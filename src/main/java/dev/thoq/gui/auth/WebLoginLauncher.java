@@ -1,8 +1,6 @@
 package dev.thoq.gui.auth;
 
 import dev.thoq.Alya;
-import dev.thoq.gui.AltManagerGui;
-import dev.thoq.gui.SessionChanger;
 import dev.thoq.util.auth.MicrosoftAuth;
 import dev.thoq.util.auth.SessionManager;
 import dev.thoq.util.font.AlyaFontRenderer;
@@ -72,12 +70,29 @@ public class WebLoginLauncher extends GuiScreen {
 
     @Override
     protected void actionPerformed(final GuiButton button) {
+        cleanup();
+
         if(button.id == 0) {
             mc.displayGuiScreen(new AltManagerGui());
         }
         if(button.id == 1) {
             SessionChanger.getInstance().setUserOffline("Alya");
             mc.displayGuiScreen(new AltManagerGui());
+        }
+    }
+
+    private void cleanup() {
+        try {
+            if(task != null) {
+                task.cancel(true);
+                task = null;
+            }
+            if(executor != null) {
+                executor.shutdownNow();
+                executor = null;
+            }
+        } catch(final Exception exception) {
+            Alya.getInstance().getLogger().error("Failed to close alt manager executor/task", exception);
         }
     }
 

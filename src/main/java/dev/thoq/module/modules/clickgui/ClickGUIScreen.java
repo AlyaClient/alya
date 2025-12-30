@@ -20,7 +20,7 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int PANEL_WIDTH = 100;
     private static final int PANEL_HEIGHT = 18;
     private static final int MODULE_HEIGHT = 18;
-    private static final int SETTING_HEIGHT = 9;
+    private static final int SETTING_HEIGHT = 14;
     private static final int PANEL_SPACING = 120;
     private static final int BACKGROUND_COLOR = 0xFF181A17;
     private static final int MODULE_BACKGROUND_COLOR = 0xFF232623;
@@ -99,6 +99,7 @@ public final class ClickGUIScreen extends GuiScreen {
                             totalHeight += SETTING_HEIGHT;
                         }
                     }
+                    totalHeight += 2;
                 }
             }
         }
@@ -129,9 +130,7 @@ public final class ClickGUIScreen extends GuiScreen {
         }
 
         final int categoryColor = getCategoryColor(category);
-        RenderUtility.drawRectOutline(panelX, panelY, PANEL_WIDTH, totalHeight, BORDER_WIDTH, categoryColor);
-
-        RenderUtility.drawRect(panelX, panelY + totalHeight, PANEL_WIDTH, 2, BACKGROUND_COLOR);
+        RenderUtility.drawRectOutline(panelX, panelY, PANEL_WIDTH, totalHeight, categoryColor, BORDER_WIDTH);
     }
 
     private void renderModuleButton(final Module module, final int positionX, final int positionY, final Category category) {
@@ -142,9 +141,9 @@ public final class ClickGUIScreen extends GuiScreen {
         final boolean extended = expandedModules.getOrDefault(module, false);
         if(!extended) {
             final int backgroundColor = module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
-            RenderUtility.drawRect(positionX + 2, positionY, PANEL_WIDTH - 4, MODULE_HEIGHT, backgroundColor);
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, backgroundColor);
         } else {
-            RenderUtility.drawRect(positionX + 2, positionY, PANEL_WIDTH - 4, MODULE_HEIGHT, BACKGROUND_COLOR);
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
         }
 
         final String moduleName = module.getName().toLowerCase();
@@ -161,14 +160,14 @@ public final class ClickGUIScreen extends GuiScreen {
         if(setting instanceof BooleanSetting) {
             final BooleanSetting booleanSetting = (BooleanSetting) setting;
             if(booleanSetting.isEnabled()) {
-                RenderUtility.drawRect(positionX + 3, positionY, PANEL_WIDTH - 6, SETTING_HEIGHT, getCategoryColor(category));
+                RenderUtility.drawRect(positionX + 1, positionY + 1, PANEL_WIDTH - 2, SETTING_HEIGHT - 2, getCategoryColor(category));
             }
-            fontRenderer.drawString(setting.getName(), positionX + 4, positionY, TEXT_COLOR);
+            fontRenderer.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
 
         } else if(setting instanceof ModeSetting) {
             final ModeSetting modeSetting = (ModeSetting) setting;
             final String text = setting.getName() + " > " + modeSetting.getValue();
-            fontRenderer.drawString(text, positionX + 4, positionY + 1, TEXT_COLOR);
+            fontRenderer.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
 
         } else if(setting instanceof NumberSetting) {
             final NumberSetting numberSetting = (NumberSetting) setting;
@@ -181,11 +180,11 @@ public final class ClickGUIScreen extends GuiScreen {
             final double maximum = numberSetting.getMax();
             final double percentage = (value - minimum) / (maximum - minimum);
 
-            final int fillWidth = (int) (percentage * (PANEL_WIDTH - 6));
-            RenderUtility.drawRect(positionX + 3, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
+            final int fillWidth = (int) (percentage * (PANEL_WIDTH - 2));
+            RenderUtility.drawRect(positionX + 1, positionY + 1, fillWidth, SETTING_HEIGHT - 2, getCategoryColor(category));
 
             final String text = setting.getName() + ": " + Math.round(value * 100.0) / 100.0;
-            fontRenderer.drawString(text, positionX + 4, positionY, TEXT_COLOR);
+            fontRenderer.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
         }
     }
 

@@ -1,4 +1,4 @@
-package dev.thoq.gui;
+package dev.thoq.gui.auth;
 
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.AuthenticationService;

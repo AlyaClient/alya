@@ -1,9 +1,10 @@
 package dev.thoq.event.events;
 
+import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
 @SuppressWarnings("unused")
-public final class MotionEvent implements IEvent {
+public final class MotionEvent implements IEvent, ICancelable {
 
     private double x;
     private double y;
@@ -74,8 +75,8 @@ public final class MotionEvent implements IEvent {
         return canceled;
     }
 
-    public void setCanceled(final boolean canceled) {
-        this.canceled = canceled;
+    public void cancel() {
+        this.canceled = true;
     }
 
 

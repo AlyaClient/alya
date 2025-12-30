@@ -13,9 +13,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class ArrayList extends Module {
+public final class ArrayListModule extends Module {
 
-    public ArrayList() {
+    public ArrayListModule() {
         super("ArrayList", "Displays enabled modules on screen", Category.RENDER);
     }
 
@@ -36,7 +36,7 @@ public final class ArrayList extends Module {
 
         final List<Module> enabledModules = Alya.getInstance().getModuleManager().getEnabledModules()
                 .stream()
-                .filter(m -> !(m instanceof ArrayList))
+                .filter(m -> !(m instanceof ArrayListModule))
                 .sorted(Comparator.comparingDouble(m -> -fontRenderer.getStringWidth(m.getName())))
                 .collect(Collectors.toList());
 

@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import dev.thoq.Alya;
-import dev.thoq.gui.AltManagerGui;
+import dev.thoq.gui.auth.AltManagerGui;
 import dev.thoq.gui.AlyaButton;
 import dev.thoq.util.ShaderUtil;
 import dev.thoq.util.font.AlyaFontRenderer;
@@ -436,15 +436,27 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         String titleText = "Alya";
 
-        int titleY = 35;
-
         AlyaFontRenderer titleFont = Alya.getInstance().getFontRendererTitle();
+
+        int firstButtonY = this.height / 4 + 48;
+        int availableHeight = firstButtonY - 10;
+
+        float baseScale = 2.5F;
+        float fontHeight = titleFont.getHeight();
+        float scaledHeight = fontHeight * baseScale;
+
+        float scale = baseScale;
+        if(scaledHeight + 35 > availableHeight) {
+            scale = Math.max(1.0F, (availableHeight - 20) / fontHeight);
+        }
+
+        final int titleY = Math.max(20, (int) ((availableHeight - fontHeight * scale) / 2));
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(this.width / 2.0F, titleY, 0.0F);
-        GlStateManager.scale(2.5F, 2.5F, 1.0F);
+        GlStateManager.scale(scale, scale, 1.0F);
 
-        float titleWidth = titleFont.getStringWidth(titleText);
+        final float titleWidth = titleFont.getStringWidth(titleText);
 
         titleFont.drawString(titleText, -titleWidth / 2 + 1, 1, 0xFF1a1a1a);
 

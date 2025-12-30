@@ -9,9 +9,10 @@ import dev.thoq.event.EventBus;
 import dev.thoq.module.ModuleManager;
 import dev.thoq.module.modules.clickgui.ClickGUI;
 import dev.thoq.module.modules.movement.FlightModule;
-import dev.thoq.module.modules.render.ArrayList;
-import dev.thoq.module.modules.render.HUD;
-import dev.thoq.module.modules.render.Keystrokes;
+import dev.thoq.module.modules.movement.SpeedModule;
+import dev.thoq.module.modules.player.NoJumpDelayModule;
+import dev.thoq.module.modules.player.NoRightClickDelayModule;
+import dev.thoq.module.modules.render.*;
 import dev.thoq.util.font.AlyaFontRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,10 +50,15 @@ public final class Alya {
 
     private void initializeModules() {
         moduleManager.register(new ClickGUI());
-        moduleManager.register(new ArrayList());
-        moduleManager.register(new HUD());
-        moduleManager.register(new Keystrokes());
+        moduleManager.register(new ArrayListModule());
+        moduleManager.register(new HUDModule());
+        moduleManager.register(new KeystrokesModule());
         moduleManager.register(new FlightModule());
+        moduleManager.register(new SpeedModule());
+        moduleManager.register(new FullBrightModule());
+        moduleManager.register(new AmbienceModule());
+        moduleManager.register(new NoRightClickDelayModule());
+        moduleManager.register(new NoJumpDelayModule());
     }
 
     private void initializeCommands() {

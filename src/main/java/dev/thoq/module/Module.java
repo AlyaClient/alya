@@ -123,4 +123,6 @@ public abstract class Module {
     public boolean hasSettings() {
         return !settings.isEmpty();
     }
+
+
 }

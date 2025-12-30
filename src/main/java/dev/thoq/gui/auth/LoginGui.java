@@ -1,7 +1,6 @@
 package dev.thoq.gui.auth;
 
 import dev.thoq.Alya;
-import dev.thoq.gui.SessionChanger;
 import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.resources.I18n;

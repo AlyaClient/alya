@@ -1,7 +1,6 @@
 package dev.thoq.util.auth;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpServer;
 import dev.thoq.Alya;
 import net.minecraft.util.Session;
@@ -24,12 +23,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -73,7 +70,6 @@ public final class MicrosoftAuth {
                         errorMsg = new AtomicReference<>(null);
 
                 server.createContext("/callback", exchange -> {
-
                     final Map<String, String> query = URLEncodedUtils
                             .parse(
                                     exchange.getRequestURI().toString().replaceAll("/callback\\?", ""),
@@ -95,7 +91,7 @@ public final class MicrosoftAuth {
                         errorMsg.set(String.format("%s: %s", query.get("error"), query.get("error_description")));
                     }
 
-                    final InputStream stream = MicrosoftAuth.class.getResourceAsStream("/callback.html");
+                    final InputStream stream = MicrosoftAuth.class.getResourceAsStream("/assets/minecraft/Alya/Assets/Web/auth_login_sucess.html");
                     final byte[] response = stream != null ? IOUtils.toByteArray(stream) : new byte[0];
                     exchange.getResponseHeaders().add("Content-Type", "text/html");
                     exchange.sendResponseHeaders(200, response.length);
@@ -375,30 +371,38 @@ public final class MicrosoftAuth {
         }, executor);
     }
 
-    public static class SessionStorage {
-        private static final Gson GSON = new Gson();
-
-        public static List<Session> loadSessions(File filePath) {
-            try(FileReader reader = new FileReader(filePath)) {
-                Type sessionListType = new TypeToken<List<Session>>() {
-                }.getType();
-                return GSON.fromJson(reader, sessionListType);
-            } catch(IOException ioException) {
-                Alya.getInstance().getLogger().error("Failed to load sessions", ioException);
-                return Collections.emptyList();
-            }
-        }
-    }
-
     public static void openWebLink(URI uri) {
+        boolean opened = false;
+
         if(Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             if(desktop.isSupported(Desktop.Action.BROWSE)) {
                 try {
                     desktop.browse(uri);
+                    opened = true;
                 } catch(IOException ioException) {
-                    Alya.getInstance().getLogger().error("Failed to open web link", ioException);
+                    Alya.getInstance().getLogger().error("Failed to open web link via Desktop", ioException);
                 }
+            }
+        }
+
+        if(!opened) {
+            String os = System.getProperty("os.name").toLowerCase();
+            try {
+                ProcessBuilder pb;
+                if(os.contains("linux")) {
+                    pb = new ProcessBuilder("xdg-open", uri.toString());
+                } else if(os.contains("mac")) {
+                    pb = new ProcessBuilder("open", uri.toString());
+                } else if(os.contains("win")) {
+                    pb = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri.toString());
+                } else {
+                    Alya.getInstance().getLogger().error("Unsupported OS for opening web link: " + os);
+                    return;
+                }
+                pb.start();
+            } catch(IOException ioException) {
+                Alya.getInstance().getLogger().error("Failed to open web link via command", ioException);
             }
         }
     }

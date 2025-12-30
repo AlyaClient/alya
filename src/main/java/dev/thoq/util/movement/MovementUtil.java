@@ -81,7 +81,7 @@ public final class MovementUtil implements IUtil {
         final double motionX = MC.thePlayer.motionX;
         final double motionZ = MC.thePlayer.motionZ;
 
-        setSpeed(MovementUtil.getSpeed());
+        setSpeed(speed);
 
         MC.thePlayer.motionX = motionX + (MC.thePlayer.motionX - motionX) * strafePercentage;
         MC.thePlayer.motionZ = motionZ + (MC.thePlayer.motionZ - motionZ) * strafePercentage;

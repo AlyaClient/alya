@@ -1,8 +1,6 @@
-package dev.thoq.gui;
+package dev.thoq.gui.auth;
 
 import dev.thoq.Alya;
-import dev.thoq.gui.auth.LoginGui;
-import dev.thoq.gui.auth.WebLoginLauncher;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
