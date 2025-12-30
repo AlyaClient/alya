@@ -29,7 +29,7 @@ public class ProtocolRange {
     }
 
     public ProtocolRange(ComparableProtocolVersion lowerBound, ComparableProtocolVersion upperBound) {
-        if (lowerBound == null && upperBound == null) {
+        if(lowerBound == null && upperBound == null) {
             throw new RuntimeException("Invalid protocol range");
         }
         this.lowerBound = lowerBound;
@@ -49,16 +49,16 @@ public class ProtocolRange {
     }
 
     public boolean contains(final ComparableProtocolVersion protocolVersion) {
-        if (this.lowerBound != null && protocolVersion.getIndex() < lowerBound.getIndex()) return false;
+        if(this.lowerBound != null && protocolVersion.getIndex() < lowerBound.getIndex()) return false;
 
         return this.upperBound == null || protocolVersion.getIndex() <= upperBound.getIndex();
     }
 
     @Override
     public String toString() {
-        if (lowerBound == null) return upperBound.getName() + "+";
-        if (upperBound == null) return lowerBound.getName() + "-";
-        if (lowerBound == upperBound) return lowerBound.getName();
+        if(lowerBound == null) return upperBound.getName() + "+";
+        if(upperBound == null) return lowerBound.getName() + "-";
+        if(lowerBound == upperBound) return lowerBound.getName();
 
         return lowerBound.getName() + " - " + upperBound.getName();
     }

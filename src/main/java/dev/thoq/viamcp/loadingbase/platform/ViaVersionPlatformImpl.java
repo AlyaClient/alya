@@ -63,7 +63,7 @@ public class ViaVersionPlatformImpl implements ViaPlatform<UUID> {
 
     @Override
     public void sendMessage(UUID uuid, String msg) {
-        if (uuid == null) {
+        if(uuid == null) {
             this.getLogger().info(msg);
         } else {
             this.getLogger().info("[" + uuid + "] " + msg);
@@ -170,7 +170,7 @@ public class ViaVersionPlatformImpl implements ViaPlatform<UUID> {
 
     @Override
     public JsonObject getDump() {
-        if (ViaLoadingBase.getInstance().getDumpSupplier() == null) return new JsonObject();
+        if(ViaLoadingBase.getInstance().getDumpSupplier() == null) return new JsonObject();
 
         return ViaLoadingBase.getInstance().getDumpSupplier().get();
     }

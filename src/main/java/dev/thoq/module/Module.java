@@ -1,6 +1,7 @@
 package dev.thoq.module;
 
 import dev.thoq.Alya;
+import dev.thoq.module.setting.ModeSetting;
 import dev.thoq.module.setting.Setting;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public abstract class Module {
     protected static final Minecraft MC = Minecraft.getMinecraft();
 
@@ -16,6 +18,7 @@ public abstract class Module {
     private final String description;
     private final Category category;
     private final List<Setting<?>> settings;
+    private final List<Submodule> submodules;
     private boolean enabled;
     private int keyCode;
 
@@ -30,6 +33,7 @@ public abstract class Module {
         this.enabled = false;
         this.keyCode = keyCode;
         this.settings = new ArrayList<>();
+        this.submodules = new ArrayList<>();
     }
 
     public void onEnable() {
@@ -48,11 +52,34 @@ public abstract class Module {
             if(enabled) {
                 Alya.getInstance().getEventBus().subscribe(this);
                 onEnable();
+                updateSubmodules();
             } else {
                 onDisable();
+                for(Submodule submodule : submodules) {
+                    submodule.setEnabled(false);
+                }
                 Alya.getInstance().getEventBus().unsubscribe(this);
             }
         }
+    }
+
+    protected void updateSubmodules() {
+        getSetting("Mode").ifPresent(setting -> {
+            if(setting instanceof ModeSetting) {
+                String mode = ((ModeSetting) setting).getValue();
+                for(Submodule submodule : submodules) {
+                    submodule.setEnabled(isEnabled() && submodule.getName().equalsIgnoreCase(mode));
+                }
+            }
+        });
+    }
+
+    protected void addSubmodule(Submodule submodule) {
+        submodules.add(submodule);
+    }
+
+    public List<Submodule> getSubmodules() {
+        return submodules;
     }
 
     public boolean isEnabled() {

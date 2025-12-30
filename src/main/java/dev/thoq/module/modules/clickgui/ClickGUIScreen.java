@@ -3,10 +3,7 @@ package dev.thoq.module.modules.clickgui;
 import dev.thoq.Alya;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
-import dev.thoq.module.setting.BooleanSetting;
-import dev.thoq.module.setting.NumberSetting;
-import dev.thoq.module.setting.Setting;
-import dev.thoq.module.setting.StringSetting;
+import dev.thoq.module.setting.*;
 import dev.thoq.util.AlyaFontRenderer;
 import dev.thoq.util.RenderUtility;
 import net.minecraft.client.gui.GuiScreen;
@@ -96,7 +93,11 @@ public final class ClickGUIScreen extends GuiScreen {
                 for(final Module module : modules) {
                     bodyHeight += MODULE_HEIGHT;
                     if(expandedModuleSettings.getOrDefault(module, false) && !module.getSettings().isEmpty()) {
-                        bodyHeight += module.getSettings().size() * SETTING_HEIGHT;
+                        for(final Setting<?> setting : module.getSettings()) {
+                            if(setting.isVisible()) {
+                                bodyHeight += SETTING_HEIGHT;
+                            }
+                        }
                     }
                 }
 
@@ -129,6 +130,8 @@ public final class ClickGUIScreen extends GuiScreen {
 
                     if(settingsExpanded && hasSettings) {
                         for(final Setting<?> setting : module.getSettings()) {
+                            if(!setting.isVisible()) continue;
+
                             final boolean settingHovered = isMouseOver(mouseX, mouseY, panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1);
 
                             if(setting instanceof BooleanSetting) {
@@ -147,6 +150,14 @@ public final class ClickGUIScreen extends GuiScreen {
                                 final int settingTextWidth = (int) fontRenderer.getStringWidth(settingName);
                                 fontRenderer.drawStringWithShadow(settingName, panelX + PANEL_WIDTH - settingTextWidth - 10, moduleY + 3,
                                         boolSetting.isEnabled() ? TEXT_COLOR : TEXT_COLOR_DISABLED);
+                            } else if(setting instanceof ModeSetting) {
+                                final ModeSetting modeSetting = (ModeSetting) setting;
+                                final int settingBgColor = settingHovered ? 0x80303030 : SETTING_BACKGROUND;
+                                RenderUtility.drawRect(panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1, settingBgColor);
+
+                                final String settingText = setting.getName() + ": " + modeSetting.getValue();
+                                final int modeSettingTextWidth = (int) fontRenderer.getStringWidth(settingText);
+                                fontRenderer.drawStringWithShadow(settingText, panelX + PANEL_WIDTH - modeSettingTextWidth - 10, moduleY + 3, TEXT_COLOR);
                             } else if(setting instanceof NumberSetting) {
                                 final NumberSetting numSetting = (NumberSetting) setting;
                                 final int sliderWidth = PANEL_WIDTH - 12;
@@ -231,10 +242,14 @@ public final class ClickGUIScreen extends GuiScreen {
 
                     if(settingsExpanded && hasSettings) {
                         for(final Setting<?> setting : module.getSettings()) {
+                            if(!setting.isVisible()) continue;
+
                             if(isMouseOver(mouseX, mouseY, panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1)) {
                                 if(mouseButton == 0) {
                                     if(setting instanceof BooleanSetting) {
                                         ((BooleanSetting) setting).toggle();
+                                    } else if(setting instanceof ModeSetting) {
+                                        ((ModeSetting) setting).cycle();
                                     } else if(setting instanceof NumberSetting) {
                                         draggingNumberSetting = (NumberSetting) setting;
                                         draggingSliderX = panelX + 6;

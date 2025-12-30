@@ -1,8 +1,5 @@
 package net.minecraft.util;
 
-import dev.thoq.Alya;
-import dev.thoq.event.events.PlayerMoveEvent;
-
 public class MovementInput
 {
     /**
@@ -19,6 +16,5 @@ public class MovementInput
 
     public void updatePlayerMoveState()
     {
-        Alya.getInstance().getEventBus().dispatch(new PlayerMoveEvent());
     }
 }

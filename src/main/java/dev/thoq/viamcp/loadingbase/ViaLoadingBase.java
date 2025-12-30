@@ -86,7 +86,8 @@ public class ViaLoadingBase {
     }
 
     public ComparableProtocolVersion getTargetVersion() {
-        if (forceNativeVersionCondition != null && forceNativeVersionCondition.getAsBoolean()) return nativeProtocolVersion;
+        if(forceNativeVersionCondition != null && forceNativeVersionCondition.getAsBoolean())
+            return nativeProtocolVersion;
 
         return targetProtocolVersion;
     }
@@ -98,12 +99,13 @@ public class ViaLoadingBase {
     public void reload(final ComparableProtocolVersion protocolVersion) {
         this.targetProtocolVersion = protocolVersion;
 
-        if (this.onProtocolReload != null) this.onProtocolReload.accept(targetProtocolVersion);
+        if(this.onProtocolReload != null) this.onProtocolReload.accept(targetProtocolVersion);
     }
 
     public void initPlatform() {
-        for (Platform platform : platforms) platform.createProtocolPath();
-        for (ProtocolVersion preProtocol : Platform.TEMP_INPUT_PROTOCOLS) PROTOCOLS.put(preProtocol, new ComparableProtocolVersion(preProtocol.getVersion(), preProtocol.getName(), Platform.TEMP_INPUT_PROTOCOLS.indexOf(preProtocol)));
+        for(Platform platform : platforms) platform.createProtocolPath();
+        for(ProtocolVersion preProtocol : Platform.TEMP_INPUT_PROTOCOLS)
+            PROTOCOLS.put(preProtocol, new ComparableProtocolVersion(preProtocol.getVersion(), preProtocol.getName(), Platform.TEMP_INPUT_PROTOCOLS.indexOf(preProtocol)));
 
         this.nativeProtocolVersion = fromProtocolVersion(ProtocolVersion.getProtocol(this.nativeVersion));
         this.targetProtocolVersion = this.nativeProtocolVersion;
@@ -113,16 +115,15 @@ public class ViaLoadingBase {
                 platform(viaVersionPlatform).
                 loader(new VLBViaProviders()).
                 injector(new VLBViaInjector()).
-                commandHandler(new VLBViaCommandHandler())
-                ;
+                commandHandler(new VLBViaCommandHandler());
 
-        if (this.managerBuilderConsumer != null) this.managerBuilderConsumer.accept(builder);
+        if(this.managerBuilderConsumer != null) this.managerBuilderConsumer.accept(builder);
 
         Via.init(builder.build());
 
         final ViaManagerImpl manager = (ViaManagerImpl) Via.getManager();
         manager.addEnableListener(() -> {
-            for (Platform platform : this.platforms) platform.build(ViaLoadingBase.LOGGER);
+            for(Platform platform : this.platforms) platform.build(ViaLoadingBase.LOGGER);
         });
 
         manager.init();
@@ -162,7 +163,7 @@ public class ViaLoadingBase {
         try {
             Class.forName(name);
             return true;
-        } catch (Exception ignored) {
+        } catch(Exception ignored) {
             return false;
         }
     }
@@ -247,11 +248,11 @@ public class ViaLoadingBase {
         }
 
         public void build() {
-            if (ViaLoadingBase.getInstance() != null) {
+            if(ViaLoadingBase.getInstance() != null) {
                 ViaLoadingBase.LOGGER.severe("ViaLoadingBase has already started the platform!");
                 return;
             }
-            if (runDirectory == null || nativeVersion == null) {
+            if(runDirectory == null || nativeVersion == null) {
                 ViaLoadingBase.LOGGER.severe("Please check your ViaLoadingBaseBuilder arguments!");
                 return;
             }

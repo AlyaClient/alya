@@ -50,18 +50,18 @@ public class Platform {
     }
 
     public void createProtocolPath() {
-        if (this.versionCallback != null) {
+        if(this.versionCallback != null) {
             this.versionCallback.accept(TEMP_INPUT_PROTOCOLS);
         }
     }
 
     public void build(final Logger logger) {
-        if (this.load.getAsBoolean()) {
+        if(this.load.getAsBoolean()) {
             try {
                 this.executor.run();
                 logger.info("Loaded Platform " + this.name);
                 COUNT++;
-            } catch (Throwable t) {
+            } catch(Throwable t) {
                 logger.severe("An error occurred while loading Platform " + this.name + ":");
                 t.printStackTrace();
             }

@@ -2,6 +2,7 @@ package net.minecraft.util;
 
 import dev.thoq.Alya;
 import dev.thoq.event.events.PlayerInputEvent;
+import dev.thoq.event.events.PlayerMoveEvent;
 import net.minecraft.client.settings.GameSettings;
 
 public class MovementInputFromOptions extends MovementInput {
@@ -14,6 +15,8 @@ public class MovementInputFromOptions extends MovementInput {
     }
 
     public void updatePlayerMoveState() {
+        Alya.getInstance().getEventBus().dispatch(new PlayerMoveEvent());
+
         this.moveStrafe = 0.0F;
         this.moveForward = 0.0F;
 

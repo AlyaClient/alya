@@ -47,11 +47,11 @@ public abstract class VLBPipeline extends ChannelInboundHandlerAdapter {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         super.userEventTriggered(ctx, evt);
 
-        if (evt instanceof CompressionReorderEvent) {
+        if(evt instanceof CompressionReorderEvent) {
             final int decoderIndex = ctx.pipeline().names().indexOf(getDecompressionHandlerName());
-            if (decoderIndex == -1) return;
+            if(decoderIndex == -1) return;
 
-            if (decoderIndex > ctx.pipeline().names().indexOf(VIA_DECODER_HANDLER_NAME)) {
+            if(decoderIndex > ctx.pipeline().names().indexOf(VIA_DECODER_HANDLER_NAME)) {
                 final ChannelHandler decoder = ctx.pipeline().get(VIA_DECODER_HANDLER_NAME);
                 final ChannelHandler encoder = ctx.pipeline().get(VIA_ENCODER_HANDLER_NAME);
 

@@ -47,8 +47,8 @@ public class VLBViaInjector implements ViaInjector {
     @Override
     public IntSortedSet getServerProtocolVersions() {
         final IntSortedSet versions = new IntLinkedOpenHashSet();
-        for (ProtocolVersion value : ProtocolVersion.getProtocols()) {
-            if (value.getVersion() >= ProtocolVersion.v1_7_1.getVersion()) {
+        for(ProtocolVersion value : ProtocolVersion.getProtocols()) {
+            if(value.getVersion() >= ProtocolVersion.v1_7_1.getVersion()) {
                 versions.add(value.getVersion());
             }
         }

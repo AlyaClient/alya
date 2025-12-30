@@ -41,8 +41,8 @@ public class VLBViaDecodeHandler extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf bytebuf, List<Object> out) throws Exception {
-        if (!user.checkIncomingPacket()) throw CancelDecoderException.generate(null);
-        if (!user.shouldTransformPacket()) {
+        if(!user.checkIncomingPacket()) throw CancelDecoderException.generate(null);
+        if(!user.shouldTransformPacket()) {
             out.add(bytebuf.retain());
             return;
         }
@@ -59,9 +59,9 @@ public class VLBViaDecodeHandler extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (PipelineUtil.containsCause(cause, CancelCodecException.class)) return;
+        if(PipelineUtil.containsCause(cause, CancelCodecException.class)) return;
 
-        if ((PipelineUtil.containsCause(cause, InformativeException.class)
+        if((PipelineUtil.containsCause(cause, InformativeException.class)
                 && user.getProtocolInfo().getState() != State.HANDSHAKE)
                 || Via.getManager().debugHandler().enabled()) {
             cause.printStackTrace();

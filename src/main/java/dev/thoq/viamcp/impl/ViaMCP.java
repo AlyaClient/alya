@@ -38,7 +38,7 @@ public class ViaMCP {
             // Force native version when playing singleplayer to avoid protocol translation issues
             return Minecraft.getMinecraft().isIntegratedServerRunning();
         }).onProtocolReload(comparableProtocolVersion -> {
-            if (getAsyncVersionSlider() != null) {
+            if(getAsyncVersionSlider() != null) {
                 getAsyncVersionSlider().setVersion(comparableProtocolVersion.getVersion());
             }
         }).build();

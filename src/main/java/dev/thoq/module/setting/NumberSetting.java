@@ -20,7 +20,7 @@ public final class NumberSetting extends Setting<Double> {
 
     @Override
     public void setValue(Double value) {
-        this.value = Math.max(min, Math.min(max, value));
+        super.setValue(Math.max(min, Math.min(max, value)));
     }
 
     public double getMin() {

@@ -39,12 +39,12 @@ public class LeakDetectSubCommand extends ViaSubCommand {
 
     @Override
     public boolean execute(ViaCommandSender viaCommandSender, String[] strings) {
-        if (strings.length == 1) {
+        if(strings.length == 1) {
             try {
                 ResourceLeakDetector.Level level = ResourceLeakDetector.Level.valueOf(strings[0]);
                 ResourceLeakDetector.setLevel(level);
                 viaCommandSender.sendMessage("Set leak detector level to " + level);
-            } catch (IllegalArgumentException e) {
+            } catch(IllegalArgumentException e) {
                 viaCommandSender.sendMessage("Invalid level (" + Arrays.toString(ResourceLeakDetector.Level.values()) + ")");
             }
         } else {
@@ -55,7 +55,7 @@ public class LeakDetectSubCommand extends ViaSubCommand {
 
     @Override
     public List<String> onTabComplete(ViaCommandSender sender, String[] args) {
-        if (args.length == 1) {
+        if(args.length == 1) {
             return Arrays.stream(ResourceLeakDetector.Level.values()).map(Enum::name).filter(it -> it.startsWith(args[0])).collect(Collectors.toList());
         }
         return super.onTabComplete(sender, args);

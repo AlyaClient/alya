@@ -38,8 +38,8 @@ public class VLBViaEncodeHandler extends MessageToMessageEncoder<ByteBuf> {
 
     @Override
     protected void encode(final ChannelHandlerContext ctx, ByteBuf bytebuf, List<Object> out) throws Exception {
-        if (!user.checkOutgoingPacket()) throw CancelEncoderException.generate(null);
-        if (!user.shouldTransformPacket()) {
+        if(!user.checkOutgoingPacket()) throw CancelEncoderException.generate(null);
+        if(!user.shouldTransformPacket()) {
             out.add(bytebuf.retain());
             return;
         }
@@ -56,7 +56,7 @@ public class VLBViaEncodeHandler extends MessageToMessageEncoder<ByteBuf> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (PipelineUtil.containsCause(cause, CancelCodecException.class)) return;
+        if(PipelineUtil.containsCause(cause, CancelCodecException.class)) return;
         super.exceptionCaught(ctx, cause);
     }
 }
