@@ -14,9 +14,10 @@ import java.util.Date;
 
 public final class HUDModule extends Module {
 
-    private final BooleanSetting showFPS = new BooleanSetting("ShowFPS", "Display FPS counter", true);
-    private final BooleanSetting showBPS = new BooleanSetting("ShowBPS", "Display blocks per second", false);
-    private final BooleanSetting showTime = new BooleanSetting("ShowTime", "Display current time", false);
+    private final BooleanSetting showFPS = new BooleanSetting("Show FPS", "Display FPS counter", true);
+    private final BooleanSetting showBPS = new BooleanSetting("Show BPS", "Display blocks per second", false);
+    private final BooleanSetting showTime = new BooleanSetting("Show Time", "Display current time", false);
+    private final BooleanSetting smoothChat = new BooleanSetting("Smooth Chat", "Animate messages in chat to smoothly enter", true);
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private double lastX, lastY, lastZ;
     private double blocksPerSecond = 0;
@@ -27,6 +28,7 @@ public final class HUDModule extends Module {
         addSetting(showFPS);
         addSetting(showBPS);
         addSetting(showTime);
+        addSetting(smoothChat);
     }
 
     @Override
@@ -98,7 +100,6 @@ public final class HUDModule extends Module {
             final double timeDelta = (currentTime - lastBPSUpdate) / 1000.0;
 
             if(timeDelta > 0) {
-
                 final double newBPS = distance / timeDelta;
                 blocksPerSecond = blocksPerSecond * 0.8 + newBPS * 0.2;
             }
@@ -108,6 +109,10 @@ public final class HUDModule extends Module {
             lastZ = MC.thePlayer.posZ;
             lastBPSUpdate = currentTime;
         }
+    }
+
+    public boolean getSmoothChatEnabled() {
+        return smoothChat.isEnabled();
     }
 
 

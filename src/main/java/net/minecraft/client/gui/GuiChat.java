@@ -147,7 +147,6 @@ public class GuiChat extends GuiScreen {
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        // Handle Keystrokes dragging
         Optional<Module> keystrokesOpt = Alya.getInstance().getModuleManager().getModule("Keystrokes");
         if(keystrokesOpt.isPresent() && keystrokesOpt.get() instanceof KeystrokesModule) {
             KeystrokesModule keystrokes = (KeystrokesModule) keystrokesOpt.get();
@@ -172,7 +171,6 @@ public class GuiChat extends GuiScreen {
      * Called when a mouse button is released.
      */
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-        // Handle Keystrokes drag release
         Optional<Module> keystrokesOpt = Alya.getInstance().getModuleManager().getModule("Keystrokes");
         if(keystrokesOpt.isPresent() && keystrokesOpt.get() instanceof KeystrokesModule) {
             KeystrokesModule keystrokes = (KeystrokesModule) keystrokesOpt.get();
@@ -201,7 +199,6 @@ public class GuiChat extends GuiScreen {
     public void autocompletePlayerNames() {
         String currentText = this.inputField.getText();
 
-        // Check if this is a command (starts with .)
         if(currentText.startsWith(".")) {
             this.autocompleteCommand();
             return;
@@ -248,12 +245,10 @@ public class GuiChat extends GuiScreen {
 
     private void autocompleteCommand() {
         if(this.playerNamesFound) {
-            // Already have completions, cycle through them
             if(this.autocompleteIndex >= this.foundPlayerNames.size()) {
                 this.autocompleteIndex = 0;
             }
         } else {
-            // Get new completions
             this.foundPlayerNames.clear();
             this.autocompleteIndex = 0;
 
@@ -268,7 +263,6 @@ public class GuiChat extends GuiScreen {
             this.playerNamesFound = true;
         }
 
-        // Show available completions if more than one
         if(this.foundPlayerNames.size() > 1) {
             StringBuilder stringbuilder = new StringBuilder();
 
@@ -283,16 +277,12 @@ public class GuiChat extends GuiScreen {
             this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new ChatComponentText(stringbuilder.toString()), 1);
         }
 
-        // Apply the completion
         String completion = this.foundPlayerNames.get(this.autocompleteIndex++);
         String currentText = this.inputField.getText();
 
-        // For command completions, replace the entire text or just the last part
         if(!currentText.contains(" ")) {
-            // Completing command name - replace entire text
             this.inputField.setText(completion);
         } else {
-            // Completing argument - replace just the last word
             int lastSpace = currentText.lastIndexOf(' ');
             this.inputField.setText(currentText.substring(0, lastSpace + 1) + completion);
         }
@@ -341,7 +331,6 @@ public class GuiChat extends GuiScreen {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        // Handle Keystrokes dragging while mouse is held
         if(Mouse.isButtonDown(0)) {
             Optional<Module> keystrokesOpt = Alya.getInstance().getModuleManager().getModule("Keystrokes");
             if(keystrokesOpt.isPresent() && keystrokesOpt.get() instanceof KeystrokesModule) {
