@@ -31,8 +31,8 @@ public class GuiSnooper extends GuiScreen {
      * window resizes, the buttonList is cleared beforehand.
      */
     public void initGui() {
-        this.field_146610_i = I18n.format("No thanks!");
-        String s = "The Snooper and all of Minecraft and Optifine's data collection features have been removed by Alya.";
+        this.field_146610_i = I18n.format("options.snooper.title");
+        String s = I18n.format("options.snooper.desc");
         java.util.List<String> list = Lists.newArrayList();
 
         list.addAll(this.fontRendererObj.listFormattedStringToWidth(s, this.width - 30));
