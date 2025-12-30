@@ -10,16 +10,25 @@ import dev.thoq.util.movement.MovementUtil;
 public final class MotionFlightMode extends Submodule {
 
     private final BooleanSetting glide = new BooleanSetting("Glide", "Slowly fall", false);
+    private final BooleanSetting smooth = new BooleanSetting("Smooth", "Smooth movement", true);
 
-    public MotionFlightMode(FlightModule parent) {
+    public MotionFlightMode(final FlightModule parent) {
         super("Motion", parent);
         addSetting(glide);
+        addSetting(smooth);
+
         glide.setVisibility(() -> parent.getMode().is("Motion"));
+        smooth.setVisibility(() -> parent.getMode().is("Motion"));
     }
 
     @EventHandler
     public void onPlayerMoveEvent(final PlayerMoveEvent event) {
-        FlightModule flightModule = (FlightModule) parent;
+        if(!smooth.isEnabled()) {
+            MC.thePlayer.cameraYaw = 0.1f;
+        }
+
+        final FlightModule flightModule = (FlightModule) parent;
+
         if(MC.gameSettings.keyBindJump.isKeyDown()) {
             MC.thePlayer.motionY += flightModule.getSpeed().getValue() / 2D;
         } else if(MC.gameSettings.keyBindSneak.isKeyDown()) {

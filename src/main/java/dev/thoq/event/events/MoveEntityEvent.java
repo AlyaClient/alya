@@ -1,14 +1,15 @@
 package dev.thoq.event.events;
 
+import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
 @SuppressWarnings("unused")
-public final class MoveEntityEvent implements IEvent {
+public final class MoveEntityEvent implements IEvent, ICancelable {
 
     private final double x;
     private final double y;
     private final double z;
-    private boolean cancelled = false;
+    private boolean canceled = false;
 
     public MoveEntityEvent(final double x, final double y, final double z) {
         this.x = x;
@@ -29,10 +30,10 @@ public final class MoveEntityEvent implements IEvent {
     }
 
     public boolean isCanceled() {
-        return cancelled;
+        return canceled;
     }
 
-    public void setCancelled(final boolean cancelled) {
-        this.cancelled = cancelled;
+    public void cancel() {
+        this.canceled = true;
     }
 }

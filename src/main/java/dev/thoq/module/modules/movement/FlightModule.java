@@ -1,7 +1,5 @@
 package dev.thoq.module.modules.movement;
 
-import dev.thoq.event.EventHandler;
-import dev.thoq.event.events.PlayerMoveEvent;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.modules.movement.flight.MotionFlightMode;
@@ -25,15 +23,6 @@ public final class FlightModule extends Module {
         addSubmodule(new StaticFlightMode(this));
 
         mode.setOnChange(this::updateSubmodules);
-    }
-
-    @Override
-    public void onEnable() {
-        super.onEnable();
-    }
-
-    @EventHandler
-    public void onPlayerMoveEvent(final PlayerMoveEvent event) {
     }
 
     public ModeSetting getMode() {

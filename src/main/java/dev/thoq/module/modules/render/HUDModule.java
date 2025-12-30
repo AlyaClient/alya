@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public final class HUD extends Module {
+public final class HUDModule extends Module {
 
     private final BooleanSetting showFPS = new BooleanSetting("ShowFPS", "Display FPS counter", true);
     private final BooleanSetting showBPS = new BooleanSetting("ShowBPS", "Display blocks per second", false);
@@ -22,7 +22,7 @@ public final class HUD extends Module {
     private double blocksPerSecond = 0;
     private long lastBPSUpdate = 0;
 
-    public HUD() {
+    public HUDModule() {
         super("HUD", "Displays client information on screen", Category.RENDER);
         addSetting(showFPS);
         addSetting(showBPS);

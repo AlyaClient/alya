@@ -17,7 +17,7 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-public final class Keystrokes extends Module {
+public final class KeystrokesModule extends Module {
 
     private static final Minecraft MC = Minecraft.getMinecraft();
 
@@ -43,7 +43,7 @@ public final class Keystrokes extends Module {
     private int dragOffsetX = 0;
     private int dragOffsetY = 0;
 
-    public Keystrokes() {
+    public KeystrokesModule() {
         super("Keystrokes", "Shows pressed keys on screen", Category.RENDER);
         addSetting(posX);
         addSetting(posY);
@@ -105,19 +105,19 @@ public final class Keystrokes extends Module {
         final int bgColor = pressed ? BG_PRESSED : BG_COLOR;
         final int textColor = pressed ? TEXT_PRESSED : TEXT_COLOR;
 
-        RenderUtility.drawRect(x, y, width, Keystrokes.KEY_SIZE, bgColor);
+        RenderUtility.drawRect(x, y, width, KeystrokesModule.KEY_SIZE, bgColor);
 
         RenderUtility.drawRect(x, y, width, 1, BORDER_COLOR);
 
-        RenderUtility.drawRect(x, y + Keystrokes.KEY_SIZE - 1, width, 1, BORDER_COLOR);
+        RenderUtility.drawRect(x, y + KeystrokesModule.KEY_SIZE - 1, width, 1, BORDER_COLOR);
 
-        RenderUtility.drawRect(x, y, 1, Keystrokes.KEY_SIZE, BORDER_COLOR);
+        RenderUtility.drawRect(x, y, 1, KeystrokesModule.KEY_SIZE, BORDER_COLOR);
 
-        RenderUtility.drawRect(x + width - 1, y, 1, Keystrokes.KEY_SIZE, BORDER_COLOR);
+        RenderUtility.drawRect(x + width - 1, y, 1, KeystrokesModule.KEY_SIZE, BORDER_COLOR);
 
         final float textWidth = fr.getStringWidth(text);
         final float textX = x + (width - textWidth) / 2;
-        final float textY = y + (Keystrokes.KEY_SIZE - fr.getFontHeight()) / 2;
+        final float textY = y + (KeystrokesModule.KEY_SIZE - fr.getFontHeight()) / 2;
         fr.drawString(text, textX, textY, textColor);
     }
 

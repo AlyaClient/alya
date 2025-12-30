@@ -1,9 +1,10 @@
 package dev.thoq.event.events;
 
+import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
 @SuppressWarnings("unused")
-public class SlowDownEvent implements IEvent {
+public final class SlowDownEvent implements IEvent, ICancelable {
 
     private boolean cancelled = false;
 
@@ -14,8 +15,8 @@ public class SlowDownEvent implements IEvent {
         return cancelled;
     }
 
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    public void cancel() {
+        this.cancelled = true;
     }
 
 
