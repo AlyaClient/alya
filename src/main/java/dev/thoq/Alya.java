@@ -32,6 +32,7 @@ public final class Alya {
 
     private AlyaFontRenderer fontRenderer;
     private AlyaFontRenderer fontRendererSmall;
+    private AlyaFontRenderer fontRendererMedium;
     private AlyaFontRenderer fontRendererBold;
     private AlyaFontRenderer fontRendererTitle;
 
@@ -116,10 +117,10 @@ public final class Alya {
     }
 
     public AlyaFontRenderer getFontRendererMedium() {
-        if(fontRendererSmall == null) {
-            fontRendererSmall = new AlyaFontRenderer(10f);
+        if(fontRendererMedium == null) {
+            fontRendererMedium = new AlyaFontRenderer(10f);
         }
-        return fontRendererSmall;
+        return fontRendererMedium;
     }
 
     public AlyaFontRenderer getFontRendererBold() {

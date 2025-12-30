@@ -99,7 +99,6 @@ public final class ClickGUIScreen extends GuiScreen {
                             totalHeight += SETTING_HEIGHT;
                         }
                     }
-                    totalHeight += 2;
                 }
             }
         }
@@ -160,7 +159,7 @@ public final class ClickGUIScreen extends GuiScreen {
         if(setting instanceof BooleanSetting) {
             final BooleanSetting booleanSetting = (BooleanSetting) setting;
             if(booleanSetting.isEnabled()) {
-                RenderUtility.drawRect(positionX + 1, positionY + 1, PANEL_WIDTH - 2, SETTING_HEIGHT - 2, getCategoryColor(category));
+                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, getCategoryColor(category));
             }
             fontRenderer.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
 
@@ -181,7 +180,7 @@ public final class ClickGUIScreen extends GuiScreen {
             final double percentage = (value - minimum) / (maximum - minimum);
 
             final int fillWidth = (int) (percentage * (PANEL_WIDTH - 2));
-            RenderUtility.drawRect(positionX + 1, positionY + 1, fillWidth, SETTING_HEIGHT - 2, getCategoryColor(category));
+            RenderUtility.drawRect(positionX + 1, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
 
             final String text = setting.getName() + ": " + Math.round(value * 100.0) / 100.0;
             fontRenderer.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
