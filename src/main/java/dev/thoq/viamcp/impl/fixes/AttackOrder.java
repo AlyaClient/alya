@@ -34,7 +34,7 @@ public class AttackOrder {
     }
 
     public static void sendFixedAttack(final EntityPlayer entityIn, final Entity target) {
-        if(ViaLoadingBase.getInstance().getTargetVersion().isOlderThanOrEqualTo(ProtocolVersion.v1_8)) {
+        if(ViaLoadingBase.getInstance() == null || ViaLoadingBase.getInstance().getTargetVersion().isOlderThanOrEqualTo(ProtocolVersion.v1_8)) {
             mc.thePlayer.swingItem();
             mc.playerController.attackEntity(entityIn, target);
         } else {
