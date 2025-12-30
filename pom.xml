@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dev.tenacity</groupId>
+    <artifactId>Alya</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>viaversion-repo</id>
+            <url>https://repo.viaversion.com/</url>
+        </repository>
+
+        <repository>
+            <id>minecraft</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
+
+        <repository>
+            <id>litarvan</id>
+            <url>https://litarvan.github.io/maven</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <artifactId>commons-codec</artifactId>
+            <groupId>commons-codec</groupId>
+            <version>1.15</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paulscode</groupId>
+            <artifactId>codecjorbis</artifactId>
+            <version>20101023</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paulscode</groupId>
+            <artifactId>codecwav</artifactId>
+            <version>20101023</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paulscode</groupId>
+            <artifactId>libraryjavasound</artifactId>
+            <version>20101123</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paulscode</groupId>
+            <artifactId>librarylwjglopenal</artifactId>
+            <version>20100824</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paulscode</groupId>
+            <artifactId>soundsystem</artifactId>
+            <version>20120107</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>commons-compress</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <version>1.26.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>commons-io</artifactId>
+            <groupId>commons-io</groupId>
+            <version>2.14.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>commons-lang3</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <version>3.18.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>commons-logging</artifactId>
+            <groupId>commons-logging</groupId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>gson</artifactId>
+            <groupId>com.google.code.gson</groupId>
+            <version>2.9.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>guava</artifactId>
+            <groupId>com.google.guava</groupId>
+            <version>32.0.1-jre</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <version>4.5.13</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>httpcore</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <version>4.4.14</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>icu4j</artifactId>
+            <groupId>com.ibm.icu</groupId>
+            <version>68.2</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jinput</artifactId>
+            <groupId>net.java.jinput</groupId>
+            <version>2.0.9</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jinput-platform</artifactId>
+            <groupId>net.java.jinput</groupId>
+            <version>2.0.7</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <artifactId>jna</artifactId>
+            <groupId>net.java.dev.jna</groupId>
+            <version>5.6.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jna-platform</artifactId>
+            <groupId>net.java.dev.jna</groupId>
+            <version>5.6.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jopt-simple</artifactId>
+            <groupId>net.sf.jopt-simple</groupId>
+            <version>5.0.4</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jutils</artifactId>
+            <groupId>net.java.jutils</groupId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>log4j-api</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <version>2.17.2</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>log4j-core</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <version>2.25.3</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>authlib</artifactId>
+            <groupId>com.mojang</groupId>
+            <version>1.5.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.dblock</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>netty-all</artifactId>
+            <groupId>io.netty</groupId>
+            <version>4.0.23.Final</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>lwjgl</artifactId>
+            <groupId>org.lwjgl.lwjgl</groupId>
+            <version>2.9.3</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>lwjgl_util</artifactId>
+            <groupId>org.lwjgl.lwjgl</groupId>
+            <version>2.9.3</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>lwjgl-platform</artifactId>
+            <groupId>org.lwjgl.lwjgl</groupId>
+            <version>2.9.3</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.litarvan</groupId>
+            <artifactId>openauth</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viaversion-api</artifactId>
+            <version>4.9.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viabackwards</artifactId>
+            <version>4.9.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viarewind-common</artifactId>
+            <version>3.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viaversion</artifactId>
+            <version>4.9.3</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

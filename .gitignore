@@ -1,0 +1,13 @@
+jars/*
+!jars/versions/
+.idea/
+target/
+out
+classes
+.mvn
+*.ipr
+*.iws
+*.iml
+*.class
+.DS_Store
+dependency-reduced-pom.xml
