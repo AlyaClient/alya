@@ -12,7 +12,7 @@ import dev.thoq.module.modules.movement.FlightModule;
 import dev.thoq.module.modules.render.ArrayList;
 import dev.thoq.module.modules.render.HUD;
 import dev.thoq.module.modules.render.Keystrokes;
-import dev.thoq.util.AlyaFontRenderer;
+import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.viamcp.impl.ViaMCP;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,12 +104,19 @@ public final class Alya {
 
     public AlyaFontRenderer getFontRenderer() {
         if(fontRenderer == null) {
-            fontRenderer = new AlyaFontRenderer(12f);
+            fontRenderer = new AlyaFontRenderer(15f);
         }
         return fontRenderer;
     }
 
     public AlyaFontRenderer getFontRendererSmall() {
+        if(fontRendererSmall == null) {
+            fontRendererSmall = new AlyaFontRenderer(8f);
+        }
+        return fontRendererSmall;
+    }
+
+    public AlyaFontRenderer getFontRendererMedium() {
         if(fontRendererSmall == null) {
             fontRendererSmall = new AlyaFontRenderer(10f);
         }

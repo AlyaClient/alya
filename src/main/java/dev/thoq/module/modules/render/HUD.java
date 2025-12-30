@@ -6,7 +6,7 @@ import dev.thoq.event.events.Render2DEvent;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.BooleanSetting;
-import dev.thoq.util.AlyaFontRenderer;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 
 import java.text.SimpleDateFormat;
@@ -41,7 +41,7 @@ public final class HUD extends Module {
 
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
-        AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRenderer();
+        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
 
         float x = 4;
         final float y = 4;

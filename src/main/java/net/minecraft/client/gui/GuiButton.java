@@ -10,6 +10,18 @@ public class GuiButton extends Gui
 {
     protected static final ResourceLocation buttonTextures = new ResourceLocation("textures/gui/widgets.png");
 
+    private static final int BACKGROUND_COLOR = 0xFF181818;
+    private static final int BACKGROUND_HOVER = 0xFF252525;
+    private static final int BACKGROUND_DISABLED = 0xFF101010;
+    private static final int BORDER_COLOR = 0xFF303030;
+    private static final int BORDER_HOVER = 0xFF505050;
+    private static final int ACCENT_COLOR = 0xFF8B5CF6;
+    private static final int TEXT_COLOR = 0xFFFFFFFF;
+    private static final int TEXT_DISABLED = 0xFF666666;
+
+    private float hoverAnimation = 0.0F;
+    private static final float ANIMATION_SPEED = 0.15F;
+
     /** Button width in pixels */
     protected int width;
 
@@ -72,6 +84,26 @@ public class GuiButton extends Gui
         return i;
     }
 
+    private int interpolateColor(int color1, int color2, float factor)
+    {
+        int a1 = (color1 >> 24) & 0xFF;
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+
+        int a2 = (color2 >> 24) & 0xFF;
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+
+        int a = (int) (a1 + (a2 - a1) * factor);
+        int r = (int) (r1 + (r2 - r1) * factor);
+        int g = (int) (g1 + (g2 - g1) * factor);
+        int b = (int) (b1 + (b2 - b1) * factor);
+
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
     /**
      * Draws this button to the screen.
      */
@@ -80,29 +112,69 @@ public class GuiButton extends Gui
         if (this.visible)
         {
             FontRenderer fontrenderer = mc.fontRendererObj;
-            mc.getTextureManager().bindTexture(buttonTextures);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-            int i = this.getHoverState(this.hovered);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            GlStateManager.blendFunc(770, 771);
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
-            this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-            this.mouseDragged(mc, mouseX, mouseY);
-            int j = 14737632;
+
+            // Fast animation update
+            if (this.hovered && this.enabled)
+            {
+                hoverAnimation = Math.min(1.0F, hoverAnimation + ANIMATION_SPEED);
+            }
+            else
+            {
+                hoverAnimation = Math.max(0.0F, hoverAnimation - ANIMATION_SPEED);
+            }
+
+            int bgColor;
+            int borderColor;
+            int textColor;
 
             if (!this.enabled)
             {
-                j = 10526880;
+                bgColor = BACKGROUND_DISABLED;
+                borderColor = BORDER_COLOR;
+                textColor = TEXT_DISABLED;
             }
-            else if (this.hovered)
+            else
             {
-                j = 16777120;
+                // Interpolate colors based on animation
+                bgColor = interpolateColor(BACKGROUND_COLOR, BACKGROUND_HOVER, hoverAnimation);
+                borderColor = interpolateColor(BORDER_COLOR, BORDER_HOVER, hoverAnimation);
+                textColor = TEXT_COLOR;
             }
 
-            this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, j);
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+
+            // Draw background
+            drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, bgColor);
+
+            // Draw borders
+            drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + 1, borderColor);
+            drawRect(this.xPosition, this.yPosition + this.height - 1, this.xPosition + this.width, this.yPosition + this.height, borderColor);
+            drawRect(this.xPosition, this.yPosition, this.xPosition + 1, this.yPosition + this.height, borderColor);
+            drawRect(this.xPosition + this.width - 1, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, borderColor);
+
+            // Animated accent bar on left side
+            if (hoverAnimation > 0.0F && this.enabled)
+            {
+                int accentColor = interpolateColor(BACKGROUND_COLOR, ACCENT_COLOR, hoverAnimation);
+                drawRect(this.xPosition, this.yPosition, this.xPosition + 2, this.yPosition + this.height, accentColor);
+            }
+
+            this.mouseDragged(mc, mouseX, mouseY);
+
+            this.drawButtonText(mc, textColor);
+
+            GlStateManager.disableBlend();
         }
+    }
+
+    /**
+     * Draws the button text. Override this method to use a custom font renderer.
+     */
+    protected void drawButtonText(Minecraft mc, int textColor)
+    {
+        this.drawCenteredString(mc.fontRendererObj, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, textColor);
     }
 
     /**

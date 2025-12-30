@@ -1,5 +1,6 @@
-package dev.thoq.util;
+package dev.thoq.util.movement;
 
+import dev.thoq.util.IUtil;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.util.vector.Vector2f;

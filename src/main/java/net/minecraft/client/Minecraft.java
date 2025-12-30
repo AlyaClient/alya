@@ -259,7 +259,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     public final FrameTimer field_181542_y = new FrameTimer();
     long field_181543_z = System.nanoTime();
     private final boolean jvm64bit;
-    private final boolean isDemo;
     private NetworkManager myNetworkManager;
     private boolean integratedServerIsRunning;
 
@@ -339,7 +338,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.session = gameConfig.userInfo.session;
         logger.info("Setting user: " + this.session.getUsername());
         logger.info("(Session ID is " + this.session.getSessionID() + ")");
-        this.isDemo = gameConfig.gameInfo.isDemo;
         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
         this.displayHeight = gameConfig.displayInfo.height > 0 ? gameConfig.displayInfo.height : 1;
         this.tempDisplayWidth = gameConfig.displayInfo.width;
@@ -2009,13 +2007,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         if(this.currentScreen instanceof GuiGameOver) {
             this.displayGuiScreen((GuiScreen) null);
         }
-    }
-
-    /**
-     * Gets whether this is a demo or not.
-     */
-    public final boolean isDemo() {
-        return this.isDemo;
     }
 
     public NetHandlerPlayClient getNetHandler() {

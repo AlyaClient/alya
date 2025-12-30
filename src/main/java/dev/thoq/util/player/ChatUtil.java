@@ -1,4 +1,4 @@
-package dev.thoq.util;
+package dev.thoq.util.player;
 
 import dev.thoq.Alya;
 import net.minecraft.client.Minecraft;
@@ -6,7 +6,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 @SuppressWarnings("unused")
-public final class ChatUtility {
+public final class ChatUtil {
 
     private static final Minecraft MC = Minecraft.getMinecraft();
     private static final String PREFIX = EnumChatFormatting.DARK_PURPLE + "[" + EnumChatFormatting.LIGHT_PURPLE + Alya.getName() + EnumChatFormatting.DARK_PURPLE + "] " + EnumChatFormatting.RESET;

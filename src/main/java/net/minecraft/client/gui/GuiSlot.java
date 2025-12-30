@@ -496,15 +496,15 @@ public abstract class GuiSlot
     {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        float f = 32.0F;
+        // Draw dark solid color instead of dirt texture
+        GlStateManager.disableTexture2D();
         worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-        worldrenderer.pos((double)this.left, (double)endY, 0.0D).tex(0.0D, (double)((float)endY / 32.0F)).func_181669_b(64, 64, 64, endAlpha).endVertex();
-        worldrenderer.pos((double)(this.left + this.width), (double)endY, 0.0D).tex((double)((float)this.width / 32.0F), (double)((float)endY / 32.0F)).func_181669_b(64, 64, 64, endAlpha).endVertex();
-        worldrenderer.pos((double)(this.left + this.width), (double)startY, 0.0D).tex((double)((float)this.width / 32.0F), (double)((float)startY / 32.0F)).func_181669_b(64, 64, 64, startAlpha).endVertex();
-        worldrenderer.pos((double)this.left, (double)startY, 0.0D).tex(0.0D, (double)((float)startY / 32.0F)).func_181669_b(64, 64, 64, startAlpha).endVertex();
+        worldrenderer.pos((double)this.left, (double)endY, 0.0D).tex(0.0D, 1.0D).func_181669_b(0, 0, 0, endAlpha).endVertex();
+        worldrenderer.pos((double)(this.left + this.width), (double)endY, 0.0D).tex(1.0D, 1.0D).func_181669_b(0, 0, 0, endAlpha).endVertex();
+        worldrenderer.pos((double)(this.left + this.width), (double)startY, 0.0D).tex(1.0D, 0.0D).func_181669_b(0, 0, 0, startAlpha).endVertex();
+        worldrenderer.pos((double)this.left, (double)startY, 0.0D).tex(0.0D, 0.0D).func_181669_b(0, 0, 0, startAlpha).endVertex();
         tessellator.draw();
+        GlStateManager.enableTexture2D();
     }
 
     /**
@@ -524,14 +524,14 @@ public abstract class GuiSlot
     protected void drawContainerBackground(Tessellator p_drawContainerBackground_1_)
     {
         WorldRenderer worldrenderer = p_drawContainerBackground_1_.getWorldRenderer();
-        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        float f = 32.0F;
+        // Draw dark solid color instead of dirt texture
+        GlStateManager.disableTexture2D();
         worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-        worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex((double)((float)this.left / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).endVertex();
-        worldrenderer.pos((double)this.right, (double)this.bottom, 0.0D).tex((double)((float)this.right / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).endVertex();
-        worldrenderer.pos((double)this.right, (double)this.top, 0.0D).tex((double)((float)this.right / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).endVertex();
-        worldrenderer.pos((double)this.left, (double)this.top, 0.0D).tex((double)((float)this.left / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).endVertex();
+        worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex(0.0D, 1.0D).func_181669_b(15, 15, 15, 255).endVertex();
+        worldrenderer.pos((double)this.right, (double)this.bottom, 0.0D).tex(1.0D, 1.0D).func_181669_b(15, 15, 15, 255).endVertex();
+        worldrenderer.pos((double)this.right, (double)this.top, 0.0D).tex(1.0D, 0.0D).func_181669_b(15, 15, 15, 255).endVertex();
+        worldrenderer.pos((double)this.left, (double)this.top, 0.0D).tex(0.0D, 0.0D).func_181669_b(15, 15, 15, 255).endVertex();
         p_drawContainerBackground_1_.draw();
+        GlStateManager.enableTexture2D();
     }
 }

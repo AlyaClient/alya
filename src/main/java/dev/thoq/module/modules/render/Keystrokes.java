@@ -7,8 +7,8 @@ import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.BooleanSetting;
 import dev.thoq.module.setting.NumberSetting;
-import dev.thoq.util.AlyaFontRenderer;
-import dev.thoq.util.RenderUtility;
+import dev.thoq.util.render.RenderUtility;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
@@ -70,7 +70,7 @@ public final class Keystrokes extends Module {
 
         }
 
-        AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRenderer();
+        AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         GameSettings settings = MC.gameSettings;
 
         final int x = posX.getValueAsInt();
@@ -118,7 +118,7 @@ public final class Keystrokes extends Module {
         final float textWidth = fr.getStringWidth(text);
         final float textX = x + (width - textWidth) / 2;
         final float textY = y + (Keystrokes.KEY_SIZE - fr.getFontHeight()) / 2;
-        fr.drawStringWithShadow(text, textX, textY, textColor);
+        fr.drawString(text, textX, textY, textColor);
     }
 
     private boolean isKeyPressed(final KeyBinding keyBinding) {

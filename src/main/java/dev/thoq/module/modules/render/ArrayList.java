@@ -5,8 +5,8 @@ import dev.thoq.event.EventHandler;
 import dev.thoq.event.events.Render2DEvent;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
-import dev.thoq.util.AlyaFontRenderer;
-import dev.thoq.util.RenderUtility;
+import dev.thoq.util.render.RenderUtility;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.Comparator;
@@ -32,7 +32,7 @@ public final class ArrayList extends Module {
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
         final ScaledResolution scaledResolution = event.getScaledResolution();
-        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRenderer();
+        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
 
         final List<Module> enabledModules = Alya.getInstance().getModuleManager().getEnabledModules()
                 .stream()
@@ -53,7 +53,7 @@ public final class ArrayList extends Module {
 
             RenderUtility.drawRect((int) (x - 1), (int) (y - 1), (int) (width + 2), (int) (height + 2), 0x90000000);
             RenderUtility.drawRect(scaledResolution.getScaledWidth() - 2, (int) (y - 1), 1, (int) (height + 2), color);
-            fontRenderer.drawStringWithShadow(name, x + padding - 2, y, 0xFFFFFFFF);
+            fontRenderer.drawString(name, x + padding - 2, y, 0xFFFFFFFF);
 
             y += height + 2;
         }

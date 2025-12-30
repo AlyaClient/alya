@@ -4,8 +4,8 @@ import dev.thoq.Alya;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.*;
-import dev.thoq.util.AlyaFontRenderer;
-import dev.thoq.util.RenderUtility;
+import dev.thoq.util.font.AlyaFontRenderer;
+import dev.thoq.util.render.RenderUtility;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -14,334 +14,319 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public final class ClickGUIScreen extends GuiScreen {
 
-    private static final int PANEL_WIDTH = 120;
-    private static final int PANEL_HEADER_HEIGHT = 22;
-    private static final int MODULE_HEIGHT = 20;
-    private static final int SETTING_HEIGHT = 18;
-    private static final int PANEL_PADDING = 8;
-    private static final int PANEL_SPACING = 12;
-    private static final int PANEL_BACKGROUND = 0xE0181818;
-    private static final int PANEL_HEADER_BACKGROUND = 0xFF101010;
-    private static final int MODULE_BACKGROUND = 0xC0202020;
-    private static final int SETTING_BACKGROUND = 0xC0151515;
+    private static final int PANEL_WIDTH = 100;
+    private static final int PANEL_HEIGHT = 18;
+    private static final int MODULE_HEIGHT = 18;
+    private static final int SETTING_HEIGHT = 9;
+    private static final int PANEL_SPACING = 120;
+    private static final int BACKGROUND_COLOR = 0xFF181A17;
+    private static final int MODULE_BACKGROUND_COLOR = 0xFF232623;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
-    private static final int TEXT_COLOR_DISABLED = 0xFFAAAAAA;
+    private static final int BORDER_WIDTH = 1;
+    private static final int DEFAULT_CATEGORY_COLOR = 0xFF666666;
 
     private static final Map<Category, Integer> CATEGORY_COLORS = new HashMap<>();
 
     static {
-        CATEGORY_COLORS.put(Category.COMBAT, 0xFFE53935);
-        CATEGORY_COLORS.put(Category.MOVEMENT, 0xFF43A047);
-        CATEGORY_COLORS.put(Category.RENDER, 0xFF1E88E5);
-        CATEGORY_COLORS.put(Category.PLAYER, 0xFFFFB300);
-        CATEGORY_COLORS.put(Category.WORLD, 0xFF8E24AA);
-        CATEGORY_COLORS.put(Category.MISC, 0xFF757575);
+        CATEGORY_COLORS.put(Category.COMBAT, 0xFFE64D3A);
+        CATEGORY_COLORS.put(Category.MOVEMENT, 0xFF2ECD6F);
+        CATEGORY_COLORS.put(Category.RENDER, 0xFF8F2DF7);
+        CATEGORY_COLORS.put(Category.WORLD, 0xFF3A9DE6);
+        CATEGORY_COLORS.put(Category.PLAYER, 0xFFF29D11);
+        CATEGORY_COLORS.put(Category.MISC, 0xFF230057);
     }
 
     private final Map<Category, int[]> panelPositions = new HashMap<>();
-    private Category draggingPanel = null;
-    private int dragOffsetX, dragOffsetY;
-    private final Map<Category, Boolean> expandedPanels = new HashMap<>();
-    private final Map<Module, Boolean> expandedModuleSettings = new HashMap<>();
-    private StringSetting editingStringSetting = null;
-    private String stringEditBuffer = "";
-    private NumberSetting draggingNumberSetting = null;
-    private int draggingSliderX = 0;
-    private int draggingSliderWidth = 0;
+    private final Map<Category, Boolean> expandedCategories = new HashMap<>();
+    private final Map<Module, Boolean> expandedModules = new HashMap<>();
+    private final Map<NumberSetting, Integer> numberSettingPositions = new HashMap<>();
+
+    private boolean dragging = false;
+    private int dragOffsetX = 0;
+    private int dragOffsetY = 0;
+    private Category draggingCategory = null;
+    private NumberSetting currentDraggedNumberSetting = null;
+    private int currentDraggedSettingX = 0;
 
     public ClickGUIScreen() {
-        int startX = 10;
-        int startY = 20;
-        int index = 0;
-
+        int positionX = 4;
         for(final Category category : Category.values()) {
-            panelPositions.put(category, new int[]{startX + (PANEL_WIDTH + PANEL_SPACING) * index, startY});
-            expandedPanels.put(category, true);
-            index++;
+            panelPositions.put(category, new int[]{positionX, 4});
+            expandedCategories.put(category, true);
+            positionX += PANEL_SPACING;
         }
     }
 
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        drawDefaultBackground();
-        AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererSmall();
+        drawRect(0, 0, width, height, 0x80000000);
 
         for(final Category category : Category.values()) {
-            final int[] pos = panelPositions.get(category);
-            final int panelX = pos[0];
-            final int panelY = pos[1];
-            final boolean expanded = expandedPanels.get(category);
-
-            final int categoryColor = CATEGORY_COLORS.getOrDefault(category, 0xFF757575);
-
-            RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, PANEL_HEADER_BACKGROUND);
-            RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, 2, categoryColor);
-
-            final String categoryName = category.getDisplayName();
-            final int textWidth = (int) fontRenderer.getStringWidth(categoryName);
-            fontRenderer.drawStringWithShadow(categoryName, panelX + (PANEL_WIDTH - textWidth) / 2f, panelY + 6, TEXT_COLOR);
-
-            final String indicator = expanded ? "-" : "+";
-            fontRenderer.drawStringWithShadow(indicator, panelX + PANEL_WIDTH - 10, panelY + 5, TEXT_COLOR);
-
-            if(expanded) {
-                final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
-
-                int bodyHeight = PANEL_PADDING * 2;
-                for(final Module module : modules) {
-                    bodyHeight += MODULE_HEIGHT;
-                    if(expandedModuleSettings.getOrDefault(module, false) && !module.getSettings().isEmpty()) {
-                        for(final Setting<?> setting : module.getSettings()) {
-                            if(setting.isVisible()) {
-                                bodyHeight += SETTING_HEIGHT;
-                            }
-                        }
-                    }
-                }
-
-                RenderUtility.drawRect(panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyHeight, PANEL_BACKGROUND);
-
-                int moduleY = panelY + PANEL_HEADER_HEIGHT + PANEL_PADDING;
-                for(final Module module : modules) {
-                    boolean isEnabled = module.isEnabled();
-                    boolean isHovered = isMouseOver(mouseX, mouseY, panelX + 2, moduleY, PANEL_WIDTH - 4, MODULE_HEIGHT);
-                    boolean hasSettings = !module.getSettings().isEmpty();
-                    boolean settingsExpanded = expandedModuleSettings.getOrDefault(module, false);
-
-                    int moduleBgColor;
-                    if(isEnabled) {
-                        moduleBgColor = RenderUtility.withAlpha(categoryColor, 180);
-                    } else if(isHovered) {
-                        moduleBgColor = 0x80404040;
-                    } else {
-                        moduleBgColor = MODULE_BACKGROUND;
-                    }
-
-                    RenderUtility.drawRect(panelX + 2, moduleY, PANEL_WIDTH - 4, MODULE_HEIGHT - 1, moduleBgColor);
-
-                    final String moduleName = module.getName();
-                    final int moduleTextWidth = (int) fontRenderer.getStringWidth(moduleName);
-                    final int textColor = isEnabled ? TEXT_COLOR : TEXT_COLOR_DISABLED;
-                    fontRenderer.drawStringWithShadow(moduleName, panelX + PANEL_WIDTH - moduleTextWidth - 8, moduleY + 4, textColor);
-
-                    moduleY += MODULE_HEIGHT;
-
-                    if(settingsExpanded && hasSettings) {
-                        for(final Setting<?> setting : module.getSettings()) {
-                            if(!setting.isVisible()) continue;
-
-                            final boolean settingHovered = isMouseOver(mouseX, mouseY, panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1);
-
-                            if(setting instanceof BooleanSetting) {
-                                final BooleanSetting boolSetting = (BooleanSetting) setting;
-                                int settingBgColor;
-                                if(boolSetting.isEnabled()) {
-                                    settingBgColor = RenderUtility.withAlpha(categoryColor, 140);
-                                } else if(settingHovered) {
-                                    settingBgColor = 0x80303030;
-                                } else {
-                                    settingBgColor = SETTING_BACKGROUND;
-                                }
-                                RenderUtility.drawRect(panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1, settingBgColor);
-
-                                final String settingName = setting.getName();
-                                final int settingTextWidth = (int) fontRenderer.getStringWidth(settingName);
-                                fontRenderer.drawStringWithShadow(settingName, panelX + PANEL_WIDTH - settingTextWidth - 10, moduleY + 3,
-                                        boolSetting.isEnabled() ? TEXT_COLOR : TEXT_COLOR_DISABLED);
-                            } else if(setting instanceof ModeSetting) {
-                                final ModeSetting modeSetting = (ModeSetting) setting;
-                                final int settingBgColor = settingHovered ? 0x80303030 : SETTING_BACKGROUND;
-                                RenderUtility.drawRect(panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1, settingBgColor);
-
-                                final String settingText = setting.getName() + ": " + modeSetting.getValue();
-                                final int modeSettingTextWidth = (int) fontRenderer.getStringWidth(settingText);
-                                fontRenderer.drawStringWithShadow(settingText, panelX + PANEL_WIDTH - modeSettingTextWidth - 10, moduleY + 3, TEXT_COLOR);
-                            } else if(setting instanceof NumberSetting) {
-                                final NumberSetting numSetting = (NumberSetting) setting;
-                                final int sliderWidth = PANEL_WIDTH - 12;
-                                final int sliderX = panelX + 6;
-
-                                final int settingBgColor = settingHovered ? 0x80303030 : SETTING_BACKGROUND;
-                                RenderUtility.drawRect(sliderX, moduleY, sliderWidth, SETTING_HEIGHT - 1, settingBgColor);
-
-                                final double percent = (numSetting.getValue() - numSetting.getMin()) / (numSetting.getMax() - numSetting.getMin());
-                                final int filledWidth = (int) (sliderWidth * percent);
-                                RenderUtility.drawRect(sliderX, moduleY, filledWidth, SETTING_HEIGHT - 1, RenderUtility.withAlpha(categoryColor, 120));
-
-                                final String settingText = setting.getName() + ": " + String.format("%.1f", numSetting.getValue());
-                                final int numSettingTextWidth = (int) fontRenderer.getStringWidth(settingText);
-                                fontRenderer.drawStringWithShadow(settingText, panelX + PANEL_WIDTH - numSettingTextWidth - 10, moduleY + 3, TEXT_COLOR);
-                            } else if(setting instanceof StringSetting) {
-                                final StringSetting strSetting = (StringSetting) setting;
-                                final boolean isEditing = editingStringSetting == strSetting;
-                                final int settingBgColor = isEditing ? 0x80505050 : (settingHovered ? 0x80303030 : SETTING_BACKGROUND);
-                                RenderUtility.drawRect(panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1, settingBgColor);
-
-                                final String displayValue = isEditing ? stringEditBuffer + "_" : strSetting.getValue();
-                                final String settingText = setting.getName() + ": " + displayValue;
-                                final int strSettingTextWidth = (int) fontRenderer.getStringWidth(settingText);
-                                fontRenderer.drawStringWithShadow(settingText, panelX + PANEL_WIDTH - strSettingTextWidth - 10, moduleY + 3,
-                                        isEditing ? TEXT_COLOR : TEXT_COLOR_DISABLED);
-                            }
-
-                            moduleY += SETTING_HEIGHT;
-                        }
-                    }
-                }
-            }
+            renderCategoryPanel(category, mouseX, mouseY);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    @Override
-    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
-        for(final Category category : Category.values()) {
-            final int[] pos = panelPositions.get(category);
-            final int panelX = pos[0];
-            final int panelY = pos[1];
-            final boolean expanded = expandedPanels.get(category);
+    private void renderCategoryPanel(final Category category, final int mouseX, final int mouseY) {
+        final int[] position = panelPositions.get(category);
+        if(position == null) return;
 
-            if(mouseButton == 0) {
-                if(isMouseOver(mouseX, mouseY, panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT)) {
-                    if(isMouseOver(mouseX, mouseY, panelX + PANEL_WIDTH - 15, panelY, 15, PANEL_HEADER_HEIGHT)) {
-                        expandedPanels.put(category, !expanded);
-                    } else {
-                        draggingPanel = category;
-                        dragOffsetX = mouseX - panelX;
-                        dragOffsetY = mouseY - panelY;
-                    }
-                    return;
-                }
-            }
+        int panelX = position[0];
+        int panelY = position[1];
 
-            if(expanded) {
-                final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
-                int moduleY = panelY + PANEL_HEADER_HEIGHT + PANEL_PADDING;
+        if(dragging && draggingCategory == category) {
+            panelX = mouseX + dragOffsetX;
+            panelY = mouseY + dragOffsetY;
+            position[0] = panelX;
+            position[1] = panelY;
+        }
 
-                for(final Module module : modules) {
-                    boolean hasSettings = !module.getSettings().isEmpty();
-                    boolean settingsExpanded = expandedModuleSettings.getOrDefault(module, false);
+        final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
+        if(modules == null) return;
 
-                    if(isMouseOver(mouseX, mouseY, panelX + 2, moduleY, PANEL_WIDTH - 4, MODULE_HEIGHT)) {
-                        if(mouseButton == 0) {
-                            if(!(module instanceof ClickGUI)) {
-                                module.toggle();
-                            }
-                        } else if(mouseButton == 1) {
+        int totalHeight = PANEL_HEIGHT;
 
-                            if(hasSettings) {
-                                expandedModuleSettings.put(module, !settingsExpanded);
-                            }
-                        }
-                        return;
-                    }
-                    moduleY += MODULE_HEIGHT;
-
-                    if(settingsExpanded && hasSettings) {
-                        for(final Setting<?> setting : module.getSettings()) {
-                            if(!setting.isVisible()) continue;
-
-                            if(isMouseOver(mouseX, mouseY, panelX + 6, moduleY, PANEL_WIDTH - 12, SETTING_HEIGHT - 1)) {
-                                if(mouseButton == 0) {
-                                    if(setting instanceof BooleanSetting) {
-                                        ((BooleanSetting) setting).toggle();
-                                    } else if(setting instanceof ModeSetting) {
-                                        ((ModeSetting) setting).cycle();
-                                    } else if(setting instanceof NumberSetting) {
-                                        draggingNumberSetting = (NumberSetting) setting;
-                                        draggingSliderX = panelX + 6;
-                                        draggingSliderWidth = PANEL_WIDTH - 12;
-
-                                        updateSliderValue(mouseX);
-                                    } else if(setting instanceof StringSetting) {
-                                        final StringSetting strSetting = (StringSetting) setting;
-                                        if(editingStringSetting != strSetting) {
-                                            editingStringSetting = strSetting;
-                                            stringEditBuffer = strSetting.getValue();
-                                        }
-                                    }
-                                }
-                                return;
-                            }
-                            moduleY += SETTING_HEIGHT;
+        if(expandedCategories.get(category)) {
+            for(final Module module : modules) {
+                totalHeight += MODULE_HEIGHT;
+                if(expandedModules.getOrDefault(module, false)) {
+                    for(final Setting<?> setting : module.getSettings()) {
+                        if(setting.isVisible()) {
+                            totalHeight += SETTING_HEIGHT;
                         }
                     }
                 }
             }
         }
 
-        if(editingStringSetting != null && mouseButton == 0) {
-            editingStringSetting.setValue(stringEditBuffer);
-            editingStringSetting = null;
-            stringEditBuffer = "";
+        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
+
+        RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
+
+        final String categoryName = category.getDisplayName().toLowerCase();
+        fontRenderer.drawString(categoryName, panelX + 4, panelY + 5, TEXT_COLOR);
+
+        if(expandedCategories.get(category)) {
+            int currentY = panelY + PANEL_HEIGHT;
+
+            for(final Module module : modules) {
+                renderModuleButton(module, panelX, currentY, category);
+                currentY += MODULE_HEIGHT;
+
+                if(expandedModules.getOrDefault(module, false)) {
+                    for(final Setting<?> setting : module.getSettings()) {
+                        if(setting.isVisible()) {
+                            renderSettingButton(setting, panelX, currentY, category);
+                            currentY += SETTING_HEIGHT;
+                        }
+                    }
+                }
+            }
+        }
+
+        final int categoryColor = getCategoryColor(category);
+        RenderUtility.drawRectOutline(panelX, panelY, PANEL_WIDTH, totalHeight, BORDER_WIDTH, categoryColor);
+
+        RenderUtility.drawRect(panelX, panelY + totalHeight, PANEL_WIDTH, 2, BACKGROUND_COLOR);
+    }
+
+    private void renderModuleButton(final Module module, final int positionX, final int positionY, final Category category) {
+        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
+
+        RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, MODULE_HEIGHT, BACKGROUND_COLOR);
+
+        final boolean extended = expandedModules.getOrDefault(module, false);
+        if(!extended) {
+            final int backgroundColor = module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
+            RenderUtility.drawRect(positionX + 2, positionY, PANEL_WIDTH - 4, MODULE_HEIGHT, backgroundColor);
+        } else {
+            RenderUtility.drawRect(positionX + 2, positionY, PANEL_WIDTH - 4, MODULE_HEIGHT, BACKGROUND_COLOR);
+        }
+
+        final String moduleName = module.getName().toLowerCase();
+        final int textColor = extended ? (module.isEnabled() ? getCategoryColor(category) : TEXT_COLOR) : TEXT_COLOR;
+        final int textX = positionX + PANEL_WIDTH - (int) fontRenderer.getStringWidth(moduleName) - 3;
+        fontRenderer.drawString(moduleName, textX, positionY + 5, textColor);
+    }
+
+    private void renderSettingButton(final Setting<?> setting, final int positionX, final int positionY, final Category category) {
+        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererSmall();
+
+        RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
+
+        if(setting instanceof BooleanSetting) {
+            final BooleanSetting booleanSetting = (BooleanSetting) setting;
+            if(booleanSetting.isEnabled()) {
+                RenderUtility.drawRect(positionX + 3, positionY, PANEL_WIDTH - 6, SETTING_HEIGHT, getCategoryColor(category));
+            }
+            fontRenderer.drawString(setting.getName(), positionX + 4, positionY, TEXT_COLOR);
+
+        } else if(setting instanceof ModeSetting) {
+            final ModeSetting modeSetting = (ModeSetting) setting;
+            final String text = setting.getName() + " > " + modeSetting.getValue();
+            fontRenderer.drawString(text, positionX + 4, positionY + 1, TEXT_COLOR);
+
+        } else if(setting instanceof NumberSetting) {
+            final NumberSetting numberSetting = (NumberSetting) setting;
+            numberSettingPositions.put(numberSetting, positionX);
+
+            RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
+
+            final double value = numberSetting.getValue();
+            final double minimum = numberSetting.getMin();
+            final double maximum = numberSetting.getMax();
+            final double percentage = (value - minimum) / (maximum - minimum);
+
+            final int fillWidth = (int) (percentage * (PANEL_WIDTH - 6));
+            RenderUtility.drawRect(positionX + 3, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
+
+            final String text = setting.getName() + ": " + Math.round(value * 100.0) / 100.0;
+            fontRenderer.drawString(text, positionX + 4, positionY, TEXT_COLOR);
+        }
+    }
+
+    private int getCategoryColor(final Category category) {
+        return CATEGORY_COLORS.getOrDefault(category, DEFAULT_CATEGORY_COLOR);
+    }
+
+    @Override
+    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
+        for(final Category category : Category.values()) {
+            final int[] position = panelPositions.get(category);
+            if(position == null) continue;
+
+            final int panelX = position[0];
+            final int panelY = position[1];
+
+            if(isMouseOver(mouseX, mouseY, panelX, panelY, PANEL_HEIGHT)) {
+                if(mouseButton == 0) {
+                    dragging = true;
+                    draggingCategory = category;
+                    dragOffsetX = panelX - mouseX;
+                    dragOffsetY = panelY - mouseY;
+                } else if(mouseButton == 1) {
+                    expandedCategories.put(category, !expandedCategories.get(category));
+                }
+                return;
+            }
+
+            if(expandedCategories.get(category)) {
+                final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
+                if(modules != null) {
+                    int currentY = panelY + PANEL_HEIGHT;
+
+                    for(final Module module : modules) {
+                        if(isMouseOver(mouseX, mouseY, panelX, currentY, MODULE_HEIGHT)) {
+                            if(mouseButton == 0) {
+                                if(!(module instanceof ClickGUI)) {
+                                    module.toggle();
+                                }
+                            } else if(mouseButton == 1 && !module.getSettings().isEmpty()) {
+                                expandedModules.put(module, !expandedModules.getOrDefault(module, false));
+                            }
+                            return;
+                        }
+                        currentY += MODULE_HEIGHT;
+
+                        if(expandedModules.getOrDefault(module, false)) {
+                            for(final Setting<?> setting : module.getSettings()) {
+                                if(setting.isVisible()) {
+                                    if(isMouseOver(mouseX, mouseY, panelX, currentY, SETTING_HEIGHT)) {
+                                        if(setting instanceof NumberSetting && mouseButton == 0) {
+                                            currentDraggedNumberSetting = (NumberSetting) setting;
+                                            currentDraggedSettingX = panelX;
+                                            updateNumberSettingFromMouse(mouseX);
+                                        } else {
+                                            handleSettingClick(setting, mouseButton);
+                                        }
+                                        return;
+                                    }
+                                    currentY += SETTING_HEIGHT;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    private void updateSliderValue(final int mouseX) {
-        if(draggingNumberSetting != null) {
-            double percent = (double) (mouseX - draggingSliderX) / draggingSliderWidth;
-            percent = Math.max(0, Math.min(1, percent));
-            double value = draggingNumberSetting.getMin() + percent * (draggingNumberSetting.getMax() - draggingNumberSetting.getMin());
-
-            double increment = draggingNumberSetting.getIncrement();
-            value = Math.round(value / increment) * increment;
-            draggingNumberSetting.setValue(value);
+    private void handleSettingClick(final Setting<?> setting, final int mouseButton) {
+        if(setting instanceof BooleanSetting) {
+            final BooleanSetting booleanSetting = (BooleanSetting) setting;
+            booleanSetting.toggle();
+        } else if(setting instanceof ModeSetting) {
+            final ModeSetting modeSetting = (ModeSetting) setting;
+            if(mouseButton == 0) {
+                modeSetting.cycle();
+            } else if(mouseButton == 1) {
+                final String currentValue = modeSetting.getValue();
+                final List<String> modes = modeSetting.getModes();
+                final int currentIndex = modes.indexOf(currentValue);
+                final int previousIndex = (currentIndex - 1 + modes.size()) % modes.size();
+                modeSetting.setValue(modes.get(previousIndex));
+            }
         }
-    }
-
-    @Override
-    protected void mouseReleased(final int mouseX, final int mouseY, final int state) {
-        draggingPanel = null;
-        draggingNumberSetting = null;
-        super.mouseReleased(mouseX, mouseY, state);
     }
 
     @Override
     protected void mouseClickMove(final int mouseX, final int mouseY, final int clickedMouseButton, final long timeSinceLastClick) {
-        if(draggingPanel != null && clickedMouseButton == 0) {
-            final int[] pos = panelPositions.get(draggingPanel);
-            pos[0] = mouseX - dragOffsetX;
-            pos[1] = mouseY - dragOffsetY;
+        if(dragging && draggingCategory != null) {
+            return;
         }
 
-        if(draggingNumberSetting != null && clickedMouseButton == 0) {
-            updateSliderValue(mouseX);
+        if(currentDraggedNumberSetting != null) {
+            updateNumberSettingFromMouse(mouseX);
+            return;
         }
+
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
     @Override
+    protected void mouseReleased(final int mouseX, final int mouseY, final int state) {
+        dragging = false;
+        draggingCategory = null;
+        currentDraggedNumberSetting = null;
+
+        super.mouseReleased(mouseX, mouseY, state);
+    }
+
+    private void updateNumberSettingFromMouse(final int mouseX) {
+        if(currentDraggedNumberSetting == null) return;
+
+        final int settingX = currentDraggedSettingX;
+        final int sliderStart = settingX + 3;
+        final int sliderWidth = PANEL_WIDTH - 6;
+
+        int relativeX = mouseX - sliderStart;
+        relativeX = Math.max(0, Math.min(relativeX, sliderWidth));
+
+        final double percentage = (double) relativeX / sliderWidth;
+
+        final double minimum = currentDraggedNumberSetting.getMin();
+        final double maximum = currentDraggedNumberSetting.getMax();
+        final double increment = currentDraggedNumberSetting.getIncrement();
+        double newValue = minimum + (percentage * (maximum - minimum));
+
+        newValue = Math.round(newValue / increment) * increment;
+        currentDraggedNumberSetting.setValue(newValue);
+    }
+
+    private boolean isMouseOver(final int mouseX, final int mouseY, final int positionX, final int positionY, final int height) {
+        return mouseX >= positionX && mouseX <= positionX + ClickGUIScreen.PANEL_WIDTH && mouseY >= positionY && mouseY <= positionY + height;
+    }
+
+    @Override
     protected void keyTyped(final char typedChar, final int keyCode) throws IOException {
-
-        if(editingStringSetting != null) {
-            if(keyCode == Keyboard.KEY_ESCAPE) {
-                editingStringSetting = null;
-                stringEditBuffer = "";
-                return;
-            } else if(keyCode == Keyboard.KEY_RETURN) {
-                editingStringSetting.setValue(stringEditBuffer);
-                editingStringSetting = null;
-                stringEditBuffer = "";
-                return;
-            } else if(keyCode == Keyboard.KEY_BACK) {
-                if(!stringEditBuffer.isEmpty()) {
-                    stringEditBuffer = stringEditBuffer.substring(0, stringEditBuffer.length() - 1);
-                }
-                return;
-            } else if(typedChar >= 32 && typedChar < 127) {
-                stringEditBuffer += typedChar;
-                return;
-            }
-        }
-
-        if(keyCode == 1) {
+        if(keyCode == Keyboard.KEY_ESCAPE) {
             mc.displayGuiScreen(null);
-
             Alya.getInstance().getModuleManager().getModule(ClickGUI.class)
                     .ifPresent(module -> module.setEnabled(false));
             return;
@@ -352,15 +337,6 @@ public final class ClickGUIScreen extends GuiScreen {
     @Override
     public boolean doesGuiPauseGame() {
         return false;
-    }
-
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-    }
-
-    private boolean isMouseOver(final int mouseX, final int mouseY, final int x, final int y, final int width, final int height) {
-        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
 
 

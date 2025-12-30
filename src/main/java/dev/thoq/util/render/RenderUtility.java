@@ -1,4 +1,4 @@
-package dev.thoq.util;
+package dev.thoq.util.render;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;

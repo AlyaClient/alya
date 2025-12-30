@@ -5,7 +5,7 @@ import dev.thoq.event.events.PlayerMoveEvent;
 import dev.thoq.module.Submodule;
 import dev.thoq.module.modules.movement.FlightModule;
 import dev.thoq.module.setting.BooleanSetting;
-import dev.thoq.util.MovementUtil;
+import dev.thoq.util.movement.MovementUtil;
 
 public final class MotionFlightMode extends Submodule {
 

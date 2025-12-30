@@ -3,7 +3,7 @@ package dev.thoq.command.commands;
 import dev.thoq.Alya;
 import dev.thoq.command.Command;
 import dev.thoq.module.Module;
-import dev.thoq.util.ChatUtility;
+import dev.thoq.util.player.ChatUtil;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -19,9 +19,9 @@ public final class BindCommand extends Command {
     @Override
     public void execute(final String[] args) {
         if(args.length < 1) {
-            ChatUtility.sendInfo("Usage: .bind add <module> <key>");
-            ChatUtility.sendInfo("Usage: .bind remove <module>");
-            ChatUtility.sendInfo("Usage: .bind list");
+            ChatUtil.sendInfo("Usage: .bind add <module> <key>");
+            ChatUtil.sendInfo("Usage: .bind remove <module>");
+            ChatUtil.sendInfo("Usage: .bind list");
             return;
         }
 
@@ -31,7 +31,7 @@ public final class BindCommand extends Command {
             case "add":
             case "set":
                 if(args.length < 3) {
-                    ChatUtility.sendError("Usage: .bind add <module> <key>");
+                    ChatUtil.sendError("Usage: .bind add <module> <key>");
                     return;
                 }
                 handleAdd(args[1], args[2]);
@@ -40,7 +40,7 @@ public final class BindCommand extends Command {
             case "remove":
             case "clear":
                 if(args.length < 2) {
-                    ChatUtility.sendError("Usage: .bind remove <module>");
+                    ChatUtil.sendError("Usage: .bind remove <module>");
                     return;
                 }
                 handleRemove(args[1]);
@@ -51,8 +51,8 @@ public final class BindCommand extends Command {
                 break;
 
             default:
-                ChatUtility.sendError("Unknown action: " + action);
-                ChatUtility.sendInfo("Available actions: add, remove, list");
+                ChatUtil.sendError("Unknown action: " + action);
+                ChatUtil.sendInfo("Available actions: add, remove, list");
                 break;
         }
     }
@@ -61,7 +61,7 @@ public final class BindCommand extends Command {
         Optional<Module> moduleOpt = Alya.getInstance().getModuleManager().getModule(moduleName);
 
         if(!moduleOpt.isPresent()) {
-            ChatUtility.sendError("Module not found: " + moduleName);
+            ChatUtil.sendError("Module not found: " + moduleName);
             return;
         }
 
@@ -69,32 +69,32 @@ public final class BindCommand extends Command {
         final int keyCode = Keyboard.getKeyIndex(keyName.toUpperCase());
 
         if(keyCode == Keyboard.KEY_NONE) {
-            ChatUtility.sendError("Invalid key: " + keyName);
+            ChatUtil.sendError("Invalid key: " + keyName);
             return;
         }
 
         module.setKeyCode(keyCode);
-        ChatUtility.sendSuccess("Bound " + module.getName() + " to " + Keyboard.getKeyName(keyCode));
+        ChatUtil.sendSuccess("Bound " + module.getName() + " to " + Keyboard.getKeyName(keyCode));
     }
 
     private void handleRemove(final String moduleName) {
         final Optional<Module> moduleOpt = Alya.getInstance().getModuleManager().getModule(moduleName);
 
         if(!moduleOpt.isPresent()) {
-            ChatUtility.sendError("Module not found: " + moduleName);
+            ChatUtil.sendError("Module not found: " + moduleName);
             return;
         }
 
         final Module module = moduleOpt.get();
         module.setKeyCode(Keyboard.KEY_NONE);
-        ChatUtility.sendSuccess("Removed keybind from " + module.getName());
+        ChatUtil.sendSuccess("Removed keybind from " + module.getName());
     }
 
     private void handleList() {
-        ChatUtility.sendInfo("Module Keybinds:");
+        ChatUtil.sendInfo("Module Keybinds:");
         for(final Module module : Alya.getInstance().getModuleManager().getModules()) {
             if(module.getKeyCode() != Keyboard.KEY_NONE) {
-                ChatUtility.sendRaw("  " + module.getName() + " -> " + Keyboard.getKeyName(module.getKeyCode()));
+                ChatUtil.sendRaw("  " + module.getName() + " -> " + Keyboard.getKeyName(module.getKeyCode()));
             }
         }
     }

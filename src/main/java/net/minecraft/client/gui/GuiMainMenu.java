@@ -3,9 +3,10 @@ package net.minecraft.client.gui;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import dev.thoq.Alya;
+import dev.thoq.gui.AltManagerGui;
 import dev.thoq.gui.AlyaButton;
-import dev.thoq.util.AlyaFontRenderer;
 import dev.thoq.util.ShaderUtil;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -19,7 +20,6 @@ import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.demo.DemoWorldServer;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldInfo;
 import net.optifine.CustomPanorama;
@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-@SuppressWarnings({"SameParameterValue", "StatementWithEmptyBody", "unchecked", "rawtypes", "DataFlowIssue", "unused", "deprecation"})
+@SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "DataFlowIssue", "unused", "deprecation"})
 public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     private static final Logger logger = LogManager.getLogger();
@@ -73,7 +73,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     private int field_92019_w;
     private ResourceLocation backgroundTexture;
 
-    private GuiButton realmsButton;
     private boolean field_183502_L;
     private GuiScreen field_183503_M;
     private GuiScreen modUpdateNotification;
@@ -154,14 +153,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
             this.splashText = "OOoooOOOoooo! Spooky!";
         }
 
-        int i = 24;
-        int j = this.height / 4 + 48;
+        final int i = 24;
+        final int j = this.height / 4 + 48;
 
-        if(this.mc.isDemo()) {
-            this.addDemoButtons(j, 24);
-        } else {
-            this.addSingleplayerMultiplayerButtons(j, 24);
-        }
+        this.addSingleplayerMultiplayerButtons(j, 24);
 
         this.buttonList.add(new AlyaButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
         this.buttonList.add(new AlyaButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
@@ -196,22 +191,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         this.buttonList.add(new AlyaButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_, I18n.format("menu.multiplayer")));
 
         if(Reflector.GuiModList_Constructor.exists()) {
-            this.buttonList.add(this.realmsButton = new AlyaButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online").replace("Minecraft", "").trim()));
+            this.buttonList.add(new AlyaButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online").replace("Minecraft", "").trim()));
             this.buttonList.add(new AlyaButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")));
         } else {
-            this.buttonList.add(this.realmsButton = new AlyaButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")));
-        }
-    }
-
-    private void addDemoButtons(int p_73972_1_, int p_73972_2_) {
-        this.buttonList.add(new AlyaButton(11, this.width / 2 - 100, p_73972_1_, I18n.format("menu.playdemo")));
-        GuiButton buttonResetDemo;
-        this.buttonList.add(buttonResetDemo = new AlyaButton(12, this.width / 2 - 100, p_73972_1_ + p_73972_2_, I18n.format("menu.resetdemo")));
-        ISaveFormat isaveformat = this.mc.getSaveLoader();
-        WorldInfo worldinfo = isaveformat.getWorldInfo("Demo_World");
-
-        if(worldinfo == null) {
-            buttonResetDemo.enabled = false;
+            this.buttonList.add(new AlyaButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")));
         }
     }
 
@@ -232,8 +215,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
             this.mc.displayGuiScreen(new GuiMultiplayer(this));
         }
 
-        if(button.id == 14 && this.realmsButton.visible) {
-
+        if(button.id == 14) {
+            this.mc.displayGuiScreen(new AltManagerGui());
         }
 
         if(button.id == 4) {
@@ -242,10 +225,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         if(button.id == 6 && Reflector.GuiModList_Constructor.exists()) {
             this.mc.displayGuiScreen((GuiScreen) Reflector.newInstance(Reflector.GuiModList_Constructor, new Object[]{this}));
-        }
-
-        if(button.id == 11) {
-            this.mc.launchIntegratedServer("Demo_World", "Demo_World", DemoWorldServer.demoWorldSettings);
         }
 
         if(button.id == 12) {
@@ -457,13 +436,13 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         String titleText = "Alya";
 
-        int titleY = 60;
+        int titleY = 35;
 
         AlyaFontRenderer titleFont = Alya.getInstance().getFontRendererTitle();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(this.width / 2.0F, titleY, 0.0F);
-        GlStateManager.scale(1.5F, 1.5F, 1.0F);
+        GlStateManager.scale(2.5F, 2.5F, 1.0F);
 
         float titleWidth = titleFont.getStringWidth(titleText);
 

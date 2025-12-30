@@ -4,7 +4,7 @@ import dev.thoq.event.EventHandler;
 import dev.thoq.event.events.PlayerMoveEvent;
 import dev.thoq.module.Submodule;
 import dev.thoq.module.modules.movement.FlightModule;
-import dev.thoq.util.MovementUtil;
+import dev.thoq.util.movement.MovementUtil;
 
 public final class StaticFlightMode extends Submodule {
 

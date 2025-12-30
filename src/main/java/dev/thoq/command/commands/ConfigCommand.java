@@ -2,7 +2,7 @@ package dev.thoq.command.commands;
 
 import dev.thoq.Alya;
 import dev.thoq.command.Command;
-import dev.thoq.util.ChatUtility;
+import dev.thoq.util.player.ChatUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,9 @@ public final class ConfigCommand extends Command {
     @Override
     public void execute(final String[] args) {
         if(args.length < 1) {
-            ChatUtility.sendInfo("Usage: .config save <name>");
-            ChatUtility.sendInfo("Usage: .config load <name>");
-            ChatUtility.sendInfo("Usage: .config list");
+            ChatUtil.sendInfo("Usage: .config save <name>");
+            ChatUtil.sendInfo("Usage: .config load <name>");
+            ChatUtil.sendInfo("Usage: .config list");
             return;
         }
 
@@ -27,7 +27,7 @@ public final class ConfigCommand extends Command {
         switch(action) {
             case "save":
                 if(args.length < 2) {
-                    ChatUtility.sendError("Usage: .config save <name>");
+                    ChatUtil.sendError("Usage: .config save <name>");
                     return;
                 }
                 handleSave(args[1]);
@@ -35,7 +35,7 @@ public final class ConfigCommand extends Command {
 
             case "load":
                 if(args.length < 2) {
-                    ChatUtility.sendError("Usage: .config load <name>");
+                    ChatUtil.sendError("Usage: .config load <name>");
                     return;
                 }
                 handleLoad(args[1]);
@@ -46,35 +46,35 @@ public final class ConfigCommand extends Command {
                 break;
 
             default:
-                ChatUtility.sendError("Unknown action: " + action);
-                ChatUtility.sendInfo("Available actions: save, load, list");
+                ChatUtil.sendError("Unknown action: " + action);
+                ChatUtil.sendInfo("Available actions: save, load, list");
                 break;
         }
     }
 
     private void handleSave(final String configName) {
         Alya.getInstance().getConfigManager().save(configName);
-        ChatUtility.sendSuccess("Saved config: " + configName);
+        ChatUtil.sendSuccess("Saved config: " + configName);
     }
 
     private void handleLoad(final String configName) {
         if(!Alya.getInstance().getConfigManager().configExists(configName)) {
-            ChatUtility.sendError("Config not found: " + configName);
+            ChatUtil.sendError("Config not found: " + configName);
             return;
         }
         Alya.getInstance().getConfigManager().load(configName);
-        ChatUtility.sendSuccess("Loaded config: " + configName);
+        ChatUtil.sendSuccess("Loaded config: " + configName);
     }
 
     private void handleList() {
         final String[] configs = Alya.getInstance().getConfigManager().getConfigNames();
         if(configs.length == 0) {
-            ChatUtility.sendInfo("No configs found.");
+            ChatUtil.sendInfo("No configs found.");
             return;
         }
-        ChatUtility.sendInfo("Available configs:");
+        ChatUtil.sendInfo("Available configs:");
         for(final String config : configs) {
-            ChatUtility.sendRaw("  - " + config);
+            ChatUtil.sendRaw("  - " + config);
         }
     }
 
