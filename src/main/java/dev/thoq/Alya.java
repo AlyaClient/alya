@@ -13,7 +13,6 @@ import dev.thoq.module.modules.render.ArrayList;
 import dev.thoq.module.modules.render.HUD;
 import dev.thoq.module.modules.render.Keystrokes;
 import dev.thoq.util.font.AlyaFontRenderer;
-import dev.thoq.viamcp.impl.ViaMCP;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
@@ -36,12 +35,6 @@ public final class Alya {
     private AlyaFontRenderer fontRendererTitle;
 
     private Alya() {
-        try {
-            ViaMCP.create();
-            ViaMCP.INSTANCE.initAsyncSlider();
-        } catch(final Exception exception) {
-            LOGGER.info("Failed to initialize ViaMCP", exception);
-        }
     }
 
     public void initialize() {

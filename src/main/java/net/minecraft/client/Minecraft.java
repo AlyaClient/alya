@@ -14,7 +14,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import dev.thoq.Alya;
 import dev.thoq.event.events.BlockPlaceableEvent;
 import dev.thoq.event.events.TickEvent;
-import dev.thoq.viamcp.impl.fixes.AttackOrder;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -1263,7 +1262,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
     public void clickMouse() {
         if(this.leftClickCounter <= 0) {
-            AttackOrder.sendConditionalSwing(this.objectMouseOver);
+            this.thePlayer.swingItem();
 
             if(this.objectMouseOver == null) {
                 logger.error("Null returned as \'hitResult\', this shouldn\'t happen!");
@@ -1274,7 +1273,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             } else {
                 switch(this.objectMouseOver.typeOfHit) {
                     case ENTITY:
-                        AttackOrder.sendFixedAttack(this.thePlayer, this.objectMouseOver.entityHit);
+                        this.playerController.attackEntity(this.thePlayer, this.objectMouseOver.entityHit);
                         break;
 
                     case BLOCK:

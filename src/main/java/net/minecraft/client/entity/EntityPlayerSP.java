@@ -235,9 +235,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
 
         if(this.isCurrentViewEntity()) {
-            if(motionEvent == null) {
-                return;
-            }
+            motionEvent = new MotionEvent(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround);
+            Alya.getInstance().getEventBus().dispatch(motionEvent);
 
             if(!motionEvent.isCanceled()) {
                 double posX = motionEvent.getX(), posY = motionEvent.getY(), posZ = motionEvent.getZ();
