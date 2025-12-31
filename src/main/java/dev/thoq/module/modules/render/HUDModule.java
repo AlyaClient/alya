@@ -25,10 +25,7 @@ public final class HUDModule extends Module {
 
     public HUDModule() {
         super("HUD", "Displays client information on screen", Category.RENDER);
-        addSetting(showFPS);
-        addSetting(showBPS);
-        addSetting(showTime);
-        addSetting(smoothChat);
+        initializeSettings(showFPS, showBPS, showTime, smoothChat);
     }
 
     @Override
@@ -77,9 +74,7 @@ public final class HUDModule extends Module {
             info.append(" [").append(time).append("]");
         }
 
-        if(!info.isEmpty()) {
-            fontRenderer.drawStringWithShadow(info.toString(), x, y, whiteColor);
-        }
+        fontRenderer.drawStringWithShadow(info.toString(), x, y, whiteColor);
     }
 
     private void updateBPS() {

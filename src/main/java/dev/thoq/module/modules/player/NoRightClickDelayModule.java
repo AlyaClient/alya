@@ -13,7 +13,7 @@ public final class NoRightClickDelayModule extends Module {
     public NoRightClickDelayModule() {
         super("NoRightClickDelay", "Removes right click delay", Category.PLAYER);
 
-        addSetting(delay);
+        initializeSettings(delay);
     }
 
     @EventHandler

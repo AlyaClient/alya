@@ -16,9 +16,7 @@ public final class VanillaSpeedMode extends Submodule {
 
     public VanillaSpeedMode(final SpeedModule parent) {
         super("Vanilla", parent);
-        addSetting(speed);
-        addSetting(autoJump);
-        addSetting(strafe);
+        initializeSettings(speed, autoJump, strafe);
 
         speed.setVisibility(() -> parent.getMode().is("Vanilla"));
         autoJump.setVisibility(() -> parent.getMode().is("Vanilla"));

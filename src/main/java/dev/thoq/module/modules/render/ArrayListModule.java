@@ -23,7 +23,7 @@ public final class ArrayListModule extends Module {
     public ArrayListModule() {
         super("ArrayList", "Displays enabled modules on screen", Category.RENDER);
 
-        addSetting(showVisual);
+        initializeSettings(showVisual);
     }
 
     @Override
@@ -48,7 +48,7 @@ public final class ArrayListModule extends Module {
                 .filter(m -> !(m instanceof ClickGUI))
                 .filter(m -> showVisual || !(m.getCategory() == Category.RENDER))
                 .sorted(Comparator.comparingDouble(m -> -fontRenderer.getStringWidth(m.getName())))
-                .toList();
+                .collect(Collectors.toList());
 
         float y = 2;
         final int padding = 4;

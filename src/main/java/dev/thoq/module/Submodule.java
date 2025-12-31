@@ -5,6 +5,7 @@ import dev.thoq.module.setting.Setting;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Submodule {
@@ -52,9 +53,10 @@ public abstract class Submodule {
         return settings;
     }
 
-    protected <T extends Setting<?>> void addSetting(final T setting) {
-        settings.add(setting);
-        parent.addSetting(setting);
+    @SafeVarargs
+    protected final <T extends Setting<?>> void initializeSettings(final T... theSettings) {
+        Collections.addAll(settings, theSettings);
+        parent.initializeSettings(theSettings);
     }
 
 

@@ -6,14 +6,14 @@ import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.NumberSetting;
 
-public class Timer extends Module {
+public class TimerModule extends Module {
 
     public final NumberSetting timer = new NumberSetting("Speed", "Multiplier", 1, 0.1, 10, 0.1);
 
-    public Timer() {
+    public TimerModule() {
         super("Timer", "Change the tick speed client side", Category.WORLD);
 
-        addSetting(timer);
+        initializeSettings(timer);
     }
 
     @EventHandler

@@ -2,7 +2,7 @@
   <configuration default="false" name="Start" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="Start" />
     <module name="Alya" />
-    <option name="VM_PARAMETERS" value="--enable-native-access=ALL-UNNAMED -Djava.library.path=$PROJECT_DIR$/jars/versions/1.8.9/1.8.9-natives" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/jars/versions/1.8.9/1.8.9-natives" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/jars" />
     <method v="2">
       <option name="Make" enabled="true" />

@@ -18,10 +18,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.awt.*;
-import java.io.*;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -43,348 +42,278 @@ public final class MicrosoftAuth {
             .build();
 
     public static final String CLIENT_ID = "42a60a84-599d-44b2-a7c6-b00cdef1d6a2";
-
     public static final int PORT = 25575;
 
-    public static CompletableFuture<String> acquireMSAuthCode(
-            final Executor executor
-    ) {
+    public static CompletableFuture<String> acquireMSAuthCode(final Executor executor) {
+        Alya.getInstance().getLogger().debug("acquireMSAuthCode start");
         return acquireMSAuthCode(MicrosoftAuth::openWebLink, executor);
     }
 
-    public static CompletableFuture<String> acquireMSAuthCode(
-            final Consumer<URI> browserAction,
-            final Executor executor
-    ) {
+    public static CompletableFuture<String> acquireMSAuthCode(final Consumer<URI> browserAction, final Executor executor) {
+        Alya.getInstance().getLogger().debug("acquireMSAuthCode with browserAction start");
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final String state = new SecureRandom()
-                        .ints(8, 0, 62)
-                        .mapToObj("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"::charAt)
-                        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                        .toString();
+                StringBuilder sb = new StringBuilder();
+                SecureRandom random = new SecureRandom();
 
-                final HttpServer server = HttpServer.create(
-                        new InetSocketAddress(PORT), 0
-                );
+                random.ints(8, 0, 62).mapToObj("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"::charAt)
+                        .forEach(sb::append);
+                String state = sb.toString();
 
-                final CountDownLatch latch = new CountDownLatch(1);
-                final AtomicReference<String> authCode = new AtomicReference<>(null),
-                        errorMsg = new AtomicReference<>(null);
+                Alya.getInstance().getLogger().debug("state generated {}", state);
+
+                HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+                Alya.getInstance().getLogger().debug("server created on port {}", PORT);
+
+                CountDownLatch latch = new CountDownLatch(1);
+                AtomicReference<String> authCode = new AtomicReference<>(null);
+                AtomicReference<String> errorMsg = new AtomicReference<>(null);
 
                 server.createContext("/callback", exchange -> {
-                    final Map<String, String> query = URLEncodedUtils
-                            .parse(
-                                    exchange.getRequestURI().toString().replaceAll("/callback\\?", ""),
-                                    StandardCharsets.UTF_8
-                            )
-                            .stream()
-                            .collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
+                    Alya.getInstance().getLogger().debug("callback hit {}", exchange.getRequestURI());
+                    Map<String, String> queryParams = URLEncodedUtils
+                            .parse(exchange.getRequestURI().toString().replaceAll("/callback\\?", ""), StandardCharsets.UTF_8)
+                            .stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
+                    Alya.getInstance().getLogger().debug("query params {}", queryParams);
 
-                    if(!state.equals(query.get("state"))) {
-
-                        errorMsg.set(
-                                String.format("State mismatch! Expected '%s' but got '%s'.", state, query.get("state"))
-                        );
-                    } else if(query.containsKey("code")) {
-
-                        authCode.set(query.get("code"));
-                    } else if(query.containsKey("error")) {
-
-                        errorMsg.set(String.format("%s: %s", query.get("error"), query.get("error_description")));
+                    // Check if the state from the query matches the generated one
+                    if (!state.equals(queryParams.get("state"))) {
+                        String em = String.format("State mismatch expected %s got %s", state, queryParams.get("state"));
+                        errorMsg.set(em);
+                        Alya.getInstance().getLogger().error("state mismatch {}", em);
+                    } else if (queryParams.containsKey("code")) {
+                        authCode.set(queryParams.get("code"));
+                        Alya.getInstance().getLogger().debug("auth code {}", authCode.get());
+                    } else if (queryParams.containsKey("error")) {
+                        String em = String.format("%s %s", queryParams.get("error"), queryParams.get("error_description"));
+                        errorMsg.set(em);
+                        Alya.getInstance().getLogger().error("error from callback {}", em);
                     }
 
-                    final InputStream stream = MicrosoftAuth.class.getResourceAsStream("/assets/minecraft/Alya/Assets/Web/auth_login_sucess.html");
-                    final byte[] response = stream != null ? IOUtils.toByteArray(stream) : new byte[0];
-                    exchange.getResponseHeaders().add("Content-Type", "text/html");
-                    exchange.sendResponseHeaders(200, response.length);
-                    exchange.getResponseBody().write(response);
-                    exchange.getResponseBody().close();
+                    // Send the success page after processing the callback
+                    try {
+                        InputStream stream = MicrosoftAuth.class.getResourceAsStream("/assets/minecraft/Alya/Assets/Web/auth_login_sucess.html");
+                        byte[] respBytes = stream != null ? IOUtils.toByteArray(stream) : new byte[0];
+                        exchange.getResponseHeaders().add("Content-Type", "text/html");
+                        exchange.sendResponseHeaders(200, respBytes.length);
+                        exchange.getResponseBody().write(respBytes);
+                        exchange.getResponseBody().close();
+                        Alya.getInstance().getLogger().debug("sent success page");
+                    } catch (Exception e) {
+                        Alya.getInstance().getLogger().error("error writing response", e);
+                    }
 
                     latch.countDown();
                 });
 
-                final URIBuilder uriBuilder = new URIBuilder("https://login.live.com/oauth20_authorize.srf")
+                // Create the URI for authentication
+                URI uri = new URIBuilder("https://login.live.com/oauth20_authorize.srf")
                         .addParameter("client_id", CLIENT_ID)
                         .addParameter("response_type", "code")
                         .addParameter("redirect_uri", String.format("http://localhost:%d/callback", server.getAddress().getPort()))
                         .addParameter("scope", "XboxLive.signin XboxLive.offline_access")
                         .addParameter("state", state)
-                        .addParameter("prompt", "select_account");
-                final URI uri = uriBuilder.build();
+                        .addParameter("prompt", "select_account")
+                        .build();
+                Alya.getInstance().getLogger().debug("auth URI {}", uri);
 
+                // Open the browser with the auth link
                 browserAction.accept(uri);
+                server.start();
+                Alya.getInstance().getLogger().debug("server started waiting for callback");
+                latch.await();
 
-                try {
-                    server.start();
-                    latch.await();
-
-                    return Optional.ofNullable(authCode.get())
-                            .filter(code -> !StringUtils.isBlank(code))
-
-                            .orElseThrow(() -> new Exception(
-                                    Optional.ofNullable(errorMsg.get())
-                                            .orElse("There was no auth code or error description present.")
-                            ));
-                } finally {
-                    server.stop(2);
+                // After callback, check if the auth code is available
+                String code = authCode.get();
+                if (StringUtils.isBlank(code)) {
+                    String err = Optional.ofNullable(errorMsg.get()).orElse("no auth or error");
+                    Alya.getInstance().getLogger().error("no code or error present {}", err);
+                    throw new Exception(err);
                 }
-            } catch(final InterruptedException interruptedException) {
-                throw new CancellationException("Microsoft auth code acquisition was cancelled!");
-            } catch(final Exception exception) {
-                throw new CompletionException("Unable to acquire Microsoft auth code!", exception);
+                Alya.getInstance().getLogger().debug("returning auth code {}", code);
+                return code;
+            } catch (InterruptedException ie) {
+                Alya.getInstance().getLogger().warn("acquire interrupted");
+                throw new CancellationException("acquire MS auth code cancelled");
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("exception in acquireMSAuthCode", e);
+                throw new CompletionException("unable to acquire MS auth code", e);
             }
         }, executor);
     }
 
-    public static CompletableFuture<String> acquireMSAccessToken(
-            final String authCode,
-            final Executor executor
-    ) {
+    public static CompletableFuture<String> acquireMSAccessToken(final String authCode, final Executor executor) {
+        Alya.getInstance().getLogger().debug("acquireMSAccessToken start authCode {}", authCode);
         return CompletableFuture.supplyAsync(() -> {
-            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
-                final HttpPost request = new HttpPost(URI.create("https://login.live.com/oauth20_token.srf"));
+            try (CloseableHttpClient client = HttpClients.createMinimal()) {
+                HttpPost request = new HttpPost("https://login.live.com/oauth20_token.srf");
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.setEntity(new UrlEncodedFormEntity(
-                        Arrays.asList(
-                                new BasicNameValuePair("client_id", CLIENT_ID),
-                                new BasicNameValuePair("grant_type", "authorization_code"),
-                                new BasicNameValuePair("code", authCode),
-
-                                new BasicNameValuePair(
-                                        "redirect_uri", String.format("http://localhost:%d/callback", PORT)
-                                )
-                        ),
-                        "UTF-8"
-                ));
-
-                final org.apache.http.HttpResponse res = client.execute(request);
-                final JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
-                return Optional.ofNullable(json.get("access_token"))
+                request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+                        new BasicNameValuePair("client_id", CLIENT_ID),
+                        new BasicNameValuePair("grant_type", "authorization_code"),
+                        new BasicNameValuePair("code", authCode),
+                        new BasicNameValuePair("redirect_uri", String.format("http://localhost:%d/callback", PORT))
+                ), StandardCharsets.UTF_8));
+                Alya.getInstance().getLogger().debug("token request execute");
+                org.apache.http.HttpResponse response = client.execute(request);
+                Alya.getInstance().getLogger().debug("token response {}", response.getStatusLine());
+                JsonObject json = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+                String token = Optional.ofNullable(json.get("access_token"))
                         .map(JsonElement::getAsString)
-                        .filter(token -> !StringUtils.isBlank(token))
-
-                        .orElseThrow(() -> new Exception(
-                                json.has("error") ? String.format(
-                                        "%s: %s",
-                                        json.get("error").getAsString(),
-                                        json.get("error_description").getAsString()
-                                ) : "There was no access token or error description present."
-                        ));
-            } catch(final InterruptedException interruptedException) {
-                throw new CancellationException("Microsoft access token acquisition was cancelled!");
-            } catch(final Exception exception) {
-                throw new CompletionException("Unable to acquire Microsoft access token!", exception);
+                        .filter(t -> !StringUtils.isBlank(t))
+                        .orElseThrow(() -> new Exception("no access token"));
+                Alya.getInstance().getLogger().debug("access token {}", token);
+                return token;
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("error in acquireMSAccessToken", e);
+                throw new CompletionException("unable to get MS access token", e);
             }
         }, executor);
     }
 
-    public static CompletableFuture<String> acquireXboxAccessToken(
-            final String accessToken,
-            final Executor executor
-    ) {
+    public static CompletableFuture<String> acquireXboxAccessToken(final String accessToken, final Executor executor) {
+        Alya.getInstance().getLogger().debug("acquireXboxAccessToken start accessToken {}", accessToken);
         return CompletableFuture.supplyAsync(() -> {
-            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
-                final HttpPost request = new HttpPost(URI.create("https://user.auth.xboxlive.com/user/authenticate"));
-                final JsonObject entity = getJsonObject(accessToken);
+            try (CloseableHttpClient client = HttpClients.createMinimal()) {
+                HttpPost request = new HttpPost("https://user.auth.xboxlive.com/user/authenticate");
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Content-Type", "application/json");
-                request.setEntity(new StringEntity(entity.toString()));
-
-                final org.apache.http.HttpResponse res = client.execute(request);
-                final JsonObject json = res.getStatusLine().getStatusCode() == 200
-                        ? JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject()
-                        : new JsonObject();
-
-                return Optional.ofNullable(json.get("Token"))
-                        .map(JsonElement::getAsString)
-                        .filter(token -> !StringUtils.isBlank(token))
-                        .orElseThrow(() -> new Exception(
-                                json.has("XErr") ? String.format(
-                                        "%s: %s", json.get("XErr").getAsString(), json.get("Message").getAsString()
-                                ) : "There was no access token or error description present."
-                        ));
-            } catch(final InterruptedException interruptedException) {
-                throw new CancellationException("Xbox Live access token acquisition was cancelled!");
-            } catch(final Exception exception) {
-                throw new CompletionException("Unable to acquire Xbox Live access token!", exception);
+                JsonObject obj = new JsonObject();
+                JsonObject props = new JsonObject();
+                props.addProperty("AuthMethod", "RPS");
+                props.addProperty("SiteName", "user.auth.xboxlive.com");
+                props.addProperty("RpsTicket", String.format("d=%s", accessToken));
+                obj.add("Properties", props);
+                obj.addProperty("RelyingParty", "http://auth.xboxlive.com");
+                obj.addProperty("TokenType", "JWT");
+                request.setEntity(new StringEntity(obj.toString()));
+                org.apache.http.HttpResponse res = client.execute(request);
+                Alya.getInstance().getLogger().debug("xbox auth {}", res.getStatusLine());
+                JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
+                String token = Optional.ofNullable(json.get("Token")).map(JsonElement::getAsString)
+                        .filter(t -> !StringUtils.isBlank(t))
+                        .orElseThrow(() -> new Exception("no xbox token"));
+                Alya.getInstance().getLogger().debug("xbox access token {}", token);
+                return token;
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("error in acquireXboxAccessToken", e);
+                throw new CompletionException("unable to get xbox access token", e);
             }
         }, executor);
     }
 
-    private static @NonNull JsonObject getJsonObject(String accessToken) {
-        final JsonObject entity = new JsonObject();
-        final JsonObject properties = new JsonObject();
-        properties.addProperty("AuthMethod", "RPS");
-        properties.addProperty("SiteName", "user.auth.xboxlive.com");
-        properties.addProperty("RpsTicket", String.format("d=%s", accessToken));
-        entity.add("Properties", properties);
-        entity.addProperty("RelyingParty", "http://auth.xboxlive.com");
-        entity.addProperty("TokenType", "JWT");
-        return entity;
-    }
-
-    public static CompletableFuture<Map<String, String>> acquireXboxXstsToken(
-            final String accessToken,
-            final Executor executor
-    ) {
+    public static CompletableFuture<Map<String, String>> acquireXboxXstsToken(final String accessToken, final Executor executor) {
+        Alya.getInstance().getLogger().debug("acquireXboxXstsToken start {}", accessToken);
         return CompletableFuture.supplyAsync(() -> {
-            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
-                final HttpPost request = new HttpPost("https://xsts.auth.xboxlive.com/xsts/authorize");
-                final JsonObject entity = new JsonObject();
-                final JsonObject properties = new JsonObject();
-                final JsonArray userTokens = new JsonArray();
+            try (CloseableHttpClient client = HttpClients.createMinimal()) {
+                HttpPost request = new HttpPost("https://xsts.auth.xboxlive.com/xsts/authorize");
+                request.setConfig(REQUEST_CONFIG);
+                request.setHeader("Content-Type", "application/json");
+                JsonObject entity = new JsonObject();
+                JsonObject props = new JsonObject();
+                JsonArray userTokens = new JsonArray();
                 userTokens.add(new JsonPrimitive(accessToken));
-                properties.addProperty("SandboxId", "RETAIL");
-                properties.add("UserTokens", userTokens);
-                entity.add("Properties", properties);
+                props.add("UserTokens", userTokens);
+                props.addProperty("SandboxId", "RETAIL");
+                entity.add("Properties", props);
                 entity.addProperty("RelyingParty", "rp://api.minecraftservices.com/");
                 entity.addProperty("TokenType", "JWT");
-                request.setConfig(REQUEST_CONFIG);
-                request.setHeader("Content-Type", "application/json");
                 request.setEntity(new StringEntity(entity.toString()));
-
-                final org.apache.http.HttpResponse res = client.execute(request);
-
-                final JsonObject json = res.getStatusLine().getStatusCode() == 200
-                        ? JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject()
-                        : new JsonObject();
-                return Optional.ofNullable(json.get("Token"))
-                        .map(JsonElement::getAsString)
-                        .filter(token -> !StringUtils.isBlank(token))
-                        .map(token -> {
-                            final String uhs = json.get("DisplayClaims").getAsJsonObject()
-                                    .get("xui").getAsJsonArray()
-                                    .get(0).getAsJsonObject()
-                                    .get("uhs").getAsString();
-
-                            Map<String, String> result = new HashMap<>();
-                            result.put("Token", token);
-                            result.put("uhs", uhs);
-                            return result;
-                        })
-
-                        .orElseThrow(() -> new Exception(
-                                json.has("XErr") ? String.format(
-                                        "%s: %s", json.get("XErr").getAsString(), json.get("Message").getAsString()
-                                ) : "There was no access token or error description present."
-                        ));
-            } catch(final InterruptedException interruptedException) {
-                throw new CancellationException("Xbox Live XSTS token acquisition was cancelled!");
-            } catch(final Exception exception) {
-                throw new CompletionException("Unable to acquire Xbox Live XSTS token!", exception);
+                org.apache.http.HttpResponse res = client.execute(request);
+                Alya.getInstance().getLogger().debug("xsts authorize {}", res.getStatusLine());
+                JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
+                String token = Optional.ofNullable(json.get("Token")).map(JsonElement::getAsString)
+                        .filter(t -> !StringUtils.isBlank(t))
+                        .orElseThrow(() -> new Exception("no xsts token"));
+                String uhs = json.get("DisplayClaims").getAsJsonObject().get("xui").getAsJsonArray()
+                        .get(0).getAsJsonObject().get("uhs").getAsString();
+                Map<String, String> map = new HashMap<>();
+                map.put("Token", token);
+                map.put("uhs", uhs);
+                Alya.getInstance().getLogger().debug("xsts token {} uhs {}", token, uhs);
+                return map;
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("error in acquireXboxXstsToken", e);
+                throw new CompletionException("unable to get xsts token", e);
             }
         }, executor);
     }
 
-    public static CompletableFuture<String> acquireMCAccessToken(
-            final String xstsToken,
-            final String userHash,
-            final Executor executor
-    ) {
+    public static CompletableFuture<String> acquireMCAccessToken(final String xstsToken, final String userHash, final Executor executor) {
+        Alya.getInstance().getLogger().debug("acquireMCAccessToken start {} {}", xstsToken, userHash);
         return CompletableFuture.supplyAsync(() -> {
-            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
-
-                final HttpPost request = new HttpPost(URI.create("https://api.minecraftservices.com/authentication/login_with_xbox"));
+            try (CloseableHttpClient client = HttpClients.createMinimal()) {
+                HttpPost request = new HttpPost("https://api.minecraftservices.com/authentication/login_with_xbox");
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Content-Type", "application/json");
-                request.setEntity(new StringEntity(
-                        String.format("{\"identityToken\": \"XBL3.0 x=%s;%s\"}", userHash, xstsToken)
-                ));
-
-                final org.apache.http.HttpResponse res = client.execute(request);
-                final JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
-
-                return Optional.ofNullable(json.get("access_token"))
+                request.setEntity(new StringEntity(String.format("{\"identityToken\":\"XBL3.0 x=%s;%s\"}", userHash, xstsToken)));
+                org.apache.http.HttpResponse res = client.execute(request);
+                Alya.getInstance().getLogger().debug("mc auth {}", res.getStatusLine());
+                JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
+                String token = Optional.ofNullable(json.get("access_token"))
                         .map(JsonElement::getAsString)
-                        .filter(token -> !StringUtils.isBlank(token))
-
-                        .orElseThrow(() -> new Exception(
-                                json.has("error") ? String.format(
-                                        "%s: %s", json.get("error").getAsString(), json.get("errorMessage").getAsString()
-                                ) : "There was no access token or error description present."
-                        ));
-            } catch(final InterruptedException interruptedException) {
-                throw new CancellationException("Minecraft access token acquisition was cancelled!");
-            } catch(final Exception exception) {
-                throw new CompletionException("Unable to acquire Minecraft access token!", exception);
+                        .filter(t -> !StringUtils.isBlank(t))
+                        .orElseThrow(() -> new Exception("no mc access token"));
+                Alya.getInstance().getLogger().debug("mc access token {}", token);
+                return token;
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("error in acquireMCAccessToken", e);
+                throw new CompletionException("unable to get mc access token", e);
             }
         }, executor);
     }
 
-    public static CompletableFuture<Session> login(
-            final String mcToken,
-            final Executor executor
-    ) {
+    public static CompletableFuture<Session> login(final String mcToken, final Executor executor) {
+        Alya.getInstance().getLogger().debug("login start {}", mcToken);
         return CompletableFuture.supplyAsync(() -> {
-            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
-
-                final HttpGet request = new HttpGet(URI.create("https://api.minecraftservices.com/minecraft/profile"));
+            try (CloseableHttpClient client = HttpClients.createMinimal()) {
+                HttpGet request = new HttpGet("https://api.minecraftservices.com/minecraft/profile");
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Authorization", "Bearer " + mcToken);
-
-                final org.apache.http.HttpResponse res = client.execute(request);
-                final JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
-                return Optional.ofNullable(json.get("id"))
-                        .map(JsonElement::getAsString)
-                        .filter(uuid -> !StringUtils.isBlank(uuid))
-
-                        .map(uuid -> new Session(
-                                json.get("name").getAsString(),
-                                uuid,
-                                mcToken,
-                                Session.Type.MOJANG.toString()
-                        ))
-
-                        .orElseThrow(() -> new Exception(
-                                json.has("error") ? String.format(
-                                        "%s: %s", json.get("error").getAsString(), json.get("errorMessage").getAsString()
-                                ) : "There was no profile or error description present."
-                        ));
-            } catch(final InterruptedException interruptedException) {
-                throw new CancellationException("Minecraft profile fetching was cancelled!");
-            } catch(final Exception exception) {
-                throw new CompletionException("Unable to fetch Minecraft profile!", exception);
+                org.apache.http.HttpResponse res = client.execute(request);
+                Alya.getInstance().getLogger().debug("profile response {}", res.getStatusLine());
+                JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
+                String uuid = Optional.ofNullable(json.get("id")).map(JsonElement::getAsString)
+                        .filter(u -> !StringUtils.isBlank(u))
+                        .orElseThrow(() -> new Exception("no profile present"));
+                Session session = new Session(json.get("name").getAsString(), uuid, mcToken, Session.Type.MOJANG.toString());
+                Alya.getInstance().getLogger().debug("login successful for {}", json.get("name").getAsString());
+                return session;
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("error in login", e);
+                throw new CompletionException("unable to fetch profile", e);
             }
         }, executor);
     }
 
     public static void openWebLink(URI uri) {
+        Alya.getInstance().getLogger().debug("openWebLink {}", uri);
         boolean opened = false;
-
-        if(Desktop.isDesktopSupported()) {
-            final Desktop desktop = Desktop.getDesktop();
-            if(desktop.isSupported(Desktop.Action.BROWSE)) {
-                try {
-                    desktop.browse(uri);
-                    opened = true;
-                } catch(final IOException ioException) {
-                    Alya.getInstance().getLogger().error("Failed to open web link via Desktop", ioException);
-                }
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Desktop.getDesktop().browse(uri);
+                opened = true;
+                Alya.getInstance().getLogger().debug("opened with Desktop");
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("desktop browse failed", e);
             }
         }
-
-        if(!opened) {
+        if (!opened) {
             String os = System.getProperty("os.name").toLowerCase();
+            Alya.getInstance().getLogger().debug("fallback open for OS {}", os);
             try {
-                ProcessBuilder pb;
-                if(os.contains("linux")) {
-                    pb = new ProcessBuilder("xdg-open", uri.toString());
-                } else if(os.contains("mac")) {
-                    pb = new ProcessBuilder("open", uri.toString());
-                } else if(os.contains("win")) {
-                    pb = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri.toString());
-                } else {
-                    Alya.getInstance().getLogger().error("Unsupported OS for opening web link: {}", os);
-                    return;
-                }
+                ProcessBuilder pb = os.contains("linux")
+                        ? new ProcessBuilder("xdg-open", uri.toString())
+                        : os.contains("mac")
+                        ? new ProcessBuilder("open", uri.toString())
+                        : new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri.toString());
                 pb.start();
-            } catch(final IOException ioException) {
-                Alya.getInstance().getLogger().error("Failed to open web link via command", ioException);
+                Alya.getInstance().getLogger().debug("fallback open executed");
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("fallback open failed", e);
             }
         }
     }
-
 
 }
