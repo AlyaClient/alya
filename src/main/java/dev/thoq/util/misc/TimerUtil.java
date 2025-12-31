@@ -1,5 +1,6 @@
 package dev.thoq.util.misc;
 
+@SuppressWarnings("unused")
 public final class TimerUtil {
 
     private long lastMS = System.currentTimeMillis();

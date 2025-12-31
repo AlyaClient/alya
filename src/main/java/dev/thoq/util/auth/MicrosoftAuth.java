@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpServer;
 import dev.thoq.Alya;
 import net.minecraft.util.Session;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -26,12 +25,14 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("HttpUrlsUsage")
 public final class MicrosoftAuth {
 
     public static final RequestConfig REQUEST_CONFIG = RequestConfig
@@ -57,7 +58,11 @@ public final class MicrosoftAuth {
     ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final String state = RandomStringUtils.randomAlphanumeric(8);
+                final String state = new SecureRandom()
+                        .ints(8, 0, 62)
+                        .mapToObj("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"::charAt)
+                        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                        .toString();
 
                 final HttpServer server = HttpServer.create(
                         new InetSocketAddress(PORT), 0

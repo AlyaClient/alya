@@ -5,7 +5,6 @@ import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
 
 import java.io.IOException;
 
