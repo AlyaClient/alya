@@ -60,7 +60,7 @@ public final class BindCommand extends Command {
     private void handleAdd(final String moduleName, final String keyName) {
         Optional<Module> moduleOpt = Alya.getInstance().getModuleManager().getModule(moduleName);
 
-        if(moduleOpt.isEmpty()) {
+        if(!moduleOpt.isPresent()) {
             ChatUtil.sendError("Module not found: " + moduleName);
             return;
         }
@@ -80,7 +80,7 @@ public final class BindCommand extends Command {
     private void handleRemove(final String moduleName) {
         final Optional<Module> moduleOpt = Alya.getInstance().getModuleManager().getModule(moduleName);
 
-        if(moduleOpt.isEmpty()) {
+        if(!moduleOpt.isPresent()) {
             ChatUtil.sendError("Module not found: " + moduleName);
             return;
         }

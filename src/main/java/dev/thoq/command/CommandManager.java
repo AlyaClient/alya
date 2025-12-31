@@ -4,13 +4,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public record CommandManager(CommandRepository repository, String prefix) {
+public final class CommandManager {
+
+    private final CommandRepository repository;
+    private final String prefix;
 
     public CommandManager() {
         this(new InMemoryCommandRepository(), ".");
+    }
+
+    public CommandManager(CommandRepository repository, String prefix) {
+        this.repository = repository;
+        this.prefix = prefix;
+    }
+
+    public CommandRepository repository() {
+        return repository;
+    }
+
+    public String prefix() {
+        return prefix;
     }
 
     public void register(final Command command) {
@@ -34,25 +51,27 @@ public record CommandManager(CommandRepository repository, String prefix) {
     }
 
     public boolean executeCommand(final String message) {
-        if(!message.startsWith(prefix)) {
+        if (!message.startsWith(prefix)) {
             return false;
         }
 
         final String commandLine = message.substring(prefix.length()).trim();
-        if(commandLine.isEmpty()) {
+        if (commandLine.isEmpty()) {
             return false;
         }
 
         final String[] parts = commandLine.split("\\s+");
         final String commandName = parts[0];
-        final String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
+        final String[] args = parts.length > 1
+                ? Arrays.copyOfRange(parts, 1, parts.length)
+                : new String[0];
 
         Optional<Command> command = repository.findByName(commandName);
-        if(command.isEmpty()) {
+        if (!command.isPresent()) {
             command = repository.findByAlias(commandName);
         }
 
-        if(command.isPresent()) {
+        if (command.isPresent()) {
             command.get().execute(args);
             return true;
         }
@@ -61,13 +80,13 @@ public record CommandManager(CommandRepository repository, String prefix) {
     }
 
     public List<String> getCompletions(final String input) {
-        if(!input.startsWith(prefix)) {
-            return new ArrayList<>();
+        if (!input.startsWith(prefix)) {
+            return new ArrayList<String>();
         }
 
         final String commandLine = input.substring(prefix.length());
 
-        if(!commandLine.contains(" ")) {
+        if (!commandLine.contains(" ")) {
             return getCommandCompletions(commandLine);
         }
 
@@ -75,28 +94,30 @@ public record CommandManager(CommandRepository repository, String prefix) {
         final String commandName = parts[0];
 
         Optional<Command> command = repository.findByName(commandName);
-        if(command.isEmpty()) {
+        if (!command.isPresent()) {
             command = repository.findByAlias(commandName);
         }
 
-        if(command.isPresent()) {
-            final String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
+        if (command.isPresent()) {
+            final String[] args = parts.length > 1
+                    ? Arrays.copyOfRange(parts, 1, parts.length)
+                    : new String[0];
             return command.get().getCompletions(args);
         }
 
-        return new ArrayList<>();
+        return new ArrayList<String>();
     }
 
     public List<String> getCommandCompletions(final String partial) {
         final String lowerPartial = partial.toLowerCase();
-        final List<String> completions = new ArrayList<>();
+        final List<String> completions = new ArrayList<String>();
 
-        for(final Command command : repository.findAll()) {
-            if(command.getName().toLowerCase().startsWith(lowerPartial)) {
+        for (final Command command : repository.findAll()) {
+            if (command.getName().toLowerCase().startsWith(lowerPartial)) {
                 completions.add(prefix + command.getName());
             }
-            for(final String alias : command.getAliases()) {
-                if(alias.toLowerCase().startsWith(lowerPartial)) {
+            for (final String alias : command.getAliases()) {
+                if (alias.toLowerCase().startsWith(lowerPartial)) {
                     completions.add(prefix + alias);
                 }
             }
@@ -105,5 +126,22 @@ public record CommandManager(CommandRepository repository, String prefix) {
         return completions.stream().sorted().collect(Collectors.toList());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CommandManager)) return false;
+        CommandManager that = (CommandManager) o;
+        return Objects.equals(repository, that.repository) &&
+                Objects.equals(prefix, that.prefix);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(repository, prefix);
+    }
+
+    @Override
+    public String toString() {
+        return "CommandManager[repository=" + repository + ", prefix=" + prefix + "]";
+    }
 }

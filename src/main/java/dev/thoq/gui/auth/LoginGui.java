@@ -55,7 +55,7 @@ public class LoginGui extends GuiScreen {
             this.username.setFocused(true);
         }
         if(character == '\r') {
-            this.actionPerformed(this.buttonList.getFirst());
+            this.actionPerformed(this.buttonList.get(0));
         }
         this.username.textboxKeyTyped(character, key);
     }

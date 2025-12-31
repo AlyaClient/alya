@@ -15,7 +15,7 @@ public final class EventBus {
     private final Map<Object, List<RegisteredListener>> subscriberListeners = new ConcurrentHashMap<>();
 
     public <T extends IEvent> void subscribe(final Class<T> eventClass, final IEventListener<T> listener) {
-        listeners.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(listener);
+        listeners.computeIfAbsent(eventClass, e -> new CopyOnWriteArrayList<>()).add(listener);
     }
 
     public <T extends IEvent> void unsubscribe(final Class<T> eventClass, final IEventListener<T> listener) {

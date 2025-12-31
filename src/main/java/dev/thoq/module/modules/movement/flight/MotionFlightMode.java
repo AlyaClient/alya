@@ -30,9 +30,9 @@ public final class MotionFlightMode extends Submodule {
         final FlightModule flightModule = (FlightModule) parent;
 
         if(MC.gameSettings.keyBindJump.isKeyDown()) {
-            MC.thePlayer.motionY += flightModule.getSpeed().getValue() / 2D;
+            MC.thePlayer.motionY += flightModule.getSpeed().getValue() / 4D;
         } else if(MC.gameSettings.keyBindSneak.isKeyDown()) {
-            MC.thePlayer.motionY -= flightModule.getSpeed().getValue() / 2D;
+            MC.thePlayer.motionY -= flightModule.getSpeed().getValue() / 4D;
         } else {
             MC.thePlayer.motionY = glide.isEnabled() ? -0.05 : 0;
         }
