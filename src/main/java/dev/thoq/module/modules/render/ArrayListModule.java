@@ -5,6 +5,9 @@ import dev.thoq.event.EventHandler;
 import dev.thoq.event.events.Render2DEvent;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
+import dev.thoq.module.modules.clickgui.ClickGUI;
+import dev.thoq.module.modules.clickgui.ClickGUIScreen;
+import dev.thoq.module.setting.BooleanSetting;
 import dev.thoq.util.render.RenderUtility;
 import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -15,8 +18,12 @@ import java.util.stream.Collectors;
 
 public final class ArrayListModule extends Module {
 
+    private final BooleanSetting showVisual = new BooleanSetting("Show Visual Modules", "Show visual modules?", true);
+
     public ArrayListModule() {
         super("ArrayList", "Displays enabled modules on screen", Category.RENDER);
+
+        addSetting(showVisual);
     }
 
     @Override
@@ -33,10 +40,13 @@ public final class ArrayListModule extends Module {
     public void onRender2D(final Render2DEvent event) {
         final ScaledResolution scaledResolution = event.getScaledResolution();
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
+        final boolean showVisual = this.showVisual.getValue();
 
         final List<Module> enabledModules = Alya.getInstance().getModuleManager().getEnabledModules()
                 .stream()
                 .filter(m -> !(m instanceof ArrayListModule))
+                .filter(m -> !(m instanceof ClickGUI))
+                .filter(m -> showVisual || !(m.getCategory() == Category.RENDER))
                 .sorted(Comparator.comparingDouble(m -> -fontRenderer.getStringWidth(m.getName())))
                 .collect(Collectors.toList());
 
@@ -60,21 +70,9 @@ public final class ArrayListModule extends Module {
     }
 
     private int getCategoryColor(final Category category) {
-        switch(category) {
-            case COMBAT:
-                return 0xFFFF5555;
-            case MOVEMENT:
-                return 0xFF55FF55;
-            case RENDER:
-                return 0xFF5555FF;
-            case PLAYER:
-                return 0xFFFFFF55;
-            case WORLD:
-                return 0xFF55FFFF;
-            case MISC:
-            default:
-                return 0xFFFF55FF;
-        }
+        return ClickGUIScreen
+                .getCategoryColors()
+                .getOrDefault(category, 0xFFFF55FF);
     }
 
 

@@ -337,5 +337,7 @@ public final class ClickGUIScreen extends GuiScreen {
         return false;
     }
 
-
+    public static Map<Category, Integer> getCategoryColors() {
+        return CATEGORY_COLORS;
+    }
 }
