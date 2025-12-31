@@ -57,8 +57,6 @@ public final class MicrosoftAuth {
     ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                //todo: fix
-                //noinspection deprecation
                 final String state = RandomStringUtils.randomAlphanumeric(8);
 
                 final HttpServer server = HttpServer.create(
@@ -113,9 +111,7 @@ public final class MicrosoftAuth {
                 browserAction.accept(uri);
 
                 try {
-
                     server.start();
-
                     latch.await();
 
                     return Optional.ofNullable(authCode.get())
@@ -126,13 +122,12 @@ public final class MicrosoftAuth {
                                             .orElse("There was no auth code or error description present.")
                             ));
                 } finally {
-
                     server.stop(2);
                 }
-            } catch(InterruptedException e) {
+            } catch(final InterruptedException interruptedException) {
                 throw new CancellationException("Microsoft auth code acquisition was cancelled!");
-            } catch(Exception e) {
-                throw new CompletionException("Unable to acquire Microsoft auth code!", e);
+            } catch(final Exception exception) {
+                throw new CompletionException("Unable to acquire Microsoft auth code!", exception);
             }
         }, executor);
     }
@@ -142,8 +137,7 @@ public final class MicrosoftAuth {
             final Executor executor
     ) {
         return CompletableFuture.supplyAsync(() -> {
-            try(CloseableHttpClient client = HttpClients.createMinimal()) {
-
+            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
                 final HttpPost request = new HttpPost(URI.create("https://login.live.com/oauth20_token.srf"));
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -161,11 +155,7 @@ public final class MicrosoftAuth {
                 ));
 
                 final org.apache.http.HttpResponse res = client.execute(request);
-
-                //todo: fix
-                //noinspection deprecation
-                final JsonObject json = new JsonParser().parse(EntityUtils.toString(res.getEntity())).getAsJsonObject();
-
+                final JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
                 return Optional.ofNullable(json.get("access_token"))
                         .map(JsonElement::getAsString)
                         .filter(token -> !StringUtils.isBlank(token))
@@ -177,10 +167,10 @@ public final class MicrosoftAuth {
                                         json.get("error_description").getAsString()
                                 ) : "There was no access token or error description present."
                         ));
-            } catch(InterruptedException e) {
+            } catch(final InterruptedException interruptedException) {
                 throw new CancellationException("Microsoft access token acquisition was cancelled!");
-            } catch(Exception e) {
-                throw new CompletionException("Unable to acquire Microsoft access token!", e);
+            } catch(final Exception exception) {
+                throw new CompletionException("Unable to acquire Microsoft access token!", exception);
             }
         }, executor);
     }
@@ -190,8 +180,7 @@ public final class MicrosoftAuth {
             final Executor executor
     ) {
         return CompletableFuture.supplyAsync(() -> {
-            try(CloseableHttpClient client = HttpClients.createMinimal()) {
-
+            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
                 final HttpPost request = new HttpPost(URI.create("https://user.auth.xboxlive.com/user/authenticate"));
                 final JsonObject entity = getJsonObject(accessToken);
                 request.setConfig(REQUEST_CONFIG);
@@ -199,26 +188,22 @@ public final class MicrosoftAuth {
                 request.setEntity(new StringEntity(entity.toString()));
 
                 final org.apache.http.HttpResponse res = client.execute(request);
-
-                //todo: fix
-                //noinspection deprecation
                 final JsonObject json = res.getStatusLine().getStatusCode() == 200
-                        ? new JsonParser().parse(EntityUtils.toString(res.getEntity())).getAsJsonObject()
+                        ? JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject()
                         : new JsonObject();
 
                 return Optional.ofNullable(json.get("Token"))
                         .map(JsonElement::getAsString)
                         .filter(token -> !StringUtils.isBlank(token))
-
                         .orElseThrow(() -> new Exception(
                                 json.has("XErr") ? String.format(
                                         "%s: %s", json.get("XErr").getAsString(), json.get("Message").getAsString()
                                 ) : "There was no access token or error description present."
                         ));
-            } catch(InterruptedException e) {
+            } catch(final InterruptedException interruptedException) {
                 throw new CancellationException("Xbox Live access token acquisition was cancelled!");
-            } catch(Exception e) {
-                throw new CompletionException("Unable to acquire Xbox Live access token!", e);
+            } catch(final Exception exception) {
+                throw new CompletionException("Unable to acquire Xbox Live access token!", exception);
             }
         }, executor);
     }
@@ -240,8 +225,7 @@ public final class MicrosoftAuth {
             final Executor executor
     ) {
         return CompletableFuture.supplyAsync(() -> {
-            try(CloseableHttpClient client = HttpClients.createMinimal()) {
-
+            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
                 final HttpPost request = new HttpPost("https://xsts.auth.xboxlive.com/xsts/authorize");
                 final JsonObject entity = new JsonObject();
                 final JsonObject properties = new JsonObject();
@@ -258,17 +242,13 @@ public final class MicrosoftAuth {
 
                 final org.apache.http.HttpResponse res = client.execute(request);
 
-                //todo: fix
-                //noinspection deprecation
                 final JsonObject json = res.getStatusLine().getStatusCode() == 200
-                        ? new JsonParser().parse(EntityUtils.toString(res.getEntity())).getAsJsonObject()
+                        ? JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject()
                         : new JsonObject();
                 return Optional.ofNullable(json.get("Token"))
                         .map(JsonElement::getAsString)
                         .filter(token -> !StringUtils.isBlank(token))
-
                         .map(token -> {
-
                             final String uhs = json.get("DisplayClaims").getAsJsonObject()
                                     .get("xui").getAsJsonArray()
                                     .get(0).getAsJsonObject()
@@ -285,10 +265,10 @@ public final class MicrosoftAuth {
                                         "%s: %s", json.get("XErr").getAsString(), json.get("Message").getAsString()
                                 ) : "There was no access token or error description present."
                         ));
-            } catch(InterruptedException e) {
+            } catch(final InterruptedException interruptedException) {
                 throw new CancellationException("Xbox Live XSTS token acquisition was cancelled!");
-            } catch(Exception e) {
-                throw new CompletionException("Unable to acquire Xbox Live XSTS token!", e);
+            } catch(final Exception exception) {
+                throw new CompletionException("Unable to acquire Xbox Live XSTS token!", exception);
             }
         }, executor);
     }
@@ -299,7 +279,7 @@ public final class MicrosoftAuth {
             final Executor executor
     ) {
         return CompletableFuture.supplyAsync(() -> {
-            try(CloseableHttpClient client = HttpClients.createMinimal()) {
+            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
 
                 final HttpPost request = new HttpPost(URI.create("https://api.minecraftservices.com/authentication/login_with_xbox"));
                 request.setConfig(REQUEST_CONFIG);
@@ -309,10 +289,7 @@ public final class MicrosoftAuth {
                 ));
 
                 final org.apache.http.HttpResponse res = client.execute(request);
-
-                //todo: fix
-                //noinspection deprecation
-                final JsonObject json = new JsonParser().parse(EntityUtils.toString(res.getEntity())).getAsJsonObject();
+                final JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
 
                 return Optional.ofNullable(json.get("access_token"))
                         .map(JsonElement::getAsString)
@@ -323,10 +300,10 @@ public final class MicrosoftAuth {
                                         "%s: %s", json.get("error").getAsString(), json.get("errorMessage").getAsString()
                                 ) : "There was no access token or error description present."
                         ));
-            } catch(InterruptedException e) {
+            } catch(final InterruptedException interruptedException) {
                 throw new CancellationException("Minecraft access token acquisition was cancelled!");
-            } catch(Exception e) {
-                throw new CompletionException("Unable to acquire Minecraft access token!", e);
+            } catch(final Exception exception) {
+                throw new CompletionException("Unable to acquire Minecraft access token!", exception);
             }
         }, executor);
     }
@@ -336,17 +313,14 @@ public final class MicrosoftAuth {
             final Executor executor
     ) {
         return CompletableFuture.supplyAsync(() -> {
-            try(CloseableHttpClient client = HttpClients.createMinimal()) {
+            try(final CloseableHttpClient client = HttpClients.createMinimal()) {
 
                 final HttpGet request = new HttpGet(URI.create("https://api.minecraftservices.com/minecraft/profile"));
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Authorization", "Bearer " + mcToken);
 
                 final org.apache.http.HttpResponse res = client.execute(request);
-
-                //todo: fix
-                //noinspection deprecation
-                final JsonObject json = new JsonParser().parse(EntityUtils.toString(res.getEntity())).getAsJsonObject();
+                final JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
                 return Optional.ofNullable(json.get("id"))
                         .map(JsonElement::getAsString)
                         .filter(uuid -> !StringUtils.isBlank(uuid))
@@ -363,10 +337,10 @@ public final class MicrosoftAuth {
                                         "%s: %s", json.get("error").getAsString(), json.get("errorMessage").getAsString()
                                 ) : "There was no profile or error description present."
                         ));
-            } catch(InterruptedException e) {
+            } catch(final InterruptedException interruptedException) {
                 throw new CancellationException("Minecraft profile fetching was cancelled!");
-            } catch(Exception e) {
-                throw new CompletionException("Unable to fetch Minecraft profile!", e);
+            } catch(final Exception exception) {
+                throw new CompletionException("Unable to fetch Minecraft profile!", exception);
             }
         }, executor);
     }
@@ -375,12 +349,12 @@ public final class MicrosoftAuth {
         boolean opened = false;
 
         if(Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
+            final Desktop desktop = Desktop.getDesktop();
             if(desktop.isSupported(Desktop.Action.BROWSE)) {
                 try {
                     desktop.browse(uri);
                     opened = true;
-                } catch(IOException ioException) {
+                } catch(final IOException ioException) {
                     Alya.getInstance().getLogger().error("Failed to open web link via Desktop", ioException);
                 }
             }
@@ -397,11 +371,11 @@ public final class MicrosoftAuth {
                 } else if(os.contains("win")) {
                     pb = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri.toString());
                 } else {
-                    Alya.getInstance().getLogger().error("Unsupported OS for opening web link: " + os);
+                    Alya.getInstance().getLogger().error("Unsupported OS for opening web link: {}", os);
                     return;
                 }
                 pb.start();
-            } catch(IOException ioException) {
+            } catch(final IOException ioException) {
                 Alya.getInstance().getLogger().error("Failed to open web link via command", ioException);
             }
         }

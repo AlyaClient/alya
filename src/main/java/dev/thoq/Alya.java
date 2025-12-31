@@ -14,15 +14,24 @@ import dev.thoq.module.modules.player.NoJumpDelayModule;
 import dev.thoq.module.modules.player.NoRightClickDelayModule;
 import dev.thoq.module.modules.render.*;
 import dev.thoq.util.font.AlyaFontRenderer;
+import dev.thoq.util.misc.Title;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.Display;
+
+import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
 public final class Alya {
 
     private static final Alya INSTANCE = new Alya();
     private static final String NAME = "Alya", VERSION = "1.0";
+    private static final ResourceLocation OPENING_SOUND = new ResourceLocation("Alya/Sounds/Opening.wav");
 
     private final Logger LOGGER = LogManager.getLogger();
     private final EventBus eventBus = new EventBus();
@@ -35,18 +44,20 @@ public final class Alya {
     private AlyaFontRenderer fontRendererMedium;
     private AlyaFontRenderer fontRendererBold;
     private AlyaFontRenderer fontRendererTitle;
+    private boolean audioStarted;
 
     private Alya() {
     }
 
     public void initialize() {
-        Display.setTitle(String.format("%s %s %s", NAME, VERSION, "Development"));
+        Title.update(this.getClass());
         initializeModules();
         initializeCommands();
         LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
         LOGGER.info("Initialized {} commands", commandManager.getCommands().size());
 
         configManager.load();
+        playStartupSound();
     }
 
     private void initializeModules() {
@@ -66,6 +77,29 @@ public final class Alya {
         commandManager.register(new HelpCommand());
         commandManager.register(new BindCommand());
         commandManager.register(new ConfigCommand());
+    }
+
+    private void playStartupSound() {
+        CompletableFuture.runAsync(() -> {
+            if(!audioStarted) {
+                try {
+                    final Minecraft mc = Minecraft.getMinecraft();
+                    final InputStream inputStream = mc.getResourceManager().getResource(OPENING_SOUND).getInputStream();
+
+                    try(final AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(inputStream))) {
+                        final Clip clip = AudioSystem.getClip();
+                        clip.open(audioStream);
+                        clip.setMicrosecondPosition(250_000);
+                        clip.start();
+                    }
+                } catch(final UnsupportedAudioFileException | IOException | LineUnavailableException exception) {
+                    LOGGER.error("Failed to play startup chime", exception);
+                }
+
+                audioStarted = true;
+            }
+        });
+
     }
 
     public void terminate() {

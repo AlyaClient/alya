@@ -2,9 +2,10 @@ package dev.thoq.event.events;
 
 import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
+import dev.thoq.event.TemporalEvent;
 
 @SuppressWarnings("unused")
-public final class MotionEvent implements IEvent, ICancelable {
+public final class MotionEvent implements IEvent, ICancelable, TemporalEvent {
 
     private double x;
     private double y;
@@ -13,6 +14,7 @@ public final class MotionEvent implements IEvent, ICancelable {
     private float pitch;
     private boolean onGround;
     private boolean canceled = false;
+    private boolean pre = true;
 
     public MotionEvent(final double x, final double y, final double z, final float yaw, final float pitch, final boolean onGround) {
         this.x = x;
@@ -80,4 +82,18 @@ public final class MotionEvent implements IEvent, ICancelable {
     }
 
 
+    @Override
+    public boolean isPre() {
+        return pre;
+    }
+
+    @Override
+    public boolean isPost() {
+        return !pre;
+    }
+
+    @Override
+    public void setPost() {
+        this.pre = false;
+    }
 }

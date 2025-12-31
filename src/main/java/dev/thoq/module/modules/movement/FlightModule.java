@@ -32,4 +32,6 @@ public final class FlightModule extends Module {
     public NumberSetting getSpeed() {
         return speed;
     }
+
+
 }

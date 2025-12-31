@@ -14,6 +14,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import dev.thoq.Alya;
 import dev.thoq.event.events.BlockPlaceableEvent;
 import dev.thoq.event.events.TickEvent;
+import dev.thoq.util.misc.Title;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -552,7 +553,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
     private void createDisplay() throws LWJGLException {
         Display.setResizable(true);
-        Display.setTitle("Starting " + Alya.getName() + " " + Alya.getVersion() + "...");
+        Title.update(this.getClass());
 
         try {
             Display.create((new PixelFormat()).withDepthBits(24));

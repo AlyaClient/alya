@@ -22,4 +22,6 @@ public final class NoRightClickDelayModule extends Module {
             MC.rightClickDelayTimer = 0;
         }
     }
+
+
 }

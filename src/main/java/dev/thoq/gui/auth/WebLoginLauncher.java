@@ -61,7 +61,7 @@ public class WebLoginLauncher extends GuiScreen {
                             SessionManager.setSession(session);
                             Minecraft.getMinecraft().displayGuiScreen(new GuiMainMenu());
                         })
-                        .exceptionally(error -> null);
+                        .exceptionally(_ -> null);
             } catch(final Exception exception) {
                 Alya.getInstance().getLogger().error("Failed to acquire Microsoft access token", exception);
             }

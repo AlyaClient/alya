@@ -38,19 +38,19 @@ public final class ConfigManager {
     }
 
     public void save(String configName) {
-        File configFile = new File(configDir, configName + ".json");
+        final File configFile = new File(configDir, configName + ".json");
 
-        JsonObject root = new JsonObject();
-        JsonObject modules = new JsonObject();
+        final JsonObject root = new JsonObject();
+        final JsonObject modules = new JsonObject();
 
-        for(Module module : Alya.getInstance().getModuleManager().getModules()) {
+        for(final Module module : Alya.getInstance().getModuleManager().getModules()) {
             JsonObject moduleData = new JsonObject();
             moduleData.addProperty("enabled", module.isEnabled());
             moduleData.addProperty("keyCode", module.getKeyCode());
 
             if(module.hasSettings()) {
-                JsonObject settingsData = new JsonObject();
-                for(Setting<?> setting : module.getSettings()) {
+                final JsonObject settingsData = new JsonObject();
+                for(final Setting<?> setting : module.getSettings()) {
                     settingsData.addProperty(setting.getName(), setting.getValueAsString());
                 }
                 moduleData.add("settings", settingsData);
@@ -61,11 +61,11 @@ public final class ConfigManager {
 
         root.add("modules", modules);
 
-        try(FileWriter writer = new FileWriter(configFile)) {
+        try(final FileWriter writer = new FileWriter(configFile)) {
             GSON.toJson(root, writer);
             Alya.getInstance().getLogger().info("Saved config: {}", configName);
-        } catch(IOException e) {
-            Alya.getInstance().getLogger().error("Failed to save config: {}", configName, e);
+        } catch(final IOException ioException) {
+            Alya.getInstance().getLogger().error("Failed to save config: {}", configName, ioException);
         }
     }
 
@@ -73,21 +73,19 @@ public final class ConfigManager {
         load("default");
     }
 
-    public void load(String configName) {
-        File configFile = new File(configDir, configName + ".json");
+    public void load(final String configName) {
+        final File configFile = new File(configDir, configName + ".json");
 
         if(!configFile.exists()) {
             Alya.getInstance().getLogger().info("Config file does not exist: {}", configName);
             return;
         }
 
-        try(FileReader reader = new FileReader(configFile)) {
-            //todo: fix
-            //noinspection deprecation
-            JsonObject root = new JsonParser().parse(reader).getAsJsonObject();
+        try(final FileReader reader = new FileReader(configFile)) {
+            final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
 
             if(root.has("modules")) {
-                JsonObject modules = root.getAsJsonObject("modules");
+                final JsonObject modules = root.getAsJsonObject("modules");
 
                 for(final Map.Entry<String, JsonElement> entry : modules.entrySet()) {
                     final String moduleName = entry.getKey();

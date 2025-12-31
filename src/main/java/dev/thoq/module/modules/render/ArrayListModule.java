@@ -38,7 +38,7 @@ public final class ArrayListModule extends Module {
 
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
-        final ScaledResolution scaledResolution = event.getScaledResolution();
+        final ScaledResolution scaledResolution = event.scaledResolution();
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         final boolean showVisual = this.showVisual.getValue();
 
@@ -48,7 +48,7 @@ public final class ArrayListModule extends Module {
                 .filter(m -> !(m instanceof ClickGUI))
                 .filter(m -> showVisual || !(m.getCategory() == Category.RENDER))
                 .sorted(Comparator.comparingDouble(m -> -fontRenderer.getStringWidth(m.getName())))
-                .collect(Collectors.toList());
+                .toList();
 
         float y = 2;
         final int padding = 4;

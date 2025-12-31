@@ -16,7 +16,7 @@ public final class AlyaButton extends GuiButton {
     }
 
     @Override
-    protected void drawButtonText(Minecraft mc, int textColor) {
+    protected void drawButtonText(final Minecraft mc, final int textColor) {
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         if(fontRenderer != null) {
             final float textWidth = fontRenderer.getStringWidth(this.displayString);

@@ -4,15 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public final class ModuleManager {
-    private final ModuleRepository repository;
+public record ModuleManager(ModuleRepository repository) {
 
     public ModuleManager() {
-        this.repository = new InMemoryModuleRepository();
-    }
-
-    public ModuleManager(final ModuleRepository repository) {
-        this.repository = repository;
+        this(new InMemoryModuleRepository());
     }
 
     public void register(final Module module) {
@@ -47,7 +42,5 @@ public final class ModuleManager {
         repository.findAll().forEach(module -> module.setEnabled(false));
     }
 
-    public ModuleRepository getRepository() {
-        return repository;
-    }
+
 }

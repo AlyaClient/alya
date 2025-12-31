@@ -99,7 +99,7 @@ public final class AlyaFontRenderer {
 
             for(final CharData data : fontData.chars) {
                 final char character = (char) index;
-                int baseline = data.y + data.height - fontMetrics.getDescent() - 1;
+                final int baseline = data.y + data.height - fontMetrics.getDescent() - 1;
                 graphics.drawString(String.valueOf(character), data.x + 2, baseline);
                 index++;
             }
@@ -220,7 +220,7 @@ public final class AlyaFontRenderer {
         GL11.glVertex2d(x + width, y);
     }
 
-    private static float roundToHalf(double value) {
+    private static float roundToHalf(final double value) {
         return (float) (Math.round(value * 2) / 2.0);
     }
 

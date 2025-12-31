@@ -19,21 +19,17 @@ public final class RenderUtility {
     }
 
     public static void drawRectOutline(final float x, final float y, final float width, final float height, final int color, final float thickness) {
-
         drawRect(x, y, width, thickness, color);
-
         drawRect(x, y + height - thickness, width, thickness, color);
-
         drawRect(x, y, thickness, height, color);
-
         drawRect(x + width - thickness, y, thickness, height, color);
     }
 
     public static void drawRoundedRect(final float x, final float y, final float width, final float height, final float radius, final int color) {
-        float alpha = (color >> 24 & 0xFF) / 255.0F;
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
 
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
@@ -74,10 +70,10 @@ public final class RenderUtility {
     }
 
     public static void drawArc(final float centerX, final float centerY, final float radius, final int startAngle, final int endAngle, final int color) {
-        float alpha = (color >> 24 & 0xFF) / 255.0F;
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
 
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
@@ -106,15 +102,15 @@ public final class RenderUtility {
     }
 
     public static void drawHorizontalGradient(final float x, final float y, final float width, final float height, final int leftColor, final int rightColor) {
-        float leftAlpha = (leftColor >> 24 & 0xFF) / 255.0F;
-        float leftRed = (leftColor >> 16 & 0xFF) / 255.0F;
-        float leftGreen = (leftColor >> 8 & 0xFF) / 255.0F;
-        float leftBlue = (leftColor & 0xFF) / 255.0F;
+        final float leftAlpha = (leftColor >> 24 & 0xFF) / 255.0F;
+        final float leftRed = (leftColor >> 16 & 0xFF) / 255.0F;
+        final float leftGreen = (leftColor >> 8 & 0xFF) / 255.0F;
+        final float leftBlue = (leftColor & 0xFF) / 255.0F;
 
-        float rightAlpha = (rightColor >> 24 & 0xFF) / 255.0F;
-        float rightRed = (rightColor >> 16 & 0xFF) / 255.0F;
-        float rightGreen = (rightColor >> 8 & 0xFF) / 255.0F;
-        float rightBlue = (rightColor & 0xFF) / 255.0F;
+        final float rightAlpha = (rightColor >> 24 & 0xFF) / 255.0F;
+        final float rightRed = (rightColor >> 16 & 0xFF) / 255.0F;
+        final float rightGreen = (rightColor >> 8 & 0xFF) / 255.0F;
+        final float rightBlue = (rightColor & 0xFF) / 255.0F;
 
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
@@ -139,15 +135,15 @@ public final class RenderUtility {
     }
 
     public static void drawVerticalGradient(final float x, final float y, final float width, final float height, final int topColor, final int bottomColor) {
-        float topAlpha = (topColor >> 24 & 0xFF) / 255.0F;
-        float topRed = (topColor >> 16 & 0xFF) / 255.0F;
-        float topGreen = (topColor >> 8 & 0xFF) / 255.0F;
-        float topBlue = (topColor & 0xFF) / 255.0F;
+        final float topAlpha = (topColor >> 24 & 0xFF) / 255.0F;
+        final float topRed = (topColor >> 16 & 0xFF) / 255.0F;
+        final float topGreen = (topColor >> 8 & 0xFF) / 255.0F;
+        final float topBlue = (topColor & 0xFF) / 255.0F;
 
-        float bottomAlpha = (bottomColor >> 24 & 0xFF) / 255.0F;
-        float bottomRed = (bottomColor >> 16 & 0xFF) / 255.0F;
-        float bottomGreen = (bottomColor >> 8 & 0xFF) / 255.0F;
-        float bottomBlue = (bottomColor & 0xFF) / 255.0F;
+        final float bottomAlpha = (bottomColor >> 24 & 0xFF) / 255.0F;
+        final float bottomRed = (bottomColor >> 16 & 0xFF) / 255.0F;
+        final float bottomGreen = (bottomColor >> 8 & 0xFF) / 255.0F;
+        final float bottomBlue = (bottomColor & 0xFF) / 255.0F;
 
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
@@ -172,10 +168,10 @@ public final class RenderUtility {
     }
 
     public static void drawLine(final float x1, final float y1, final float x2, final float y2, final float thickness, final int color) {
-        float alpha = (color >> 24 & 0xFF) / 255.0F;
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
 
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();

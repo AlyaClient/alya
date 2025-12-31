@@ -1,24 +1,24 @@
 package dev.thoq.gui.auth;
 
-import dev.thoq.Alya;
+import dev.thoq.util.misc.Title;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.opengl.Display;
 
 public class AltManagerGui extends GuiScreen {
+
     @Override
     public void initGui() {
-        Display.setTitle(String.format("%s %s - Alt Manager", Alya.getName(), Alya.getVersion()));
+        Title.update(this.getClass());
         System.currentTimeMillis();
 
-        int buttonWidth = 100;
-        int buttonHeight = 20;
-        int buttonSpacing = 10;
+        final int buttonWidth = 100;
+        final int buttonHeight = 20;
+        final int buttonSpacing = 10;
 
-        int totalHeight = 4 * buttonHeight + 3 * buttonSpacing;
-        int startY = (this.height / 2) - (totalHeight / 2);
-        int buttonX = (this.width / 2) - (buttonWidth / 2);
+        final int totalHeight = 4 * buttonHeight + 3 * buttonSpacing;
+        final int startY = (this.height / 2) - (totalHeight / 2);
+        final int buttonX = (this.width / 2) - (buttonWidth / 2);
 
         this.buttonList.add(new GuiButton(3, buttonX, startY, buttonWidth, buttonHeight, "Browser"));
         this.buttonList.add(new GuiButton(1, buttonX, startY + buttonHeight + buttonSpacing, buttonWidth, buttonHeight, "Cracked"));
@@ -33,7 +33,6 @@ public class AltManagerGui extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
-
         switch(button.id) {
             case 0:
                 mc.displayGuiScreen(new GuiMainMenu());
@@ -47,4 +46,6 @@ public class AltManagerGui extends GuiScreen {
                 break;
         }
     }
+
+
 }

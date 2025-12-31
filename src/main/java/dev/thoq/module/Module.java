@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public abstract class Module {
+
     protected static final Minecraft MC = Minecraft.getMinecraft();
 
     private final String name;

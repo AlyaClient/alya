@@ -156,20 +156,17 @@ public final class ClickGUIScreen extends GuiScreen {
 
         RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
 
-        if(setting instanceof BooleanSetting) {
-            final BooleanSetting booleanSetting = (BooleanSetting) setting;
+        if(setting instanceof BooleanSetting booleanSetting) {
             if(booleanSetting.isEnabled()) {
                 RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, getCategoryColor(category));
             }
             fontRenderer.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
 
-        } else if(setting instanceof ModeSetting) {
-            final ModeSetting modeSetting = (ModeSetting) setting;
+        } else if(setting instanceof ModeSetting modeSetting) {
             final String text = setting.getName() + " > " + modeSetting.getValue();
             fontRenderer.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
 
-        } else if(setting instanceof NumberSetting) {
-            final NumberSetting numberSetting = (NumberSetting) setting;
+        } else if(setting instanceof NumberSetting numberSetting) {
             numberSettingPositions.put(numberSetting, positionX);
 
             RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
@@ -256,11 +253,9 @@ public final class ClickGUIScreen extends GuiScreen {
     }
 
     private void handleSettingClick(final Setting<?> setting, final int mouseButton) {
-        if(setting instanceof BooleanSetting) {
-            final BooleanSetting booleanSetting = (BooleanSetting) setting;
+        if(setting instanceof BooleanSetting booleanSetting) {
             booleanSetting.toggle();
-        } else if(setting instanceof ModeSetting) {
-            final ModeSetting modeSetting = (ModeSetting) setting;
+        } else if(setting instanceof ModeSetting modeSetting) {
             if(mouseButton == 0) {
                 modeSetting.cycle();
             } else if(mouseButton == 1) {

@@ -25,7 +25,7 @@ public final class BindCommand extends Command {
             return;
         }
 
-        String action = args[0].toLowerCase();
+        final String action = args[0].toLowerCase();
 
         switch(action) {
             case "add":
@@ -60,7 +60,7 @@ public final class BindCommand extends Command {
     private void handleAdd(final String moduleName, final String keyName) {
         Optional<Module> moduleOpt = Alya.getInstance().getModuleManager().getModule(moduleName);
 
-        if(!moduleOpt.isPresent()) {
+        if(moduleOpt.isEmpty()) {
             ChatUtil.sendError("Module not found: " + moduleName);
             return;
         }
@@ -80,7 +80,7 @@ public final class BindCommand extends Command {
     private void handleRemove(final String moduleName) {
         final Optional<Module> moduleOpt = Alya.getInstance().getModuleManager().getModule(moduleName);
 
-        if(!moduleOpt.isPresent()) {
+        if(moduleOpt.isEmpty()) {
             ChatUtil.sendError("Module not found: " + moduleName);
             return;
         }

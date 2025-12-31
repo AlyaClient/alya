@@ -15,7 +15,7 @@ public final class EventBus {
     private final Map<Object, List<RegisteredListener>> subscriberListeners = new ConcurrentHashMap<>();
 
     public <T extends IEvent> void subscribe(final Class<T> eventClass, final IEventListener<T> listener) {
-        listeners.computeIfAbsent(eventClass, k -> new CopyOnWriteArrayList<>()).add(listener);
+        listeners.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(listener);
     }
 
     public <T extends IEvent> void unsubscribe(final Class<T> eventClass, final IEventListener<T> listener) {
@@ -42,15 +42,15 @@ public final class EventBus {
                 continue;
             }
 
-            Class<?> paramType = method.getParameterTypes()[0];
+            final Class<?> paramType = method.getParameterTypes()[0];
             if(!IEvent.class.isAssignableFrom(paramType)) {
                 continue;
             }
 
-            Class<? extends IEvent> eventClass = (Class<? extends IEvent>) paramType;
+            final Class<? extends IEvent> eventClass = (Class<? extends IEvent>) paramType;
             method.setAccessible(true);
 
-            IEventListener<IEvent> listener = event -> {
+            final IEventListener<IEvent> listener = event -> {
                 try {
                     method.invoke(subscriber, event);
                 } catch(Exception exception) {
@@ -70,7 +70,7 @@ public final class EventBus {
         final List<RegisteredListener> registered = subscriberListeners.remove(subscriber);
         if(registered != null) {
             for(final RegisteredListener reg : registered) {
-                unsubscribe((Class<IEvent>) reg.eventClass, (IEventListener<IEvent>) reg.listener);
+                unsubscribe((Class<IEvent>) reg.eventClass(), (IEventListener<IEvent>) reg.listener());
             }
         }
     }

@@ -29,11 +29,11 @@ public class SessionChanger {
         authService.createMinecraftSessionService();
     }
 
-    private void setSession(Session session) {
+    private void setSession(final Session session) {
         Minecraft.getMinecraft().session = session;
     }
 
-    public void setUserOffline(String username) {
+    public void setUserOffline(final String username) {
         this.auth.logOut();
         Session session = new Session(username, username, "0", "legacy");
         setSession(session);

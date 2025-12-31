@@ -240,7 +240,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 
             if(!motionEvent.isCanceled()) {
                 double posX = motionEvent.getX(), posY = motionEvent.getY(), posZ = motionEvent.getZ();
-                float rotationYaw = motionEvent.getYaw(), rotationPitch = motionEvent.getPitch();
+                float rotationYaw = (float) motionEvent.getY(), rotationPitch = motionEvent.getPitch();
                 boolean onGround = motionEvent.isOnGround();
 
                 if(onGround)

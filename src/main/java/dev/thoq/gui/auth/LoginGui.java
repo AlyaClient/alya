@@ -11,6 +11,7 @@ import java.io.IOException;
 
 @SuppressWarnings({"CallToPrintStackTrace", "RedundantArrayCreation"})
 public class LoginGui extends GuiScreen {
+
     private GuiTextField username;
     private static final AlyaFontRenderer FONT_MD = Alya.getInstance().getFontRendererMedium();
 
@@ -37,7 +38,6 @@ public class LoginGui extends GuiScreen {
 
     @Override
     public void initGui() {
-        Display.setTitle(String.format("%s %s - Alt Manager - Internal Portal", Alya.getName(), Alya.getVersion()));
         final ScaledResolution sr = new ScaledResolution(this.mc);
         this.buttonList.clear();
         this.buttonList.add(new GuiButton(0, this.width / 2 - 50 - 10, this.height / 2 - 20, 120, 20, I18n.format("Login", new Object[0])));
@@ -49,14 +49,14 @@ public class LoginGui extends GuiScreen {
     protected void keyTyped(final char character, final int key) {
         try {
             super.keyTyped(character, key);
-        } catch(IOException e) {
-            e.printStackTrace();
+        } catch(final IOException ioException) {
+            ioException.printStackTrace();
         }
         if(character == '\t' && !this.username.isFocused()) {
             this.username.setFocused(true);
         }
         if(character == '\r') {
-            this.actionPerformed(this.buttonList.get(0));
+            this.actionPerformed(this.buttonList.getFirst());
         }
         this.username.textboxKeyTyped(character, key);
     }
@@ -81,4 +81,6 @@ public class LoginGui extends GuiScreen {
     public void updateScreen() {
         this.username.updateCursorCounter();
     }
+
+
 }

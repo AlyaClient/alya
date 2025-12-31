@@ -77,7 +77,7 @@ public final class HUDModule extends Module {
             info.append(" [").append(time).append("]");
         }
 
-        if(info.length() > 0) {
+        if(!info.isEmpty()) {
             fontRenderer.drawStringWithShadow(info.toString(), x, y, whiteColor);
         }
     }

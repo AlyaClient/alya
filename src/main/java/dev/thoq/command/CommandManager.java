@@ -7,19 +7,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public final class CommandManager {
-
-    private final CommandRepository repository;
-    private final String prefix;
+public record CommandManager(CommandRepository repository, String prefix) {
 
     public CommandManager() {
-        this.repository = new InMemoryCommandRepository();
-        this.prefix = ".";
-    }
-
-    public CommandManager(final CommandRepository repository, final String prefix) {
-        this.repository = repository;
-        this.prefix = prefix;
+        this(new InMemoryCommandRepository(), ".");
     }
 
     public void register(final Command command) {
@@ -42,14 +33,6 @@ public final class CommandManager {
         return repository.findAll();
     }
 
-    public CommandRepository getRepository() {
-        return repository;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
     public boolean executeCommand(final String message) {
         if(!message.startsWith(prefix)) {
             return false;
@@ -65,7 +48,7 @@ public final class CommandManager {
         final String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
 
         Optional<Command> command = repository.findByName(commandName);
-        if(!command.isPresent()) {
+        if(command.isEmpty()) {
             command = repository.findByAlias(commandName);
         }
 
@@ -92,7 +75,7 @@ public final class CommandManager {
         final String commandName = parts[0];
 
         Optional<Command> command = repository.findByName(commandName);
-        if(!command.isPresent()) {
+        if(command.isEmpty()) {
             command = repository.findByAlias(commandName);
         }
 
