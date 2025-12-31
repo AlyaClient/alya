@@ -9,21 +9,16 @@ import java.lang.reflect.Field;
 public class SessionManager {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
-    private static Field sessionField = null;
+    private static Field sessionField;
 
-    public static Field getSessionField() {
-        if(sessionField == null) {
-            try {
-                for(final Field field : Minecraft.class.getDeclaredFields()) {
-                    if(field.getType().isAssignableFrom(Session.class)) {
-                        sessionField = field;
-                        sessionField.setAccessible(true);
-                        break;
-                    }
+    private static Field getSessionField() {
+        if (sessionField == null) {
+            for (Field field : Minecraft.class.getDeclaredFields()) {
+                if (field.getType() == Session.class) {
+                    field.setAccessible(true);
+                    sessionField = field;
+                    break;
                 }
-            } catch(Exception exception) {
-                Alya.getInstance().getLogger().error("Failed to get session field", exception);
-                sessionField = null;
             }
         }
         return sessionField;
@@ -34,11 +29,18 @@ public class SessionManager {
     }
 
     public static void setSession(final Session session) {
-        try {
-            getSessionField().set(mc, session);
-        } catch(IllegalAccessException illegalAccessException) {
-            Alya.getInstance().getLogger().error("Failed to set session", illegalAccessException);
-        }
+        mc.addScheduledTask(() -> {
+            try {
+                Field field = getSessionField();
+                if (field == null) {
+                    Alya.getInstance().getLogger().error("Session field not found");
+                    return;
+                }
+                field.set(mc, session);
+            } catch (Exception e) {
+                Alya.getInstance().getLogger().error("Failed to set session", e);
+            }
+        });
     }
 
 
