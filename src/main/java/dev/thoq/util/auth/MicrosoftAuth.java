@@ -45,12 +45,12 @@ public final class MicrosoftAuth {
     public static final int PORT = 25575;
 
     public static CompletableFuture<String> acquireMSAuthCode(final Executor executor) {
-        Alya.getInstance().getLogger().info("acquireMSAuthCode start");
+        Alya.getInstance().getLogger().debug("acquireMSAuthCode start");
         return acquireMSAuthCode(MicrosoftAuth::openWebLink, executor);
     }
 
     public static CompletableFuture<String> acquireMSAuthCode(final Consumer<URI> browserAction, final Executor executor) {
-        Alya.getInstance().getLogger().info("acquireMSAuthCode with browserAction start");
+        Alya.getInstance().getLogger().debug("acquireMSAuthCode with browserAction start");
         return CompletableFuture.supplyAsync(() -> {
             try {
                 StringBuilder sb = new StringBuilder();
@@ -60,21 +60,21 @@ public final class MicrosoftAuth {
                         .forEach(sb::append);
                 String state = sb.toString();
 
-                Alya.getInstance().getLogger().info("state generated {}", state);
+                Alya.getInstance().getLogger().debug("state generated {}", state);
 
                 HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
-                Alya.getInstance().getLogger().info("server created on port {}", PORT);
+                Alya.getInstance().getLogger().debug("server created on port {}", PORT);
 
                 CountDownLatch latch = new CountDownLatch(1);
                 AtomicReference<String> authCode = new AtomicReference<>(null);
                 AtomicReference<String> errorMsg = new AtomicReference<>(null);
 
                 server.createContext("/callback", exchange -> {
-                    Alya.getInstance().getLogger().info("callback hit {}", exchange.getRequestURI());
+                    Alya.getInstance().getLogger().debug("callback hit {}", exchange.getRequestURI());
                     Map<String, String> queryParams = URLEncodedUtils
                             .parse(exchange.getRequestURI().toString().replaceAll("/callback\\?", ""), StandardCharsets.UTF_8)
                             .stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
-                    Alya.getInstance().getLogger().info("query params {}", queryParams);
+                    Alya.getInstance().getLogger().debug("query params {}", queryParams);
 
                     // Check if the state from the query matches the generated one
                     if (!state.equals(queryParams.get("state"))) {
@@ -83,7 +83,7 @@ public final class MicrosoftAuth {
                         Alya.getInstance().getLogger().error("state mismatch {}", em);
                     } else if (queryParams.containsKey("code")) {
                         authCode.set(queryParams.get("code"));
-                        Alya.getInstance().getLogger().info("auth code {}", authCode.get());
+                        Alya.getInstance().getLogger().debug("auth code {}", authCode.get());
                     } else if (queryParams.containsKey("error")) {
                         String em = String.format("%s %s", queryParams.get("error"), queryParams.get("error_description"));
                         errorMsg.set(em);
@@ -98,7 +98,7 @@ public final class MicrosoftAuth {
                         exchange.sendResponseHeaders(200, respBytes.length);
                         exchange.getResponseBody().write(respBytes);
                         exchange.getResponseBody().close();
-                        Alya.getInstance().getLogger().info("sent success page");
+                        Alya.getInstance().getLogger().debug("sent success page");
                     } catch (Exception e) {
                         Alya.getInstance().getLogger().error("error writing response", e);
                     }
@@ -115,12 +115,12 @@ public final class MicrosoftAuth {
                         .addParameter("state", state)
                         .addParameter("prompt", "select_account")
                         .build();
-                Alya.getInstance().getLogger().info("auth URI {}", uri);
+                Alya.getInstance().getLogger().debug("auth URI {}", uri);
 
                 // Open the browser with the auth link
                 browserAction.accept(uri);
                 server.start();
-                Alya.getInstance().getLogger().info("server started waiting for callback");
+                Alya.getInstance().getLogger().debug("server started waiting for callback");
                 latch.await();
 
                 // After callback, check if the auth code is available
@@ -130,7 +130,7 @@ public final class MicrosoftAuth {
                     Alya.getInstance().getLogger().error("no code or error present {}", err);
                     throw new Exception(err);
                 }
-                Alya.getInstance().getLogger().info("returning auth code {}", code);
+                Alya.getInstance().getLogger().debug("returning auth code {}", code);
                 return code;
             } catch (InterruptedException ie) {
                 Alya.getInstance().getLogger().warn("acquire interrupted");
@@ -143,7 +143,7 @@ public final class MicrosoftAuth {
     }
 
     public static CompletableFuture<String> acquireMSAccessToken(final String authCode, final Executor executor) {
-        Alya.getInstance().getLogger().info("acquireMSAccessToken start authCode {}", authCode);
+        Alya.getInstance().getLogger().debug("acquireMSAccessToken start authCode {}", authCode);
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
                 HttpPost request = new HttpPost("https://login.live.com/oauth20_token.srf");
@@ -155,15 +155,15 @@ public final class MicrosoftAuth {
                         new BasicNameValuePair("code", authCode),
                         new BasicNameValuePair("redirect_uri", String.format("http://localhost:%d/callback", PORT))
                 ), StandardCharsets.UTF_8));
-                Alya.getInstance().getLogger().info("token request execute");
+                Alya.getInstance().getLogger().debug("token request execute");
                 org.apache.http.HttpResponse response = client.execute(request);
-                Alya.getInstance().getLogger().info("token response {}", response.getStatusLine());
+                Alya.getInstance().getLogger().debug("token response {}", response.getStatusLine());
                 JsonObject json = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
                 String token = Optional.ofNullable(json.get("access_token"))
                         .map(JsonElement::getAsString)
                         .filter(t -> !StringUtils.isBlank(t))
                         .orElseThrow(() -> new Exception("no access token"));
-                Alya.getInstance().getLogger().info("access token {}", token);
+                Alya.getInstance().getLogger().debug("access token {}", token);
                 return token;
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("error in acquireMSAccessToken", e);
@@ -173,7 +173,7 @@ public final class MicrosoftAuth {
     }
 
     public static CompletableFuture<String> acquireXboxAccessToken(final String accessToken, final Executor executor) {
-        Alya.getInstance().getLogger().info("acquireXboxAccessToken start accessToken {}", accessToken);
+        Alya.getInstance().getLogger().debug("acquireXboxAccessToken start accessToken {}", accessToken);
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
                 HttpPost request = new HttpPost("https://user.auth.xboxlive.com/user/authenticate");
@@ -189,12 +189,12 @@ public final class MicrosoftAuth {
                 obj.addProperty("TokenType", "JWT");
                 request.setEntity(new StringEntity(obj.toString()));
                 org.apache.http.HttpResponse res = client.execute(request);
-                Alya.getInstance().getLogger().info("xbox auth {}", res.getStatusLine());
+                Alya.getInstance().getLogger().debug("xbox auth {}", res.getStatusLine());
                 JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
                 String token = Optional.ofNullable(json.get("Token")).map(JsonElement::getAsString)
                         .filter(t -> !StringUtils.isBlank(t))
                         .orElseThrow(() -> new Exception("no xbox token"));
-                Alya.getInstance().getLogger().info("xbox access token {}", token);
+                Alya.getInstance().getLogger().debug("xbox access token {}", token);
                 return token;
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("error in acquireXboxAccessToken", e);
@@ -204,7 +204,7 @@ public final class MicrosoftAuth {
     }
 
     public static CompletableFuture<Map<String, String>> acquireXboxXstsToken(final String accessToken, final Executor executor) {
-        Alya.getInstance().getLogger().info("acquireXboxXstsToken start {}", accessToken);
+        Alya.getInstance().getLogger().debug("acquireXboxXstsToken start {}", accessToken);
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
                 HttpPost request = new HttpPost("https://xsts.auth.xboxlive.com/xsts/authorize");
@@ -221,7 +221,7 @@ public final class MicrosoftAuth {
                 entity.addProperty("TokenType", "JWT");
                 request.setEntity(new StringEntity(entity.toString()));
                 org.apache.http.HttpResponse res = client.execute(request);
-                Alya.getInstance().getLogger().info("xsts authorize {}", res.getStatusLine());
+                Alya.getInstance().getLogger().debug("xsts authorize {}", res.getStatusLine());
                 JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
                 String token = Optional.ofNullable(json.get("Token")).map(JsonElement::getAsString)
                         .filter(t -> !StringUtils.isBlank(t))
@@ -231,7 +231,7 @@ public final class MicrosoftAuth {
                 Map<String, String> map = new HashMap<>();
                 map.put("Token", token);
                 map.put("uhs", uhs);
-                Alya.getInstance().getLogger().info("xsts token {} uhs {}", token, uhs);
+                Alya.getInstance().getLogger().debug("xsts token {} uhs {}", token, uhs);
                 return map;
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("error in acquireXboxXstsToken", e);
@@ -241,7 +241,7 @@ public final class MicrosoftAuth {
     }
 
     public static CompletableFuture<String> acquireMCAccessToken(final String xstsToken, final String userHash, final Executor executor) {
-        Alya.getInstance().getLogger().info("acquireMCAccessToken start {} {}", xstsToken, userHash);
+        Alya.getInstance().getLogger().debug("acquireMCAccessToken start {} {}", xstsToken, userHash);
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
                 HttpPost request = new HttpPost("https://api.minecraftservices.com/authentication/login_with_xbox");
@@ -249,13 +249,13 @@ public final class MicrosoftAuth {
                 request.setHeader("Content-Type", "application/json");
                 request.setEntity(new StringEntity(String.format("{\"identityToken\":\"XBL3.0 x=%s;%s\"}", userHash, xstsToken)));
                 org.apache.http.HttpResponse res = client.execute(request);
-                Alya.getInstance().getLogger().info("mc auth {}", res.getStatusLine());
+                Alya.getInstance().getLogger().debug("mc auth {}", res.getStatusLine());
                 JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
                 String token = Optional.ofNullable(json.get("access_token"))
                         .map(JsonElement::getAsString)
                         .filter(t -> !StringUtils.isBlank(t))
                         .orElseThrow(() -> new Exception("no mc access token"));
-                Alya.getInstance().getLogger().info("mc access token {}", token);
+                Alya.getInstance().getLogger().debug("mc access token {}", token);
                 return token;
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("error in acquireMCAccessToken", e);
@@ -265,20 +265,20 @@ public final class MicrosoftAuth {
     }
 
     public static CompletableFuture<Session> login(final String mcToken, final Executor executor) {
-        Alya.getInstance().getLogger().info("login start {}", mcToken);
+        Alya.getInstance().getLogger().debug("login start {}", mcToken);
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
                 HttpGet request = new HttpGet("https://api.minecraftservices.com/minecraft/profile");
                 request.setConfig(REQUEST_CONFIG);
                 request.setHeader("Authorization", "Bearer " + mcToken);
                 org.apache.http.HttpResponse res = client.execute(request);
-                Alya.getInstance().getLogger().info("profile response {}", res.getStatusLine());
+                Alya.getInstance().getLogger().debug("profile response {}", res.getStatusLine());
                 JsonObject json = JsonParser.parseString(EntityUtils.toString(res.getEntity())).getAsJsonObject();
                 String uuid = Optional.ofNullable(json.get("id")).map(JsonElement::getAsString)
                         .filter(u -> !StringUtils.isBlank(u))
                         .orElseThrow(() -> new Exception("no profile present"));
                 Session session = new Session(json.get("name").getAsString(), uuid, mcToken, Session.Type.MOJANG.toString());
-                Alya.getInstance().getLogger().info("login successful for {}", json.get("name").getAsString());
+                Alya.getInstance().getLogger().debug("login successful for {}", json.get("name").getAsString());
                 return session;
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("error in login", e);
@@ -288,20 +288,20 @@ public final class MicrosoftAuth {
     }
 
     public static void openWebLink(URI uri) {
-        Alya.getInstance().getLogger().info("openWebLink {}", uri);
+        Alya.getInstance().getLogger().debug("openWebLink {}", uri);
         boolean opened = false;
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
                 Desktop.getDesktop().browse(uri);
                 opened = true;
-                Alya.getInstance().getLogger().info("opened with Desktop");
+                Alya.getInstance().getLogger().debug("opened with Desktop");
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("desktop browse failed", e);
             }
         }
         if (!opened) {
             String os = System.getProperty("os.name").toLowerCase();
-            Alya.getInstance().getLogger().info("fallback open for OS {}", os);
+            Alya.getInstance().getLogger().debug("fallback open for OS {}", os);
             try {
                 ProcessBuilder pb = os.contains("linux")
                         ? new ProcessBuilder("xdg-open", uri.toString())
@@ -309,7 +309,7 @@ public final class MicrosoftAuth {
                         ? new ProcessBuilder("open", uri.toString())
                         : new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri.toString());
                 pb.start();
-                Alya.getInstance().getLogger().info("fallback open executed");
+                Alya.getInstance().getLogger().debug("fallback open executed");
             } catch (Exception e) {
                 Alya.getInstance().getLogger().error("fallback open failed", e);
             }

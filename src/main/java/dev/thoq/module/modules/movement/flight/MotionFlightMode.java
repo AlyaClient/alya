@@ -14,8 +14,7 @@ public final class MotionFlightMode extends Submodule {
 
     public MotionFlightMode(final FlightModule parent) {
         super("Motion", parent);
-        addSetting(glide);
-        addSetting(smooth);
+        initializeSettings(glide, smooth);
 
         glide.setVisibility(() -> parent.getMode().is("Motion"));
         smooth.setVisibility(() -> parent.getMode().is("Motion"));

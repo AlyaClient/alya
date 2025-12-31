@@ -45,11 +45,7 @@ public final class KeystrokesModule extends Module {
 
     public KeystrokesModule() {
         super("Keystrokes", "Shows pressed keys on screen", Category.RENDER);
-        addSetting(posX);
-        addSetting(posY);
-        addSetting(showMouse);
-        addSetting(showSpace);
-        addSetting(gridSize);
+        initializeSettings(posX, posY, showMouse, showSpace, gridSize);
     }
 
     @Override

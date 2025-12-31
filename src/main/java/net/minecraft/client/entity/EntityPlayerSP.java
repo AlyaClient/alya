@@ -58,6 +58,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 
+@SuppressWarnings({"RedundantCast", "UnusedAssignment"})
 public class EntityPlayerSP extends AbstractClientPlayer {
     public final NetHandlerPlayClient sendQueue;
     private final StatFileWriter statWriter;
@@ -240,7 +241,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 
             if(!motionEvent.isCanceled()) {
                 double posX = motionEvent.getX(), posY = motionEvent.getY(), posZ = motionEvent.getZ();
-                float rotationYaw = (float) motionEvent.getY(), rotationPitch = motionEvent.getPitch();
+                float rotationYaw = motionEvent.getYaw(), rotationPitch = motionEvent.getPitch();
                 boolean onGround = motionEvent.isOnGround();
 
                 if(onGround)

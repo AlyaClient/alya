@@ -25,10 +25,7 @@ public final class HUDModule extends Module {
 
     public HUDModule() {
         super("HUD", "Displays client information on screen", Category.RENDER);
-        addSetting(showFPS);
-        addSetting(showBPS);
-        addSetting(showTime);
-        addSetting(smoothChat);
+        initializeSettings(showFPS, showBPS, showTime, smoothChat);
     }
 
     @Override

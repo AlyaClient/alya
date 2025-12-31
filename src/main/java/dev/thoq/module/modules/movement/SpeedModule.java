@@ -13,9 +13,11 @@ public final class SpeedModule extends Module {
     public SpeedModule() {
         super("Speed", "F1 car", Category.MOVEMENT);
 
-        addSetting(mode);
-        addSubmodule(new BHopSpeedMode(this));
-        addSubmodule(new VanillaSpeedMode(this));
+        initializeSettings(mode);
+        initializeSubmodules(
+                new BHopSpeedMode(this),
+                new VanillaSpeedMode(this)
+        );
     }
 
     public ModeSetting getMode() {

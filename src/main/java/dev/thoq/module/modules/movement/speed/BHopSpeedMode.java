@@ -15,8 +15,8 @@ public final class BHopSpeedMode extends Submodule {
     public BHopSpeedMode(final SpeedModule parent) {
         super("BHop", parent);
 
-        addSetting(strafe);
-        addSetting(omniSprint);
+        initializeSettings(strafe, omniSprint);
+
         strafe.setVisibility(() -> parent.getMode().is("BHop"));
         omniSprint.setVisibility(() -> parent.getMode().is("BHop"));
     }

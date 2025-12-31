@@ -14,13 +14,14 @@ public final class FlightModule extends Module {
 
     public FlightModule() {
         super("Flight", "Airplane", Category.MOVEMENT);
-        addSetting(mode);
-        addSetting(speed);
+        initializeSettings(mode, speed);
 
         speed.setVisibility(() -> mode.is("Motion"));
 
-        addSubmodule(new MotionFlightMode(this));
-        addSubmodule(new StaticFlightMode(this));
+        initializeSubmodules(
+                new MotionFlightMode(this),
+                new StaticFlightMode(this)
+        );
 
         mode.setOnChange(this::updateSubmodules);
     }

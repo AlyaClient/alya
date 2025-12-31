@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +76,13 @@ public abstract class Module {
         });
     }
 
-    protected void addSubmodule(Submodule submodule) {
+    protected void initializeSubmodules(final Submodule ...submodules) {
+        for(final Submodule submodule : submodules) {
+            addSubmodule(submodule);
+        }
+    }
+
+    private void addSubmodule(final Submodule submodule) {
         submodules.add(submodule);
     }
 
@@ -107,7 +114,12 @@ public abstract class Module {
         this.keyCode = keyCode;
     }
 
-    protected <T extends Setting<?>> void addSetting(T setting) {
+    @SafeVarargs
+    protected final <T extends Setting<?>> void initializeSettings(final T... theSettings) {
+        Collections.addAll(settings, theSettings);
+    }
+
+    private <T extends Setting<?>> void addSetting(final T setting) {
         settings.add(setting);
     }
 

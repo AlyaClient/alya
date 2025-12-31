@@ -21,6 +21,12 @@ public final class ModuleManager {
         return repository;
     }
 
+    public void putAll(final Module ...modules) {
+        for(final Module module : modules) {
+            register(module);
+        }
+    }
+
     public void register(final Module module) {
         repository.save(module);
     }

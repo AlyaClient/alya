@@ -14,7 +14,7 @@ public class AmbienceModule extends Module {
     public AmbienceModule() {
         super("Ambience", "Sets the time of day client side", Category.RENDER);
 
-        addSetting(time);
+        initializeSettings(time);
     }
 
     @Override

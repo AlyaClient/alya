@@ -12,7 +12,9 @@ import dev.thoq.module.modules.movement.FlightModule;
 import dev.thoq.module.modules.movement.SpeedModule;
 import dev.thoq.module.modules.player.NoJumpDelayModule;
 import dev.thoq.module.modules.player.NoRightClickDelayModule;
+import dev.thoq.module.modules.player.SprintModule;
 import dev.thoq.module.modules.render.*;
+import dev.thoq.module.modules.world.TimerModule;
 import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.util.misc.Title;
 import net.minecraft.client.Minecraft;
@@ -61,22 +63,28 @@ public final class Alya {
     }
 
     private void initializeModules() {
-        moduleManager.register(new ClickGUI());
-        moduleManager.register(new ArrayListModule());
-        moduleManager.register(new HUDModule());
-        moduleManager.register(new KeystrokesModule());
-        moduleManager.register(new FlightModule());
-        moduleManager.register(new SpeedModule());
-        moduleManager.register(new FullBrightModule());
-        moduleManager.register(new AmbienceModule());
-        moduleManager.register(new NoRightClickDelayModule());
-        moduleManager.register(new NoJumpDelayModule());
+        moduleManager.putAll(
+                new ClickGUI(),
+                new ArrayListModule(),
+                new HUDModule(),
+                new KeystrokesModule(),
+                new FlightModule(),
+                new SpeedModule(),
+                new FullBrightModule(),
+                new AmbienceModule(),
+                new NoRightClickDelayModule(),
+                new NoJumpDelayModule(),
+                new SprintModule(),
+                new TimerModule()
+        );
     }
 
     private void initializeCommands() {
-        commandManager.register(new HelpCommand());
-        commandManager.register(new BindCommand());
-        commandManager.register(new ConfigCommand());
+        commandManager.putAll(
+                new HelpCommand(),
+                new BindCommand(),
+                new ConfigCommand()
+        );
     }
 
     private void playStartupSound() {

@@ -30,6 +30,12 @@ public final class CommandManager {
         return prefix;
     }
 
+    public void putAll(final Command ...commands) {
+        for(final Command command : commands) {
+            register(command);
+        }
+    }
+
     public void register(final Command command) {
         repository.save(command);
     }
@@ -81,7 +87,7 @@ public final class CommandManager {
 
     public List<String> getCompletions(final String input) {
         if (!input.startsWith(prefix)) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
         final String commandLine = input.substring(prefix.length());
@@ -105,12 +111,12 @@ public final class CommandManager {
             return command.get().getCompletions(args);
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public List<String> getCommandCompletions(final String partial) {
         final String lowerPartial = partial.toLowerCase();
-        final List<String> completions = new ArrayList<String>();
+        final List<String> completions = new ArrayList<>();
 
         for (final Command command : repository.findAll()) {
             if (command.getName().toLowerCase().startsWith(lowerPartial)) {

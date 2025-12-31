@@ -23,7 +23,7 @@ public final class ArrayListModule extends Module {
     public ArrayListModule() {
         super("ArrayList", "Displays enabled modules on screen", Category.RENDER);
 
-        addSetting(showVisual);
+        initializeSettings(showVisual);
     }
 
     @Override
