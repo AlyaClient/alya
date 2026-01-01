@@ -14,24 +14,18 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldInfo;
-import net.optifine.CustomPanorama;
-import net.optifine.CustomPanoramaProperties;
 import net.optifine.reflect.Reflector;
 import org.apache.commons.io.Charsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
-import org.lwjgl.util.glu.Project;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -64,19 +58,18 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     private String openGLWarningLink;
     private static final ResourceLocation splashTexts = new ResourceLocation("texts/splashes.txt");
-
-    private static final ResourceLocation[] titlePanoramaPaths = new ResourceLocation[]{new ResourceLocation("textures/gui/title/background/panorama_0.png"), new ResourceLocation("textures/gui/title/background/panorama_1.png"), new ResourceLocation("textures/gui/title/background/panorama_2.png"), new ResourceLocation("textures/gui/title/background/panorama_3.png"), new ResourceLocation("textures/gui/title/background/panorama_4.png"), new ResourceLocation("textures/gui/title/background/panorama_5.png")};
     public static final String field_96138_a = "Please click " + EnumChatFormatting.UNDERLINE + "here" + EnumChatFormatting.RESET + " for more information.";
     private int field_92024_r;
     private int field_92022_t;
     private int field_92021_u;
     private int field_92020_v;
     private int field_92019_w;
-    private ResourceLocation backgroundTexture;
 
     private boolean field_183502_L;
     private GuiScreen field_183503_M;
     private GuiScreen modUpdateNotification;
+
+    private ResourceLocation randomImage;
 
     public GuiMainMenu() {
         this.openGLWarning2 = field_96138_a;
@@ -141,16 +134,19 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     public void initGui() {
+        int n = RANDOM.nextInt(4) + 1;
+        this.randomImage = new ResourceLocation("Alya/Assets/Femboys/" + n + ".png");
+
         Title.update(this.getClass());
         final DynamicTexture viewportTexture = new DynamicTexture(256, 256);
-        this.backgroundTexture = this.mc.getTextureManager().getDynamicTextureLocation("background", viewportTexture);
+        ResourceLocation backgroundTexture = this.mc.getTextureManager().getDynamicTextureLocation("background", viewportTexture);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
 
         if(calendar.get(Calendar.MONTH) + 1 == 12 && calendar.get(Calendar.DATE) == 24) {
-            this.splashText = "Merry X-mas! -Alya devs";
+            this.splashText = "Merry X-mas!";
         } else if(calendar.get(Calendar.MONTH) + 1 == 1 && calendar.get(Calendar.DATE) == 1) {
-            this.splashText = "Happy new year! -Alya devs";
+            this.splashText = "Happy new year!";
         } else if(calendar.get(Calendar.MONTH) + 1 == 10 && calendar.get(Calendar.DATE) == 31) {
             this.splashText = "OOoooOOOoooo! Spooky!";
         }
@@ -261,169 +257,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
-    private void drawPanorama(int p_73970_1_, int p_73970_2_, float p_73970_3_) {
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        GlStateManager.matrixMode(5889);
-        GlStateManager.pushMatrix();
-        GlStateManager.loadIdentity();
-        Project.gluPerspective(120.0F, 1.0F, 0.05F, 10.0F);
-        GlStateManager.matrixMode(5888);
-        GlStateManager.pushMatrix();
-        GlStateManager.loadIdentity();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
-        GlStateManager.depthMask(false);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        int i = 8;
-        int j = 64;
-        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
-
-        if(custompanoramaproperties != null) {
-            j = custompanoramaproperties.getBlur1();
-        }
-
-        for(int k = 0; k < j; ++k) {
-            GlStateManager.pushMatrix();
-            float f = ((float) (k % i) / (float) i - 0.5F) / 64.0F;
-            float f1 = ((float) (k / i) / (float) i - 0.5F) / 64.0F;
-            float f2 = 0.0F;
-            GlStateManager.translate(f, f1, f2);
-            GlStateManager.rotate(MathHelper.sin(((float) this.panoramaTimer + p_73970_3_) / 400.0F) * 25.0F + 20.0F, 1.0F, 0.0F, 0.0F);
-            GlStateManager.rotate(-((float) this.panoramaTimer + p_73970_3_) * 0.1F, 0.0F, 1.0F, 0.0F);
-
-            for(int l = 0; l < 6; ++l) {
-                GlStateManager.pushMatrix();
-
-                if(l == 1) {
-                    GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
-                }
-
-                if(l == 2) {
-                    GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
-                }
-
-                if(l == 3) {
-                    GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-                }
-
-                if(l == 4) {
-                    GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
-                }
-
-                if(l == 5) {
-                    GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-                }
-
-                ResourceLocation[] aresourcelocation = titlePanoramaPaths;
-
-                if(custompanoramaproperties != null) {
-                    aresourcelocation = custompanoramaproperties.getPanoramaLocations();
-                }
-
-                this.mc.getTextureManager().bindTexture(aresourcelocation[l]);
-                worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-                int i1 = 255 / (k + 1);
-                float f3 = 0.0F;
-                worldrenderer.pos(-1.0D, -1.0D, 1.0D).tex(0.0D, 0.0D).func_181669_b(255, 255, 255, i1).endVertex();
-                worldrenderer.pos(1.0D, -1.0D, 1.0D).tex(1.0D, 0.0D).func_181669_b(255, 255, 255, i1).endVertex();
-                worldrenderer.pos(1.0D, 1.0D, 1.0D).tex(1.0D, 1.0D).func_181669_b(255, 255, 255, i1).endVertex();
-                worldrenderer.pos(-1.0D, 1.0D, 1.0D).tex(0.0D, 1.0D).func_181669_b(255, 255, 255, i1).endVertex();
-                tessellator.draw();
-                GlStateManager.popMatrix();
-            }
-
-            GlStateManager.popMatrix();
-            GlStateManager.colorMask(true, true, true, false);
-        }
-
-        worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
-        GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.matrixMode(5889);
-        GlStateManager.popMatrix();
-        GlStateManager.matrixMode(5888);
-        GlStateManager.popMatrix();
-        GlStateManager.depthMask(true);
-        GlStateManager.enableCull();
-        GlStateManager.enableDepth();
-    }
-
-    private void rotateAndBlurSkybox(float p_73968_1_) {
-        this.mc.getTextureManager().bindTexture(this.backgroundTexture);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, 256, 256);
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.colorMask(true, true, true, false);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-        GlStateManager.disableAlpha();
-        int i = 3;
-        int j = 3;
-        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
-
-        if(custompanoramaproperties != null) {
-            j = custompanoramaproperties.getBlur2();
-        }
-
-        for(int k = 0; k < j; ++k) {
-            float f = 1.0F / (float) (k + 1);
-            int l = this.width;
-            int i1 = this.height;
-            float f1 = (float) (k - i / 2) / 256.0F;
-            worldrenderer.pos(l, i1, this.zLevel).tex(0.0F + f1, 1.0D).func_181666_a(1.0F, 1.0F, 1.0F, f).endVertex();
-            worldrenderer.pos(l, 0.0D, this.zLevel).tex(1.0F + f1, 1.0D).func_181666_a(1.0F, 1.0F, 1.0F, f).endVertex();
-            worldrenderer.pos(0.0D, 0.0D, this.zLevel).tex(1.0F + f1, 0.0D).func_181666_a(1.0F, 1.0F, 1.0F, f).endVertex();
-            worldrenderer.pos(0.0D, i1, this.zLevel).tex(0.0F + f1, 0.0D).func_181666_a(1.0F, 1.0F, 1.0F, f).endVertex();
-        }
-
-        tessellator.draw();
-        GlStateManager.enableAlpha();
-        GlStateManager.colorMask(true, true, true, true);
-    }
-
-    private void renderSkybox(int p_73971_1_, int p_73971_2_, float p_73971_3_) {
-        this.mc.getFramebuffer().unbindFramebuffer();
-        GlStateManager.viewport(0, 0, 256, 256);
-        this.drawPanorama(p_73971_1_, p_73971_2_, p_73971_3_);
-        this.rotateAndBlurSkybox(p_73971_3_);
-        int i = 3;
-        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
-
-        if(custompanoramaproperties != null) {
-            i = custompanoramaproperties.getBlur3();
-        }
-
-        for(int j = 0; j < i; ++j) {
-            this.rotateAndBlurSkybox(p_73971_3_);
-            this.rotateAndBlurSkybox(p_73971_3_);
-        }
-
-        this.mc.getFramebuffer().bindFramebuffer(true);
-        GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
-        float f2 = this.width > this.height ? 120.0F / (float) this.width : 120.0F / (float) this.height;
-        float f = (float) this.height * f2 / 256.0F;
-        float f1 = (float) this.width * f2 / 256.0F;
-        int k = this.width;
-        int l = this.height;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-        worldrenderer.pos(0.0D, l, this.zLevel).tex(0.5F - f, 0.5F + f1).func_181666_a(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
-        worldrenderer.pos(k, l, this.zLevel).tex(0.5F - f, 0.5F - f1).func_181666_a(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
-        worldrenderer.pos(k, 0.0D, this.zLevel).tex(0.5F + f, 0.5F - f1).func_181666_a(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
-        worldrenderer.pos(0.0D, 0.0D, this.zLevel).tex(0.5F + f, 0.5F + f1).func_181666_a(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
-        tessellator.draw();
-    }
-
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-
         menuShader.render();
 
         GlStateManager.enableAlpha();
@@ -488,6 +322,14 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
             drawRect(this.field_92022_t - 2, this.field_92021_u - 2, this.field_92020_v + 2, this.field_92019_w - 1, 1428160512);
             this.drawString(this.fontRendererObj, this.openGLWarning1, this.field_92022_t, this.field_92021_u, -1);
             this.drawString(this.fontRendererObj, this.openGLWarning2, (this.width - this.field_92024_r) / 2, this.buttonList.get(0).yPosition - 12, -1);
+        }
+
+        if(this.randomImage != null) {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            this.mc.getTextureManager().bindTexture(this.randomImage);
+            final int width = 50;
+            final int height = 70;
+            drawModalRectWithCustomSizedTexture(this.width - width, this.height - height, 0, 0, width, height, width, height);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

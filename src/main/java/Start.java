@@ -8,7 +8,7 @@ public class Start {
         System.setProperty("apple.awt.application.appearance", "system");
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        Main.main(concat(new String[]{"--version", "1.0", "--accessToken", "0", "--assetsDir", "assets", "--userProperties", "{}"}, args));
+        Main.main(concat(new String[]{"--version", "Alya_1.0", "--accessToken", "0", "--assetsDir", "assets", "--userProperties", "{}"}, args));
     }
 
     public static <T> T[] concat(T[] first, T[] second) {

@@ -626,6 +626,10 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         entityplayer.setPositionAndRotation(d0, d1, d2, f, f1);
         this.netManager.sendPacket(new C03PacketPlayer.C06PacketPlayerPosLook(entityplayer.posX, entityplayer.getEntityBoundingBox().minY, entityplayer.posZ, entityplayer.rotationYaw, entityplayer.rotationPitch, false));
 
+        if(entityplayer instanceof EntityPlayerSP) {
+            ((EntityPlayerSP) entityplayer).setLastReportedPosition(entityplayer.posX, entityplayer.getEntityBoundingBox().minY, entityplayer.posZ, entityplayer.rotationYaw, entityplayer.rotationPitch);
+        }
+
         if(!this.doneLoadingTerrain) {
             this.gameController.thePlayer.prevPosX = this.gameController.thePlayer.posX;
             this.gameController.thePlayer.prevPosY = this.gameController.thePlayer.posY;

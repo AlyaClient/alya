@@ -145,6 +145,15 @@ public class EntityPlayerSP extends AbstractClientPlayer {
      */
     public float prevTimeInPortal;
 
+    public void setLastReportedPosition(double x, double y, double z, float yaw, float pitch) {
+        this.lastReportedPosX = x;
+        this.lastReportedPosY = y;
+        this.lastReportedPosZ = z;
+        this.lastReportedYaw = yaw;
+        this.lastReportedPitch = pitch;
+        this.positionUpdateTicks = 0;
+    }
+
     public EntityPlayerSP(Minecraft mcIn, World worldIn, NetHandlerPlayClient netHandler, StatFileWriter statFile) {
         super(worldIn, netHandler.getGameProfile());
         this.sendQueue = netHandler;
