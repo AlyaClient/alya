@@ -29,7 +29,7 @@ public final class Title implements IUtil {
     }
 
     public static void set(final String title) {
-        final String base = String.format("%s %s (Minecraft 1.8.9)", Alya.getName(), Alya.getVersion());
+        final String base = String.format("%s %s | Minecraft 1.8.9", Alya.getName(), Alya.getVersion());
         if(title.isEmpty()) {
             Display.setTitle(base);
         } else {
