@@ -6,8 +6,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiButton extends Gui
-{
+public class GuiButton extends Gui {
     protected static final ResourceLocation buttonTextures = new ResourceLocation("textures/gui/widgets.png");
 
     private static final int BACKGROUND_COLOR = 0xFF181818;
@@ -22,36 +21,48 @@ public class GuiButton extends Gui
     private float hoverAnimation = 0.0F;
     private static final float ANIMATION_SPEED = 0.15F;
 
-    /** Button width in pixels */
+    /**
+     * Button width in pixels
+     */
     protected int width;
 
-    /** Button height in pixels */
+    /**
+     * Button height in pixels
+     */
     protected int height;
 
-    /** The x position of this control. */
+    /**
+     * The x position of this control.
+     */
     public int xPosition;
 
-    /** The y position of this control. */
+    /**
+     * The y position of this control.
+     */
     public int yPosition;
 
-    /** The string displayed on this control. */
+    /**
+     * The string displayed on this control.
+     */
     public String displayString;
     public int id;
 
-    /** True if this control is enabled, false to disable. */
+    /**
+     * True if this control is enabled, false to disable.
+     */
     public boolean enabled;
 
-    /** Hides the button completely if false. */
+    /**
+     * Hides the button completely if false.
+     */
     public boolean visible;
     protected boolean hovered;
 
-    public GuiButton(int buttonId, int x, int y, String buttonText)
-    {
+    public GuiButton(int buttonId, int x, int y, String buttonText) {
         this(buttonId, x, y, 200, 20, buttonText);
     }
 
-    public GuiButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText)
-    {
+    public GuiButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
         this.width = 200;
         this.height = 20;
         this.enabled = true;
@@ -68,24 +79,19 @@ public class GuiButton extends Gui
      * Returns 0 if the button is disabled, 1 if the mouse is NOT hovering over this button and 2 if it IS hovering over
      * this button.
      */
-    protected int getHoverState(boolean mouseOver)
-    {
+    protected int getHoverState(boolean mouseOver) {
         int i = 1;
 
-        if (!this.enabled)
-        {
+        if(!this.enabled) {
             i = 0;
-        }
-        else if (mouseOver)
-        {
+        } else if(mouseOver) {
             i = 2;
         }
 
         return i;
     }
 
-    private int interpolateColor(int color1, int color2, float factor)
-    {
+    private int interpolateColor(int color1, int color2, float factor) {
         int a1 = (color1 >> 24) & 0xFF;
         int r1 = (color1 >> 16) & 0xFF;
         int g1 = (color1 >> 8) & 0xFF;
@@ -107,20 +113,15 @@ public class GuiButton extends Gui
     /**
      * Draws this button to the screen.
      */
-    public void drawButton(Minecraft mc, int mouseX, int mouseY)
-    {
-        if (this.visible)
-        {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        if(this.visible) {
             FontRenderer fontrenderer = mc.fontRendererObj;
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 
             // Fast animation update
-            if (this.hovered && this.enabled)
-            {
+            if(this.hovered && this.enabled) {
                 hoverAnimation = Math.min(1.0F, hoverAnimation + ANIMATION_SPEED);
-            }
-            else
-            {
+            } else {
                 hoverAnimation = Math.max(0.0F, hoverAnimation - ANIMATION_SPEED);
             }
 
@@ -128,14 +129,11 @@ public class GuiButton extends Gui
             int borderColor;
             int textColor;
 
-            if (!this.enabled)
-            {
+            if(!this.enabled) {
                 bgColor = BACKGROUND_DISABLED;
                 borderColor = BORDER_COLOR;
                 textColor = TEXT_DISABLED;
-            }
-            else
-            {
+            } else {
                 // Interpolate colors based on animation
                 bgColor = interpolateColor(BACKGROUND_COLOR, BACKGROUND_HOVER, hoverAnimation);
                 borderColor = interpolateColor(BORDER_COLOR, BORDER_HOVER, hoverAnimation);
@@ -154,13 +152,6 @@ public class GuiButton extends Gui
             drawRect(this.xPosition, this.yPosition, this.xPosition + 1, this.yPosition + this.height, borderColor);
             drawRect(this.xPosition + this.width - 1, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, borderColor);
 
-            // Animated accent bar on left side
-            if (hoverAnimation > 0.0F && this.enabled)
-            {
-                int accentColor = interpolateColor(BACKGROUND_COLOR, ACCENT_COLOR, hoverAnimation);
-                drawRect(this.xPosition, this.yPosition, this.xPosition + 2, this.yPosition + this.height, accentColor);
-            }
-
             this.mouseDragged(mc, mouseX, mouseY);
 
             this.drawButtonText(mc, textColor);
@@ -172,58 +163,49 @@ public class GuiButton extends Gui
     /**
      * Draws the button text. Override this method to use a custom font renderer.
      */
-    protected void drawButtonText(Minecraft mc, int textColor)
-    {
+    protected void drawButtonText(Minecraft mc, int textColor) {
         this.drawCenteredString(mc.fontRendererObj, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, textColor);
     }
 
     /**
      * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
-    protected void mouseDragged(Minecraft mc, int mouseX, int mouseY)
-    {
+    protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
     }
 
     /**
      * Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
      */
-    public void mouseReleased(int mouseX, int mouseY)
-    {
+    public void mouseReleased(int mouseX, int mouseY) {
     }
 
     /**
      * Returns true if the mouse has been pressed on this control. Equivalent of MouseListener.mousePressed(MouseEvent
      * e).
      */
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
-    {
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
         return this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
     }
 
     /**
      * Whether the mouse cursor is currently over the button.
      */
-    public boolean isMouseOver()
-    {
+    public boolean isMouseOver() {
         return this.hovered;
     }
 
-    public void drawButtonForegroundLayer(int mouseX, int mouseY)
-    {
+    public void drawButtonForegroundLayer(int mouseX, int mouseY) {
     }
 
-    public void playPressSound(SoundHandler soundHandlerIn)
-    {
+    public void playPressSound(SoundHandler soundHandlerIn) {
         soundHandlerIn.playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
     }
 
-    public int getButtonWidth()
-    {
+    public int getButtonWidth() {
         return this.width;
     }
 
-    public void setWidth(int width)
-    {
+    public void setWidth(int width) {
         this.width = width;
     }
 }

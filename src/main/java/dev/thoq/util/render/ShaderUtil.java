@@ -1,4 +1,4 @@
-package dev.thoq.util;
+package dev.thoq.util.render;
 
 import dev.thoq.Alya;
 import net.minecraft.client.Minecraft;
@@ -9,6 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import org.lwjgl.input.Mouse;
+
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -17,9 +19,18 @@ public final class ShaderUtil {
     private int programId = -1;
     private int timeUniform = -1;
     private int resolutionUniform = -1;
+    private int mouseUniform = -1;
+    private int mouseVelocityUniform = -1;
+    private int deltaTimeUniform = -1;
     private final long startTime;
     private boolean initialized = false;
     private final String shaderPath;
+
+    private float mouseX = 0.5f;
+    private float mouseY = 0.5f;
+    private float prevMouseX = 0.5f;
+    private float prevMouseY = 0.5f;
+    private long lastFrameTime = 0;
 
     public ShaderUtil(final String shaderPath) {
         this.shaderPath = shaderPath;
@@ -76,6 +87,9 @@ public final class ShaderUtil {
 
             timeUniform = GL20.glGetUniformLocation(programId, "time");
             resolutionUniform = GL20.glGetUniformLocation(programId, "resolution");
+            mouseUniform = GL20.glGetUniformLocation(programId, "mouse");
+            mouseVelocityUniform = GL20.glGetUniformLocation(programId, "mouseVelocity");
+            deltaTimeUniform = GL20.glGetUniformLocation(programId, "deltaTime");
 
             GL20.glDeleteShader(vertexShader);
             GL20.glDeleteShader(fragmentShader);
@@ -99,6 +113,19 @@ public final class ShaderUtil {
 
         final float time = (System.currentTimeMillis() - startTime) / 1000.0f;
 
+        long currentTime = System.currentTimeMillis();
+        float deltaTime = lastFrameTime == 0 ? 0.016f : (currentTime - lastFrameTime) / 1000.0f;
+        deltaTime = Math.min(deltaTime, 0.1f);
+        lastFrameTime = currentTime;
+
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+        mouseX = (float) Mouse.getX() / mc.displayWidth;
+        mouseY = (float) Mouse.getY() / mc.displayHeight;
+
+        float velX = mouseX - prevMouseX;
+        float velY = mouseY - prevMouseY;
+
         GlStateManager.pushMatrix();
         GlStateManager.disableTexture2D();
         GlStateManager.disableCull();
@@ -111,6 +138,15 @@ public final class ShaderUtil {
         }
         if(resolutionUniform != -1) {
             GL20.glUniform2f(resolutionUniform, mc.displayWidth, mc.displayHeight);
+        }
+        if(mouseUniform != -1) {
+            GL20.glUniform2f(mouseUniform, mouseX, mouseY);
+        }
+        if(mouseVelocityUniform != -1) {
+            GL20.glUniform2f(mouseVelocityUniform, velX, velY);
+        }
+        if(deltaTimeUniform != -1) {
+            GL20.glUniform1f(deltaTimeUniform, deltaTime);
         }
 
         GL11.glBegin(GL11.GL_QUADS);

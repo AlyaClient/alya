@@ -42,7 +42,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     private static final Logger logger = LogManager.getLogger();
     private static final Random RANDOM = new Random();
-    private static final ShaderUtil menuShader = new ShaderUtil("Alya/Shaders/MainMenu.glsl");
+    private static final ShaderUtil menuShader = new ShaderUtil("Alya/Shaders/MainMenuBg.glsl");
 
     private String splashText;
 
@@ -158,7 +158,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         this.buttonList.add(new AlyaButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
         this.buttonList.add(new AlyaButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
-        this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
+        // this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
 
         synchronized(this.threadLock) {
             int field_92023_s = this.fontRendererObj.getStringWidth(this.openGLWarning1);
@@ -269,35 +269,45 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        String titleText = "Alya";
-
-        AlyaFontRenderer titleFont = Alya.getInstance().getFontRendererTitle();
-
+        int logoSize = 256;
         int firstButtonY = this.height / 4 + 48;
         int availableHeight = firstButtonY - 10;
 
-        float baseScale = 2.5F;
-        float fontHeight = titleFont.getHeight();
-        float scaledHeight = fontHeight * baseScale;
-
-        float scale = baseScale;
-        if(scaledHeight + 35 > availableHeight) {
-            scale = Math.max(1.0F, (availableHeight - 20) / fontHeight);
+        float scale = 10.0F;
+        if(logoSize + 20 > availableHeight) {
+            scale = (float) (availableHeight - 20) / logoSize;
         }
+        int scaledSize = (int) (logoSize * scale);
 
-        final int titleY = Math.max(20, (int) ((availableHeight - fontHeight * scale) / 2));
+        int logoX = (this.width - scaledSize) / 2;
+        int logoY = Math.max(10, (availableHeight - scaledSize) / 2);
+
+        final String titleText = "Alya";
+        final AlyaFontRenderer font = Alya.getInstance().getFontRendererTitle();
+
+        final float textWidth = font.getStringWidth(titleText);
+        final float textHeight = font.getFontHeight();
+
+        final float maxTextWidth = this.width - 20.0F;
+        final float maxTextHeight = Math.max(1.0F, availableHeight - 20.0F);
+
+        float textScale = 1.0F;
+        if(textWidth > 0.0F && textHeight > 0.0F) {
+            textScale = Math.min(maxTextWidth / textWidth, maxTextHeight / textHeight);
+        }
+        textScale = Math.max(0.5F, Math.min(textScale, 10.0F));
+
+        final float textX = (this.width / 2.0F - (textWidth * textScale) / 2.0F) / textScale;
+        final float textY = Math.max(10.0F, (availableHeight - (textHeight * textScale)) / 2.0F) / textScale;
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(this.width / 2.0F, titleY, 0.0F);
-        GlStateManager.scale(scale, scale, 1.0F);
-
-        final float titleWidth = titleFont.getStringWidth(titleText);
-
-        titleFont.drawString(titleText, -titleWidth / 2 + 1, 1, 0xFF1a1a1a);
-
-        titleFont.drawString(titleText, -titleWidth / 2, 0, 0xFF8B5CF6);
+        GlStateManager.scale(textScale, textScale, 1.0F);
+        font.drawStringWithShadow(titleText, textX, textY, 0xFFFFFFFF);
         GlStateManager.popMatrix();
+
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
