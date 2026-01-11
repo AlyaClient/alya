@@ -25,11 +25,8 @@ public final class ShaderUtil {
     private final long startTime;
     private boolean initialized = false;
     private final String shaderPath;
-
     private float mouseX = 0.5f;
     private float mouseY = 0.5f;
-    private float prevMouseX = 0.5f;
-    private float prevMouseY = 0.5f;
     private long lastFrameTime = 0;
 
     public ShaderUtil(final String shaderPath) {
@@ -118,8 +115,8 @@ public final class ShaderUtil {
         deltaTime = Math.min(deltaTime, 0.1f);
         lastFrameTime = currentTime;
 
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
+        float prevMouseX = mouseX;
+        float prevMouseY = mouseY;
         mouseX = (float) Mouse.getX() / mc.displayWidth;
         mouseY = (float) Mouse.getY() / mc.displayHeight;
 

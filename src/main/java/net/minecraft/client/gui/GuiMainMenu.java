@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import dev.thoq.Alya;
 import dev.thoq.gui.auth.AltManagerGui;
 import dev.thoq.gui.AlyaButton;
-import dev.thoq.util.ShaderUtil;
+import dev.thoq.util.render.ShaderUtil;
 import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.util.misc.Title;
 import net.minecraft.client.Minecraft;
