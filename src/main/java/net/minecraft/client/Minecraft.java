@@ -1508,7 +1508,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             --this.rightClickDelayTimer;
         }
 
-        Alya.getInstance().getEventBus().dispatch(new TickEvent());
+        final TickEvent tickEvent = new TickEvent();
+        if(tickEvent.isCanceled()) {
+            return;
+        }
+        Alya.getInstance().getEventBus().dispatch(tickEvent);
 
         this.mcProfiler.startSection("gui");
 

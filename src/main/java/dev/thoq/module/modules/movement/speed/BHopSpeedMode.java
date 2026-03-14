@@ -2,6 +2,7 @@ package dev.thoq.module.modules.movement.speed;
 
 import dev.thoq.event.EventHandler;
 import dev.thoq.event.events.MotionEvent;
+import dev.thoq.event.events.PlayerInputEvent;
 import dev.thoq.module.Submodule;
 import dev.thoq.module.modules.movement.SpeedModule;
 import dev.thoq.module.setting.BooleanSetting;
@@ -26,17 +27,29 @@ public final class BHopSpeedMode extends Submodule {
         if(!MovementUtil.isMoving()) {
             return;
         }
-
+    
         if(MC.thePlayer.onGround) {
             MC.thePlayer.jump();
         }
 
         final int strafePercentage = strafe.isEnabled() ? 1 : 0;
-        if(MC.gameSettings.keyBindSprint.isKeyDown() || MC.thePlayer.isSprinting() || omniSprint.isEnabled()) {
-            MC.thePlayer.setSprinting(true);
-            MovementUtil.setSpeed(MovementUtil.SPRINT_SPEED, strafePercentage);
+        MC.thePlayer.setSprinting(true);
+        if(omniSprint.isEnabled()) {
+            MovementUtil.setSpeed(0.377F, strafePercentage);
         } else {
-            MovementUtil.setSpeed(MovementUtil.WALK_SPEED, strafePercentage);
+            if(MC.gameSettings.keyBindForward.pressed) {
+                MovementUtil.setSpeed(0.377F, strafePercentage);
+            } else {
+                MovementUtil.setSpeed(0.32F, strafePercentage);
+            }
+        }
+    }
+
+    @EventHandler
+    private void onPlayerInputEvent(final PlayerInputEvent event) {
+        if(MC.gameSettings.keyBindJump.pressed) {
+            System.out.println("BALLS");
+            event.cancel();
         }
     }
 

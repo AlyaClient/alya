@@ -14,6 +14,7 @@ import org.lwjgl.opengl.Display;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WebLoginLauncher extends GuiScreen {
 
@@ -21,12 +22,20 @@ public class WebLoginLauncher extends GuiScreen {
     private CompletableFuture<Void> task = null;
     private static final AlyaFontRenderer FONT_MD = Alya.getInstance().getFontRendererMedium();
 
+    private final AtomicBoolean authComplete = new AtomicBoolean(false);
+    private volatile String statusMessage = "Waiting for browser login...";
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
-
         super.drawScreen(mouseX, mouseY, partialTicks);
-        FONT_MD.drawString("Please continue in your web browser", (float) this.width / 2 - FONT_MD.getStringWidth("Please continue in your web browser") / 2, Math.round((float) this.height / 2 - 70), -1);
+
+        float cx = (float) this.width / 2;
+        float cy = (float) this.height / 2;
+
+        FONT_MD.drawString(statusMessage,
+                cx - FONT_MD.getStringWidth(statusMessage) / 2,
+                Math.round(cy - 70), -1);
     }
 
     @Override
@@ -39,43 +48,83 @@ public class WebLoginLauncher extends GuiScreen {
         final int buttonHeight = 20;
         final int buttonX = (this.width / 2) - (buttonWidth / 2);
 
-        this.buttonList.add(new GuiButton(0, buttonX, buttonY, buttonWidth, buttonHeight, "Done"));
-        this.buttonList.add(new GuiButton(1, buttonX, buttonY + buttonHeight + 5, buttonWidth, buttonHeight, "Cancel"));
+        GuiButton doneBtn = new GuiButton(0, buttonX, buttonY, buttonWidth, buttonHeight, "Done");
+        GuiButton cancelBtn = new GuiButton(1, buttonX, buttonY + buttonHeight + 5, buttonWidth, buttonHeight, "Cancel");
+
+        doneBtn.enabled = false;
+        this.buttonList.add(doneBtn);
+        this.buttonList.add(cancelBtn);
         super.initGui();
 
-        if(task == null) {
-            if(executor == null) {
+        if (task == null) {
+            if (executor == null) {
                 executor = Executors.newSingleThreadExecutor();
             }
 
+            Alya.getInstance().getLogger().info("[Auth] Starting Microsoft auth flow");
+
             try {
                 task = MicrosoftAuth.acquireMSAuthCode(executor)
-                        .thenComposeAsync(msAuthCode -> MicrosoftAuth.acquireMSAccessToken(msAuthCode, executor))
-                        .thenComposeAsync(msAccessToken -> MicrosoftAuth.acquireXboxAccessToken(msAccessToken, executor))
-                        .thenComposeAsync(xboxAccessToken -> MicrosoftAuth.acquireXboxXstsToken(xboxAccessToken, executor))
-                        .thenComposeAsync(xboxXstsData -> MicrosoftAuth.acquireMCAccessToken(
-                                xboxXstsData.get("Token"), xboxXstsData.get("uhs"), executor
-                        ))
-                        .thenComposeAsync(mcToken -> MicrosoftAuth.login(mcToken, executor))
+                        .thenComposeAsync(msAuthCode -> {
+                            Alya.getInstance().getLogger().info("[Auth] Got MS auth code, requesting MS access token");
+                            statusMessage = "Getting Microsoft token...";
+                            return MicrosoftAuth.acquireMSAccessToken(msAuthCode, executor);
+                        }, executor)
+                        .thenComposeAsync(msAccessToken -> {
+                            Alya.getInstance().getLogger().info("[Auth] Got MS access token (len={}), requesting Xbox token", msAccessToken.length());
+                            statusMessage = "Getting Xbox token...";
+                            return MicrosoftAuth.acquireXboxAccessToken(msAccessToken, executor);
+                        }, executor)
+                        .thenComposeAsync(xboxAccessToken -> {
+                            Alya.getInstance().getLogger().info("[Auth] Got Xbox token (len={}), requesting XSTS token", xboxAccessToken.length());
+                            statusMessage = "Getting XSTS token...";
+                            return MicrosoftAuth.acquireXboxXstsToken(xboxAccessToken, executor);
+                        }, executor)
+                        .thenComposeAsync(xboxXstsData -> {
+                            String xstsToken = xboxXstsData.get("Token");
+                            String uhs = xboxXstsData.get("uhs");
+                            Alya.getInstance().getLogger().info("[Auth] Got XSTS token (len={}), uhs present={}, requesting MC token", xstsToken != null ? xstsToken.length() : 0, uhs != null);
+                            statusMessage = "Getting Minecraft token...";
+                            return MicrosoftAuth.acquireMCAccessToken(xstsToken, uhs, executor);
+                        }, executor)
+                        .thenComposeAsync(mcToken -> {
+                            Alya.getInstance().getLogger().info("[Auth] Got MC access token (len={}), fetching profile", mcToken.length());
+                            statusMessage = "Fetching profile...";
+                            return MicrosoftAuth.login(mcToken, executor);
+                        }, executor)
                         .thenAccept(session -> {
-                            SessionManager.setSession(session);
-                            Minecraft.getMinecraft().displayGuiScreen(new GuiMainMenu());
+                            Alya.getInstance().getLogger().info("[Auth] Got session: username={}, uuid={}", session.getUsername(), session.getPlayerID());
+                            authComplete.set(true);
+                            Minecraft mc = Minecraft.getMinecraft();
+                            mc.addScheduledTask(() -> {
+                                Alya.getInstance().getLogger().info("[Auth] Setting session on main thread");
+                                SessionManager.setSession(session);
+                                mc.displayGuiScreen(new GuiMainMenu());
+                            });
                         })
-                        .exceptionally(e -> null);
-            } catch(final Exception exception) {
-                Alya.getInstance().getLogger().error("Failed to acquire Microsoft access token", exception);
+                        .exceptionally(e -> {
+                            Alya.getInstance().getLogger().error("[Auth] Auth chain failed: {}", e.getMessage(), e);
+                            statusMessage = "Login failed: " + e.getCause().getMessage();
+                            mc.addScheduledTask(() -> {
+                                for (Object btn : buttonList) {
+                                    ((GuiButton) btn).enabled = true;
+                                }
+                            });
+                            return null;
+                        });
+            } catch (final Exception exception) {
+                Alya.getInstance().getLogger().error("[Auth] Exception starting auth task", exception);
             }
         }
     }
 
     @Override
     protected void actionPerformed(final GuiButton button) {
-        cleanup();
-
-        if(button.id == 0) {
+        if (button.id == 0 && authComplete.get()) {
             mc.displayGuiScreen(new AltManagerGui());
         }
-        if(button.id == 1) {
+        if (button.id == 1) {
+            cleanup();
             SessionChanger.getInstance().setUserOffline("Alya");
             mc.displayGuiScreen(new AltManagerGui());
         }
@@ -83,18 +132,17 @@ public class WebLoginLauncher extends GuiScreen {
 
     private void cleanup() {
         try {
-            if(task != null) {
+            if (task != null) {
                 task.cancel(true);
                 task = null;
             }
-            if(executor != null) {
+            if (executor != null) {
                 executor.shutdownNow();
                 executor = null;
             }
-        } catch(final Exception exception) {
-            Alya.getInstance().getLogger().error("Failed to close alt manager executor/task", exception);
+        } catch (final Exception exception) {
+            Alya.getInstance().getLogger().error("[Auth] Failed to close executor/task", exception);
         }
     }
-
 
 }

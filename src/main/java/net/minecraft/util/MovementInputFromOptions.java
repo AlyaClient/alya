@@ -15,7 +15,11 @@ public class MovementInputFromOptions extends MovementInput {
     }
 
     public void updatePlayerMoveState() {
-        Alya.getInstance().getEventBus().dispatch(new PlayerMoveEvent());
+        final PlayerMoveEvent playerMoveEvent = new PlayerMoveEvent();
+        if(playerMoveEvent.isCanceled()) {
+            return;
+        }
+        Alya.getInstance().getEventBus().dispatch(playerMoveEvent);
 
         this.moveStrafe = 0.0F;
         this.moveForward = 0.0F;
@@ -39,7 +43,11 @@ public class MovementInputFromOptions extends MovementInput {
         this.jump = this.gameSettings.keyBindJump.isKeyDown();
         this.sneak = this.gameSettings.keyBindSneak.isKeyDown();
 
-        Alya.getInstance().getEventBus().dispatch(new PlayerInputEvent());
+        final PlayerInputEvent playerInputEvent = new PlayerInputEvent();
+        if(playerInputEvent.isCanceled()) {
+            return;
+        }
+        Alya.getInstance().getEventBus().dispatch(playerInputEvent);
 
         if (this.sneak) {
             this.moveStrafe = (float)((double)this.moveStrafe * 0.3D);

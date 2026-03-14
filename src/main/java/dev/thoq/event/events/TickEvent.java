@@ -1,15 +1,18 @@
 package dev.thoq.event.events;
 
+import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
-public final class TickEvent implements IEvent {
+public final class TickEvent implements IEvent, ICancelable {
+
+    private boolean canceled = false;
 
     public TickEvent() {
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof TickEvent;
+    public boolean equals(Object object) {
+        return object instanceof TickEvent;
     }
 
     @Override
@@ -21,4 +24,16 @@ public final class TickEvent implements IEvent {
     public String toString() {
         return "TickEvent[]";
     }
+
+    @Override
+    public boolean isCanceled() {
+        return this.canceled;
+    }
+
+    @Override
+    public void cancel() {
+        this.canceled = true;
+    }
+
+
 }

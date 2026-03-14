@@ -8,6 +8,7 @@ import dev.thoq.config.ConfigManager;
 import dev.thoq.event.EventBus;
 import dev.thoq.module.ModuleManager;
 import dev.thoq.module.modules.clickgui.ClickGUI;
+import dev.thoq.module.modules.misc.DisablerModule;
 import dev.thoq.module.modules.movement.FlightModule;
 import dev.thoq.module.modules.movement.SpeedModule;
 import dev.thoq.module.modules.player.NoJumpDelayModule;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("unused")
 public final class Alya {
 
     private static final Alya INSTANCE = new Alya();
@@ -75,7 +75,8 @@ public final class Alya {
                 new NoRightClickDelayModule(),
                 new NoJumpDelayModule(),
                 new SprintModule(),
-                new TimerModule()
+                new TimerModule(),
+                new DisablerModule()
         );
     }
 

@@ -78,13 +78,22 @@ public final class MovementUtil implements IUtil {
         strafePercentage /= 100;
         strafePercentage = Math.min(1, Math.max(0, strafePercentage));
 
-        final double motionX = MC.thePlayer.motionX;
-        final double motionZ = MC.thePlayer.motionZ;
+        if (!isMoving()) return;
 
-        setSpeed(speed);
+        final double currentSpeed = getMoveSpeed();
+        if (currentSpeed == 0) {
+            setSpeed(speed);
+            return;
+        }
 
-        MC.thePlayer.motionX = motionX + (MC.thePlayer.motionX - motionX) * strafePercentage;
-        MC.thePlayer.motionZ = motionZ + (MC.thePlayer.motionZ - motionZ) * strafePercentage;
+        final double scale = speed / currentSpeed;
+        final double forwardX = -MathHelper.sin((float) getDirection()) * speed;
+        final double forwardZ = MathHelper.cos((float) getDirection()) * speed;
+        final double strafeX = MC.thePlayer.motionX * scale;
+        final double strafeZ = MC.thePlayer.motionZ * scale;
+
+        MC.thePlayer.motionX = forwardX + (strafeX - forwardX) * strafePercentage;
+        MC.thePlayer.motionZ = forwardZ + (strafeZ - forwardZ) * strafePercentage;
     }
 
 

@@ -2,6 +2,9 @@ package net.minecraft.network;
 
 import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import dev.thoq.Alya;
+import dev.thoq.event.events.PacketSendEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
@@ -162,8 +165,13 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
     {
         if (this.isChannelOpen())
         {
-            this.flushOutboundQueue();
-            this.dispatchPacket(packetIn, (GenericFutureListener <? extends Future <? super Void >> [])null);
+            final PacketSendEvent packetSendEvent = new PacketSendEvent(packetIn);
+            Alya.getInstance().getEventBus().dispatch(packetSendEvent);
+
+            if(!packetSendEvent.isCanceled()) {
+                this.flushOutboundQueue();
+                this.dispatchPacket(packetSendEvent.getPacket(), null);
+            }
         }
         else
         {

@@ -23,5 +23,9 @@ public class TimerModule extends Module {
         }
     }
 
+    @Override
+    public void onDisable() {
+        net.minecraft.util.Timer.timerSpeed = 1.0F;
+    }
 
 }

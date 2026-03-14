@@ -29,16 +29,20 @@ public class SessionManager {
     }
 
     public static void setSession(final Session session) {
+        Alya.getInstance().getLogger().info("[SessionManager] setSession called: username={}, uuid={}", session.getUsername(), session.getPlayerID());
         mc.addScheduledTask(() -> {
             try {
                 Field field = getSessionField();
                 if (field == null) {
-                    Alya.getInstance().getLogger().error("Session field not found");
+                    Alya.getInstance().getLogger().error("[SessionManager] Session field not found via reflection");
                     return;
                 }
+                Alya.getInstance().getLogger().info("[SessionManager] Reflecting session field: {}", field.getName());
                 field.set(mc, session);
+                Session verify = mc.getSession();
+                Alya.getInstance().getLogger().info("[SessionManager] Session set, verify: username={}, uuid={}", verify.getUsername(), verify.getPlayerID());
             } catch (Exception e) {
-                Alya.getInstance().getLogger().error("Failed to set session", e);
+                Alya.getInstance().getLogger().error("[SessionManager] Failed to set session via reflection", e);
             }
         });
     }
