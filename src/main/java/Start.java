@@ -9,7 +9,7 @@ public class Start {
         Main.main(
             Array.concat(
                 new String[]{
-                        "--version", "Alya_1.0",
+                        "--version", "1.8.9",
                         "--accessToken", "0",
                         "--assetsDir", "assets",
                         "--userProperties", "{}"
