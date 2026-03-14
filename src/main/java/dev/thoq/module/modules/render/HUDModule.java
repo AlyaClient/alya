@@ -41,64 +41,42 @@ public final class HUDModule extends Module {
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
-
         float x = 4;
         final float y = 4;
-
-        final String firstChar = "A";
-        final String restChars = "lya";
-
         final int purpleColor = 0xFF8B5CF6;
         final int whiteColor = 0xFFFFFFFF;
 
-        fontRenderer.drawStringWithShadow(firstChar, x, y, purpleColor);
-        x += fontRenderer.getStringWidth(firstChar);
-
-        fontRenderer.drawStringWithShadow(restChars, x, y, whiteColor);
-        x += fontRenderer.getStringWidth(restChars);
+        fontRenderer.drawStringWithShadow("A", x, y, purpleColor);
+        x += fontRenderer.getStringWidth("A");
+        fontRenderer.drawStringWithShadow("lya", x, y, whiteColor);
+        x += fontRenderer.getStringWidth("lya");
 
         final StringBuilder info = new StringBuilder();
 
         if(showFPS.isEnabled()) {
-            final int fps = Minecraft.getDebugFPS();
-            info.append(" [").append(fps).append(" FPS]");
+            info.append(" [").append(Minecraft.getDebugFPS()).append(" FPS]");
         }
-
         if(showBPS.isEnabled()) {
             updateBPS();
             info.append(" [").append(String.format("%.1f", blocksPerSecond)).append(" BPS]");
         }
-
         if(showTime.isEnabled()) {
-            final String time = timeFormat.format(new Date());
-            info.append(" [").append(time).append("]");
+            info.append(" [").append(timeFormat.format(new Date())).append("]");
         }
 
         fontRenderer.drawStringWithShadow(info.toString(), x, y, whiteColor);
     }
 
     private void updateBPS() {
-        if(MC.thePlayer == null) {
-            blocksPerSecond = 0;
-            return;
-        }
-
+        if(MC.thePlayer == null) { blocksPerSecond = 0; return; }
         final long currentTime = System.currentTimeMillis();
-
         if(currentTime - lastBPSUpdate >= 50) {
-
             final double deltaX = MC.thePlayer.posX - lastX;
             final double deltaY = MC.thePlayer.posY - lastY;
             final double deltaZ = MC.thePlayer.posZ - lastZ;
-
             final double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
             final double timeDelta = (currentTime - lastBPSUpdate) / 1000.0;
-
-            if(timeDelta > 0) {
-                final double newBPS = distance / timeDelta;
-                blocksPerSecond = blocksPerSecond * 0.8 + newBPS * 0.2;
-            }
-
+            if(timeDelta > 0) blocksPerSecond = blocksPerSecond * 0.8 + (distance / timeDelta) * 0.2;
             lastX = MC.thePlayer.posX;
             lastY = MC.thePlayer.posY;
             lastZ = MC.thePlayer.posZ;
@@ -109,6 +87,4 @@ public final class HUDModule extends Module {
     public boolean getSmoothChatEnabled() {
         return smoothChat.isEnabled();
     }
-
-
 }

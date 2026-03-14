@@ -1,21 +1,13 @@
 package dev.thoq;
 
 import dev.thoq.command.CommandManager;
-import dev.thoq.command.commands.BindCommand;
-import dev.thoq.command.commands.ConfigCommand;
-import dev.thoq.command.commands.HelpCommand;
 import dev.thoq.config.ConfigManager;
 import dev.thoq.event.EventBus;
+import dev.thoq.lua.LuaEngine;
 import dev.thoq.module.ModuleManager;
 import dev.thoq.module.modules.clickgui.ClickGUI;
-import dev.thoq.module.modules.misc.DisablerModule;
-import dev.thoq.module.modules.movement.FlightModule;
-import dev.thoq.module.modules.movement.SpeedModule;
-import dev.thoq.module.modules.player.NoJumpDelayModule;
-import dev.thoq.module.modules.player.NoRightClickDelayModule;
-import dev.thoq.module.modules.player.SprintModule;
-import dev.thoq.module.modules.render.*;
-import dev.thoq.module.modules.world.TimerModule;
+import dev.thoq.module.modules.render.HUDModule;
+import dev.thoq.module.modules.render.KeystrokesModule;
 import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.util.misc.Title;
 import net.minecraft.client.Minecraft;
@@ -40,6 +32,7 @@ public final class Alya {
     private final ModuleManager moduleManager = new ModuleManager();
     private final CommandManager commandManager = new CommandManager();
     private final ConfigManager configManager = new ConfigManager();
+    private final LuaEngine luaEngine = new LuaEngine();
 
     private AlyaFontRenderer fontRenderer;
     private AlyaFontRenderer fontRendererSmall;
@@ -53,39 +46,75 @@ public final class Alya {
 
     public void initialize() {
         Title.update(this.getClass());
-        initializeModules();
-        initializeCommands();
+        moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
+        bindFontRenderersToLua();
+        luaEngine.loadAll();
         LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
         LOGGER.info("Initialized {} commands", commandManager.getCommands().size());
-
         configManager.load();
         playStartupSound();
     }
 
-    private void initializeModules() {
-        moduleManager.putAll(
-                new ClickGUI(),
-                new ArrayListModule(),
-                new HUDModule(),
-                new KeystrokesModule(),
-                new FlightModule(),
-                new SpeedModule(),
-                new FullBrightModule(),
-                new AmbienceModule(),
-                new NoRightClickDelayModule(),
-                new NoJumpDelayModule(),
-                new SprintModule(),
-                new TimerModule(),
-                new DisablerModule()
-        );
+    private void bindFontRenderersToLua() {
+        luaEngine.getGlobals().set("getFontRenderer", new org.luaj.vm2.lib.ZeroArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call() {
+                return buildFontRendererTable(getFontRenderer());
+            }
+        });
+        luaEngine.getGlobals().set("getFontRendererSmall", new org.luaj.vm2.lib.ZeroArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call() {
+                return buildFontRendererTable(getFontRendererSmall());
+            }
+        });
+        luaEngine.getGlobals().set("getFontRendererMedium", new org.luaj.vm2.lib.ZeroArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call() {
+                return buildFontRendererTable(getFontRendererMedium());
+            }
+        });
+        luaEngine.getGlobals().set("getFontRendererBold", new org.luaj.vm2.lib.ZeroArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call() {
+                return buildFontRendererTable(getFontRendererBold());
+            }
+        });
+        luaEngine.getGlobals().set("getFontRendererTitle", new org.luaj.vm2.lib.ZeroArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call() {
+                return buildFontRendererTable(getFontRendererTitle());
+            }
+        });
+
+        org.luaj.vm2.LuaTable alyaTable = (org.luaj.vm2.LuaTable) luaEngine.getGlobals().get("alya");
+        alyaTable.set("getFontRenderer", luaEngine.getGlobals().get("getFontRenderer"));
+        alyaTable.set("getFontRendererSmall", luaEngine.getGlobals().get("getFontRendererSmall"));
+        alyaTable.set("getFontRendererMedium", luaEngine.getGlobals().get("getFontRendererMedium"));
+        alyaTable.set("getFontRendererBold", luaEngine.getGlobals().get("getFontRendererBold"));
+        alyaTable.set("getFontRendererTitle", luaEngine.getGlobals().get("getFontRendererTitle"));
     }
 
-    private void initializeCommands() {
-        commandManager.putAll(
-                new HelpCommand(),
-                new BindCommand(),
-                new ConfigCommand()
-        );
+    private org.luaj.vm2.LuaTable buildFontRendererTable(final AlyaFontRenderer renderer) {
+        org.luaj.vm2.LuaTable table = new org.luaj.vm2.LuaTable();
+        table.set("drawString", new org.luaj.vm2.lib.VarArgFunction() {
+            @Override public org.luaj.vm2.Varargs invoke(org.luaj.vm2.Varargs args) {
+                renderer.drawString(args.arg(1).tojstring(), args.arg(2).tofloat(), args.arg(3).tofloat(), args.arg(4).toint());
+                return org.luaj.vm2.LuaValue.NIL;
+            }
+        });
+        table.set("drawStringWithShadow", new org.luaj.vm2.lib.VarArgFunction() {
+            @Override public org.luaj.vm2.Varargs invoke(org.luaj.vm2.Varargs args) {
+                renderer.drawStringWithShadow(args.arg(1).tojstring(), args.arg(2).tofloat(), args.arg(3).tofloat(), args.arg(4).toint());
+                return org.luaj.vm2.LuaValue.NIL;
+            }
+        });
+        table.set("getStringWidth", new org.luaj.vm2.lib.OneArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call(org.luaj.vm2.LuaValue text) {
+                return org.luaj.vm2.LuaValue.valueOf((double) renderer.getStringWidth(text.tojstring()));
+            }
+        });
+        table.set("getFontHeight", new org.luaj.vm2.lib.ZeroArgFunction() {
+            @Override public org.luaj.vm2.LuaValue call() {
+                return org.luaj.vm2.LuaValue.valueOf((double) renderer.getFontHeight());
+            }
+        });
+        return table;
     }
 
     private void playStartupSound() {
@@ -108,7 +137,6 @@ public final class Alya {
                 audioStarted = true;
             }
         });
-
     }
 
     public void terminate() {
@@ -143,6 +171,10 @@ public final class Alya {
 
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public LuaEngine getLuaEngine() {
+        return luaEngine;
     }
 
     public AlyaFontRenderer getFontRenderer() {
@@ -183,6 +215,4 @@ public final class Alya {
     public Logger getLogger() {
         return LOGGER;
     }
-
-
 }

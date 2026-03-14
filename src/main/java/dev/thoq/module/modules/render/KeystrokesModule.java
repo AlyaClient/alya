@@ -31,13 +31,10 @@ public final class KeystrokesModule extends Module {
     private static final int KEY_SPACING = 2;
     private static final int SPACE_WIDTH = KEY_SIZE * 3 + KEY_SPACING * 2;
     private static final int MOUSE_WIDTH = (KEY_SIZE * 3 + KEY_SPACING * 2 - KEY_SPACING) / 2;
-
     private static final int BG_COLOR = 0xC0181818;
     private static final int BG_PRESSED = 0xC08B5CF6;
-
     private static final int BORDER_COLOR = 0xFF303030;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
-    private static final int TEXT_PRESSED = 0xFFFFFFFF;
 
     private boolean isDragging = false;
     private int dragOffsetX = 0;
@@ -48,73 +45,50 @@ public final class KeystrokesModule extends Module {
         initializeSettings(posX, posY, showMouse, showSpace, gridSize);
     }
 
-    @Override
-    public void onEnable() {
-        super.onEnable();
-    }
-
-    @Override
-    public void onDisable() {
-        super.onDisable();
-    }
-
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
-
         if(MC.currentScreen != null && !(MC.currentScreen instanceof GuiChat)) {
             return;
-
         }
 
         AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         GameSettings settings = MC.gameSettings;
 
-        final int x = posX.getValueAsInt();
-        final int y = posY.getValueAsInt();
+        final int startX = posX.getValueAsInt();
+        final int startY = posY.getValueAsInt();
 
-        final int wX = x + KEY_SIZE + KEY_SPACING;
-        drawKey(fontRenderer, wX, y, KEY_SIZE, getKeyName(settings.keyBindForward), isKeyPressed(settings.keyBindForward));
+        final int forwardX = startX + KEY_SIZE + KEY_SPACING;
+        drawKey(fontRenderer, forwardX, startY, KEY_SIZE, getKeyName(settings.keyBindForward), isKeyPressed(settings.keyBindForward));
 
-        final int row2Y = y + KEY_SIZE + KEY_SPACING;
-        drawKey(fontRenderer, x, row2Y, KEY_SIZE, getKeyName(settings.keyBindLeft), isKeyPressed(settings.keyBindLeft));
-        drawKey(fontRenderer, x + KEY_SIZE + KEY_SPACING, row2Y, KEY_SIZE, getKeyName(settings.keyBindBack), isKeyPressed(settings.keyBindBack));
-        drawKey(fontRenderer, x + (KEY_SIZE + KEY_SPACING) * 2, row2Y, KEY_SIZE, getKeyName(settings.keyBindRight), isKeyPressed(settings.keyBindRight));
+        final int row2Y = startY + KEY_SIZE + KEY_SPACING;
+        drawKey(fontRenderer, startX, row2Y, KEY_SIZE, getKeyName(settings.keyBindLeft), isKeyPressed(settings.keyBindLeft));
+        drawKey(fontRenderer, startX + KEY_SIZE + KEY_SPACING, row2Y, KEY_SIZE, getKeyName(settings.keyBindBack), isKeyPressed(settings.keyBindBack));
+        drawKey(fontRenderer, startX + (KEY_SIZE + KEY_SPACING) * 2, row2Y, KEY_SIZE, getKeyName(settings.keyBindRight), isKeyPressed(settings.keyBindRight));
 
         int currentY = row2Y + KEY_SIZE + KEY_SPACING;
 
         if(showMouse.isEnabled()) {
-            boolean lmbPressed = Mouse.isButtonDown(0);
-            boolean rmbPressed = Mouse.isButtonDown(1);
-
-            drawKey(fontRenderer, x, currentY, MOUSE_WIDTH, "LMB", lmbPressed);
-            drawKey(fontRenderer, x + MOUSE_WIDTH + KEY_SPACING, currentY, MOUSE_WIDTH, "RMB", rmbPressed);
-
+            drawKey(fontRenderer, startX, currentY, MOUSE_WIDTH, "LMB", Mouse.isButtonDown(0));
+            drawKey(fontRenderer, startX + MOUSE_WIDTH + KEY_SPACING, currentY, MOUSE_WIDTH, "RMB", Mouse.isButtonDown(1));
             currentY += KEY_SIZE + KEY_SPACING;
         }
 
         if(showSpace.isEnabled()) {
-            drawKey(fontRenderer, x, currentY, SPACE_WIDTH, "SPACE", isKeyPressed(settings.keyBindJump));
+            drawKey(fontRenderer, startX, currentY, SPACE_WIDTH, "SPACE", isKeyPressed(settings.keyBindJump));
         }
     }
 
-    private void drawKey(final AlyaFontRenderer fr, final int x, final int y, final int width, final String text, final boolean pressed) {
+    private void drawKey(final AlyaFontRenderer fontRenderer, final int x, final int y, final int width, final String text, final boolean pressed) {
         final int bgColor = pressed ? BG_PRESSED : BG_COLOR;
-        final int textColor = pressed ? TEXT_PRESSED : TEXT_COLOR;
-
-        RenderUtility.drawRect(x, y, width, KeystrokesModule.KEY_SIZE, bgColor);
-
+        RenderUtility.drawRect(x, y, width, KEY_SIZE, bgColor);
         RenderUtility.drawRect(x, y, width, 1, BORDER_COLOR);
-
-        RenderUtility.drawRect(x, y + KeystrokesModule.KEY_SIZE - 1, width, 1, BORDER_COLOR);
-
-        RenderUtility.drawRect(x, y, 1, KeystrokesModule.KEY_SIZE, BORDER_COLOR);
-
-        RenderUtility.drawRect(x + width - 1, y, 1, KeystrokesModule.KEY_SIZE, BORDER_COLOR);
-
-        final float textWidth = fr.getStringWidth(text);
+        RenderUtility.drawRect(x, y + KEY_SIZE - 1, width, 1, BORDER_COLOR);
+        RenderUtility.drawRect(x, y, 1, KEY_SIZE, BORDER_COLOR);
+        RenderUtility.drawRect(x + width - 1, y, 1, KEY_SIZE, BORDER_COLOR);
+        final float textWidth = fontRenderer.getStringWidth(text);
         final float textX = x + (width - textWidth) / 2;
-        final float textY = y + (KeystrokesModule.KEY_SIZE - fr.getFontHeight()) / 2;
-        fr.drawString(text, textX, textY, textColor);
+        final float textY = y + (KEY_SIZE - fontRenderer.getFontHeight()) / 2;
+        fontRenderer.drawString(text, textX, textY, TEXT_COLOR);
     }
 
     private boolean isKeyPressed(final KeyBinding keyBinding) {
@@ -124,13 +98,8 @@ public final class KeystrokesModule extends Module {
     private String getKeyName(final KeyBinding keyBinding) {
         final int keyCode = keyBinding.getKeyCode();
         final String name = Keyboard.getKeyName(keyCode);
-        if(name == null || name.isEmpty()) {
-            return "?";
-        }
-
-        if(name.length() > 3) {
-            return name.substring(0, 1);
-        }
+        if(name == null || name.isEmpty()) return "?";
+        if(name.length() > 3) return name.substring(0, 1);
         return name;
     }
 
@@ -144,26 +113,20 @@ public final class KeystrokesModule extends Module {
         return false;
     }
 
-    @SuppressWarnings("unused")
     public void mouseReleased(final int mouseX, final int mouseY, final int mouseButton) {
-        if(mouseButton == 0) {
-            isDragging = false;
-        }
+        if(mouseButton == 0) isDragging = false;
     }
 
     public void mouseDragged(final int mouseX, final int mouseY) {
         if(isDragging) {
             int newX = mouseX - dragOffsetX;
             int newY = mouseY - dragOffsetY;
-
             final int grid = gridSize.getValueAsInt();
             newX = Math.round((float) newX / grid) * grid;
             newY = Math.round((float) newY / grid) * grid;
-
             final ScaledResolution scaledResolution = new ScaledResolution(MC);
             newX = Math.max(0, Math.min(newX, scaledResolution.getScaledWidth() - getTotalWidth()));
             newY = Math.max(0, Math.min(newY, scaledResolution.getScaledHeight() - getTotalHeight()));
-
             posX.setValue((double) newX);
             posY.setValue((double) newY);
         }
@@ -172,10 +135,7 @@ public final class KeystrokesModule extends Module {
     public boolean isMouseOver(final int mouseX, final int mouseY) {
         final int x = posX.getValueAsInt();
         final int y = posY.getValueAsInt();
-        final int width = getTotalWidth();
-        final int height = getTotalHeight();
-
-        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+        return mouseX >= x && mouseX <= x + getTotalWidth() && mouseY >= y && mouseY <= y + getTotalHeight();
     }
 
     public int getTotalWidth() {
@@ -184,27 +144,12 @@ public final class KeystrokesModule extends Module {
 
     public int getTotalHeight() {
         int height = KEY_SIZE * 2 + KEY_SPACING;
-
-        if(showMouse.isEnabled()) {
-            height += KEY_SIZE + KEY_SPACING;
-        }
-        if(showSpace.isEnabled()) {
-            height += KEY_SIZE + KEY_SPACING;
-        }
+        if(showMouse.isEnabled()) height += KEY_SIZE + KEY_SPACING;
+        if(showSpace.isEnabled()) height += KEY_SIZE + KEY_SPACING;
         return height;
     }
 
     public boolean isDragging() {
         return isDragging;
     }
-
-    public NumberSetting getPosX() {
-        return posX;
-    }
-
-    public NumberSetting getPosY() {
-        return posY;
-    }
-
-
 }

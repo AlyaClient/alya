@@ -1,0 +1,164 @@
+package dev.thoq.lua.api;
+
+import dev.thoq.util.render.RenderUtility;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.VarArgFunction;
+
+public final class LuaRenderApi extends LuaTable {
+
+    public LuaRenderApi() {
+        set("drawRect", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawRect(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawRectAbsolute", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawRectAbsolute(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawRectOutline", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawRectOutline(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).toint(),
+                        arguments.arg(6).tofloat());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawRoundedRect", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawRoundedRect(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).tofloat(),
+                        arguments.arg(6).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawArc", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawArc(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).toint(),
+                        arguments.arg(5).toint(),
+                        arguments.arg(6).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawCircle", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawCircle(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawHorizontalGradient", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawHorizontalGradient(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).toint(),
+                        arguments.arg(6).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawVerticalGradient", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawVerticalGradient(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).toint(),
+                        arguments.arg(6).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawLine", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawLine(
+                        arguments.arg(1).tofloat(),
+                        arguments.arg(2).tofloat(),
+                        arguments.arg(3).tofloat(),
+                        arguments.arg(4).tofloat(),
+                        arguments.arg(5).tofloat(),
+                        arguments.arg(6).toint());
+                return LuaValue.NIL;
+            }
+        });
+
+        set("toARGB", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                return LuaValue.valueOf(RenderUtility.toARGB(
+                        arguments.arg(1).toint(),
+                        arguments.arg(2).toint(),
+                        arguments.arg(3).toint(),
+                        arguments.arg(4).toint()));
+            }
+        });
+
+        set("toRGB", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                return LuaValue.valueOf(RenderUtility.toRGB(
+                        arguments.arg(1).toint(),
+                        arguments.arg(2).toint(),
+                        arguments.arg(3).toint()));
+            }
+        });
+
+        set("withAlpha", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                return LuaValue.valueOf(RenderUtility.withAlpha(
+                        arguments.arg(1).toint(),
+                        arguments.arg(2).toint()));
+            }
+        });
+    }
+}

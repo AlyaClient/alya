@@ -134,7 +134,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     public void initGui() {
-        int n = RANDOM.nextInt(4) + 1;
+        int n = RANDOM.nextInt(8) + 1;
         this.randomImage = new ResourceLocation("Alya/Assets/Femboys/" + n + ".png");
 
         Title.update(this.getClass());
