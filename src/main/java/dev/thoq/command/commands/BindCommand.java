@@ -4,8 +4,12 @@ import dev.thoq.Alya;
 import dev.thoq.command.Command;
 import dev.thoq.module.Module;
 import dev.thoq.util.player.ChatUtil;
+import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class BindCommand extends Command {
 
@@ -34,13 +38,13 @@ public final class BindCommand extends Command {
                 ChatUtil.sendError("Module not found: " + args[1]);
                 return;
             }
-            try {
-                final int keyCode = Integer.parseInt(args[2]);
-                module.get().setKeyCode(keyCode);
-                ChatUtil.sendSuccess("Key binding updated for " + module.get().getName());
-            } catch (final NumberFormatException e) {
-                ChatUtil.sendError("Invalid key code: " + args[2]);
+            final int keyCode = resolveKey(args[2]);
+            if (keyCode == Keyboard.KEY_NONE) {
+                ChatUtil.sendError("Invalid key: '" + args[2] + "'. Use a key name (e.g. R, F, HOME) or numeric keycode.");
+                return;
             }
+            module.get().setKeyCode(keyCode);
+            ChatUtil.sendSuccess("Bound " + module.get().getName() + " to " + Keyboard.getKeyName(keyCode));
 
         } else if (action.equals("remove") || action.equals("clear")) {
             if (args.length < 2) {
@@ -59,7 +63,7 @@ public final class BindCommand extends Command {
             ChatUtil.sendInfo("Module Keybinds:");
             for (final Module module : Alya.getInstance().getModuleManager().getModules()) {
                 if (module.getKeyCode() != 0) {
-                    ChatUtil.sendRaw("  " + module.getName() + " -> key:" + module.getKeyCode());
+                    ChatUtil.sendRaw("  " + module.getName() + " -> " + Keyboard.getKeyName(module.getKeyCode()));
                 }
             }
 
@@ -67,5 +71,32 @@ public final class BindCommand extends Command {
             ChatUtil.sendError("Unknown action: " + action);
             ChatUtil.sendInfo("Available actions: add, remove, list");
         }
+    }
+
+    @Override
+    public List<String> getCompletions(final String[] args) {
+        List<String> completions = new ArrayList<>();
+        if (args.length == 1) {
+            for (String action : new String[]{"add", "remove", "list", "clear"}) {
+                if (action.startsWith(args[0].toLowerCase())) completions.add(action);
+            }
+        } else if (args.length == 2 && (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("set")
+                || args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("clear"))) {
+            final String prefix = args[1].toLowerCase();
+            completions = Alya.getInstance().getModuleManager().getModules().stream()
+                    .map(Module::getName)
+                    .filter(name -> name.toLowerCase().startsWith(prefix))
+                    .collect(Collectors.toList());
+        }
+        return completions;
+    }
+
+    private int resolveKey(final String input) {
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException ignored) {}
+        final int key = Keyboard.getKeyIndex(input.toUpperCase());
+        if (key != Keyboard.KEY_NONE) return key;
+        return Keyboard.KEY_NONE;
     }
 }

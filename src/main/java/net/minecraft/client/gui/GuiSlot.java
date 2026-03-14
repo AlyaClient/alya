@@ -496,7 +496,6 @@ public abstract class GuiSlot
     {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        // Draw dark solid color instead of dirt texture
         GlStateManager.disableTexture2D();
         worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
         worldrenderer.pos((double)this.left, (double)endY, 0.0D).tex(0.0D, 1.0D).func_181669_b(0, 0, 0, endAlpha).endVertex();
@@ -524,7 +523,6 @@ public abstract class GuiSlot
     protected void drawContainerBackground(Tessellator p_drawContainerBackground_1_)
     {
         WorldRenderer worldrenderer = p_drawContainerBackground_1_.getWorldRenderer();
-        // Draw dark solid color instead of dirt texture
         GlStateManager.disableTexture2D();
         worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
         worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex(0.0D, 1.0D).func_181669_b(15, 15, 15, 255).endVertex();

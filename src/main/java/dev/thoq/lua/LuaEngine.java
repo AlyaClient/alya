@@ -2,6 +2,7 @@ package dev.thoq.lua;
 
 import dev.thoq.Alya;
 import dev.thoq.lua.api.LuaChatApi;
+import dev.thoq.lua.api.LuaCombatApi;
 import dev.thoq.lua.api.LuaCommandApi;
 import dev.thoq.lua.api.LuaConfigApi;
 import dev.thoq.lua.api.LuaEventApi;
@@ -47,6 +48,7 @@ public final class LuaEngine {
         alyaTable.set("render", new LuaRenderApi());
         alyaTable.set("timer", new LuaTimerApi());
         alyaTable.set("mc", new LuaMinecraftApi());
+        alyaTable.set("combat", new LuaCombatApi());
         alyaTable.set("reload", new ZeroArgFunction() {
             @Override
             public LuaValue call() {

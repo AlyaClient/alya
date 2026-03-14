@@ -6,6 +6,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
+import org.lwjgl.input.Keyboard;
 
 public final class LuaMinecraftApi extends LuaTable {
 
@@ -311,6 +312,47 @@ public final class LuaMinecraftApi extends LuaTable {
             @Override
             public LuaValue call() {
                 return minecraft.thePlayer != null ? LuaValue.valueOf(minecraft.thePlayer.hurtTime) : LuaValue.valueOf(0);
+            }
+        });
+
+        set("getEntityId", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return minecraft.thePlayer != null ? LuaValue.valueOf(minecraft.thePlayer.getEntityId()) : LuaValue.valueOf(-1);
+            }
+        });
+
+        set("setSneakPressed", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue v) {
+                minecraft.gameSettings.keyBindSneak.pressed = v.toboolean();
+                return LuaValue.NIL;
+            }
+        });
+
+        set("isAboveVoid", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                if (minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
+                java.util.List<?> boxes = minecraft.theWorld.getCollidingBoundingBoxes(
+                    minecraft.thePlayer,
+                    minecraft.thePlayer.getEntityBoundingBox().offset(0, -1.4, 0).contract(0.2, 0, 0.2)
+                );
+                return LuaValue.valueOf(boxes.isEmpty());
+            }
+        });
+
+        set("isOnLadder", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(minecraft.thePlayer != null && minecraft.thePlayer.isOnLadder());
+            }
+        });
+
+        set("isKeyDown", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue keyCode) {
+                return LuaValue.valueOf(Keyboard.isKeyDown(keyCode.toint()));
             }
         });
     }

@@ -22,7 +22,6 @@ public class Main
 {
     public static void main(String[] p_main_0_)
     {
-        // Enable dark LAF on macOS
         System.setProperty("apple.awt.application.appearance", "system");
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("java.net.preferIPv4Stack", "true");

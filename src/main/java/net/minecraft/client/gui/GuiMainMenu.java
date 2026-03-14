@@ -40,7 +40,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     private static final Logger logger = LogManager.getLogger();
     private static final Random RANDOM = new Random();
-    private static final ShaderUtil menuShader = new ShaderUtil("Alya/Shaders/MainMenuBg.glsl");
+    private static ShaderUtil menuShader = null;
 
     private String splashText;
 
@@ -156,7 +156,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         this.buttonList.add(new AlyaButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
         this.buttonList.add(new AlyaButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
-        // this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
 
         synchronized(this.threadLock) {
             int field_92023_s = this.fontRendererObj.getStringWidth(this.openGLWarning1);
@@ -256,6 +255,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        if (menuShader == null) menuShader = new ShaderUtil("Alya/Shaders/MainMenuBg.glsl");
         menuShader.render();
 
         GlStateManager.enableAlpha();

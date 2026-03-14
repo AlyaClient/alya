@@ -552,7 +552,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         GlStateManager.disableLighting();
         GlStateManager.disableFog();
         GlStateManager.disableTexture2D();
-        // Draw gradient from black (top) to rgb(15,15,15) (bottom)
         this.drawGradientRect(0, 0, this.width, this.height, 0xFF000000, 0xFF0F0F0F);
         GlStateManager.enableTexture2D();
     }

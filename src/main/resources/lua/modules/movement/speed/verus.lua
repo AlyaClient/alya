@@ -29,10 +29,10 @@ local function createVerusSpeedMode(moduleTable, modeSettings)
         alya.mc.setSprinting(true)
 
         if omniSprint.isEnabled() then
-            alya.movement.setSpeedStrafe(0.377 * boostAmount, strafePercentage)
+            alya.movement.setSpeedStrafe(0.33 * boostAmount, strafePercentage)
         else
             if alya.mc.isForwardDown() then
-                alya.movement.setSpeedStrafe(0.377 * boostAmount, strafePercentage)
+                alya.movement.setSpeedStrafe(0.33 * boostAmount, strafePercentage)
             else
                 alya.movement.setSpeedStrafe(0.32, strafePercentage)
             end

@@ -70,6 +70,16 @@ public final class Alya {
             "modules/player/norightclickdelay.lua",
             "modules/player/nofall.lua",
 
+            "modules/combat/killaura.lua",
+            "modules/combat/velocity.lua",
+            "modules/combat/criticals.lua",
+            "modules/combat/autoclicker.lua",
+            "modules/combat/clickassist.lua",
+
+            "modules/movement/longjump.lua",
+
+            "modules/player/legitscaffold.lua",
+
             "modules/misc/disabler.lua",
 
             "modules/world/timer.lua",

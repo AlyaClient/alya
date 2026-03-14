@@ -1,16 +1,8 @@
 #!/bin/bash
 JDK_PATH="$HOME/.sdkman/candidates/java/8.0.482-librca/bin/java"
-echo "JDK: $JDK_PATH"
 SCRIPT_DIR=$(pwd)
 
-if [ ! -d "$SCRIPT_DIR/target/lib-temp" ]; then
-    unzip -q "$SCRIPT_DIR/target/libs" -d "$SCRIPT_DIR/target/lib-temp"
-fi
-
-CP="$SCRIPT_DIR/target/Alya-1.0.jar"
-for jar in "$SCRIPT_DIR/target/lib-temp"/*.jar; do
-    CP="$CP:$jar"
-done
+CP="$SCRIPT_DIR/target/Alya-1.0.jar:$SCRIPT_DIR/target/libs"
 
 $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.heapdump" \
     "-Djava.library.path=$SCRIPT_DIR/jars/versions/1.8.9/1.8.9-natives" \

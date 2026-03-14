@@ -118,7 +118,6 @@ public class GuiButton extends Gui {
             FontRenderer fontrenderer = mc.fontRendererObj;
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 
-            // Fast animation update
             if(this.hovered && this.enabled) {
                 hoverAnimation = Math.min(1.0F, hoverAnimation + ANIMATION_SPEED);
             } else {
@@ -134,7 +133,6 @@ public class GuiButton extends Gui {
                 borderColor = BORDER_COLOR;
                 textColor = TEXT_DISABLED;
             } else {
-                // Interpolate colors based on animation
                 bgColor = interpolateColor(BACKGROUND_COLOR, BACKGROUND_HOVER, hoverAnimation);
                 borderColor = interpolateColor(BORDER_COLOR, BORDER_HOVER, hoverAnimation);
                 textColor = TEXT_COLOR;
@@ -143,10 +141,8 @@ public class GuiButton extends Gui {
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-            // Draw background
             drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, bgColor);
 
-            // Draw borders
             drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + 1, borderColor);
             drawRect(this.xPosition, this.yPosition + this.height - 1, this.xPosition + this.width, this.yPosition + this.height, borderColor);
             drawRect(this.xPosition, this.yPosition, this.xPosition + 1, this.yPosition + this.height, borderColor);

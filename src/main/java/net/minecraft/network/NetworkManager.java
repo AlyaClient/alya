@@ -4,6 +4,7 @@ import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import dev.thoq.Alya;
+import dev.thoq.event.events.PacketReceiveEvent;
 import dev.thoq.event.events.PacketSendEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -138,9 +139,10 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
         {
             try
             {
-               // todo: packetReceiveEvent
+                final PacketReceiveEvent packetReceiveEvent = new PacketReceiveEvent(p_channelRead0_2_);
+                Alya.getInstance().getEventBus().dispatch(packetReceiveEvent);
 
-                //if(!packetReceiveEvent.isCanceled())
+                if(!packetReceiveEvent.isCanceled())
                     p_channelRead0_2_.processPacket(this.packetListener);
             }
             catch (ThreadQuickExitException var4)

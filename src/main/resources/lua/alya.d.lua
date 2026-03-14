@@ -59,6 +59,8 @@
 ---@field isOnGround fun(): boolean
 ---@field isPre fun(): boolean
 ---@field isPost fun(): boolean
+---@field setYaw fun(yaw: number)
+---@field setPitch fun(pitch: number)
 ---@field setX fun(x: number)
 ---@field setY fun(y: number)
 ---@field setZ fun(z: number)
@@ -77,6 +79,16 @@
 
 ---@class AlyaPacketSendEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
+
+---@class AlyaPacketReceiveEvent : AlyaCancelableEvent
+---@field getPacketClass fun(): string
+---@field getEntityId fun(): integer packet entity id (S12 only, -1 otherwise)
+---@field getMotionX fun(): number raw motion x (int for S12, float for S27)
+---@field getMotionY fun(): number raw motion y
+---@field getMotionZ fun(): number raw motion z
+---@field setMotionX fun(v: number)
+---@field setMotionY fun(v: number)
+---@field setMotionZ fun(v: number)
 
 ---@class AlyaModules
 local AlyaModules = {}
@@ -110,7 +122,7 @@ function AlyaModules.getByCategory(category) end
 local AlyaEvents = {}
 
 ---subscribes a callback to named game event
----@param eventName "motion"|"update"|"render2d"|"tick"|"timeupdate"|"playermove"|"playerinput"|"packetsend"|"moveentity"|"slowdown"|"blockplaceable"
+---@param eventName "motion"|"update"|"render2d"|"tick"|"timeupdate"|"playermove"|"playerinput"|"packetsend"|"packetreceive"|"moveentity"|"slowdown"|"blockplaceable"
 ---@param callback fun(event: AlyaMotionEvent|AlyaRender2DEvent|AlyaCancelableEvent|AlyaPacketSendEvent)
 function AlyaEvents.on(eventName, callback) end
 
@@ -326,12 +338,136 @@ function AlyaMC.getFallDistance() end
 function AlyaMC.setFallDistance(distance) end
 ---@return number
 function AlyaMC.getHurtTime() end
+---@return integer
+function AlyaMC.getEntityId() end
 
 ---@class AlyaFontRenderer
 ---@field drawString fun(text: string, x: number, y: number, color: integer)
 ---@field drawStringWithShadow fun(text: string, x: number, y: number, color: integer)
 ---@field getStringWidth fun(text: string): number
 ---@field getFontHeight fun(): number
+
+---@class AlyaEntityPlayer
+---@field id integer
+---@field name string
+---@field x number
+---@field y number
+---@field z number
+---@field eyeHeight number
+---@field health number
+---@field hurtTime integer
+---@field distance number
+---@field isInvisible boolean
+
+---@class AlyaRotation
+---@field yaw number
+---@field pitch number
+
+---@class AlyaCombat
+
+---returns nearby players as array of AlyaEntityPlayer, sorted by distance
+---@param reach? number defaults to 6.0
+---@param raycastOnly? boolean only include players in line of sight
+---@return AlyaEntityPlayer[]
+function AlyaCombat.getPlayers(reach, raycastOnly) end
+
+---returns nearby living entities filtered by type, sorted by distance
+---@param reach? number defaults to 6.0
+---@param raycastOnly? boolean
+---@param players? boolean include players (default true)
+---@param hostile? boolean include hostile mobs (default true)
+---@param passive? boolean include passive mobs (default true)
+---@return AlyaEntityPlayer[]
+function AlyaCombat.getEntities(reach, raycastOnly, players, hostile, passive) end
+
+---returns yaw/pitch rotation from player eye to entity position
+---@param entity AlyaEntityPlayer
+---@return AlyaRotation
+function AlyaCombat.getRotationToEntity(entity) end
+
+---returns sensitivity multiplier used for snapping rotations to valid values
+---@return number
+function AlyaCombat.getSensitivityMultiplier() end
+
+---swings item and sends attack packet for entity with given id
+---@param entityId integer
+---@return boolean success
+function AlyaCombat.attackEntity(entityId) end
+
+---swings the held item
+function AlyaCombat.swingItem() end
+
+---plays enchantment critical particle on entity
+---@param entityId integer
+function AlyaCombat.onEnchantmentCritical(entityId) end
+
+---plays critical hit particle on entity
+---@param entityId integer
+function AlyaCombat.onCriticalHit(entityId) end
+
+---sends C08PacketPlayerBlockPlacement to begin blocking with held sword
+function AlyaCombat.sendBlockPlacement() end
+
+---sends C07PacketPlayerDigging RELEASE_USE_ITEM to stop blocking
+function AlyaCombat.sendReleaseUseItem() end
+
+---returns true if player is holding a sword
+---@return boolean
+function AlyaCombat.isHoldingSword() end
+
+---returns true if player swing animation is in progress
+---@return boolean
+function AlyaCombat.isSwingInProgress() end
+
+---returns player hurt time
+---@return integer
+function AlyaCombat.getHurtTime() end
+
+---returns true if the local player can see the entity (raycast)
+---@param entityId integer
+---@return boolean
+function AlyaCombat.canSee(entityId) end
+
+---returns true if name is in the friends list
+---@param name string
+---@return boolean
+function AlyaCombat.isFriend(name) end
+
+---adds name to friends list
+---@param name string
+function AlyaCombat.addFriend(name) end
+
+---removes name from friends list
+---@param name string
+function AlyaCombat.removeFriend(name) end
+
+---returns all friend names
+---@return string[]
+function AlyaCombat.getFriends() end
+
+---sends C04PacketPlayerPosition with a y offset from current position
+---@param offset number
+---@param onGround boolean
+function AlyaCombat.sendPositionPacket(offset, onGround) end
+
+---resets leftClickCounter and calls clickMouse
+function AlyaCombat.clickMouse() end
+
+---returns true if the attack key (left mouse) is held
+---@return boolean
+function AlyaCombat.isAttackKeyDown() end
+
+---returns true if the use item key (right mouse) is held
+---@return boolean
+function AlyaCombat.isUseKeyDown() end
+
+---returns local player rotation yaw
+---@return number
+function AlyaCombat.getPlayerYaw() end
+
+---returns local player rotation pitch
+---@return number
+function AlyaCombat.getPlayerPitch() end
 
 ---@class Alya
 ---@field modules AlyaModules
@@ -343,6 +479,7 @@ function AlyaMC.getHurtTime() end
 ---@field render AlyaRender
 ---@field timer AlyaTimer
 ---@field mc AlyaMC
+---@field combat AlyaCombat
 ---@field getName fun(): string
 ---@field getVersion fun(): string
 ---@field reload fun()

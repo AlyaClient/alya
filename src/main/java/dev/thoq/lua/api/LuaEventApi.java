@@ -6,7 +6,10 @@ import dev.thoq.event.IEventListener;
 import dev.thoq.event.events.BlockPlaceableEvent;
 import dev.thoq.event.events.MotionEvent;
 import dev.thoq.event.events.MoveEntityEvent;
+import dev.thoq.event.events.PacketReceiveEvent;
 import dev.thoq.event.events.PacketSendEvent;
+import net.minecraft.network.play.server.S12PacketEntityVelocity;
+import net.minecraft.network.play.server.S27PacketExplosion;
 import dev.thoq.event.events.PlayerInputEvent;
 import dev.thoq.event.events.PlayerMoveEvent;
 import dev.thoq.event.events.Render2DEvent;
@@ -43,6 +46,7 @@ public final class LuaEventApi extends LuaTable {
         EVENT_CLASS_MAP.put("playermove", PlayerMoveEvent.class);
         EVENT_CLASS_MAP.put("playerinput", PlayerInputEvent.class);
         EVENT_CLASS_MAP.put("packetsend", PacketSendEvent.class);
+        EVENT_CLASS_MAP.put("packetreceive", PacketReceiveEvent.class);
         EVENT_CLASS_MAP.put("moveentity", MoveEntityEvent.class);
         EVENT_CLASS_MAP.put("slowdown", SlowDownEvent.class);
         EVENT_CLASS_MAP.put("blockplaceable", BlockPlaceableEvent.class);
@@ -164,6 +168,20 @@ public final class LuaEventApi extends LuaTable {
                     return LuaValue.valueOf(motionEvent.isPost());
                 }
             });
+            eventTable.set("setYaw", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue v) {
+                    motionEvent.setYaw((float) v.todouble());
+                    return LuaValue.NIL;
+                }
+            });
+            eventTable.set("setPitch", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue v) {
+                    motionEvent.setPitch((float) v.todouble());
+                    return LuaValue.NIL;
+                }
+            });
             eventTable.set("setX", new OneArgFunction() {
                 @Override
                 public LuaValue call(LuaValue xValue) {
@@ -276,6 +294,95 @@ public final class LuaEventApi extends LuaTable {
                 @Override
                 public LuaValue call() {
                     return LuaValue.valueOf(packetSendEvent.getPacket().getClass().getSimpleName());
+                }
+            });
+         } else if (event instanceof PacketReceiveEvent) {
+            final PacketReceiveEvent packetReceiveEvent = (PacketReceiveEvent) event;
+            eventTable.set("cancel", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    packetReceiveEvent.cancel();
+                    return LuaValue.NIL;
+                }
+            });
+            eventTable.set("isCanceled", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    return LuaValue.valueOf(packetReceiveEvent.isCanceled());
+                }
+            });
+            eventTable.set("getPacketClass", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    return LuaValue.valueOf(packetReceiveEvent.getPacket().getClass().getSimpleName());
+                }
+            });
+            eventTable.set("getMotionX", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        return LuaValue.valueOf(((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionX);
+                    if (packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                        return LuaValue.valueOf((double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionX);
+                    return LuaValue.valueOf(0d);
+                }
+            });
+            eventTable.set("getMotionY", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        return LuaValue.valueOf(((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionY);
+                    if (packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                        return LuaValue.valueOf((double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionY);
+                    return LuaValue.valueOf(0d);
+                }
+            });
+            eventTable.set("getMotionZ", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        return LuaValue.valueOf(((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionZ);
+                    if (packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                        return LuaValue.valueOf((double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionZ);
+                    return LuaValue.valueOf(0d);
+                }
+            });
+            eventTable.set("setMotionX", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue val) {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionX = val.toint();
+                    else if (packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                        ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionX = (float) val.todouble();
+                    return LuaValue.NIL;
+                }
+            });
+            eventTable.set("setMotionY", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue val) {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionY = val.toint();
+                    else if (packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                        ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionY = (float) val.todouble();
+                    return LuaValue.NIL;
+                }
+            });
+            eventTable.set("setMotionZ", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue val) {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionZ = val.toint();
+                    else if (packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                        ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionZ = (float) val.todouble();
+                    return LuaValue.NIL;
+                }
+            });
+            eventTable.set("getEntityId", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    if (packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                        return LuaValue.valueOf(((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getEntityID());
+                    return LuaValue.valueOf(-1);
                 }
             });
         } else if (event instanceof TickEvent) {
