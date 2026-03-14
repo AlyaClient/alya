@@ -2,11 +2,9 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import dev.thoq.Alya;
 import dev.thoq.gui.auth.AltManagerGui;
 import dev.thoq.gui.AlyaButton;
 import dev.thoq.util.render.ShaderUtil;
-import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.util.misc.Title;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -271,41 +269,21 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        int logoSize = 256;
         int firstButtonY = this.height / 4 + 48;
         int availableHeight = firstButtonY - 10;
 
-        float scale = 10.0F;
-        if(logoSize + 20 > availableHeight) {
-            scale = (float) (availableHeight - 20) / logoSize;
-        }
-        int scaledSize = (int) (logoSize * scale);
-
+        int scaledSize = Math.min(140, availableHeight - 20);
         int logoX = (this.width - scaledSize) / 2;
         int logoY = Math.max(10, (availableHeight - scaledSize) / 2);
 
-        final String titleText = "Alya";
-        final AlyaFontRenderer font = Alya.getInstance().getFontRendererTitle();
-
-        final float textWidth = font.getStringWidth(titleText);
-        final float textHeight = font.getFontHeight();
-
-        final float maxTextWidth = this.width - 20.0F;
-        final float maxTextHeight = Math.max(1.0F, availableHeight - 20.0F);
-
-        float textScale = 1.0F;
-        if(textWidth > 0.0F && textHeight > 0.0F) {
-            textScale = Math.min(maxTextWidth / textWidth, maxTextHeight / textHeight);
-        }
-        textScale = Math.max(0.5F, Math.min(textScale, 10.0F));
-
-        final float textX = (this.width / 2.0F - (textWidth * textScale) / 2.0F) / textScale;
-        final float textY = Math.max(10.0F, (availableHeight - (textHeight * textScale)) / 2.0F) / textScale;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(textScale, textScale, 1.0F);
-        font.drawStringWithShadow(titleText, textX, textY, 0xFFFFFFFF);
-        GlStateManager.popMatrix();
+        GlStateManager.tryBlendFuncSeparate(774, 771, 1, 0);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(new ResourceLocation("Alya/Assets/GUI/logo.png"));
+        org.lwjgl.opengl.GL11.glTexParameteri(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S, org.lwjgl.opengl.GL11.GL_CLAMP);
+        org.lwjgl.opengl.GL11.glTexParameteri(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T, org.lwjgl.opengl.GL11.GL_CLAMP);
+        org.lwjgl.opengl.GL11.glTexParameteri(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER, org.lwjgl.opengl.GL11.GL_NEAREST);
+        org.lwjgl.opengl.GL11.glTexParameteri(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER, org.lwjgl.opengl.GL11.GL_NEAREST);
+        drawModalRectWithCustomSizedTexture(logoX, logoY, 0, 0, scaledSize, scaledSize, scaledSize, scaledSize);
 
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 

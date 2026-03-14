@@ -1014,7 +1014,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 
         if(packetIn.getWindowId() == 0) {
             container = entityplayer.inventoryContainer;
-        } else if(packetIn.getWindowId() == entityplayer.openContainer.windowId) {
+        } else if(entityplayer.openContainer != null && packetIn.getWindowId() == entityplayer.openContainer.windowId) {
             container = entityplayer.openContainer;
         }
 
@@ -1615,6 +1615,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
      */
     public void handleTeams(S3EPacketTeams packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
+        if (this.clientWorldController == null) return;
         Scoreboard scoreboard = this.clientWorldController.getScoreboard();
         ScorePlayerTeam scoreplayerteam;
 

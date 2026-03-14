@@ -320,6 +320,12 @@ function AlyaMC.getLastPosX() end
 function AlyaMC.getLastPosY() end
 ---@return number
 function AlyaMC.getLastPosZ() end
+---@return number
+function AlyaMC.getFallDistance() end
+---@param distance integer
+function AlyaMC.setFallDistance(distance) end
+---@return number
+function AlyaMC.getHurtTime() end
 
 ---@class AlyaFontRenderer
 ---@field drawString fun(text: string, x: number, y: number, color: integer)

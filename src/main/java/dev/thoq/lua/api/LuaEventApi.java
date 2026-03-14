@@ -2,6 +2,7 @@ package dev.thoq.lua.api;
 
 import dev.thoq.Alya;
 import dev.thoq.event.IEvent;
+import dev.thoq.event.IEventListener;
 import dev.thoq.event.events.BlockPlaceableEvent;
 import dev.thoq.event.events.MotionEvent;
 import dev.thoq.event.events.MoveEntityEvent;
@@ -21,12 +22,17 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class LuaEventApi extends LuaTable {
 
     private static final Map<String, Class<? extends IEvent>> EVENT_CLASS_MAP = new HashMap<>();
+
+    private final List<Map.Entry<Class<IEvent>, IEventListener<IEvent>>> subscriptions = new ArrayList<>();
 
     static {
         EVENT_CLASS_MAP.put("motion", MotionEvent.class);
@@ -56,17 +62,18 @@ public final class LuaEventApi extends LuaTable {
                     Alya.getInstance().getLogger().warn("Unknown Lua event: {}", eventKey);
                     return LuaValue.NIL;
                 }
-                Alya.getInstance().getEventBus().subscribe(
-                        (Class<IEvent>) eventClass,
-                        event -> {
-                            LuaTable eventTable = buildEventTable(event);
-                            try {
-                                luaFunction.call(eventTable);
-                            } catch (LuaError luaError) {
-                                Alya.getInstance().getLogger().error("Lua event handler error: {}",
-                                        luaError.getMessage());
-                            }
-                        });
+                final Class<IEvent> typedEventClass = (Class<IEvent>) eventClass;
+                final IEventListener<IEvent> listener = event -> {
+                    LuaTable eventTable = buildEventTable(event);
+                    try {
+                        luaFunction.call(eventTable);
+                    } catch (LuaError luaError) {
+                        Alya.getInstance().getLogger().error("Lua event handler error: {}",
+                                luaError.getMessage());
+                    }
+                };
+                subscriptions.add(new AbstractMap.SimpleEntry<>(typedEventClass, listener));
+                Alya.getInstance().getEventBus().subscribe(typedEventClass, listener);
                 return LuaValue.NIL;
             }
         });
@@ -82,6 +89,13 @@ public final class LuaEventApi extends LuaTable {
                 return namesTable;
             }
         });
+    }
+
+    public void clearSubscriptions() {
+        for (Map.Entry<Class<IEvent>, IEventListener<IEvent>> entry : subscriptions) {
+            Alya.getInstance().getEventBus().unsubscribe(entry.getKey(), entry.getValue());
+        }
+        subscriptions.clear();
     }
 
     private LuaTable buildEventTable(final IEvent event) {
@@ -129,6 +143,13 @@ public final class LuaEventApi extends LuaTable {
                 @Override
                 public LuaValue call() {
                     return LuaValue.valueOf(motionEvent.isOnGround());
+                }
+            });
+            eventTable.set("setOnGround", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue onGroundValue) {
+                    motionEvent.setOnGround(onGroundValue.toboolean());
+                    return LuaValue.NIL;
                 }
             });
             eventTable.set("isPre", new ZeroArgFunction() {

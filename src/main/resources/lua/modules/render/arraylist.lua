@@ -36,18 +36,20 @@ alya.events.on("render2d", function(event)
         local name = currentModule.getName()
         local category = currentModule.getCategory()
 
-        if name ~= "ArrayList" and name ~= "ClickGUI" then
-            if showVisual.isEnabled() or category ~= "RENDER" then
-                local width = fontRenderer.getStringWidth(name) + padding * 2
-                local positionX = screenWidth - width - 2
-                local color = getCategoryColor(category)
+        if name == "ArrayList" and name == "ClickGUI" then
+            return
+        end
 
-                alya.render.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
-                alya.render.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, color)
-                fontRenderer.drawString(name, positionX + padding - 2, positionY, 0xFFFFFFFF)
+        if showVisual.isEnabled() or category ~= "RENDER" then
+            local width = fontRenderer.getStringWidth(name) + padding * 2
+            local positionX = screenWidth - width - 2
+            local color = getCategoryColor(category)
 
-                positionY = positionY + height + 2
-            end
+            alya.render.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
+            alya.render.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, color)
+
+            fontRenderer.drawString(name, positionX + padding - 2, positionY, 0xFFFFFFFF)
+            positionY = positionY + height + 2
         end
     end
 end)

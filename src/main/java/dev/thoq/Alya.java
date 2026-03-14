@@ -1,6 +1,10 @@
 package dev.thoq;
 
 import dev.thoq.command.CommandManager;
+import dev.thoq.command.commands.BindCommand;
+import dev.thoq.command.commands.ConfigCommand;
+import dev.thoq.command.commands.HelpCommand;
+import dev.thoq.command.commands.ReloadCommand;
 import dev.thoq.config.ConfigManager;
 import dev.thoq.event.EventBus;
 import dev.thoq.lua.LuaEngine;
@@ -44,9 +48,42 @@ public final class Alya {
     private Alya() {
     }
 
+
+    public String[] getScripts() {
+        final String[] scripts = {"util/movement.lua",
+            "util/chat.lua",
+            "util/render.lua",
+
+            "core/module.lua",
+            "core/submodule.lua",
+            "core/command.lua",
+
+            "modules/render/fullbright.lua",
+            "modules/render/arraylist.lua",
+            "modules/render/ambience.lua",
+
+            "modules/movement/flight.lua",
+            "modules/movement/speed.lua",
+
+            "modules/player/sprint.lua",
+            "modules/player/nojumpdelay.lua",
+            "modules/player/norightclickdelay.lua",
+            "modules/player/nofall.lua",
+
+            "modules/misc/disabler.lua",
+
+            "modules/world/timer.lua",
+
+            "modules/movement/highjump.lua",
+            "modules/movement/wee.lua"
+        };
+        return scripts;
+    }
+
     public void initialize() {
         Title.update(this.getClass());
         moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
+        commandManager.putAll(new HelpCommand(), new BindCommand(), new ConfigCommand(), new ReloadCommand());
         bindFontRenderersToLua();
         luaEngine.loadAll();
         LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
@@ -215,4 +252,6 @@ public final class Alya {
     public Logger getLogger() {
         return LOGGER;
     }
+
+
 }

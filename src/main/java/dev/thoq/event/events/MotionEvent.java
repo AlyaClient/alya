@@ -4,7 +4,6 @@ import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 import dev.thoq.event.TemporalEvent;
 
-@SuppressWarnings("unused")
 public final class MotionEvent implements IEvent, ICancelable, TemporalEvent {
 
     private double x;

@@ -1,6 +1,7 @@
 package dev.thoq.lua.api;
 
 import net.minecraft.client.Minecraft;
+
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
@@ -292,5 +293,27 @@ public final class LuaMinecraftApi extends LuaTable {
                         : LuaValue.valueOf(0d);
             }
         });
+        set("getFallDistance", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return minecraft.thePlayer != null ? LuaValue.valueOf(minecraft.thePlayer.fallDistance) : LuaValue.valueOf(0D);
+            }
+        });
+        set("setFallDistance", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue fallDistance) {
+                if (minecraft.thePlayer != null)
+                    minecraft.thePlayer.fallDistance = fallDistance.tofloat();
+                return LuaValue.NIL;
+            }
+        });
+        set("getHurtTime", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return minecraft.thePlayer != null ? LuaValue.valueOf(minecraft.thePlayer.hurtTime) : LuaValue.valueOf(0);
+            }
+        });
     }
+
+
 }
