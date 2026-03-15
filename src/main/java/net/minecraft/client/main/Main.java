@@ -91,7 +91,6 @@ public class Main
         int j = ((Integer)optionset.valueOf(optionspec14)).intValue();
         boolean flag = optionset.has("fullscreen");
         boolean flag1 = optionset.has("checkGlErrors");
-        boolean flag2 = optionset.has("demo");
         String s3 = (String)optionset.valueOf(optionspec12);
         Gson gson = (new GsonBuilder()).registerTypeAdapter(PropertyMap.class, new Serializer()).create();
         PropertyMap propertymap = (PropertyMap)gson.fromJson((String)optionset.valueOf(optionspec15), PropertyMap.class);

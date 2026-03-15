@@ -1,14 +1,11 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "type": "java",
             "name": "Run Alya",
             "request": "launch",
-            "mainClass": "Start",
+            "mainClass": "main.Start",
             "projectName": "Alya",
             "vmArgs": "-Djava.library.path=${workspaceFolder}/jars/versions/1.8.9/1.8.9-natives",
             "cwd": "${workspaceFolder}/jars/.minecraft"

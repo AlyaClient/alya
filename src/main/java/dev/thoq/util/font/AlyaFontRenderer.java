@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 public final class AlyaFontRenderer {
 
-    private static final float SCALE_FACTOR = 4.0f;
+    private static final float SCALE_FACTOR = 8.0f;
 
     private Font font;
     private final FontData fontData = new FontData();
@@ -23,7 +23,7 @@ public final class AlyaFontRenderer {
     private static class FontData {
         private final CharData[] chars = new CharData[256];
         private DynamicTexture texture;
-        private final int width = 1024;
+        private final int width = 2048;
         private int height;
     }
 
@@ -71,12 +71,13 @@ public final class AlyaFontRenderer {
     }
 
     private void setupTexture() {
-        final BufferedImage fakeImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics2D = (Graphics2D) fakeImage.getGraphics();
-
-        graphics2D.setFont(font);
-
-        handleSprites(fontData, font, graphics2D, false);
+        BufferedImage scratch = new BufferedImage(fontData.width, 512, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2d = (Graphics2D) scratch.getGraphics();
+        graphics2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        graphics2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        graphics2d.setFont(font);
+        handleSprites(fontData, font, graphics2d, false);
+        graphics2d.dispose();
     }
 
     private void handleSprites(final FontData fontData, final Font currentFont, final Graphics2D graphics2D, final boolean drawString) {
@@ -159,7 +160,7 @@ public final class AlyaFontRenderer {
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.scale(0.25, 0.25, 0.25);
+        GlStateManager.scale(1.0 / SCALE_FACTOR, 1.0 / SCALE_FACTOR, 1.0 / SCALE_FACTOR);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -180,11 +181,11 @@ public final class AlyaFontRenderer {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-        float xOffset = x * 4;
+        float xOffset = x * SCALE_FACTOR;
         for(int i = 0; i < text.length(); i++) {
             final char character = text.charAt(i);
             if(character < fontData.chars.length) {
-                drawLetter(xOffset, (y - 2.0f) * 4, character);
+                drawLetter(xOffset, (y - 2.0f) * SCALE_FACTOR, character);
                 xOffset += roundToHalf(fontData.chars[character].width - 16.4f);
             }
         }
@@ -228,25 +229,22 @@ public final class AlyaFontRenderer {
     }
 
     public float getStringWidth(final String text) {
-        if(text == null || text.isEmpty()) {
-            return 0;
-        }
-
+        if(text == null || text.isEmpty()) return 0;
         float width = 0;
         for(int i = 0; i < text.length(); i++) {
             final char character = text.charAt(i);
             if(character < fontData.chars.length)
                 width += roundToHalf(fontData.chars[character].width - 16.4f);
         }
-        return width / 4;
+        return width / SCALE_FACTOR;
     }
 
     public float getFontHeight() {
-        return (fontHeight - 16) / 4;
+        return (fontHeight - 16) / SCALE_FACTOR;
     }
 
     public int getHeight() {
-        return (int) ((fontHeight - 16) / 4);
+        return (int) ((fontHeight - 16) / SCALE_FACTOR);
     }
 
 

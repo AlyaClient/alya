@@ -284,7 +284,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     private ResourceLocation mojangLogo;
     private Framebuffer splashFramebuffer;
     private ScaledResolution splashScaledResolution;
-    private int splashLogoX, splashLogoY, splashDisplaySize;
+    private int splashLogoX, splashLogoY, splashLogoDisplayWidth, splashLogoDisplayHeight;
     private int splashProgressBarX, splashProgressBarY, splashProgressBarWidth, splashProgressBarHeight;
     private int splashImageWidth, splashImageHeight;
     private int splashScaleFactor;
@@ -793,14 +793,28 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             IOUtils.closeQuietly(inputstream);
         }
 
-        this.splashDisplaySize = 200;
-        this.splashLogoX = (this.splashScaledResolution.getScaledWidth() - this.splashDisplaySize) / 2;
-        this.splashLogoY = (this.splashScaledResolution.getScaledHeight() - this.splashDisplaySize) / 2 - 30;
+        // Scale logo to fit window maintaining 16:9 aspect ratio
+        int scaledW = this.splashScaledResolution.getScaledWidth();
+        int scaledH = this.splashScaledResolution.getScaledHeight();
+        float imgAspect = (float) this.splashImageWidth / this.splashImageHeight;
+        float screenAspect = (float) scaledW / scaledH;
+        int logoDisplayWidth, logoDisplayHeight;
+        if (imgAspect > screenAspect) {
+            logoDisplayWidth = scaledW;
+            logoDisplayHeight = (int) (scaledW / imgAspect);
+        } else {
+            logoDisplayHeight = scaledH;
+            logoDisplayWidth = (int) (scaledH * imgAspect);
+        }
+        this.splashLogoX = (scaledW - logoDisplayWidth) / 2;
+        this.splashLogoY = (scaledH - logoDisplayHeight) / 2;
+        this.splashLogoDisplayWidth = logoDisplayWidth;
+        this.splashLogoDisplayHeight = logoDisplayHeight;
 
         this.splashProgressBarWidth = 200;
         this.splashProgressBarHeight = 6;
-        this.splashProgressBarX = (this.splashScaledResolution.getScaledWidth() - this.splashProgressBarWidth) / 2;
-        this.splashProgressBarY = this.splashLogoY + this.splashDisplaySize + 2;
+        this.splashProgressBarX = (scaledW - this.splashProgressBarWidth) / 2;
+        this.splashProgressBarY = scaledH / 4 - this.splashProgressBarHeight / 2;
 
         this.updateSplashProgress(0);
     }
@@ -824,7 +838,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         GlStateManager.enableTexture2D();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.renderEngine.bindTexture(this.mojangLogo);
-        this.drawScaledLogo(this.splashLogoX, this.splashLogoY, this.splashDisplaySize, this.splashDisplaySize, this.splashImageWidth, this.splashImageHeight);
+        this.drawScaledLogo(this.splashLogoX, this.splashLogoY, this.splashLogoDisplayWidth, this.splashLogoDisplayHeight, this.splashImageWidth, this.splashImageHeight);
 
         GlStateManager.disableTexture2D();
 

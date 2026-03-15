@@ -75,7 +75,7 @@ public final class AlyaButton extends GuiButton {
             final float textWidth = fontRenderer.getStringWidth(this.displayString);
             final float textX = this.xPosition + (this.width - textWidth) / 2;
             final float textY = this.yPosition + (this.height - fontRenderer.getFontHeight()) / 2 + 1;
-            fontRenderer.drawStringWithShadow(this.displayString, textX, textY, textColor);
+            fontRenderer.drawString(this.displayString, textX, textY, textColor);
         } else {
             drawCenteredString(mc.fontRendererObj, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, textColor);
         }
