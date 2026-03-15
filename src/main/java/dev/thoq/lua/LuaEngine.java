@@ -23,7 +23,9 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class LuaEngine {
 
@@ -114,8 +116,18 @@ public final class LuaEngine {
     }
 
     public void reload() {
+        final Map<String, ModuleSnapshot> snapshots = new HashMap<>();
+        new ArrayList<>(Alya.getInstance().getModuleManager().getModules()).stream()
+                .filter(module -> module instanceof dev.thoq.lua.api.LuaModule)
+                .map(module -> (dev.thoq.lua.api.LuaModule) module)
+                .forEach(module -> {
+                    final Map<String, String> settingValues = new HashMap<>();
+                    module.getSettings().forEach(s -> settingValues.put(s.getName(), s.getValueAsString()));
+                    snapshots.put(module.getName(), new ModuleSnapshot(module.isEnabled(), module.getKeyCode(), settingValues));
+                });
+
         eventApi.clearSubscriptions();
-        new java.util.ArrayList<>(Alya.getInstance().getModuleManager().getModules()).stream()
+        new ArrayList<>(Alya.getInstance().getModuleManager().getModules()).stream()
                 .filter(module -> module instanceof dev.thoq.lua.api.LuaModule)
                 .forEach(module -> {
                     if (module.isEnabled()) {
@@ -129,6 +141,39 @@ public final class LuaEngine {
         loadedScripts.clear();
 
         loadAll();
+
+        new ArrayList<>(Alya.getInstance().getModuleManager().getModules()).stream()
+                .filter(module -> module instanceof dev.thoq.lua.api.LuaModule)
+                .map(module -> (dev.thoq.lua.api.LuaModule) module)
+                .forEach(module -> {
+                    final ModuleSnapshot snapshot = snapshots.get(module.getName());
+                    if (snapshot == null) return;
+                    module.setKeyCode(snapshot.keyCode);
+                    module.getSettings().forEach(setting -> {
+                        final String savedValue = snapshot.settingValues.get(setting.getName());
+                        if (savedValue != null) {
+                            try {
+                                setting.setValueFromString(savedValue);
+                            } catch (final Exception ignored) {
+                            }
+                        }
+                    });
+                    if (snapshot.enabled) {
+                        module.setEnabled(true);
+                    }
+                });
+    }
+
+    private static final class ModuleSnapshot {
+        final boolean enabled;
+        final int keyCode;
+        final Map<String, String> settingValues;
+
+        ModuleSnapshot(final boolean enabled, final int keyCode, final Map<String, String> settingValues) {
+            this.enabled = enabled;
+            this.keyCode = keyCode;
+            this.settingValues = settingValues;
+        }
     }
 
     public Globals getGlobals() {

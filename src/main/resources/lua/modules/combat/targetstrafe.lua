@@ -10,16 +10,37 @@ local targetHostile = moduleTable.addBooleanSetting("Target Hostile", "", false)
 local targetPassive = moduleTable.addBooleanSetting("Target Passive", "", false)
 
 local direction = 1
+local lockedTargetId = nil
+
+local function isValidTarget(entity)
+    if entity == nil then return false end
+    if entity.health <= 0 then return false end
+    if alya.combat.isFriend(entity.name) then return false end
+    return true
+end
 
 local function getTarget()
+    if lockedTargetId ~= nil then
+        local locked = alya.combat.getEntityById(lockedTargetId)
+        if locked ~= nil and locked.distance <= 32 and isValidTarget(locked) then
+            return locked
+        end
+        lockedTargetId = nil
+    end
+
     local targets = alya.combat.getEntities(32, false, targetPlayers.isEnabled(), targetHostile.isEnabled(),
         targetPassive.isEnabled())
     for i = #targets, 1, -1 do
-        if alya.combat.isFriend(targets[i].name) then
+        if not isValidTarget(targets[i]) then
             table.remove(targets, i)
         end
     end
-    return targets[1]
+
+    local best = targets[1]
+    if best ~= nil then
+        lockedTargetId = best.id
+    end
+    return best
 end
 
 alya.events.on("playerinput", function(event)
@@ -47,29 +68,28 @@ alya.events.on("playerinput", function(event)
 
     local nx = dx / dist
     local nz = dz / dist
-
     local tx = -nz * direction
     local tz = nx * direction
+    local r = radius.getValue()
+    local radialDelta = dist - r
+    local corrX = -nx * radialDelta * 0.5
+    local corrZ = -nz * radialDelta * 0.5
+    local moveX = tx + corrX
+    local moveZ = tz + corrZ
+
+    local moveLen = math.sqrt(moveX * moveX + moveZ * moveZ)
+    if moveLen > 1 then
+        moveX = moveX / moveLen
+        moveZ = moveZ / moveLen
+    end
 
     local yawRad = math.rad(alya.combat.getPlayerYaw())
     local fwdX = -math.sin(yawRad)
     local fwdZ = math.cos(yawRad)
     local rgtX = math.cos(yawRad)
     local rgtZ = math.sin(yawRad)
-
-    local fwd = tx * fwdX + tz * fwdZ
-    local strafe = tx * rgtX + tz * rgtZ
-
-    local r = radius.getValue()
-    local radialDelta = dist - r
-    fwd = fwd + (-nx) * radialDelta * 0.3
-    strafe = strafe + (-nz) * radialDelta * 0.3
-
-    local len = math.sqrt(fwd * fwd + strafe * strafe)
-    if len > 1 then
-        fwd = fwd / len
-        strafe = strafe / len
-    end
+    local fwd = moveX * fwdX + moveZ * fwdZ
+    local strafe = moveX * rgtX + moveZ * rgtZ
 
     event.setMoveForward(fwd)
     event.setMoveStrafe(strafe)
@@ -96,4 +116,5 @@ end)
 
 moduleTable.onDisable(function()
     direction = 1
+    lockedTargetId = nil
 end)

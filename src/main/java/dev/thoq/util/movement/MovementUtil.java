@@ -66,10 +66,10 @@ public final class MovementUtil implements IUtil {
     }
 
     public static void setSpeed(final double speed) {
-        final double yaw = getDirection();
-        if(!isMoving())
+        if (MC.thePlayer.movementInput.moveForward == 0F)
             return;
 
+        final double yaw = getDirection();
         MC.thePlayer.motionX = -MathHelper.sin((float) yaw) * speed;
         MC.thePlayer.motionZ = MathHelper.cos((float) yaw) * speed;
     }

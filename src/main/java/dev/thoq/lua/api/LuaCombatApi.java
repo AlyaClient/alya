@@ -406,6 +406,16 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
             }
         });
 
+        set("getEntityById", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue idValue) {
+                if (mc.theWorld == null || mc.thePlayer == null) return LuaValue.NIL;
+                Entity entity = mc.theWorld.getEntityByID(idValue.toint());
+                if (!(entity instanceof EntityLivingBase)) return LuaValue.NIL;
+                return livingToTable((EntityLivingBase) entity);
+            }
+        });
+
         set("setMoveForward", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue v) {
