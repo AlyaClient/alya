@@ -2,7 +2,9 @@ local moduleTable = alya.modules.register("KillAura", "Automatically attacks pla
 
 local minCps = moduleTable.addNumberSetting("Minimum CPS", "", 10, 1, 100, 0.1)
 local maxCps = moduleTable.addNumberSetting("Maximum CPS", "", 10, 1, 100, 0.1)
-local reach = moduleTable.addNumberSetting("Reach", "", 4, 3, 8, 0.1)
+local seekRange = moduleTable.addNumberSetting("Seek Range", "", 6, 1, 16, 0.1)
+local swingRange = moduleTable.addNumberSetting("Swing Range", "", 4, 1, 8, 0.1)
+local attackRange = moduleTable.addNumberSetting("Attack Range", "", 3.5, 1, 8, 0.1)
 local rotate = moduleTable.addBooleanSetting("Rotate", "", true)
 local rotMode = moduleTable.addModeSetting("Rotation Mode", "", "Blatant", "Blatant", "Legit", "Snap", "Spin")
 local autoBlock = moduleTable.addBooleanSetting("Auto Block", "", false)
@@ -26,6 +28,7 @@ smoothness.setVisibility(function() return rotMode.is("Legit") end)
 local timer = alya.timer.create()
 local blocking    = false
 local wasBlocked  = false
+local lockedTargetId = nil
 local lastYaw     = alya.combat.getPlayerYaw()
 local lastPitch   = alya.combat.getPlayerPitch()
 local lastRotTime = alya.mc.getCurrentTime()
@@ -86,9 +89,14 @@ local function snapRotation(yaw, pitch)
 end
 
 local function doAttack(target)
-    if enchPart.isEnabled() then alya.combat.onEnchantmentCritical(target.id) end
-    if critPart.isEnabled() then alya.combat.onCriticalHit(target.id) end
-    alya.combat.attackEntity(target.id)
+    if target.distance > attackRange.getValue() then return end
+    if target.distance <= swingRange.getValue() then
+        if enchPart.isEnabled() then alya.combat.onEnchantmentCritical(target.id) end
+        if critPart.isEnabled() then alya.combat.onCriticalHit(target.id) end
+        alya.combat.attackEntity(target.id)
+    else
+        alya.combat.swingItem()
+    end
 end
 
 local function shouldAttack()
@@ -126,15 +134,29 @@ alya.events.on("motion", function(event)
     if not moduleTable.isEnabled() then return end
     if not event.isPre() then return end
 
-    local targets = alya.combat.getEntities(reach.getValue(), raycast.isEnabled(), targetPlayers.isEnabled(), targetHostile.isEnabled(), targetPassive.isEnabled())
+    local targets = alya.combat.getEntities(seekRange.getValue(), raycast.isEnabled(), targetPlayers.isEnabled(), targetHostile.isEnabled(), targetPassive.isEnabled())
 
     for i = #targets, 1, -1 do
-        if alya.combat.isFriend(targets[i].name) then
+        if alya.combat.isFriend(targets[i].name) or targets[i].health <= 0 then
             table.remove(targets, i)
         end
     end
 
-    local primary = targets[1]
+    local primary = nil
+    if lockedTargetId ~= nil then
+        local locked = alya.combat.getEntityById(lockedTargetId)
+        if locked ~= nil and locked.distance <= seekRange.getValue() and locked.health > 0 and not alya.combat.isFriend(locked.name) then
+            primary = locked
+        else
+            lockedTargetId = nil
+        end
+    end
+    if primary == nil then
+        primary = targets[1]
+        if primary ~= nil then
+            lockedTargetId = primary.id
+        end
+    end
 
     blocking = autoBlock.isEnabled() and primary ~= nil and alya.combat.isHoldingSword()
 
@@ -204,6 +226,7 @@ moduleTable.onDisable(function()
     end
     blocking = false
     wasBlocked = false
+    lockedTargetId = nil
     lastYaw   = alya.combat.getPlayerYaw()
     lastPitch = alya.combat.getPlayerPitch()
     lastRotTime = alya.mc.getCurrentTime()
