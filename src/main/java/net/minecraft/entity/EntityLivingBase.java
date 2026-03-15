@@ -1645,7 +1645,7 @@ public abstract class EntityLivingBase extends Entity {
     }
 
     protected float func_110146_f(float p_110146_1_, float p_110146_2_) {
-        final float rotationYaw = EntityPlayerSP.motionEvent == null || this != Minecraft.getMinecraft().thePlayer ? this.rotationYaw : 0 /* EntityPlayerSP.motionEvent.getYaw(); */;
+        final float rotationYaw = EntityPlayerSP.motionEvent == null || this != Minecraft.getMinecraft().thePlayer ? this.rotationYaw : EntityPlayerSP.motionEvent.getYaw();
 
         float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.renderYawOffset);
         this.renderYawOffset += f * 0.3F;

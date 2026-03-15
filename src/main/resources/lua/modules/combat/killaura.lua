@@ -1,19 +1,20 @@
 local moduleTable = alya.modules.register("KillAura", "Automatically attacks players within range", "COMBAT")
 
-local minCps     = moduleTable.addNumberSetting("Minimum CPS", "", 10, 1, 100, 0.1)
-local maxCps     = moduleTable.addNumberSetting("Maximum CPS", "", 10, 1, 100, 0.1)
-local reach      = moduleTable.addNumberSetting("Reach", "", 4, 3, 8, 0.1)
-local rotate     = moduleTable.addBooleanSetting("Rotate", "", true)
-local rotMode    = moduleTable.addModeSetting("Rotation Mode", "", "Blatant", "Blatant", "Legit", "Snap", "Spin")
-local autoBlock  = moduleTable.addBooleanSetting("Auto Block", "", false)
-local blockMode  = moduleTable.addModeSetting("Auto Block Mode", "", "Vanilla", "Vanilla", "Hurt Time", "Fake")
-local enchPart   = moduleTable.addBooleanSetting("Enchant Particle", "", false)
-local critPart   = moduleTable.addBooleanSetting("Critical Particle", "", false)
-local extraRand  = moduleTable.addBooleanSetting("Extra Randomization", "", false)
-local raycast    = moduleTable.addBooleanSetting("Raycast", "", true)
-local noDelay    = moduleTable.addBooleanSetting("No Attack Delay", "", false)
+local minCps = moduleTable.addNumberSetting("Minimum CPS", "", 10, 1, 100, 0.1)
+local maxCps = moduleTable.addNumberSetting("Maximum CPS", "", 10, 1, 100, 0.1)
+local reach = moduleTable.addNumberSetting("Reach", "", 4, 3, 8, 0.1)
+local rotate = moduleTable.addBooleanSetting("Rotate", "", true)
+local rotMode = moduleTable.addModeSetting("Rotation Mode", "", "Blatant", "Blatant", "Legit", "Snap", "Spin")
+local autoBlock = moduleTable.addBooleanSetting("Auto Block", "", false)
+local blockMode = moduleTable.addModeSetting("Auto Block Mode", "", "Vanilla", "Vanilla", "Hurt Time", "Fake")
+local enchPart = moduleTable.addBooleanSetting("Enchant Particle", "", false)
+local critPart = moduleTable.addBooleanSetting("Critical Particle", "", false)
+local extraRand = moduleTable.addBooleanSetting("Extra Randomization", "", false)
+local clientRotate = moduleTable.addBooleanSetting("Client Rotate", "", true)
+local raycast = moduleTable.addBooleanSetting("Raycast", "", true)
+local noDelay = moduleTable.addBooleanSetting("No Attack Delay", "", false)
 local tomfoolery = moduleTable.addBooleanSetting("Tomfoolery", "", false)
-local jitterStr  = moduleTable.addNumberSetting("Jitter Strength", "", 2.0, 0.1, 10.0, 0.1)
+local jitterStr = moduleTable.addNumberSetting("Jitter Strength", "", 2.0, 0.1, 10.0, 0.1)
 local smoothness = moduleTable.addNumberSetting("Smoothness", "", 3.0, 1.0, 10.0, 0.1)
 local targetPlayers = moduleTable.addBooleanSetting("Target Players", "", true)
 local targetHostile = moduleTable.addBooleanSetting("Target Hostile", "", false)
@@ -22,11 +23,11 @@ local targetPassive = moduleTable.addBooleanSetting("Target Passive", "", false)
 jitterStr.setVisibility(function() return rotMode.is("Legit") end)
 smoothness.setVisibility(function() return rotMode.is("Legit") end)
 
-local timer       = alya.timer.create()
+local timer = alya.timer.create()
 local blocking    = false
 local wasBlocked  = false
-local lastYaw     = 0
-local lastPitch   = 0
+local lastYaw     = alya.combat.getPlayerYaw()
+local lastPitch   = alya.combat.getPlayerPitch()
 local lastRotTime = alya.mc.getCurrentTime()
 local jitterPhase = 0
 local spinProgress = 0
@@ -40,29 +41,40 @@ local function randomInRange(a, b)
     return a + math.random() * (b - a)
 end
 
+local function wrapDelta(delta)
+    delta = delta % 360
+    if delta > 180 then delta = delta - 360 end
+    return delta
+end
+
+local rwYaw   = 0
+local rwPitch = 0
+
 local function addJitter(yaw, pitch)
     local now = alya.mc.getCurrentTime()
-    local dt = (now - lastRotTime) / 1000.0
+    local dt  = math.min((now - lastRotTime) / 1000.0, 0.1)
     lastRotTime = now
 
-    jitterPhase = jitterPhase + dt * 2.0
-
     local js = jitterStr.getValue()
-    local jx = math.sin(jitterPhase * 1.3) * math.cos(jitterPhase * 0.7) * js
-    local jy = math.cos(jitterPhase * 1.1) * math.sin(jitterPhase * 0.9) * js * 0.6
-
-    jx = jx + (math.random() - 0.5) * js * 0.3
-    jy = jy + (math.random() - 0.5) * js * 0.2
-
     local sf = 1.0 / smoothness.getValue()
-    local ty = yaw + jx
-    local tp = pitch + jy
 
-    local ny = lastYaw + (ty - lastYaw) * sf
-    local np = lastPitch + (tp - lastPitch) * sf
+    rwYaw   = rwYaw   * 0.75 + (math.random() - 0.5) * js * dt * 60
+    rwPitch = rwPitch * 0.75 + (math.random() - 0.5) * js * 0.55 * dt * 60
+
+    rwYaw   = math.max(-js, math.min(js, rwYaw))
+    rwPitch = math.max(-js * 0.6, math.min(js * 0.6, rwPitch))
+
+    local ty = yaw + rwYaw
+    local tp = pitch + rwPitch
+
+    local dyaw   = wrapDelta(ty - lastYaw)
+    local dpitch = wrapDelta(tp - lastPitch)
+
+    local ny = lastYaw  + dyaw   * sf
+    local np = lastPitch + dpitch * sf
     np = math.max(-90, math.min(90, np))
 
-    lastYaw = ny
+    lastYaw   = ny
     lastPitch = np
     return ny, np
 end
@@ -145,17 +157,13 @@ alya.events.on("motion", function(event)
             yaw, pitch = addJitter(yaw, pitch)
             yaw, pitch = snapRotation(yaw, pitch)
         elseif mode == "Snap" then
-            local js = 30.0
-            local now = alya.mc.getCurrentTime()
-            local dt = (now - lastRotTime) / 1000.0
-            lastRotTime = now
-            jitterPhase = jitterPhase + dt * 2.0
-            local jx = math.sin(jitterPhase * 1.3) * math.cos(jitterPhase * 0.7) * js
-            local jy = math.cos(jitterPhase * 1.1) * math.sin(jitterPhase * 0.9) * js * 0.6
-            jx = jx + (math.random() - 0.5) * js * 0.3
-            jy = jy + (math.random() - 0.5) * js * 0.2
-            local ny = lastYaw + ((yaw + jx) - lastYaw)
-            local np = lastPitch + ((pitch + jy) - lastPitch)
+            local js = 4.0
+            local jx = (math.random() - 0.5) * js
+            local jy = (math.random() - 0.5) * js * 0.5
+            local dy = wrapDelta((yaw + jx) - lastYaw)
+            local dp = wrapDelta((pitch + jy) - lastPitch)
+            local ny = lastYaw  + dy
+            local np = lastPitch + dp
             np = math.max(-90, math.min(90, np))
             lastYaw, lastPitch = ny, np
             yaw, pitch = snapRotation(ny, np)
@@ -168,6 +176,10 @@ alya.events.on("motion", function(event)
 
         event.setYaw(yaw)
         event.setPitch(pitch)
+
+        if clientRotate.isEnabled() then
+            alya.combat.setClientRotation(yaw, pitch)
+        end
     end
 
     if tomfoolery.isEnabled() then
@@ -185,11 +197,18 @@ moduleTable.onDisable(function()
     if wasBlocked and not alya.combat.isSwingInProgress() then
         alya.combat.sendReleaseUseItem()
     end
+    if clientRotate.isEnabled() then
+        local yaw = alya.combat.getPlayerYaw()
+        local pitch = alya.combat.getPlayerPitch()
+        alya.combat.setClientRotation(yaw, pitch)
+    end
     blocking = false
     wasBlocked = false
-    lastYaw = 0
-    lastPitch = 0
+    lastYaw   = alya.combat.getPlayerYaw()
+    lastPitch = alya.combat.getPlayerPitch()
     lastRotTime = alya.mc.getCurrentTime()
     jitterPhase = 0
     spinProgress = 0
+    rwYaw = 0
+    rwPitch = 0
 end)

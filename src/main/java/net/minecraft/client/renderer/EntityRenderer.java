@@ -645,7 +645,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     private void orientCamera(float partialTicks) {
         Entity entity = this.mc.getRenderViewEntity();
         float f = entity.getEyeHeight();
-        double d0 = this.mc.playerController.getBlockReachDistance();
+        double d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
         double d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks + (double) f;
         double d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
 
@@ -750,9 +750,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         GlStateManager.translate(0.0F, -f, 0.0F);
-        d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
-        d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks + (double) f;
-        d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
         this.cloudFog = this.mc.renderGlobal.hasCloudFog(d0, d1, d2, partialTicks);
     }
 
@@ -1631,6 +1628,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             this.mc.mcProfiler.endStartSection("aboveClouds");
             this.renderCloudsCheck(renderglobal, partialTicks, pass);
         }
+
+        dev.thoq.Alya.getInstance().getEventBus().dispatch(new dev.thoq.event.events.Render3DEvent(partialTicks));
 
         if(Reflector.ForgeHooksClient_dispatchRenderLast.exists()) {
             this.mc.mcProfiler.endStartSection("forge_render_last");

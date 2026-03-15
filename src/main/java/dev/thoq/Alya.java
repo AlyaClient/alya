@@ -61,6 +61,7 @@ public final class Alya {
             "modules/render/fullbright.lua",
             "modules/render/arraylist.lua",
             "modules/render/ambience.lua",
+            "modules/render/esp.lua",
 
             "modules/movement/flight.lua",
             "modules/movement/speed.lua",
@@ -75,6 +76,7 @@ public final class Alya {
             "modules/combat/criticals.lua",
             "modules/combat/autoclicker.lua",
             "modules/combat/clickassist.lua",
+            "modules/combat/targetstrafe.lua",
 
             "modules/movement/longjump.lua",
 

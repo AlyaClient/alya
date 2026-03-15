@@ -266,6 +266,13 @@ public final class LuaMinecraftApi extends LuaTable {
             }
         });
 
+        set("getPartialTicks", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf((double) minecraft.timer.renderPartialTicks);
+            }
+        });
+
         set("getCurrentTime", new ZeroArgFunction() {
             @Override
             public LuaValue call() {

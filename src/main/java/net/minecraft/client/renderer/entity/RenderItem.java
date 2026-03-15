@@ -453,11 +453,8 @@ public class RenderItem implements IResourceManagerReloadListener
             final EntityPlayer player = (EntityPlayer) lastEntityToRenderFor;
             final ItemStack heldItem = player.getHeldItem();
             if(heldItem != null) {
-                if(lastEntityToRenderFor == Minecraft.getMinecraft().thePlayer) {
-                    // todo: killaura blocking
-                    if(heldItem.getItem() instanceof ItemSword && (player.getItemInUseCount() > 0 || player.isBlocking()))
-                        doThirdPersonBlockTransformations();
-                }
+                if(heldItem.getItem() instanceof ItemSword && (player.getItemInUseCount() > 0 || player.isBlocking()))
+                    doThirdPersonBlockTransformations();
             }
         }
 

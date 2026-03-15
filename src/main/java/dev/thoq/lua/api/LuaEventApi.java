@@ -5,6 +5,7 @@ import dev.thoq.event.IEvent;
 import dev.thoq.event.IEventListener;
 import dev.thoq.event.events.BlockPlaceableEvent;
 import dev.thoq.event.events.MotionEvent;
+import dev.thoq.event.events.Render3DEvent;
 import dev.thoq.event.events.MoveEntityEvent;
 import dev.thoq.event.events.PacketReceiveEvent;
 import dev.thoq.event.events.PacketSendEvent;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 public final class LuaEventApi extends LuaTable {
 
+    private static final net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
     private static final Map<String, Class<? extends IEvent>> EVENT_CLASS_MAP = new HashMap<>();
 
     private final List<Map.Entry<Class<IEvent>, IEventListener<IEvent>>> subscriptions = new ArrayList<>();
@@ -50,6 +52,7 @@ public final class LuaEventApi extends LuaTable {
         EVENT_CLASS_MAP.put("moveentity", MoveEntityEvent.class);
         EVENT_CLASS_MAP.put("slowdown", SlowDownEvent.class);
         EVENT_CLASS_MAP.put("blockplaceable", BlockPlaceableEvent.class);
+        EVENT_CLASS_MAP.put("render3d", Render3DEvent.class);
     }
 
     public LuaEventApi() {
@@ -275,6 +278,22 @@ public final class LuaEventApi extends LuaTable {
                     return LuaValue.valueOf(playerInputEvent.isCanceled());
                 }
             });
+            eventTable.set("setMoveForward", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue v) {
+                    if (mc.thePlayer != null && mc.thePlayer.movementInput != null)
+                        mc.thePlayer.movementInput.moveForward = (float) v.todouble();
+                    return LuaValue.NIL;
+                }
+            });
+            eventTable.set("setMoveStrafe", new OneArgFunction() {
+                @Override
+                public LuaValue call(LuaValue v) {
+                    if (mc.thePlayer != null && mc.thePlayer.movementInput != null)
+                        mc.thePlayer.movementInput.moveStrafe = (float) v.todouble();
+                    return LuaValue.NIL;
+                }
+            });
         } else if (event instanceof PacketSendEvent) {
             final PacketSendEvent packetSendEvent = (PacketSendEvent) event;
             eventTable.set("cancel", new ZeroArgFunction() {
@@ -398,6 +417,14 @@ public final class LuaEventApi extends LuaTable {
                 @Override
                 public LuaValue call() {
                     return LuaValue.valueOf(tickEvent.isCanceled());
+                }
+            });
+        } else if (event instanceof Render3DEvent) {
+            final Render3DEvent render3DEvent = (Render3DEvent) event;
+            eventTable.set("getPartialTicks", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    return LuaValue.valueOf((double) render3DEvent.getPartialTicks());
                 }
             });
         } else if (event instanceof SlowDownEvent) {

@@ -131,6 +131,51 @@ public final class LuaRenderApi extends LuaTable {
             }
         });
 
+        set("worldToScreen", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                float[] result = RenderUtility.worldToScreen(
+                        arguments.arg(1).todouble(),
+                        arguments.arg(2).todouble(),
+                        arguments.arg(3).todouble());
+                if (result == null) return LuaValue.NIL;
+                LuaTable t = new LuaTable();
+                t.set("x", LuaValue.valueOf((double) result[0]));
+                t.set("y", LuaValue.valueOf((double) result[1]));
+                return t;
+            }
+        });
+
+        set("drawBox3D", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawBox3D(
+                        arguments.arg(1).todouble(), // worldX
+                        arguments.arg(2).todouble(), // worldY
+                        arguments.arg(3).todouble(), // worldZ
+                        arguments.arg(4).todouble(), // width
+                        arguments.arg(5).todouble(), // height
+                        arguments.arg(6).toint(),    // color
+                        arguments.arg(7).tofloat()); // lineWidth
+                return LuaValue.NIL;
+            }
+        });
+
+        set("drawCircle3D", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs arguments) {
+                RenderUtility.drawCircle3D(
+                        arguments.arg(1).todouble(),
+                        arguments.arg(2).todouble(),
+                        arguments.arg(3).todouble(),
+                        arguments.arg(4).todouble(),
+                        arguments.arg(5).toint(),
+                        arguments.arg(6).toint(),
+                        arguments.arg(7).tofloat());
+                return LuaValue.NIL;
+            }
+        });
+
         set("toARGB", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {

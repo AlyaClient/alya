@@ -61,6 +61,35 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
             }
         });
 
+        set("getAllPlayers", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                if (mc.theWorld == null || mc.thePlayer == null) return new LuaTable();
+                LuaTable result = new LuaTable();
+                int i = 1;
+                for (Object obj : mc.theWorld.getLoadedEntityList()) {
+                    if (!(obj instanceof EntityPlayer)) continue;
+                    EntityPlayer ep = (EntityPlayer) obj;
+                    if (ep == mc.thePlayer) continue;
+                    LuaTable t = new LuaTable();
+                    t.set("name", LuaValue.valueOf(ep.getName()));
+                    t.set("x", LuaValue.valueOf(ep.posX));
+                    t.set("y", LuaValue.valueOf(ep.posY));
+                    t.set("z", LuaValue.valueOf(ep.posZ));
+                    t.set("lastX", LuaValue.valueOf(ep.lastTickPosX));
+                    t.set("lastY", LuaValue.valueOf(ep.lastTickPosY));
+                    t.set("lastZ", LuaValue.valueOf(ep.lastTickPosZ));
+                    t.set("width", LuaValue.valueOf((double) ep.width));
+                    t.set("height", LuaValue.valueOf((double) ep.height));
+                    t.set("health", LuaValue.valueOf((double) ep.getHealth()));
+                    t.set("maxHealth", LuaValue.valueOf((double) ep.getMaxHealth()));
+                    t.set("isInvisible", LuaValue.valueOf(ep.isInvisible()));
+                    result.set(i++, t);
+                }
+                return result;
+            }
+        });
+
         set("getEntities", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs args) {
@@ -364,10 +393,31 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
             }
         });
 
+        set("setClientRotation", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs args) {
+                if (mc.thePlayer == null) return LuaValue.NIL;
+                float yaw = (float) args.checkdouble(1);
+                float pitch = (float) args.checkdouble(2);
+                mc.thePlayer.renderYawOffset = yaw;
+                mc.thePlayer.rotationYawHead = yaw;
+                mc.thePlayer.rotationPitchHead = pitch;
+                return LuaValue.NIL;
+            }
+        });
+
         set("setMoveForward", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue v) {
                 if (mc.thePlayer != null) mc.thePlayer.moveForward = (float) v.todouble();
+                return LuaValue.NIL;
+            }
+        });
+
+        set("setMoveStrafing", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue v) {
+                if (mc.thePlayer != null) mc.thePlayer.moveStrafing = (float) v.todouble();
                 return LuaValue.NIL;
             }
         });
