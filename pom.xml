@@ -238,7 +238,7 @@
                 <executions>
                     <execution>
                         <id>create-libs</id>
-                        <phase>package</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
