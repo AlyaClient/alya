@@ -28,6 +28,9 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int BORDER_WIDTH = 1;
     private static final int DEFAULT_CATEGORY_COLOR = 0xFF666666;
 
+    private static final AlyaFontRenderer fontMedium = Alya.getInstance().getFontRendererMedium();
+    private static final AlyaFontRenderer fontSmall = Alya.getInstance().getFontRendererSmall();
+
     private static final Map<Category, Integer> CATEGORY_COLORS = new HashMap<>();
 
     static {
@@ -103,12 +106,10 @@ public final class ClickGUIScreen extends GuiScreen {
             }
         }
 
-        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
-
         RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
 
         final String categoryName = category.getDisplayName().toLowerCase();
-        fontRenderer.drawString(categoryName, panelX + 4, panelY + 5, TEXT_COLOR);
+        fontMedium.drawString(categoryName, panelX + 4, panelY + 5, TEXT_COLOR);
 
         if(expandedCategories.get(category)) {
             int currentY = panelY + PANEL_HEIGHT;
@@ -133,8 +134,6 @@ public final class ClickGUIScreen extends GuiScreen {
     }
 
     private void renderModuleButton(final Module module, final int positionX, final int positionY, final Category category) {
-        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
-
         RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, MODULE_HEIGHT, BACKGROUND_COLOR);
 
         final boolean extended = expandedModules.getOrDefault(module, false);
@@ -147,13 +146,11 @@ public final class ClickGUIScreen extends GuiScreen {
 
         final String moduleName = module.getName().toLowerCase();
         final int textColor = extended ? (module.isEnabled() ? getCategoryColor(category) : TEXT_COLOR) : TEXT_COLOR;
-        final int textX = positionX + PANEL_WIDTH - (int) fontRenderer.getStringWidth(moduleName) - 3;
-        fontRenderer.drawString(moduleName, textX, positionY + 5, textColor);
+        final int textX = positionX + PANEL_WIDTH - (int) fontMedium.getStringWidth(moduleName) - 3;
+        fontMedium.drawString(moduleName, textX, positionY + 5, textColor);
     }
 
     private void renderSettingButton(final Setting<?> setting, final int positionX, final int positionY, final Category category) {
-        final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererSmall();
-
         RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
 
         if(setting instanceof BooleanSetting) {
@@ -161,12 +158,12 @@ public final class ClickGUIScreen extends GuiScreen {
             if(booleanSetting.isEnabled()) {
                 RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, getCategoryColor(category));
             }
-            fontRenderer.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
 
         } else if(setting instanceof ModeSetting) {
             final ModeSetting modeSetting = (ModeSetting) setting;
             final String text = setting.getName() + " > " + modeSetting.getValue();
-            fontRenderer.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
 
         } else if(setting instanceof NumberSetting) {
             final NumberSetting numberSetting = (NumberSetting) setting;
@@ -183,7 +180,7 @@ public final class ClickGUIScreen extends GuiScreen {
             RenderUtility.drawRect(positionX + 1, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
 
             final String text = setting.getName() + ": " + Math.round(value * 100.0) / 100.0;
-            fontRenderer.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
         }
     }
 

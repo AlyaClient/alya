@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.ISaveFormat;
@@ -46,8 +45,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     private String splashText;
 
-    private int panoramaTimer;
-
     private final boolean field_175375_v = true;
 
     private final Object threadLock = new Object();
@@ -66,7 +63,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     private int field_92019_w;
 
     private boolean field_183502_L;
-    private GuiScreen field_183503_M;
     private GuiScreen modUpdateNotification;
 
     private ResourceLocation randomImage;
@@ -114,16 +110,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
-    private boolean func_183501_a() {
-        return Minecraft.getMinecraft().gameSettings.getOptionOrdinalValue(GameSettings.Options.REALMS_NOTIFICATIONS) && this.field_183503_M != null;
-    }
-
     public void updateScreen() {
-        ++this.panoramaTimer;
-
-        if(this.func_183501_a()) {
-            this.field_183503_M.updateScreen();
-        }
     }
 
     public boolean doesGuiPauseGame() {
@@ -160,8 +147,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         this.buttonList.add(new AlyaButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
 
         synchronized(this.threadLock) {
-            int field_92023_s = this.fontRendererObj.getStringWidth(this.openGLWarning1);
-            this.field_92024_r = this.fontRendererObj.getStringWidth(this.openGLWarning2);
+            int field_92023_s = (int) font.getStringWidth(this.openGLWarning1);
+            this.field_92024_r = (int) font.getStringWidth(this.openGLWarning2);
             int k = Math.max(field_92023_s, this.field_92024_r);
             this.field_92022_t = (this.width - k) / 2;
             this.field_92021_u = this.buttonList.get(0).yPosition - 24;
@@ -170,17 +157,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
 
         this.mc.func_181537_a(false);
-
-        if(Minecraft.getMinecraft().gameSettings.getOptionOrdinalValue(GameSettings.Options.REALMS_NOTIFICATIONS) && !this.field_183502_L) {
-            RealmsBridge realmsbridge = new RealmsBridge();
-            this.field_183503_M = realmsbridge.getNotificationScreen(this);
-            this.field_183502_L = true;
-        }
-
-        if(this.func_183501_a()) {
-            this.field_183503_M.func_183500_a(this.width, this.height);
-            this.field_183503_M.initGui();
-        }
     }
 
     private void addSingleplayerMultiplayerButtons(int p_73969_1_, int p_73969_2_) {
@@ -260,7 +236,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         if (menuShader == null) menuShader = new ShaderUtil("Alya/Shaders/MainMenuBg.glsl");
         menuShader.render();
 
-        // ---
         GlStateManager.enableAlpha();
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
@@ -285,7 +260,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
-        // ---
 
         if(Reflector.FMLCommonHandler_getBrandings.exists()) {
             Object object = Reflector.call(Reflector.FMLCommonHandler_instance);
@@ -295,7 +269,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
                 String s1 = list.get(l1);
 
                 if(!Strings.isNullOrEmpty(s1)) {
-                    this.drawString(this.fontRendererObj, s1, 2, this.height - (10 + l1 * (this.fontRendererObj.FONT_HEIGHT + 1)), 16777215);
+                    this.drawString(s1, 2, this.height - (10 + l1 * ((int) font.getFontHeight() + 1)), 16777215);
                 }
             }
 
@@ -305,8 +279,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
         if(this.openGLWarning1 != null && !this.openGLWarning1.isEmpty()) {
             drawRect(this.field_92022_t - 2, this.field_92021_u - 2, this.field_92020_v + 2, this.field_92019_w - 1, 1428160512);
-            this.drawString(this.fontRendererObj, this.openGLWarning1, this.field_92022_t, this.field_92021_u, -1);
-            this.drawString(this.fontRendererObj, this.openGLWarning2, (this.width - this.field_92024_r) / 2, this.buttonList.get(0).yPosition - 12, -1);
+            this.drawString(this.openGLWarning1, this.field_92022_t, this.field_92021_u, -1);
+            this.drawString(this.openGLWarning2, (this.width - this.field_92024_r) / 2, this.buttonList.get(0).yPosition - 12, -1);
         }
 
         if(this.randomImage != null) {
@@ -318,10 +292,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-
-        if(this.func_183501_a()) {
-            this.field_183503_M.drawScreen(mouseX, mouseY, partialTicks);
-        }
 
         if(this.modUpdateNotification != null) {
             this.modUpdateNotification.drawScreen(mouseX, mouseY, partialTicks);
@@ -338,16 +308,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
                 this.mc.displayGuiScreen(guiconfirmopenlink);
             }
         }
-
-        if(this.func_183501_a()) {
-            this.field_183503_M.mouseClicked(mouseX, mouseY, mouseButton);
-        }
     }
 
     public void onGuiClosed() {
-        if(this.field_183503_M != null) {
-            this.field_183503_M.onGuiClosed();
-        }
     }
 
 

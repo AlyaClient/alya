@@ -1,6 +1,8 @@
 package net.minecraft.client.gui;
 
 import java.util.List;
+import dev.thoq.Alya;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.ResourcePackListEntry;
@@ -8,6 +10,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 public abstract class GuiResourcePackList extends GuiListExtended
 {
+    private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
     protected final Minecraft mc;
     protected final List<ResourcePackListEntry> field_148204_l;
 
@@ -17,7 +20,7 @@ public abstract class GuiResourcePackList extends GuiListExtended
         this.mc = mcIn;
         this.field_148204_l = p_i45055_4_;
         this.field_148163_i = false;
-        this.setHasListHeader(true, (int)((float)mcIn.fontRendererObj.FONT_HEIGHT * 1.5F));
+        this.setHasListHeader(true, (int)(font.getFontHeight() * 1.5F));
     }
 
     /**
@@ -26,7 +29,7 @@ public abstract class GuiResourcePackList extends GuiListExtended
     protected void drawListHeader(int p_148129_1_, int p_148129_2_, Tessellator p_148129_3_)
     {
         String s = EnumChatFormatting.UNDERLINE + "" + EnumChatFormatting.BOLD + this.getListHeader();
-        this.mc.fontRendererObj.drawString(s, p_148129_1_ + this.width / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2, Math.min(this.top + 3, p_148129_2_), 16777215);
+        font.drawString(s, p_148129_1_ + this.width / 2 - (int) font.getStringWidth(s) / 2, Math.min(this.top + 3, p_148129_2_), 16777215);
     }
 
     protected abstract String getListHeader();

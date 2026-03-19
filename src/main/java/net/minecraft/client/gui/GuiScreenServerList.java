@@ -102,8 +102,8 @@ public class GuiScreenServerList extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, I18n.format("selectServer.direct", new Object[0]), this.width / 2, 20, 16777215);
-        this.drawString(this.fontRendererObj, I18n.format("addServer.enterIp", new Object[0]), this.width / 2 - 100, 100, 10526880);
+        this.drawCenteredString(I18n.format("selectServer.direct", new Object[0]), this.width / 2, 20, 16777215);
+        this.drawString(I18n.format("addServer.enterIp", new Object[0]), this.width / 2 - 100, 100, 10526880);
         this.field_146302_g.drawTextBox();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

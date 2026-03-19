@@ -396,7 +396,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer
         if (creativetabs.drawInForegroundOfTab())
         {
             GlStateManager.disableBlend();
-            this.fontRendererObj.drawString(I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]), 8, 6, 4210752);
+            font.drawString(I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]), (float)(8), (float)(6), 4210752);
         }
     }
 

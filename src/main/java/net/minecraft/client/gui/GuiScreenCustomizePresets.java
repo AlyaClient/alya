@@ -110,9 +110,9 @@ public class GuiScreenCustomizePresets extends GuiScreen
     {
         this.drawDefaultBackground();
         this.field_175311_g.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, this.field_175315_a, this.width / 2, 8, 16777215);
-        this.drawString(this.fontRendererObj, this.field_175313_s, 50, 30, 10526880);
-        this.drawString(this.fontRendererObj, this.field_175312_t, 50, 70, 10526880);
+        this.drawCenteredString(this.field_175315_a, this.width / 2, 8, 16777215);
+        this.drawString(this.field_175313_s, 50, 30, 10526880);
+        this.drawString(this.field_175312_t, 50, 70, 10526880);
         this.field_175317_i.drawTextBox();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -230,7 +230,7 @@ public class GuiScreenCustomizePresets extends GuiScreen
         {
             GuiScreenCustomizePresets.Info guiscreencustomizepresets$info = (GuiScreenCustomizePresets.Info)GuiScreenCustomizePresets.field_175310_f.get(entryID);
             this.func_178051_a(p_180791_2_, p_180791_3_, guiscreencustomizepresets$info.field_178953_b);
-            GuiScreenCustomizePresets.this.fontRendererObj.drawString(guiscreencustomizepresets$info.field_178955_a, p_180791_2_ + 32 + 10, p_180791_3_ + 14, 16777215);
+            font.drawString(guiscreencustomizepresets$info.field_178955_a, (float)(p_180791_2_ + 32 + 10), (float)(p_180791_3_ + 14), 16777215);
         }
     }
 }

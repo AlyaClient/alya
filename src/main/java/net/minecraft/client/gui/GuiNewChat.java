@@ -95,7 +95,7 @@ public class GuiNewChat extends Gui {
                                 drawRect(i2, (int) (j2 - 9 + animationOffsetY), i2 + l + 4, (int) (j2 + animationOffsetY), l1 / 2 << 24);
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
-                                this.mc.fontRendererObj.drawStringWithShadow(s, (float) i2, (float) (j2 - 8) + animationOffsetY, 16777215 + (l1 << 24));
+                                font.drawStringWithShadow(s, (float) i2, (float) (j2 - 8) + animationOffsetY, 16777215 + (l1 << 24));
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
                             }
@@ -104,7 +104,7 @@ public class GuiNewChat extends Gui {
                 }
 
                 if(flag) {
-                    int k2 = this.mc.fontRendererObj.FONT_HEIGHT;
+                    int k2 = (int) font.getFontHeight();
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int l2 = k * k2 + k;
                     int i3 = j * k2 + j;
@@ -242,8 +242,8 @@ public class GuiNewChat extends Gui {
             if(j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.field_146253_i.size());
 
-                if(j <= MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale()) && k < this.mc.fontRendererObj.FONT_HEIGHT * l + l) {
-                    int i1 = k / this.mc.fontRendererObj.FONT_HEIGHT + this.scrollPos;
+                if(j <= MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale()) && k < (int) font.getFontHeight() * l + l) {
+                    int i1 = k / (int) font.getFontHeight() + this.scrollPos;
 
                     if(i1 >= 0 && i1 < this.field_146253_i.size()) {
                         ChatLine chatline = (ChatLine) this.field_146253_i.get(i1);
@@ -251,7 +251,7 @@ public class GuiNewChat extends Gui {
 
                         for(IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if(ichatcomponent instanceof ChatComponentText) {
-                                j1 += this.mc.fontRendererObj.getStringWidth(GuiUtilRenderComponents.func_178909_a(((ChatComponentText) ichatcomponent).getChatComponentText_TextValue(), false));
+                                j1 += (int) font.getStringWidth(GuiUtilRenderComponents.func_178909_a(((ChatComponentText) ichatcomponent).getChatComponentText_TextValue(), false));
 
                                 if(j1 > j) {
                                     return ichatcomponent;
