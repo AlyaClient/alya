@@ -20,10 +20,7 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityList;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -183,7 +180,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
             int i = 0;
 
             for(String s : textLines) {
-                int j = this.fontRendererObj.getStringWidth(s);
+                int j = (int) font.getStringWidth(s);
 
                 if(j > i) {
                     i = j;
@@ -223,7 +220,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
 
             for(int k1 = 0; k1 < textLines.size(); ++k1) {
                 String s1 = (String) textLines.get(k1);
-                this.fontRendererObj.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+                font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
 
                 if(k1 == 0) {
                     i2 += 2;

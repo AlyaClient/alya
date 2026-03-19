@@ -73,8 +73,8 @@ public class GuiMerchant extends GuiContainer
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
         String s = this.chatComponent.getUnformattedText();
-        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
-        this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, this.ySize - 96 + 2, 4210752);
+        font.drawString(s, (float)(this.xSize / 2 - (int) font.getStringWidth(s) / 2), (float)(6), 4210752);
+        font.drawString(I18n.format("container.inventory", new Object[0]), (float)(8), (float)(this.ySize - 96 + 2), 4210752);
     }
 
     /**

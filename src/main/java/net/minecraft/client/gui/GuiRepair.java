@@ -70,7 +70,7 @@ public class GuiRepair extends GuiContainer implements ICrafting
     {
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
-        this.fontRendererObj.drawString(I18n.format("container.repair", new Object[0]), 60, 6, 4210752);
+        font.drawString(I18n.format("container.repair", new Object[0]), (float)(60), (float)(6), 4210752);
 
         if (this.anvil.maximumCost > 0)
         {
@@ -95,7 +95,7 @@ public class GuiRepair extends GuiContainer implements ICrafting
             if (flag)
             {
                 int j = -16777216 | (i & 16579836) >> 2 | i & -16777216;
-                int k = this.xSize - 8 - this.fontRendererObj.getStringWidth(s);
+                int k = this.xSize - 8 - (int) font.getStringWidth(s);
                 int l = 67;
 
                 if (this.fontRendererObj.getUnicodeFlag())
@@ -110,7 +110,7 @@ public class GuiRepair extends GuiContainer implements ICrafting
                     this.fontRendererObj.drawString(s, k + 1, l + 1, j);
                 }
 
-                this.fontRendererObj.drawString(s, k, l, i);
+                font.drawString(s, (float)(k), (float)(l), i);
             }
         }
 

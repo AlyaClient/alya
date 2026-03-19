@@ -121,8 +121,8 @@ public class GuiAchievement extends Gui
             }
             else
             {
-                this.mc.fontRendererObj.drawString(this.achievementTitle, i + 30, j + 7, -256);
-                this.mc.fontRendererObj.drawString(this.achievementDescription, i + 30, j + 18, -1);
+                font.drawString(this.achievementTitle, (float)(i + 30), (float)(j + 7), -256);
+                font.drawString(this.achievementDescription, (float)(i + 30), (float)(j + 18), -1);
             }
 
             RenderHelper.enableGUIStandardItemLighting();

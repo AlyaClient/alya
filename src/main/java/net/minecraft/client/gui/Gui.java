@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import dev.thoq.Alya;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -9,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class Gui
 {
+    protected static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
     public static final ResourceLocation optionsBackground = new ResourceLocation("textures/gui/options_background.png");
     public static final ResourceLocation statIcons = new ResourceLocation("textures/gui/container/stats_icons.png");
     public static final ResourceLocation icons = new ResourceLocation("textures/gui/icons.png");
@@ -125,11 +128,27 @@ public class Gui
     }
 
     /**
+     * Renders the specified text to the screen, center-aligned using AlyaFontRenderer.
+     */
+    public void drawCenteredString(String text, int x, int y, int color)
+    {
+        font.drawString(text, x - font.getStringWidth(text) / 2.0f, y, color);
+    }
+
+    /**
      * Renders the specified text to the screen. Args : renderer, string, x, y, color
      */
     public void drawString(FontRenderer fontRendererIn, String text, int x, int y, int color)
     {
         fontRendererIn.drawStringWithShadow(text, (float)x, (float)y, color);
+    }
+
+    /**
+     * Renders the specified text to the screen using AlyaFontRenderer.
+     */
+    public void drawString(String text, int x, int y, int color)
+    {
+        font.drawString(text, x, y, color);
     }
 
     /**

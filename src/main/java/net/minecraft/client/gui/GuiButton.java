@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import dev.thoq.Alya;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
@@ -14,12 +16,13 @@ public class GuiButton extends Gui {
     private static final int BACKGROUND_DISABLED = 0xFF101010;
     private static final int BORDER_COLOR = 0xFF303030;
     private static final int BORDER_HOVER = 0xFF505050;
-    private static final int ACCENT_COLOR = 0xFF8B5CF6;
+    //private static final int ACCENT_COLOR = 0xFF8B5CF6;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
     private static final int TEXT_DISABLED = 0xFF666666;
 
     private float hoverAnimation = 0.0F;
     private static final float ANIMATION_SPEED = 0.15F;
+    private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
 
     /**
      * Button width in pixels
@@ -115,7 +118,6 @@ public class GuiButton extends Gui {
      */
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if(this.visible) {
-            FontRenderer fontrenderer = mc.fontRendererObj;
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 
             if(this.hovered && this.enabled) {
@@ -149,7 +151,6 @@ public class GuiButton extends Gui {
             drawRect(this.xPosition + this.width - 1, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, borderColor);
 
             this.mouseDragged(mc, mouseX, mouseY);
-
             this.drawButtonText(mc, textColor);
 
             GlStateManager.disableBlend();
@@ -160,7 +161,17 @@ public class GuiButton extends Gui {
      * Draws the button text. Override this method to use a custom font renderer.
      */
     protected void drawButtonText(Minecraft mc, int textColor) {
-        this.drawCenteredString(mc.fontRendererObj, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, textColor);
+        String text = this.displayString;
+        float maxWidth = this.width - 6;
+        if (font.getStringWidth(text) > maxWidth) {
+            while (text.length() > 0 && font.getStringWidth(text + "...") > maxWidth) {
+                text = text.substring(0, text.length() - 1);
+            }
+            text = text + "...";
+        }
+        float textX = this.xPosition + (this.width - font.getStringWidth(text)) / 2.0f;
+        float textY = this.yPosition + (this.height - font.getFontHeight()) / 2.0f;
+        font.drawString(text, textX, textY, textColor);
     }
 
     /**

@@ -1,16 +1,19 @@
 package net.minecraft.client.gui;
 
+import dev.thoq.Alya;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry
 {
+    private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
     private final Minecraft mc = Minecraft.getMinecraft();
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
     {
-        int i = y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2;
-        this.mc.fontRendererObj.drawString(I18n.format("lanServer.scanning", new Object[0]), this.mc.currentScreen.width / 2 - this.mc.fontRendererObj.getStringWidth(I18n.format("lanServer.scanning", new Object[0])) / 2, i, 16777215);
+        int i = y + slotHeight / 2 - (int) font.getFontHeight() / 2;
+        font.drawString(I18n.format("lanServer.scanning", new Object[0]), this.mc.currentScreen.width / 2 - (int) font.getStringWidth(I18n.format("lanServer.scanning", new Object[0])) / 2, i, 16777215);
         String s;
 
         switch ((int)(Minecraft.getSystemTime() / 300L % 4L))
@@ -29,7 +32,7 @@ public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry
                 s = "o o O";
         }
 
-        this.mc.fontRendererObj.drawString(s, this.mc.currentScreen.width / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2, i + this.mc.fontRendererObj.FONT_HEIGHT, 8421504);
+        font.drawString(s, this.mc.currentScreen.width / 2 - (int) font.getStringWidth(s) / 2, i + (int) font.getFontHeight(), 8421504);
     }
 
     public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_)

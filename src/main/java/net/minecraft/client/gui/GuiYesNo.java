@@ -69,13 +69,13 @@ public class GuiYesNo extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, this.messageLine1, this.width / 2, 70, 16777215);
+        this.drawCenteredString(this.messageLine1, this.width / 2, 70, 16777215);
         int i = 90;
 
         for (String s : this.field_175298_s)
         {
-            this.drawCenteredString(this.fontRendererObj, s, this.width / 2, i, 16777215);
-            i += this.fontRendererObj.FONT_HEIGHT;
+            this.drawCenteredString(s, this.width / 2, i, 16777215);
+            i += (int) font.getFontHeight();
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
