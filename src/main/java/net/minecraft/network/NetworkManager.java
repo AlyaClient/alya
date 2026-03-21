@@ -363,12 +363,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
         Class <? extends SocketChannel > oclass;
         LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
 
-        if (Epoll.isAvailable() && p_181124_2_)
-        {
-            oclass = EpollSocketChannel.class;
-            lazyloadbase = field_181125_e;
-        }
-        else
         {
             oclass = NioSocketChannel.class;
             lazyloadbase = CLIENT_NIO_EVENTLOOP;

@@ -154,6 +154,13 @@ public final class AlyaFontRenderer {
         return getStringWidth(text);
     }
 
+    private static final int[] COLOR_CODES = {
+        0x000000, 0x0000AA, 0x00AA00, 0x00AAAA,
+        0xAA0000, 0xAA00AA, 0xFFAA00, 0xAAAAAA,
+        0x555555, 0x5555FF, 0x55FF55, 0x55FFFF,
+        0xFF5555, 0xFF55FF, 0xFFFF55, 0xFFFFFF
+    };
+
     private void renderString(final String text, final float x, final float y, final int color) {
         if(text == null || text.isEmpty()) {
             return;
@@ -165,13 +172,13 @@ public final class AlyaFontRenderer {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         float alpha = ((color >> 24) & 0xFF) / 255.0f;
-        final float red = ((color >> 16) & 0xFF) / 255.0f;
-        final float green = ((color >> 8) & 0xFF) / 255.0f;
-        final float blue = (color & 0xFF) / 255.0f;
-
         if(alpha == 0) {
             alpha = 1.0f;
         }
+
+        float red = ((color >> 16) & 0xFF) / 255.0f;
+        float green = ((color >> 8) & 0xFF) / 255.0f;
+        float blue = (color & 0xFF) / 255.0f;
 
         GlStateManager.color(red, green, blue, alpha);
         GlStateManager.enableTexture2D();
@@ -184,6 +191,24 @@ public final class AlyaFontRenderer {
         float xOffset = x * SCALE_FACTOR;
         for(int i = 0; i < text.length(); i++) {
             final char character = text.charAt(i);
+            if(character == '\u00a7' && i + 1 < text.length()) {
+                int colorIndex = "0123456789abcdefABCDEF".indexOf(text.charAt(i + 1));
+                if(colorIndex >= 0) {
+                    if(colorIndex >= 16) colorIndex -= 6;
+                    int c = COLOR_CODES[colorIndex];
+                    red = ((c >> 16) & 0xFF) / 255.0f;
+                    green = ((c >> 8) & 0xFF) / 255.0f;
+                    blue = (c & 0xFF) / 255.0f;
+                    GlStateManager.color(red, green, blue, alpha);
+                } else if(text.charAt(i + 1) == 'r' || text.charAt(i + 1) == 'R') {
+                    red = ((color >> 16) & 0xFF) / 255.0f;
+                    green = ((color >> 8) & 0xFF) / 255.0f;
+                    blue = (color & 0xFF) / 255.0f;
+                    GlStateManager.color(red, green, blue, alpha);
+                }
+                i++;
+                continue;
+            }
             if(character < fontData.chars.length) {
                 drawLetter(xOffset, (y - 2.0f) * SCALE_FACTOR, character);
                 xOffset += roundToHalf(fontData.chars[character].width - 16.4f);
@@ -233,6 +258,10 @@ public final class AlyaFontRenderer {
         float width = 0;
         for(int i = 0; i < text.length(); i++) {
             final char character = text.charAt(i);
+            if(character == '\u00a7' && i + 1 < text.length()) {
+                i++;
+                continue;
+            }
             if(character < fontData.chars.length)
                 width += roundToHalf(fontData.chars[character].width - 16.4f);
         }

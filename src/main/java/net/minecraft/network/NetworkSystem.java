@@ -94,13 +94,6 @@ public class NetworkSystem
             Class <? extends ServerSocketChannel > oclass;
             LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
 
-            if (Epoll.isAvailable() && this.mcServer.func_181035_ah())
-            {
-                oclass = EpollServerSocketChannel.class;
-                lazyloadbase = field_181141_b;
-                logger.info("Using epoll channel type");
-            }
-            else
             {
                 oclass = NioServerSocketChannel.class;
                 lazyloadbase = eventLoops;

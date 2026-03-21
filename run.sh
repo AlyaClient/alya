@@ -8,6 +8,7 @@ $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.heapdump" \
     "-Djava.library.path=$SCRIPT_DIR/jars/versions/1.8.9/1.8.9-natives" \
     "-Dminecraft.launcher.brand=minecraft-launcher" \
     "-Dminecraft.launcher.version=3.2.13" \
+    "-Dio.netty.transport.noNative=true" \
     "-Dminecraft.client.jar=$SCRIPT_DIR/target/Alya-1.0.jar" \
     -cp "$CP" \
     -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC \
