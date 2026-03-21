@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 public class CrashReport
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(CrashReport.class);
 
     /** Description of the crash report. */
     private final String description;

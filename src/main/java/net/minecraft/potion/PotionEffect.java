@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 public class PotionEffect
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(PotionEffect.class);
 
     /** ID value of the potion this effect matches. */
     private int potionID;

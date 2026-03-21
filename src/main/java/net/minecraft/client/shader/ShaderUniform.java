@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class ShaderUniform
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ShaderUniform.class);
     private int uniformLocation;
     private final int uniformCount;
     private final int uniformType;

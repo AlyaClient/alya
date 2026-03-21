@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 public class RegistrySimple<K, V> implements IRegistry<K, V>
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(RegistrySimple.class);
     protected final Map<K, V> registryObjects = this.createUnderlyingMap();
 
     protected Map<K, V> createUnderlyingMap()

@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ResourcePackRepository
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ResourcePackRepository.class);
     private static final FileFilter resourcePackFilter = new FileFilter()
     {
         public boolean accept(File p_accept_1_)

@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 public class PlayerManager
 {
-    private static final Logger pmLogger = LogManager.getLogger();
+    private static final Logger pmLogger = LogManager.getLogger(PlayerManager.class);
     private final WorldServer theWorldServer;
     private final List<EntityPlayerMP> players = Lists.<EntityPlayerMP>newArrayList();
     private final LongHashMap<PlayerManager.PlayerInstance> playerInstances = new LongHashMap();

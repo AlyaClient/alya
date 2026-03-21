@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(AnvilChunkLoader.class);
     private Map<ChunkCoordIntPair, NBTTagCompound> chunksToRemove = new ConcurrentHashMap();
     private Set<ChunkCoordIntPair> pendingAnvilChunksCoordinates = Collections.<ChunkCoordIntPair>newSetFromMap(new ConcurrentHashMap());
 

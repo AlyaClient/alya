@@ -83,7 +83,7 @@ public class Config
     private static boolean desktopModeChecked = false;
     private static DefaultResourcePack defaultResourcePackLazy = null;
     public static final Float DEF_ALPHA_FUNC_LEVEL = Float.valueOf(0.1F);
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(Config.class);
     public static final boolean logDetail = System.getProperty("log.detail", "false").equals("true");
     private static String mcDebugLast = null;
     private static int fpsMinLast = 0;
@@ -1328,6 +1328,13 @@ public class Config
             try
             {
                 DisplayMode[] adisplaymode = Display.getAvailableDisplayModes();
+
+                if (adisplaymode == null || adisplaymode.length == 0)
+                {
+                    displayModes = new DisplayMode[] {desktopDisplayMode};
+                    return displayModes;
+                }
+
                 Set<Dimension> set = getDisplayModeDimensions(adisplaymode);
                 List list = new ArrayList();
 

@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 public class TextureMap extends AbstractTexture implements ITickableTextureObject
 {
     private static final boolean ENABLE_SKIP = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(TextureMap.class);
     public static final ResourceLocation LOCATION_MISSING_TEXTURE = new ResourceLocation("missingno");
     public static final ResourceLocation locationBlocksTexture = new ResourceLocation("textures/atlas/blocks.png");
     private final List<TextureAtlasSprite> listAnimatedSprites;

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ServerList
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ServerList.class);
 
     /** The Minecraft instance. */
     private final Minecraft mc;

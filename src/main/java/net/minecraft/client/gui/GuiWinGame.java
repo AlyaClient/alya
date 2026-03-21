@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 public class GuiWinGame extends GuiScreen
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiWinGame.class);
     private static final ResourceLocation MINECRAFT_LOGO = new ResourceLocation("textures/gui/title/minecraft.png");
     private static final ResourceLocation VIGNETTE_TEXTURE = new ResourceLocation("textures/misc/vignette.png");
     private int field_146581_h;

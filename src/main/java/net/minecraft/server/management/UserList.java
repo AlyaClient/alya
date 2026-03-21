@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 public class UserList<K, V extends UserListEntry<K>>
 {
-    protected static final Logger logger = LogManager.getLogger();
+    protected static final Logger logger = LogManager.getLogger(UserList.class);
     protected final Gson gson;
     private final File saveFile;
     private final Map<String, V> values = Maps.<String, V>newHashMap();

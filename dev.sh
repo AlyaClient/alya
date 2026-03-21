@@ -1,5 +1,8 @@
 #!/bin/bash
-JDK_PATH="$HOME/.sdkman/candidates/java/8.0.482-tem/bin/java"
+
+set -euo pipefail
+
+JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-tem/bin/java"
 SCRIPT_DIR=$(pwd)
 
 CP="$SCRIPT_DIR/target/classes:$SCRIPT_DIR/jars/versions/1.8.9/1.8.9.jar:$SCRIPT_DIR/target/libs"

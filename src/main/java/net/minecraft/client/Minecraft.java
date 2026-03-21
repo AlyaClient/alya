@@ -113,7 +113,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 public class Minecraft implements IThreadListener {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(Minecraft.class);
     private static final ResourceLocation locationMojangPng = new ResourceLocation("Alya/Assets/Title/Alya.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
 

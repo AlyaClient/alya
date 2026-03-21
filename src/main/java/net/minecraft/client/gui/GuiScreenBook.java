@@ -29,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiScreenBook extends GuiScreen
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiScreenBook.class);
     private static final ResourceLocation bookGuiTextures = new ResourceLocation("textures/gui/book.png");
 
     /** The player editing the book */

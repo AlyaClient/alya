@@ -80,7 +80,7 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 
 public class EntityRenderer implements IResourceManagerReloadListener {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(EntityRenderer.class);
     private static final ResourceLocation locationRainPng = new ResourceLocation("textures/environment/rain.png");
     private static final ResourceLocation locationSnowPng = new ResourceLocation("textures/environment/snow.png");
     public static boolean anaglyphEnable;

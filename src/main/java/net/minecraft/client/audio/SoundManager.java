@@ -38,7 +38,7 @@ public class SoundManager
 {
     /** The marker used for logging */
     private static final Marker LOG_MARKER = MarkerManager.getMarker("SOUNDS");
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(SoundManager.class);
 
     /** A reference to the sound handler. */
     private final SoundHandler sndHandler;

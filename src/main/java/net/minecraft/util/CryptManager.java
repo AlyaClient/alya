@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 public class CryptManager
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(CryptManager.class);
 
     /**
      * Generate a new shared secret AES key from a secure random source

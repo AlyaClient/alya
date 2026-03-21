@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
 {
     private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ServerListEntryNormal.class);
     private static final ThreadPoolExecutor field_148302_b = new ScheduledThreadPoolExecutor(5, (new ThreadFactoryBuilder()).setNameFormat("Server Pinger #%d").setDaemon(true).build());
     private static final ResourceLocation UNKNOWN_SERVER = new ResourceLocation("textures/misc/unknown_server.png");
     private static final ResourceLocation SERVER_SELECTION_BUTTONS = new ResourceLocation("textures/gui/server_selection.png");

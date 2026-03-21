@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 public class LanServerDetector
 {
     private static final AtomicInteger field_148551_a = new AtomicInteger(0);
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(LanServerDetector.class);
 
     public static class LanServer
     {

@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 public class EntityTracker
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(EntityTracker.class);
     private final WorldServer theWorld;
     private Set<EntityTrackerEntry> trackedEntities = Sets.<EntityTrackerEntry>newHashSet();
     private IntHashMap<EntityTrackerEntry> trackedEntityHashTable = new IntHashMap();

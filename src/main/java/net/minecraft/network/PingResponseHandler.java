@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 public class PingResponseHandler extends ChannelInboundHandlerAdapter
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(PingResponseHandler.class);
     private NetworkSystem networkSystem;
 
     public PingResponseHandler(NetworkSystem networkSystemIn)

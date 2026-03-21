@@ -23,7 +23,7 @@ import org.lwjgl.opengl.GL12;
 
 public class ScreenShotHelper
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ScreenShotHelper.class);
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
     /** A buffer to hold pixel values returned by OpenGL. */

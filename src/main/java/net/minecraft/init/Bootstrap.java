@@ -58,7 +58,7 @@ public class Bootstrap
 
     /** Whether the blocks, items, etc have already been registered */
     private static boolean alreadyRegistered = false;
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(Bootstrap.class);
 
     /**
      * Is Bootstrap registration already done?

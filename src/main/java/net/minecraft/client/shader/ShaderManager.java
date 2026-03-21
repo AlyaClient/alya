@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ShaderManager
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ShaderManager.class);
     private static final ShaderDefault defaultShaderUniform = new ShaderDefault();
     private static ShaderManager staticShaderManager = null;
     private static int currentProgram = -1;

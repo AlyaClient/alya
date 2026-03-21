@@ -62,7 +62,7 @@ import org.apache.logging.log4j.Logger;
 
 public class EntityTrackerEntry
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(EntityTrackerEntry.class);
 
     /** The entity that this EntityTrackerEntry tracks. */
     public Entity trackedEntity;

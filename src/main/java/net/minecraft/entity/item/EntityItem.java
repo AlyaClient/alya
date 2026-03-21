@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 public class EntityItem extends Entity
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(EntityItem.class);
 
     /**
      * The age of this EntityItem (used to animate it up and down as well as expire it)

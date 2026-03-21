@@ -1,5 +1,5 @@
 #!/bin/bash
-JDK_PATH="$HOME/.sdkman/candidates/java/8.0.482-librca/bin/java"
+JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-tem/bin/java"
 SCRIPT_DIR=$(pwd)
 
 CP="$SCRIPT_DIR/target/Alya-1.0.jar:$SCRIPT_DIR/target/libs"

@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 public class EntityAIFindEntityNearestPlayer extends EntityAIBase
 {
-    private static final Logger field_179436_a = LogManager.getLogger();
+    private static final Logger field_179436_a = LogManager.getLogger(EntityAIFindEntityNearestPlayer.class);
     private EntityLiving field_179434_b;
     private final Predicate<Entity> field_179435_c;
     private final EntityAINearestAttackableTarget.Sorter field_179432_d;

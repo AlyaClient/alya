@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 public class NetHandlerLoginClient implements INetHandlerLoginClient
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(NetHandlerLoginClient.class);
     private final Minecraft mc;
     private final GuiScreen previousGuiScreen;
     private final NetworkManager networkManager;

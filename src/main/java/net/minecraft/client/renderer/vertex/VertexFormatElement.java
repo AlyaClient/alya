@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 public class VertexFormatElement
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(VertexFormatElement.class);
     private final VertexFormatElement.EnumType type;
     private final VertexFormatElement.EnumUsage usage;
     private int index;

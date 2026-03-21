@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 public class FallbackResourceManager implements IResourceManager
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(FallbackResourceManager.class);
     protected final List<IResourcePack> resourcePacks = Lists.<IResourcePack>newArrayList();
     private final IMetadataSerializer frmMetadataSerializer;
 

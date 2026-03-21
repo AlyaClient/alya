@@ -42,7 +42,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(GuiScreen.class);
     private static final Set<String> PROTOCOLS = Sets.newHashSet(new String[]{"http", "https"});
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
 

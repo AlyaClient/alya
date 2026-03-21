@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 public class StatisticsFile extends StatFileWriter
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(StatisticsFile.class);
     private final MinecraftServer mcServer;
     private final File statsFile;
     private final Set<StatBase> field_150888_e = Sets.<StatBase>newHashSet();

@@ -18,7 +18,7 @@ import org.lwjgl.Sys;
 
 public class GuiScreenResourcePacks extends GuiScreen
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiScreenResourcePacks.class);
     private final GuiScreen parentScreen;
     private List<ResourcePackListEntry> availableResourcePacks;
     private List<ResourcePackListEntry> selectedResourcePacks;

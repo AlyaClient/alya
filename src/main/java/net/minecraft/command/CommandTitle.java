@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 public class CommandTitle extends CommandBase
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(CommandTitle.class);
 
     /**
      * Gets the name of the command

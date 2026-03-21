@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Log
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(Log.class);
     public static final boolean logDetail = System.getProperty("log.detail", "false").equals("true");
 
     public static void detail(String s)

@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ResourceIndex
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ResourceIndex.class);
     private final Map<String, File> resourceMap = Maps.<String, File>newHashMap();
 
     public ResourceIndex(File p_i1047_1_, String p_i1047_2_)

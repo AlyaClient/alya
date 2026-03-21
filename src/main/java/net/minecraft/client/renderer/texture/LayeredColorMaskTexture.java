@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 public class LayeredColorMaskTexture extends AbstractTexture
 {
     /** Access to the Logger, for all your logging needs. */
-    private static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger(LayeredColorMaskTexture.class);
 
     /** The location of the texture. */
     private final ResourceLocation textureLocation;

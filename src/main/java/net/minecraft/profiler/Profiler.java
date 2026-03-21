@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Profiler
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(Profiler.class);
     private final List<String> sectionList = Lists.<String>newArrayList();
     private final List<Long> timestampList = Lists.<Long>newArrayList();
 

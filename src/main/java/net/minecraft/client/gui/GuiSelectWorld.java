@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiSelectWorld.class);
     private final DateFormat field_146633_h = new SimpleDateFormat();
     protected GuiScreen parentScreen;
     protected String field_146628_f = "Select world";

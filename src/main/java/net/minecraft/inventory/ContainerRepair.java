@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ContainerRepair extends Container
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ContainerRepair.class);
 
     /** Here comes out item you merged and/or renamed. */
     private IInventory outputSlot;

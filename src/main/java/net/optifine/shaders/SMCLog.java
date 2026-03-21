@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class SMCLog
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(SMCLog.class);
     private static final String PREFIX = "[Shaders] ";
 
     public static void severe(String message)

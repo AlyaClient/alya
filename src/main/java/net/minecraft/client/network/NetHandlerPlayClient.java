@@ -212,7 +212,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class NetHandlerPlayClient implements INetHandlerPlayClient {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(NetHandlerPlayClient.class);
 
     /**
      * The NetworkManager instance used to communicate with the server (used only by handlePlayerPosLook to update

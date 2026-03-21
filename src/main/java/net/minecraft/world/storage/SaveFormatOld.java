@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 public class SaveFormatOld implements ISaveFormat
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(SaveFormatOld.class);
 
     /**
      * Reference to the File object representing the directory for the world saves

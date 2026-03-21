@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ResourcePackListEntryDefault extends ResourcePackListEntry
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ResourcePackListEntryDefault.class);
     private final IResourcePack field_148320_d;
     private final ResourceLocation resourcePackIcon;
 

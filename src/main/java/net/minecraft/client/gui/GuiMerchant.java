@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 public class GuiMerchant extends GuiContainer
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiMerchant.class);
 
     /** The GUI texture for the villager merchant GUI. */
     private static final ResourceLocation MERCHANT_GUI_TEXTURE = new ResourceLocation("textures/gui/container/villager.png");

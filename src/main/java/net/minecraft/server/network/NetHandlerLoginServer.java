@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
 {
     private static final AtomicInteger AUTHENTICATOR_THREAD_ID = new AtomicInteger(0);
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(NetHandlerLoginServer.class);
     private static final Random RANDOM = new Random();
     private final byte[] verifyToken = new byte[4];
     private final MinecraftServer server;

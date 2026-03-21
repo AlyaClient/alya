@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 public class PreYggdrasilConverter
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(PreYggdrasilConverter.class);
     public static final File OLD_IPBAN_FILE = new File("banned-ips.txt");
     public static final File OLD_PLAYERBAN_FILE = new File("banned-players.txt");
     public static final File OLD_OPS_FILE = new File("ops.txt");

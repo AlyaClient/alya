@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 public class NBTTagList extends NBTBase
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(NBTTagList.class);
     private List<NBTBase> tagList = Lists.<NBTBase>newArrayList();
 
     /**

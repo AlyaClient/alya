@@ -13,7 +13,7 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiCommandBlock extends GuiScreen
 {
-    private static final Logger field_146488_a = LogManager.getLogger();
+    private static final Logger field_146488_a = LogManager.getLogger(GuiCommandBlock.class);
 
     /** Text field containing the command block's command. */
     private GuiTextField commandTextField;

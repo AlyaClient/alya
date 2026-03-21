@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 public class GuiConnecting extends GuiScreen
 {
     private static final AtomicInteger CONNECTION_ID = new AtomicInteger(0);
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiConnecting.class);
     private NetworkManager networkManager;
     private boolean cancel;
     private final GuiScreen previousGuiScreen;

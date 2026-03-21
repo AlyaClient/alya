@@ -47,7 +47,7 @@ import org.apache.logging.log4j.Logger;
 
 public class NetworkSystem
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(NetworkSystem.class);
     public static final LazyLoadBase<NioEventLoopGroup> eventLoops = new LazyLoadBase<NioEventLoopGroup>()
     {
         protected NioEventLoopGroup load()

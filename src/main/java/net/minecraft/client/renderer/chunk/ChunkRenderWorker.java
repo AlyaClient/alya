@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ChunkRenderWorker implements Runnable
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(ChunkRenderWorker.class);
     private final ChunkRenderDispatcher chunkRenderDispatcher;
     private final RegionRenderCacheBuilder regionRenderCacheBuilder;
 

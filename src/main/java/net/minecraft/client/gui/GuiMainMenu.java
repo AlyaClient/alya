@@ -39,7 +39,7 @@ import java.util.Random;
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "DataFlowIssue", "unused", "deprecation"})
 public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiMainMenu.class);
     private static final Random RANDOM = new Random();
     private static ShaderUtil menuShader = null;
 

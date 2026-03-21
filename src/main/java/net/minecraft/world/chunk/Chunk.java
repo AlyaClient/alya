@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Chunk
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(Chunk.class);
 
     /**
      * Used to store block IDs, block MSBs, Sky-light maps, Block-light maps, and metadata. Each entry corresponds to a

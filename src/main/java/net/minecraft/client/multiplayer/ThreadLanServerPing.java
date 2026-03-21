@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 public class ThreadLanServerPing extends Thread
 {
     private static final AtomicInteger field_148658_a = new AtomicInteger(0);
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ThreadLanServerPing.class);
     private final String motd;
 
     /** The socket we're using to send packets on. */

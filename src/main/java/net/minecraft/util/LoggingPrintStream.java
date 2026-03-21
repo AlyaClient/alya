@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 public class LoggingPrintStream extends PrintStream
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(LoggingPrintStream.class);
     private final String domain;
 
     public LoggingPrintStream(String domainIn, OutputStream outStream)

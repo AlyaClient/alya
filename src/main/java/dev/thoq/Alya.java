@@ -31,7 +31,7 @@ public final class Alya {
     private static final String NAME = "Alya", VERSION = "1.0";
     private static final ResourceLocation OPENING_SOUND = new ResourceLocation("Alya/Sounds/Opening.wav");
 
-    private final Logger LOGGER = LogManager.getLogger();
+    private final Logger LOGGER = LogManager.getLogger(Alya.class);
     private final EventBus eventBus = new EventBus();
     private final ModuleManager moduleManager = new ModuleManager();
     private final CommandManager commandManager = new CommandManager();

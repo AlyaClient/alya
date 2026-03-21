@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(GuiMultiplayer.class);
     private final OldServerPinger oldServerPinger = new OldServerPinger();
     private final GuiScreen parentScreen;
     private ServerSelectionList serverListSelector;

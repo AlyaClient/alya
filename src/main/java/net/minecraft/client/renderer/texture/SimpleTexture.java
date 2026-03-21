@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 public class SimpleTexture extends AbstractTexture
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(SimpleTexture.class);
     protected final ResourceLocation textureLocation;
     public ResourceLocation locationEmissive;
     public boolean isEmissive;

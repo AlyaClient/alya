@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 public class VertexFormat
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(VertexFormat.class);
     private final List<VertexFormatElement> elements;
     private final List<Integer> offsets;
 

@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 public class CommandHandler implements ICommandManager
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(CommandHandler.class);
     private final Map<String, ICommand> commandMap = Maps.<String, ICommand>newHashMap();
     private final Set<ICommand> commandSet = Sets.<ICommand>newHashSet();
 

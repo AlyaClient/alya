@@ -66,7 +66,7 @@ public abstract class ServerConfigurationManager {
     public static final File FILE_IPBANS = new File("banned-ips.json");
     public static final File FILE_OPS = new File("ops.json");
     public static final File FILE_WHITELIST = new File("whitelist.json");
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(ServerConfigurationManager.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
 
     /**
