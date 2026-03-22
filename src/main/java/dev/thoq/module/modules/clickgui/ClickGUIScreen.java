@@ -31,7 +31,7 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int TEXT_COLOR = 0xFFCCCCCC;
     private static final float BORDER_WIDTH = 0.5f;
     private static final int DEFAULT_CATEGORY_COLOR = 0xFF666666;
-    private static final int SETTING_ACCENT_WIDTH = 2;
+
 
     private static final AlyaFontRenderer fontMedium = Alya.getInstance().getFontRendererSmall();
     private static final AlyaFontRenderer fontSmall = Alya.getInstance().getFontRendererTiny();
@@ -57,6 +57,7 @@ public final class ClickGUIScreen extends GuiScreen {
     private Category draggingCategory = null;
     private NumberSetting currentDraggedNumberSetting = null;
     private int currentDraggedSettingX = 0;
+    private boolean draggingSecondNub = false;
 
     public ClickGUIScreen() {
         int positionX = 4;
@@ -173,18 +174,16 @@ public final class ClickGUIScreen extends GuiScreen {
 
         RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, SETTING_BACKGROUND_COLOR);
 
-        RenderUtility.drawRect(settingX, positionY, SETTING_ACCENT_WIDTH, SETTING_HEIGHT, getCategoryColor(category));
-
-        final int textX = settingX + SETTING_ACCENT_WIDTH + 3;
+        final int textX = settingX + 3;
         final int settingRight = positionX + PANEL_WIDTH - SETTING_INDENT;
 
         if(setting instanceof BooleanSetting) {
             final BooleanSetting booleanSetting = (BooleanSetting) setting;
             if(booleanSetting.isEnabled()) {
-                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, settingWidth - SETTING_ACCENT_WIDTH, SETTING_HEIGHT, getCategoryColor(category));
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, getCategoryColor(category));
             }
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, settingWidth - SETTING_ACCENT_WIDTH, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, HOVER_TINT);
             }
             fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
 
@@ -195,7 +194,7 @@ public final class ClickGUIScreen extends GuiScreen {
             final float modeWidth = fontSmall.getStringWidth(modeValue);
             fontSmall.drawString(modeValue, settingRight - modeWidth - 2, positionY + 3, TEXT_COLOR);
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, settingWidth - SETTING_ACCENT_WIDTH, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, HOVER_TINT);
             }
 
         } else if(setting instanceof NumberSetting) {
@@ -205,24 +204,47 @@ public final class ClickGUIScreen extends GuiScreen {
             final double value = numberSetting.getValue();
             final double minimum = numberSetting.getMin();
             final double maximum = numberSetting.getMax();
-            final double percentage = (value - minimum) / (maximum - minimum);
-
-            final int sliderWidth = settingWidth - SETTING_ACCENT_WIDTH;
-            final int fillWidth = (int) (percentage * sliderWidth);
-            RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
-
-            final int nubX = settingX + SETTING_ACCENT_WIDTH + fillWidth - 2;
+            final int sliderWidth = settingWidth;
+            final int categoryColor = getCategoryColor(category);
             final int nubWidth = 4;
-            final int nubColor = lightenColor(getCategoryColor(category), 0.4f);
-            RenderUtility.drawRect(Math.max(settingX + SETTING_ACCENT_WIDTH, nubX), positionY, nubWidth, SETTING_HEIGHT, nubColor);
+            final int nubColor = lightenColor(categoryColor, 0.4f);
 
-            final String displayValue = String.valueOf(Math.round(value * 100.0) / 100.0);
-            fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
-            final float valueWidth = fontSmall.getStringWidth(displayValue);
-            fontSmall.drawString(displayValue, settingRight - valueWidth - 2, positionY + 3, TEXT_COLOR);
+            if(numberSetting.isRangeEnabled()) {
+                final double secondValue = numberSetting.getSecondValue();
+                final double loVal = Math.min(value, secondValue);
+                final double hiVal = Math.max(value, secondValue);
+                final double loPercentage = (loVal - minimum) / (maximum - minimum);
+                final double hiPercentage = (hiVal - minimum) / (maximum - minimum);
+
+                final int fillStart = (int) (loPercentage * sliderWidth);
+                final int fillEnd = (int) (hiPercentage * sliderWidth);
+                RenderUtility.drawRect(settingX + fillStart, positionY, fillEnd - fillStart, SETTING_HEIGHT, categoryColor);
+
+                final int nub1X = settingX + (int) (((value - minimum) / (maximum - minimum)) * sliderWidth) - 2;
+                final int nub2X = settingX + (int) (((secondValue - minimum) / (maximum - minimum)) * sliderWidth) - 2;
+                RenderUtility.drawRect(Math.max(settingX, nub1X), positionY, nubWidth, SETTING_HEIGHT, nubColor);
+                RenderUtility.drawRect(Math.max(settingX, nub2X), positionY, nubWidth, SETTING_HEIGHT, nubColor);
+
+                final String displayValue = Math.round(loVal * 100.0) / 100.0 + "-" + Math.round(hiVal * 100.0) / 100.0;
+                fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
+                final float valueWidth = fontSmall.getStringWidth(displayValue);
+                fontSmall.drawString(displayValue, settingRight - valueWidth - 2, positionY + 3, TEXT_COLOR);
+            } else {
+                final double percentage = (value - minimum) / (maximum - minimum);
+                final int fillWidth = (int) (percentage * sliderWidth);
+                RenderUtility.drawRect(settingX, positionY, fillWidth, SETTING_HEIGHT, categoryColor);
+
+                final int nubX = settingX + fillWidth - 2;
+                RenderUtility.drawRect(Math.max(settingX, nubX), positionY, nubWidth, SETTING_HEIGHT, nubColor);
+
+                final String displayValue = String.valueOf(Math.round(value * 100.0) / 100.0);
+                fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
+                final float valueWidth = fontSmall.getStringWidth(displayValue);
+                fontSmall.drawString(displayValue, settingRight - valueWidth - 2, positionY + 3, TEXT_COLOR);
+            }
 
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, sliderWidth, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX, positionY, sliderWidth, SETTING_HEIGHT, HOVER_TINT);
             }
         }
     }
@@ -285,6 +307,17 @@ public final class ClickGUIScreen extends GuiScreen {
                                         if(setting instanceof NumberSetting && mouseButton == 0) {
                                             currentDraggedNumberSetting = (NumberSetting) setting;
                                             currentDraggedSettingX = panelX;
+                                            if(currentDraggedNumberSetting.isRangeEnabled()) {
+                                                final int sliderStart = panelX + SETTING_INDENT;
+                                                final int sliderWidth = PANEL_WIDTH - SETTING_INDENT * 2;
+                                                final double pct = (double) Math.max(0, Math.min(mouseX - sliderStart, sliderWidth)) / sliderWidth;
+                                                final double mouseVal = currentDraggedNumberSetting.getMin() + pct * (currentDraggedNumberSetting.getMax() - currentDraggedNumberSetting.getMin());
+                                                final double distFirst = Math.abs(mouseVal - currentDraggedNumberSetting.getValue());
+                                                final double distSecond = Math.abs(mouseVal - currentDraggedNumberSetting.getSecondValue());
+                                                draggingSecondNub = distSecond < distFirst;
+                                            } else {
+                                                draggingSecondNub = false;
+                                            }
                                             updateNumberSettingFromMouse(mouseX);
                                         } else {
                                             handleSettingClick(setting, mouseButton);
@@ -348,9 +381,9 @@ public final class ClickGUIScreen extends GuiScreen {
     private void updateNumberSettingFromMouse(final int mouseX) {
         if(currentDraggedNumberSetting == null) return;
 
-        final int settingX = currentDraggedSettingX + SETTING_INDENT + SETTING_ACCENT_WIDTH;
+        final int settingX = currentDraggedSettingX + SETTING_INDENT;
         final int sliderStart = settingX;
-        final int sliderWidth = PANEL_WIDTH - SETTING_INDENT * 2 - SETTING_ACCENT_WIDTH;
+        final int sliderWidth = PANEL_WIDTH - SETTING_INDENT * 2;
 
         int relativeX = mouseX - sliderStart;
         relativeX = Math.max(0, Math.min(relativeX, sliderWidth));
@@ -363,7 +396,12 @@ public final class ClickGUIScreen extends GuiScreen {
         double newValue = minimum + (percentage * (maximum - minimum));
 
         newValue = Math.round(newValue / increment) * increment;
-        currentDraggedNumberSetting.setValue(newValue);
+
+        if(draggingSecondNub) {
+            currentDraggedNumberSetting.setSecondValue(newValue);
+        } else {
+            currentDraggedNumberSetting.setValue(newValue);
+        }
     }
 
     private boolean isMouseOver(final int mouseX, final int mouseY, final int positionX, final int positionY, final int height) {

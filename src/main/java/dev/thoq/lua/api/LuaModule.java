@@ -272,6 +272,50 @@ public final class LuaModule extends Module {
                 return LuaValue.valueOf(numberSetting.getIncrement());
             }
         });
+        settingTable.set("isRangeEnabled", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(numberSetting.isRangeEnabled());
+            }
+        });
+        settingTable.set("setRangeEnabled", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue enabled) {
+                numberSetting.setRangeEnabled(enabled.toboolean());
+                return LuaValue.NIL;
+            }
+        });
+        settingTable.set("getSecondValue", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(numberSetting.getSecondValue());
+            }
+        });
+        settingTable.set("getSecondValueAsInt", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(numberSetting.getSecondValueAsInt());
+            }
+        });
+        settingTable.set("setSecondValue", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue doubleValue) {
+                numberSetting.setSecondValue(doubleValue.todouble());
+                return LuaValue.NIL;
+            }
+        });
+        settingTable.set("getRandomValue", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(numberSetting.getRandomValue());
+            }
+        });
+        settingTable.set("getRandomValueAsInt", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(numberSetting.getRandomValueAsInt());
+            }
+        });
         settingTable.set("setVisibility", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue visibilityFunction) {

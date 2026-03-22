@@ -4,7 +4,6 @@ package dev.thoq.util.misc;
 public final class TimerUtil {
 
     private long lastMS = System.currentTimeMillis();
-    private final long lastNS = System.nanoTime();
 
     public void reset() {
         lastMS = System.currentTimeMillis();
@@ -23,7 +22,7 @@ public final class TimerUtil {
     }
 
     public boolean hasTimeElapsed(long time) {
-        return System.nanoTime() - lastNS > time * 1_000_000;
+        return System.currentTimeMillis() - lastMS > time;
     }
 
     public boolean hasTimeElapsed(double time) {
