@@ -2,7 +2,7 @@ local Module = {}
 Module.__index = Module
 
 function Module.new(name, description, category, keyCode)
-    local moduleTable = alya.modules.register(name, description, category or "MISC")
+    local moduleTable = alya.modules.register(name, description, category or "OTHER")
     if keyCode then
         moduleTable.setKeyCode(keyCode)
     end
@@ -10,7 +10,7 @@ function Module.new(name, description, category, keyCode)
     instance._moduleTable = moduleTable
     instance._name = name
     instance._description = description
-    instance._category = category or "MISC"
+    instance._category = category or "OTHER"
     return instance
 end
 

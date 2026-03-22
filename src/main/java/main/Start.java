@@ -1,7 +1,7 @@
 package main;
-import dev.thoq.util.misc.Array;
 import dev.thoq.util.misc.Platform;
 import net.minecraft.client.main.Main;
+import dev.thoq.util.misc.Array;
 
 public class Start {
 

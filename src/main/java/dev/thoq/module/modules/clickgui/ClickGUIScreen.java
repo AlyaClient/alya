@@ -18,28 +18,28 @@ import java.util.Map;
 public final class ClickGUIScreen extends GuiScreen {
 
     private static final int PANEL_WIDTH = 100;
-    private static final int PANEL_HEIGHT = 18;
-    private static final int MODULE_HEIGHT = 18;
+    private static final int PANEL_HEIGHT = 16;
+    private static final int MODULE_HEIGHT = 14;
     private static final int SETTING_HEIGHT = 14;
-    private static final int PANEL_SPACING = 120;
+    private static final int PANEL_SPACING = 115;
     private static final int BACKGROUND_COLOR = 0xFF181A17;
     private static final int MODULE_BACKGROUND_COLOR = 0xFF232623;
-    private static final int TEXT_COLOR = 0xFFFFFFFF;
-    private static final int BORDER_WIDTH = 1;
+    private static final int HOVER_TINT = 0x20FFFFFF;
+    private static final int TEXT_COLOR = 0xFFCCCCCC;
+    private static final float BORDER_WIDTH = 0.5f;
     private static final int DEFAULT_CATEGORY_COLOR = 0xFF666666;
 
-    private static final AlyaFontRenderer fontMedium = Alya.getInstance().getFontRendererMedium();
-    private static final AlyaFontRenderer fontSmall = Alya.getInstance().getFontRendererSmall();
+    private static final AlyaFontRenderer fontMedium = Alya.getInstance().getFontRendererSmall();
+    private static final AlyaFontRenderer fontSmall = Alya.getInstance().getFontRendererTiny();
 
     private static final Map<Category, Integer> CATEGORY_COLORS = new HashMap<>();
 
     static {
-        CATEGORY_COLORS.put(Category.COMBAT, 0xFFE64D3A);
-        CATEGORY_COLORS.put(Category.MOVEMENT, 0xFF2ECD6F);
-        CATEGORY_COLORS.put(Category.RENDER, 0xFF8F2DF7);
-        CATEGORY_COLORS.put(Category.WORLD, 0xFF3A9DE6);
-        CATEGORY_COLORS.put(Category.PLAYER, 0xFFF29D11);
-        CATEGORY_COLORS.put(Category.MISC, 0xFF230057);
+        CATEGORY_COLORS.put(Category.COMBAT, 0xFFE74C3C);
+        CATEGORY_COLORS.put(Category.MOVEMENT, 0xFF2ECC71);
+        CATEGORY_COLORS.put(Category.PLAYER, 0xFF8E44AD);
+        CATEGORY_COLORS.put(Category.VISUAL, 0xFF3700CE);
+        CATEGORY_COLORS.put(Category.OTHER, 0xFFF39C12);
     }
 
     private final Map<Category, int[]> panelPositions = new HashMap<>();
@@ -104,6 +104,7 @@ public final class ClickGUIScreen extends GuiScreen {
                     }
                 }
             }
+            totalHeight += 1;
         }
 
         RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
@@ -115,13 +116,13 @@ public final class ClickGUIScreen extends GuiScreen {
             int currentY = panelY + PANEL_HEIGHT;
 
             for(final Module module : modules) {
-                renderModuleButton(module, panelX, currentY, category);
+                renderModuleButton(module, panelX, currentY, category, mouseX, mouseY);
                 currentY += MODULE_HEIGHT;
 
                 if(expandedModules.getOrDefault(module, false)) {
                     for(final Setting<?> setting : module.getSettings()) {
                         if(setting.isVisible()) {
-                            renderSettingButton(setting, panelX, currentY, category);
+                            renderSettingButton(setting, panelX, currentY, category, mouseX, mouseY);
                             currentY += SETTING_HEIGHT;
                         }
                     }
@@ -133,9 +134,7 @@ public final class ClickGUIScreen extends GuiScreen {
         RenderUtility.drawRectOutline(panelX, panelY, PANEL_WIDTH, totalHeight, categoryColor, BORDER_WIDTH);
     }
 
-    private void renderModuleButton(final Module module, final int positionX, final int positionY, final Category category) {
-        RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, MODULE_HEIGHT, BACKGROUND_COLOR);
-
+    private void renderModuleButton(final Module module, final int positionX, final int positionY, final Category category, final int mouseX, final int mouseY) {
         final boolean extended = expandedModules.getOrDefault(module, false);
         if(!extended) {
             final int backgroundColor = module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
@@ -144,48 +143,76 @@ public final class ClickGUIScreen extends GuiScreen {
             RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
         }
 
+        if(isMouseOver(mouseX, mouseY, positionX, positionY, MODULE_HEIGHT)) {
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, HOVER_TINT);
+        }
+
         final String moduleName = module.getName().toLowerCase();
         final int textColor = extended ? (module.isEnabled() ? getCategoryColor(category) : TEXT_COLOR) : TEXT_COLOR;
-        final int textX = positionX + PANEL_WIDTH - (int) fontMedium.getStringWidth(moduleName) - 3;
-        fontMedium.drawString(moduleName, textX, positionY + 5, textColor);
+        fontMedium.drawString(moduleName, positionX + 4, positionY + 5, textColor);
     }
 
-    private void renderSettingButton(final Setting<?> setting, final int positionX, final int positionY, final Category category) {
-        RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
+    private void renderSettingButton(final Setting<?> setting, final int positionX, final int positionY, final Category category, final int mouseX, final int mouseY) {
+        RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, BACKGROUND_COLOR);
 
         if(setting instanceof BooleanSetting) {
             final BooleanSetting booleanSetting = (BooleanSetting) setting;
             if(booleanSetting.isEnabled()) {
                 RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, getCategoryColor(category));
             }
+            if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
+                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, HOVER_TINT);
+            }
             fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
 
         } else if(setting instanceof ModeSetting) {
             final ModeSetting modeSetting = (ModeSetting) setting;
-            final String text = setting.getName() + " > " + modeSetting.getValue();
-            fontSmall.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
+            final String modeValue = modeSetting.getValue();
+            final float modeWidth = fontSmall.getStringWidth(modeValue);
+            fontSmall.drawString(modeValue, positionX + PANEL_WIDTH - modeWidth - 4, positionY + 3, TEXT_COLOR);
+            if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
+                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, HOVER_TINT);
+            }
 
         } else if(setting instanceof NumberSetting) {
             final NumberSetting numberSetting = (NumberSetting) setting;
             numberSettingPositions.put(numberSetting, positionX);
-
-            RenderUtility.drawRect(positionX, positionY, PANEL_WIDTH, SETTING_HEIGHT, BACKGROUND_COLOR);
 
             final double value = numberSetting.getValue();
             final double minimum = numberSetting.getMin();
             final double maximum = numberSetting.getMax();
             final double percentage = (value - minimum) / (maximum - minimum);
 
-            final int fillWidth = (int) (percentage * (PANEL_WIDTH - 2));
+            final int sliderWidth = PANEL_WIDTH - 2;
+            final int fillWidth = (int) (percentage * sliderWidth);
             RenderUtility.drawRect(positionX + 1, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
 
-            final String text = setting.getName() + ": " + Math.round(value * 100.0) / 100.0;
-            fontSmall.drawString(text, positionX + 4, positionY + 3, TEXT_COLOR);
+            final int nubX = positionX + 1 + fillWidth - 2;
+            final int nubWidth = 4;
+            final int nubColor = lightenColor(getCategoryColor(category), 0.4f);
+            RenderUtility.drawRect(Math.max(positionX + 1, nubX), positionY, nubWidth, SETTING_HEIGHT, nubColor);
+
+            final String displayValue = String.valueOf(Math.round(value * 100.0) / 100.0);
+            fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
+            final float valueWidth = fontSmall.getStringWidth(displayValue);
+            fontSmall.drawString(displayValue, positionX + PANEL_WIDTH - valueWidth - 4, positionY + 3, TEXT_COLOR);
+
+            if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
+                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, HOVER_TINT);
+            }
         }
     }
 
     private int getCategoryColor(final Category category) {
         return CATEGORY_COLORS.getOrDefault(category, DEFAULT_CATEGORY_COLOR);
+    }
+
+    private int lightenColor(final int color, final float amount) {
+        int r = Math.min(255, (int) (((color >> 16) & 0xFF) + (255 - ((color >> 16) & 0xFF)) * amount));
+        int g = Math.min(255, (int) (((color >> 8) & 0xFF) + (255 - ((color >> 8) & 0xFF)) * amount));
+        int b = Math.min(255, (int) ((color & 0xFF) + (255 - (color & 0xFF)) * amount));
+        return (color & 0xFF000000) | (r << 16) | (g << 8) | b;
     }
 
     @Override

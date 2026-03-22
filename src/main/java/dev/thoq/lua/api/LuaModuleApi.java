@@ -22,7 +22,7 @@ public final class LuaModuleApi extends LuaTable {
                 try {
                     category = Category.valueOf(categoryName);
                 } catch (IllegalArgumentException illegalArgumentException) {
-                    category = Category.MISC;
+                    category = Category.OTHER;
                 }
                 final LuaModule luaModule = new LuaModule(nameValue.tojstring(), descriptionValue.tojstring(),
                         category);

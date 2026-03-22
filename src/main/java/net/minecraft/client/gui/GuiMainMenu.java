@@ -1,19 +1,22 @@
 package net.minecraft.client.gui;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import dev.thoq.gui.auth.AltManagerGui;
-import dev.thoq.gui.AlyaButton;
-import dev.thoq.util.render.ShaderUtil;
 import dev.thoq.util.misc.Title;
+import dev.thoq.util.render.ShaderUtil;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.ISaveFormat;
@@ -25,16 +28,8 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLContext;
+import com.google.common.base.Strings;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "DataFlowIssue", "unused", "deprecation"})
 public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
@@ -110,18 +105,22 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
+    @Override
     public void updateScreen() {
     }
 
+    @Override
     public boolean doesGuiPauseGame() {
         return false;
     }
 
+    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
     }
 
+    @Override
     public void initGui() {
-        int n = RANDOM.nextInt(8) + 1;
+        int n = RANDOM.nextInt(13) + 1;
         this.randomImage = new ResourceLocation("Alya/Assets/Femboys/" + n + ".png");
 
         Title.update(this.getClass());
@@ -143,8 +142,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         this.addSingleplayerMultiplayerButtons(j, 24);
 
-        this.buttonList.add(new AlyaButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
-        this.buttonList.add(new AlyaButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
+        this.buttonList.add(new GuiButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
 
         synchronized(this.threadLock) {
             int field_92023_s = (int) font.getStringWidth(this.openGLWarning1);
@@ -160,17 +159,18 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     private void addSingleplayerMultiplayerButtons(int p_73969_1_, int p_73969_2_) {
-        this.buttonList.add(new AlyaButton(1, this.width / 2 - 100, p_73969_1_, I18n.format("menu.singleplayer")));
-        this.buttonList.add(new AlyaButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_, I18n.format("menu.multiplayer")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, p_73969_1_, I18n.format("menu.singleplayer")));
+        this.buttonList.add(new GuiButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_, I18n.format("menu.multiplayer")));
 
         if(Reflector.GuiModList_Constructor.exists()) {
-            this.buttonList.add(new AlyaButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online").replace("Minecraft", "").trim()));
-            this.buttonList.add(new AlyaButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")));
+            this.buttonList.add(new GuiButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online").replace("Minecraft", "").trim()));
+            this.buttonList.add(new GuiButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")));
         } else {
-            this.buttonList.add(new AlyaButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")));
+            this.buttonList.add(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")));
         }
     }
 
+    @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if(button.id == 0) {
             this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
@@ -211,6 +211,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
+    @Override
     public void confirmClicked(boolean result, int id) {
         if(result && id == 12) {
             ISaveFormat isaveformat = this.mc.getSaveLoader();
@@ -232,6 +233,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (menuShader == null) menuShader = new ShaderUtil("Alya/Shaders/MainMenuBg.glsl");
         menuShader.render();
@@ -298,6 +300,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
+    @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
@@ -310,6 +313,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
+    @Override
     public void onGuiClosed() {
     }
 

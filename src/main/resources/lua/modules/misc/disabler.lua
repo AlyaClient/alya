@@ -1,4 +1,4 @@
-local moduleTable = alya.modules.register("Disabler", "Attempts to disable certain checks on anticheats", "MISC")
+local moduleTable = alya.modules.register("Disabler", "Attempts to disable certain checks on anticheats", "OTHER")
 
 local mode = moduleTable.addModeSetting("Mode", "Disabler Mode", "OmniSprint", "OmniSprint")
 

@@ -487,7 +487,7 @@ public class SoundManager
         }
         catch (MalformedURLException var4)
         {
-            throw new Error("TODO: Sanely handle url exception! :D");
+            throw new RuntimeException("Failed to create sound URL for: " + p_148612_0_, var4);
         }
     }
 

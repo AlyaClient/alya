@@ -438,6 +438,7 @@ public class Minecraft implements IThreadListener {
         this.updateSplashProgress(20);
         this.mcMusicTicker = new MusicTicker(this);
         this.fontRendererObj = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.renderEngine, false);
+        net.minecraft.client.gui.Gui.font = this.fontRendererObj;
 
         if(this.gameSettings.language != null) {
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());

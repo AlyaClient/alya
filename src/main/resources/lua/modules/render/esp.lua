@@ -1,4 +1,4 @@
-local moduleTable = alya.modules.register("ESP", "Draws boxes around players through walls", "RENDER")
+local moduleTable = alya.modules.register("ESP", "Draws boxes around players through walls", "VISUAL")
 
 local settingRed = moduleTable.addNumberSetting("Red", "", 255, 0, 255, 1)
 local settingGreen = moduleTable.addNumberSetting("Green", "", 80,  0, 255, 1)
