@@ -3,6 +3,8 @@
 target/
 
 jars/*
+logs/
+assets/
 
 !jars/versions/
 !jars/run_config/
