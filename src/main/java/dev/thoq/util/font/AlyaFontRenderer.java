@@ -1,16 +1,21 @@
 package dev.thoq.util.font;
 
 import dev.thoq.Alya;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
 
 public final class AlyaFontRenderer {
 
@@ -52,20 +57,20 @@ public final class AlyaFontRenderer {
     public AlyaFontRenderer(final float size) {
         try {
             final InputStream inputStream = AlyaFontRenderer.class.getResourceAsStream(
-                    "/assets/minecraft/Alya/Fonts/OpenSans-Medium.ttf");
+                    "/assets/minecraft/Alya/Fonts/SF-UI-Display-Regular.ttf");
 
             if(inputStream != null) {
                 final Font baseFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
                 this.font = baseFont.deriveFont(Font.PLAIN, size * SCALE_FACTOR);
                 inputStream.close();
             } else {
-                this.font = new Font("SansSerif", Font.PLAIN, (int) (size * SCALE_FACTOR));
+                this.font = new Font("SF", Font.PLAIN, (int) (size * SCALE_FACTOR));
             }
 
             setupTexture();
         } catch(final Exception exception) {
             Alya.getInstance().getLogger().error("Failed to load default font", exception);
-            this.font = new Font("SansSerif", Font.PLAIN, (int) (size * SCALE_FACTOR));
+            this.font = new Font("SF", Font.PLAIN, (int) (size * SCALE_FACTOR));
             setupTexture();
         }
     }

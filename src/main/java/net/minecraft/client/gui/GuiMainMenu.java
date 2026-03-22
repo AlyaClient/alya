@@ -39,8 +39,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     private static final Random RANDOM = new Random();
     private static ShaderUtil menuShader = null;
 
-    private String splashText;
-
     private final boolean field_175375_v = true;
 
     private final Object threadLock = new Object();
@@ -50,7 +48,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     private String openGLWarning2;
 
     private String openGLWarningLink;
-    private static final ResourceLocation splashTexts = new ResourceLocation("texts/splashes.txt");
     public static final String field_96138_a = "Please click " + EnumChatFormatting.UNDERLINE + "here" + EnumChatFormatting.RESET + " for more information.";
     private int field_92024_r;
     private int field_92022_t;
@@ -66,37 +63,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     public GuiMainMenu() {
         this.openGLWarning2 = field_96138_a;
         this.field_183502_L = false;
-        this.splashText = "";
-        BufferedReader bufferedreader = null;
-
-        try {
-            List<String> list = Lists.newArrayList();
-            bufferedreader = new BufferedReader(new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(splashTexts).getInputStream(), Charsets.UTF_8));
-            String s;
-
-            while((s = bufferedreader.readLine()) != null) {
-                s = s.trim();
-
-                if(!s.isEmpty()) {
-                    list.add(s);
-                }
-            }
-
-            if(!list.isEmpty()) {
-                do {
-                    this.splashText = list.get(RANDOM.nextInt(list.size()));
-                } while(this.splashText.hashCode() == 125780783);
-            }
-        } catch(IOException ignored) {
-        } finally {
-            if(bufferedreader != null) {
-                try {
-                    bufferedreader.close();
-                } catch(IOException ignored) {
-                }
-            }
-        }
-
         this.openGLWarning1 = "";
 
         if(!GLContext.getCapabilities().OpenGL20 && !OpenGlHelper.areShadersSupported()) {
@@ -130,14 +96,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
 
-        if(calendar.get(Calendar.MONTH) + 1 == 12 && calendar.get(Calendar.DATE) == 24) {
-            this.splashText = "Merry X-mas!";
-        } else if(calendar.get(Calendar.MONTH) + 1 == 1 && calendar.get(Calendar.DATE) == 1) {
-            this.splashText = "Happy new year!";
-        } else if(calendar.get(Calendar.MONTH) + 1 == 10 && calendar.get(Calendar.DATE) == 31) {
-            this.splashText = "OOoooOOOoooo! Spooky!";
-        }
-
         final int i = 24;
         final int j = this.height / 4 + 48;
 
@@ -164,10 +122,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         this.buttonList.add(new GuiButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_, I18n.format("menu.multiplayer")));
 
         if(Reflector.GuiModList_Constructor.exists()) {
-            this.buttonList.add(new GuiButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online").replace("Minecraft", "").trim()));
-            this.buttonList.add(new GuiButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")));
+            this.buttonList.add(new GuiButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.alts").replace("Minecraft", "").trim()));
+            //this.buttonList.add(new GuiButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")));
         } else {
-            this.buttonList.add(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")));
+            this.buttonList.add(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.alts")));
         }
     }
 
@@ -200,38 +158,21 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         if(button.id == 6 && Reflector.GuiModList_Constructor.exists()) {
             this.mc.displayGuiScreen((GuiScreen) Reflector.newInstance(Reflector.GuiModList_Constructor, new Object[]{this}));
         }
-
-        if(button.id == 12) {
-            ISaveFormat isaveformat = this.mc.getSaveLoader();
-            WorldInfo worldinfo = isaveformat.getWorldInfo("Demo_World");
-
-            if(worldinfo != null) {
-                GuiYesNo guiyesno = GuiSelectWorld.func_152129_a(this, worldinfo.getWorldName(), 12);
-                this.mc.displayGuiScreen(guiyesno);
-            }
-        }
     }
 
     @Override
     public void confirmClicked(boolean result, int id) {
-        if(result && id == 12) {
-            ISaveFormat isaveformat = this.mc.getSaveLoader();
-            isaveformat.flushCache();
-            isaveformat.deleteWorldDirectory("Demo_World");
-            this.mc.displayGuiScreen(this);
-        } else if(id == 13) {
-            if(result) {
-                try {
-                    Class<?> oclass = Class.forName("java.awt.Desktop");
-                    Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
-                    oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, new URI(this.openGLWarningLink));
-                } catch(Throwable throwable) {
-                    logger.error("Couldn't open link", throwable);
-                }
+        if(result) {
+            try {
+                Class<?> oclass = Class.forName("java.awt.Desktop");
+                Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
+                oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, new URI(this.openGLWarningLink));
+            } catch(Throwable throwable) {
+                logger.error("Couldn't open link", throwable);
             }
-
-            this.mc.displayGuiScreen(this);
         }
+
+        this.mc.displayGuiScreen(this);
     }
 
     @Override

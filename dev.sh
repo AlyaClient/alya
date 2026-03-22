@@ -10,6 +10,7 @@ CP="$SCRIPT_DIR/target/classes:$SCRIPT_DIR/jars/versions/1.8.9/1.8.9.jar:$SCRIPT
 ./mvnw compile
 
 $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.dev.heapdump" \
+  "-Dalya.dev.resources=$SCRIPT_DIR/src/main/resources" \
   "-Djava.library.path=$SCRIPT_DIR/jars/versions/1.8.9/1.8.9-natives" \
   "-Dminecraft.launcher.brand=minecraft-launcher" \
   "-Dminecraft.launcher.version=3.2.13" \

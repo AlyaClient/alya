@@ -20,6 +20,8 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -95,7 +97,20 @@ public final class LuaEngine {
 
     public void loadScript(final String resourcePath) {
         try {
-            final InputStream inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
+            final String devDir = System.getProperty("alya.dev.resources");
+            InputStream inputStream = null;
+
+            if (devDir != null) {
+                final File devFile = new File(devDir + resourcePath);
+                if (devFile.exists()) {
+                    inputStream = new FileInputStream(devFile);
+                }
+            }
+
+            if (inputStream == null) {
+                inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
+            }
+
             if (inputStream == null) {
                 Alya.getInstance().getLogger().error("Lua script not found: {}", resourcePath);
                 return;
@@ -106,6 +121,8 @@ public final class LuaEngine {
         } catch (final LuaError luaError) {
             Alya.getInstance().getLogger().error("Lua error in {}: {}", resourcePath, luaError.getMessage());
             ChatUtil.sendError("[Lua] " + resourcePath + ": " + luaError.getMessage());
+        } catch (final Exception exception) {
+            Alya.getInstance().getLogger().error("Error loading {}: {}", resourcePath, exception.getMessage());
         }
     }
 

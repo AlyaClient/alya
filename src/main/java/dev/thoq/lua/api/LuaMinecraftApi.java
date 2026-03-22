@@ -1,6 +1,9 @@
 package dev.thoq.lua.api;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -360,6 +363,40 @@ public final class LuaMinecraftApi extends LuaTable {
             @Override
             public LuaValue call(LuaValue keyCode) {
                 return LuaValue.valueOf(Keyboard.isKeyDown(keyCode.toint()));
+            }
+        });
+
+        set("getCameraPitch", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return minecraft.thePlayer != null ? LuaValue.valueOf((double) minecraft.thePlayer.rotationPitch)
+                        : LuaValue.valueOf(0d);
+            }
+        });
+
+        set("isHoldingBlock", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                if (minecraft.thePlayer == null) return LuaValue.FALSE;
+                ItemStack held = minecraft.thePlayer.getHeldItem();
+                return LuaValue.valueOf(held != null && held.getItem() instanceof ItemBlock);
+            }
+        });
+
+        set("isOnEdge", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                if (minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
+                double x = minecraft.thePlayer.posX;
+                double z = minecraft.thePlayer.posZ;
+                double blockX = Math.floor(x);
+                double blockZ = Math.floor(z);
+                double fracX = x - blockX;
+                double fracZ = z - blockZ;
+                double edgeThreshold = 0.3;
+                boolean nearEdge = fracX < edgeThreshold || fracX > (1.0 - edgeThreshold)
+                        || fracZ < edgeThreshold || fracZ > (1.0 - edgeThreshold);
+                return LuaValue.valueOf(nearEdge);
             }
         });
     }
