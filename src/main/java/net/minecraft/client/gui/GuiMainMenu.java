@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import dev.thoq.gui.auth.AltManagerGui;
 import dev.thoq.util.misc.Title;
@@ -28,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLContext;
-import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 
 @SuppressWarnings({"SameParameterValue", "unchecked", "rawtypes", "DataFlowIssue", "unused", "deprecation"})
@@ -288,9 +289,13 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         if(this.randomImage != null) {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.mc.getTextureManager().bindTexture(this.randomImage);
-            final int width = 50;
-            final int height = 70;
-            drawModalRectWithCustomSizedTexture(this.width - width, this.height - height, 0, 0, width, height, width, height);
+            final int texW = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+            final int texH = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+            final int maxSize = 100;
+            final float scale = Math.min((float) maxSize / texW, (float) maxSize / texH);
+            final int drawW = (int) (texW * scale);
+            final int drawH = (int) (texH * scale);
+            drawModalRectWithCustomSizedTexture(this.width - drawW, this.height - drawH, 0, 0, drawW, drawH, drawW, drawH);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

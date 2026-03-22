@@ -701,7 +701,14 @@ public class Minecraft implements IThreadListener {
         ByteBuffer bytebuffer = ByteBuffer.allocateDirect(4 * aint.length).order(ByteOrder.nativeOrder());
 
         for(int i : aint) {
-            bytebuffer.putInt(i << 8 | i >> 24 & 255);
+            int a = (i >> 24) & 0xFF;
+            int r = (i >> 16) & 0xFF;
+            int g = (i >> 8) & 0xFF;
+            int b = i & 0xFF;
+            bytebuffer.put((byte) r);
+            bytebuffer.put((byte) g);
+            bytebuffer.put((byte) b);
+            bytebuffer.put((byte) a);
         }
 
         ((Buffer) bytebuffer).flip();

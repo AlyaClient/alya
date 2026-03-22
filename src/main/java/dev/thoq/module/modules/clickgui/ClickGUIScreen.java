@@ -20,14 +20,18 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int PANEL_WIDTH = 100;
     private static final int PANEL_HEIGHT = 16;
     private static final int MODULE_HEIGHT = 14;
-    private static final int SETTING_HEIGHT = 14;
+    private static final int SETTING_HEIGHT = 11;
+    private static final int SETTING_GROUP_PADDING = 2;
     private static final int PANEL_SPACING = 115;
+    private static final int SETTING_INDENT = 6;
     private static final int BACKGROUND_COLOR = 0xFF181A17;
     private static final int MODULE_BACKGROUND_COLOR = 0xFF232623;
+    private static final int SETTING_BACKGROUND_COLOR = 0xFF111311;
     private static final int HOVER_TINT = 0x20FFFFFF;
     private static final int TEXT_COLOR = 0xFFCCCCCC;
     private static final float BORDER_WIDTH = 0.5f;
     private static final int DEFAULT_CATEGORY_COLOR = 0xFF666666;
+    private static final int SETTING_ACCENT_WIDTH = 2;
 
     private static final AlyaFontRenderer fontMedium = Alya.getInstance().getFontRendererSmall();
     private static final AlyaFontRenderer fontSmall = Alya.getInstance().getFontRendererTiny();
@@ -97,10 +101,15 @@ public final class ClickGUIScreen extends GuiScreen {
             for(final Module module : modules) {
                 totalHeight += MODULE_HEIGHT;
                 if(expandedModules.getOrDefault(module, false)) {
+                    boolean hasVisibleSettings = false;
                     for(final Setting<?> setting : module.getSettings()) {
                         if(setting.isVisible()) {
                             totalHeight += SETTING_HEIGHT;
+                            hasVisibleSettings = true;
                         }
+                    }
+                    if(hasVisibleSettings) {
+                        totalHeight += SETTING_GROUP_PADDING * 2;
                     }
                 }
             }
@@ -120,12 +129,16 @@ public final class ClickGUIScreen extends GuiScreen {
                 currentY += MODULE_HEIGHT;
 
                 if(expandedModules.getOrDefault(module, false)) {
+                    RenderUtility.drawRect(panelX + 1, currentY, PANEL_WIDTH - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
+                    currentY += SETTING_GROUP_PADDING;
                     for(final Setting<?> setting : module.getSettings()) {
                         if(setting.isVisible()) {
                             renderSettingButton(setting, panelX, currentY, category, mouseX, mouseY);
                             currentY += SETTING_HEIGHT;
                         }
                     }
+                    RenderUtility.drawRect(panelX + 1, currentY, PANEL_WIDTH - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
+                    currentY += SETTING_GROUP_PADDING;
                 }
             }
         }
@@ -136,6 +149,8 @@ public final class ClickGUIScreen extends GuiScreen {
 
     private void renderModuleButton(final Module module, final int positionX, final int positionY, final Category category, final int mouseX, final int mouseY) {
         final boolean extended = expandedModules.getOrDefault(module, false);
+        final boolean hasSettings = !module.getSettings().isEmpty();
+
         if(!extended) {
             final int backgroundColor = module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
             RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, backgroundColor);
@@ -147,32 +162,40 @@ public final class ClickGUIScreen extends GuiScreen {
             RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, HOVER_TINT);
         }
 
-        final String moduleName = module.getName().toLowerCase();
+        final String moduleName = module.getName().toLowerCase() + (hasSettings ? "..." : "");
         final int textColor = extended ? (module.isEnabled() ? getCategoryColor(category) : TEXT_COLOR) : TEXT_COLOR;
         fontMedium.drawString(moduleName, positionX + 4, positionY + 5, textColor);
     }
 
     private void renderSettingButton(final Setting<?> setting, final int positionX, final int positionY, final Category category, final int mouseX, final int mouseY) {
-        RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, BACKGROUND_COLOR);
+        final int settingX = positionX + SETTING_INDENT;
+        final int settingWidth = PANEL_WIDTH - SETTING_INDENT * 2;
+
+        RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, SETTING_BACKGROUND_COLOR);
+
+        RenderUtility.drawRect(settingX, positionY, SETTING_ACCENT_WIDTH, SETTING_HEIGHT, getCategoryColor(category));
+
+        final int textX = settingX + SETTING_ACCENT_WIDTH + 3;
+        final int settingRight = positionX + PANEL_WIDTH - SETTING_INDENT;
 
         if(setting instanceof BooleanSetting) {
             final BooleanSetting booleanSetting = (BooleanSetting) setting;
             if(booleanSetting.isEnabled()) {
-                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, getCategoryColor(category));
+                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, settingWidth - SETTING_ACCENT_WIDTH, SETTING_HEIGHT, getCategoryColor(category));
             }
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, settingWidth - SETTING_ACCENT_WIDTH, SETTING_HEIGHT, HOVER_TINT);
             }
-            fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
 
         } else if(setting instanceof ModeSetting) {
             final ModeSetting modeSetting = (ModeSetting) setting;
-            fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
             final String modeValue = modeSetting.getValue();
             final float modeWidth = fontSmall.getStringWidth(modeValue);
-            fontSmall.drawString(modeValue, positionX + PANEL_WIDTH - modeWidth - 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(modeValue, settingRight - modeWidth - 2, positionY + 3, TEXT_COLOR);
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, settingWidth - SETTING_ACCENT_WIDTH, SETTING_HEIGHT, HOVER_TINT);
             }
 
         } else if(setting instanceof NumberSetting) {
@@ -184,22 +207,22 @@ public final class ClickGUIScreen extends GuiScreen {
             final double maximum = numberSetting.getMax();
             final double percentage = (value - minimum) / (maximum - minimum);
 
-            final int sliderWidth = PANEL_WIDTH - 2;
+            final int sliderWidth = settingWidth - SETTING_ACCENT_WIDTH;
             final int fillWidth = (int) (percentage * sliderWidth);
-            RenderUtility.drawRect(positionX + 1, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
+            RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, fillWidth, SETTING_HEIGHT, getCategoryColor(category));
 
-            final int nubX = positionX + 1 + fillWidth - 2;
+            final int nubX = settingX + SETTING_ACCENT_WIDTH + fillWidth - 2;
             final int nubWidth = 4;
             final int nubColor = lightenColor(getCategoryColor(category), 0.4f);
-            RenderUtility.drawRect(Math.max(positionX + 1, nubX), positionY, nubWidth, SETTING_HEIGHT, nubColor);
+            RenderUtility.drawRect(Math.max(settingX + SETTING_ACCENT_WIDTH, nubX), positionY, nubWidth, SETTING_HEIGHT, nubColor);
 
             final String displayValue = String.valueOf(Math.round(value * 100.0) / 100.0);
-            fontSmall.drawString(setting.getName(), positionX + 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(setting.getName(), textX, positionY + 3, TEXT_COLOR);
             final float valueWidth = fontSmall.getStringWidth(displayValue);
-            fontSmall.drawString(displayValue, positionX + PANEL_WIDTH - valueWidth - 4, positionY + 3, TEXT_COLOR);
+            fontSmall.drawString(displayValue, settingRight - valueWidth - 2, positionY + 3, TEXT_COLOR);
 
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX + SETTING_ACCENT_WIDTH, positionY, sliderWidth, SETTING_HEIGHT, HOVER_TINT);
             }
         }
     }
@@ -255,6 +278,7 @@ public final class ClickGUIScreen extends GuiScreen {
                         currentY += MODULE_HEIGHT;
 
                         if(expandedModules.getOrDefault(module, false)) {
+                            currentY += SETTING_GROUP_PADDING;
                             for(final Setting<?> setting : module.getSettings()) {
                                 if(setting.isVisible()) {
                                     if(isMouseOver(mouseX, mouseY, panelX, currentY, SETTING_HEIGHT)) {
@@ -270,6 +294,7 @@ public final class ClickGUIScreen extends GuiScreen {
                                     currentY += SETTING_HEIGHT;
                                 }
                             }
+                            currentY += SETTING_GROUP_PADDING;
                         }
                     }
                 }
@@ -323,9 +348,9 @@ public final class ClickGUIScreen extends GuiScreen {
     private void updateNumberSettingFromMouse(final int mouseX) {
         if(currentDraggedNumberSetting == null) return;
 
-        final int settingX = currentDraggedSettingX;
-        final int sliderStart = settingX + 3;
-        final int sliderWidth = PANEL_WIDTH - 6;
+        final int settingX = currentDraggedSettingX + SETTING_INDENT + SETTING_ACCENT_WIDTH;
+        final int sliderStart = settingX;
+        final int sliderWidth = PANEL_WIDTH - SETTING_INDENT * 2 - SETTING_ACCENT_WIDTH;
 
         int relativeX = mouseX - sliderStart;
         relativeX = Math.max(0, Math.min(relativeX, sliderWidth));
