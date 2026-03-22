@@ -1,10 +1,10 @@
 package dev.thoq.util.render;
 
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.gui.Gui;
 import org.lwjgl.opengl.GL11;
 
 @SuppressWarnings("unused")
@@ -251,7 +251,6 @@ public final class RenderUtility {
         final double oz = worldZ - cz;
 
         final double hw = w / 2.0;
-        // corners: bottom y=oy, top y=oy+h
         final double x0 = ox - hw, x1 = ox + hw;
         final double y0 = oy,      y1 = oy + h;
         final double z0 = oz - hw, z1 = oz + hw;

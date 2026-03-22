@@ -384,6 +384,11 @@ public class FontRenderer implements IResourceManagerReloadListener
         return this.drawString(text, (float)x, (float)y, color, false);
     }
 
+    public int drawString(String text, float x, float y, int color)
+    {
+        return this.drawString(text, x, y, color, false);
+    }
+
     /**
      * Draws the specified string.
      */
@@ -723,6 +728,10 @@ public class FontRenderer implements IResourceManagerReloadListener
 
             return Math.round(f);
         }
+    }
+
+    public float getFontHeight() {
+        return (float) this.FONT_HEIGHT;
     }
 
     /**

@@ -1,4 +1,4 @@
-local moduleTable = alya.modules.register("Timer", "Change the tick speed client side", "WORLD")
+local moduleTable = alya.modules.register("Timer", "Change the tick speed client side", "PLAYER")
 
 local timerSpeed = moduleTable.addNumberSetting("Speed", "Multiplier", 1.0, 0.1, 10.0, 0.1)
 

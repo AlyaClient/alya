@@ -43,6 +43,7 @@ public final class Alya {
     private AlyaFontRenderer fontRendererMedium;
     private AlyaFontRenderer fontRendererBold;
     private AlyaFontRenderer fontRendererTitle;
+    private AlyaFontRenderer fontRendererTiny;
     private boolean audioStarted;
 
     private Alya() {
@@ -259,6 +260,13 @@ public final class Alya {
             fontRendererTitle = new AlyaFontRenderer("Alya/Fonts/OpenSans-Bold.ttf", 32f);
         }
         return fontRendererTitle;
+    }
+
+    public AlyaFontRenderer getFontRendererTiny() {
+        if(fontRendererTiny == null) {
+            fontRendererTiny = new AlyaFontRenderer(7f);
+        }
+        return fontRendererTiny;
     }
 
     public Logger getLogger() {

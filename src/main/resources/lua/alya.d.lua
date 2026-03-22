@@ -96,7 +96,7 @@ local AlyaModules = {}
 ---registers a new Lua module and returns its control table
 ---@param name string
 ---@param description string
----@param category "COMBAT"|"MOVEMENT"|"RENDER"|"PLAYER"|"WORLD"|"MISC"
+---@param category "COMBAT"|"MOVEMENT"|"VISUAL"|"PLAYER"|"OTHER"
 ---@return AlyaModuleTable
 function AlyaModules.register(name, description, category) end
 
@@ -114,7 +114,7 @@ function AlyaModules.getAll() end
 function AlyaModules.getEnabled() end
 
 ---returns all Lua module tables for the given category
----@param category "COMBAT"|"MOVEMENT"|"RENDER"|"PLAYER"|"WORLD"|"MISC"
+---@param category "COMBAT"|"MOVEMENT"|"VISUAL"|"PLAYER"|"OTHER"
 ---@return AlyaModuleTable[]
 function AlyaModules.getByCategory(category) end
 

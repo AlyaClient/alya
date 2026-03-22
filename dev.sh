@@ -17,6 +17,6 @@ $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.dev.heapdump" \
   -cp "$CP" \
   -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC \
   -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M \
-  "-Dlog4j.configurationFile=$SCRIPT_DIR/assets/log_configs/client-1.7.xml" \
-  main.Start --gameDir "$SCRIPT_DIR/jars/.minecraft" \
+  "-Dlog4j.configurationFile=$SCRIPT_DIR/jars/.minecraft/assets/log_configs/client-1.7.xml" \
+  start.Main --gameDir "$SCRIPT_DIR/jars/.minecraft" \
   --assetIndex 1.8 --uuid 0 --userType msa

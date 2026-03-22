@@ -41,7 +41,7 @@ public final class KeystrokesModule extends Module {
     private int dragOffsetY = 0;
 
     public KeystrokesModule() {
-        super("Keystrokes", "Shows pressed keys on screen", Category.RENDER);
+        super("Keystrokes", "Shows pressed keys on screen", Category.VISUAL);
         initializeSettings(posX, posY, showMouse, showSpace, gridSize);
     }
 

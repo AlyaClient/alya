@@ -10,7 +10,9 @@ import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public final class HUDModule extends Module {
 
@@ -24,7 +26,7 @@ public final class HUDModule extends Module {
     private long lastBPSUpdate = 0;
 
     public HUDModule() {
-        super("HUD", "Displays client information on screen", Category.RENDER);
+        super("HUD", "Displays client information on screen", Category.VISUAL);
         initializeSettings(showFPS, showBPS, showTime, smoothChat);
     }
 
@@ -41,30 +43,40 @@ public final class HUDModule extends Module {
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
-        float x = 4;
-        final float y = 4;
         final int purpleColor = 0xFF8B5CF6;
         final int whiteColor = 0xFFFFFFFF;
 
+        float x = 4;
+        final float y = 4;
         fontRenderer.drawStringWithShadow("A", x, y, purpleColor);
         x += fontRenderer.getStringWidth("A");
         fontRenderer.drawStringWithShadow("lya", x, y, whiteColor);
-        x += fontRenderer.getStringWidth("lya");
 
-        final StringBuilder info = new StringBuilder();
+        final List<String> infoLines = new ArrayList<>();
 
         if(showFPS.isEnabled()) {
-            info.append(" [").append(Minecraft.getDebugFPS()).append(" FPS]");
+            infoLines.add("FPS: " + Minecraft.getDebugFPS());
         }
         if(showBPS.isEnabled()) {
             updateBPS();
-            info.append(" [").append(String.format("%.1f", blocksPerSecond)).append(" BPS]");
+            infoLines.add("BPS: " + String.format("%.1f", blocksPerSecond));
         }
         if(showTime.isEnabled()) {
-            info.append(" [").append(timeFormat.format(new Date())).append("]");
+            infoLines.add(timeFormat.format(new Date()));
         }
 
-        fontRenderer.drawStringWithShadow(info.toString(), x, y, whiteColor);
+        if(!infoLines.isEmpty()) {
+            infoLines.sort((a, b) -> Float.compare(fontRenderer.getStringWidth(a), fontRenderer.getStringWidth(b)));
+
+            final int screenHeight = event.scaledResolution().getScaledHeight();
+            final float lineHeight = fontRenderer.getFontHeight() + 2;
+            float infoY = screenHeight - 4 - lineHeight;
+
+            for(int i = infoLines.size() - 1; i >= 0; i--) {
+                fontRenderer.drawStringWithShadow(infoLines.get(i), 4, infoY, whiteColor);
+                infoY -= lineHeight;
+            }
+        }
     }
 
     private void updateBPS() {

@@ -1,7 +1,6 @@
 package net.minecraft.client.gui;
 
-import dev.thoq.Alya;
-import dev.thoq.util.font.AlyaFontRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -11,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class Gui
 {
-    protected static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
+    public static FontRenderer font;
     public static final ResourceLocation optionsBackground = new ResourceLocation("textures/gui/options_background.png");
     public static final ResourceLocation statIcons = new ResourceLocation("textures/gui/container/stats_icons.png");
     public static final ResourceLocation icons = new ResourceLocation("textures/gui/icons.png");
@@ -128,11 +127,12 @@ public class Gui
     }
 
     /**
-     * Renders the specified text to the screen, center-aligned using AlyaFontRenderer.
+     * Renders the specified text to the screen, center-aligned using Minecraft font.
      */
     public void drawCenteredString(String text, int x, int y, int color)
     {
-        font.drawString(text, x - font.getStringWidth(text) / 2.0f, y, color);
+        FontRenderer fr = getFont();
+        fr.drawStringWithShadow(text, (float)(x - fr.getStringWidth(text) / 2), (float)y, color);
     }
 
     /**
@@ -144,11 +144,19 @@ public class Gui
     }
 
     /**
-     * Renders the specified text to the screen using AlyaFontRenderer.
+     * Renders the specified text to the screen using Minecraft font.
      */
     public void drawString(String text, int x, int y, int color)
     {
-        font.drawString(text, x, y, color);
+        FontRenderer fr = getFont();
+        fr.drawStringWithShadow(text, (float)x, (float)y, color);
+    }
+
+    protected static FontRenderer getFont() {
+        if(font == null) {
+            font = Minecraft.getMinecraft().fontRendererObj;
+        }
+        return font;
     }
 
     /**

@@ -1,7 +1,5 @@
 package net.minecraft.client.gui;
 
-import dev.thoq.Alya;
-import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
@@ -11,18 +9,16 @@ import net.minecraft.util.ResourceLocation;
 public class GuiButton extends Gui {
     protected static final ResourceLocation buttonTextures = new ResourceLocation("textures/gui/widgets.png");
 
-    private static final int BACKGROUND_COLOR = 0xFF181818;
-    private static final int BACKGROUND_HOVER = 0xFF252525;
-    private static final int BACKGROUND_DISABLED = 0xFF101010;
+    private static final int BACKGROUND_COLOR = 0x4D181818;
+    private static final int BACKGROUND_HOVER = 0x5A252525;
+    private static final int BACKGROUND_DISABLED = 0x40101010;
     private static final int BORDER_COLOR = 0xFF303030;
-    private static final int BORDER_HOVER = 0xFF505050;
-    //private static final int ACCENT_COLOR = 0xFF8B5CF6;
+    private static final int BORDER_HOVER = 0xFFFA7DD6;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
     private static final int TEXT_DISABLED = 0xFF666666;
 
     private float hoverAnimation = 0.0F;
     private static final float ANIMATION_SPEED = 0.15F;
-    private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
 
     /**
      * Button width in pixels
@@ -161,17 +157,16 @@ public class GuiButton extends Gui {
      * Draws the button text. Override this method to use a custom font renderer.
      */
     protected void drawButtonText(Minecraft mc, int textColor) {
+        FontRenderer fr = mc.fontRendererObj;
         String text = this.displayString;
-        float maxWidth = this.width - 6;
-        if (font.getStringWidth(text) > maxWidth) {
-            while (text.length() > 0 && font.getStringWidth(text + "...") > maxWidth) {
+        int maxWidth = this.width - 6;
+        if(fr.getStringWidth(text) > maxWidth) {
+            while(text.length() > 0 && fr.getStringWidth(text + "...") > maxWidth) {
                 text = text.substring(0, text.length() - 1);
             }
             text = text + "...";
         }
-        float textX = this.xPosition + (this.width - font.getStringWidth(text)) / 2.0f;
-        float textY = this.yPosition + (this.height - font.getFontHeight()) / 2.0f;
-        font.drawString(text, textX, textY, textColor);
+        drawCenteredString(fr, text, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, textColor);
     }
 
     /**

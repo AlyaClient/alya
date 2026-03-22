@@ -9,7 +9,7 @@ public final class ClickGUI extends Module {
     private final ClickGUIScreen screen;
 
     public ClickGUI() {
-        super("ClickGUI", "Opens the click GUI to manage modules", Category.RENDER, Keyboard.KEY_RSHIFT);
+        super("ClickGUI", "Opens the click GUI to manage modules", Category.VISUAL, Keyboard.KEY_RSHIFT);
         this.screen = new ClickGUIScreen();
     }
 

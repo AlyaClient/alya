@@ -18,8 +18,6 @@
  */
 package dev.thoq.util.openauth;
 
-import com.google.gson.Gson;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,6 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import com.google.gson.Gson;
+
 
 public class HttpClient {
     public static final String MIME_TYPE_JSON = "application/json";
@@ -124,7 +124,6 @@ public class HttpClient {
             try {
                 query.append(key).append('=').append(URLEncoder.encode(value, "UTF-8"));
             } catch(UnsupportedEncodingException ignored) {
-                // Can't happen
             }
         });
 

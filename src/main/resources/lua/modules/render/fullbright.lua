@@ -1,4 +1,4 @@
-local moduleTable = alya.modules.register("FullBright", "Brightens up the world client side", "RENDER")
+local moduleTable = alya.modules.register("FullBright", "Brightens up the world client side", "VISUAL")
 
 alya.events.on("update", function(event)
     if moduleTable.isEnabled() then

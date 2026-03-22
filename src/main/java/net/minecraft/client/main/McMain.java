@@ -18,9 +18,9 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.util.List;
 
-public class Main
+public class McMain
 {
-    public static void main(String[] p_main_0_)
+    public static void mcmain(String[] p_main_0_)
     {
         System.setProperty("apple.awt.application.appearance", "system");
         System.setProperty("apple.laf.useScreenMenuBar", "true");

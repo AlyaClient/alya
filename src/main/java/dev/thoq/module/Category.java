@@ -4,10 +4,9 @@ public enum Category {
 
     COMBAT("Combat"),
     MOVEMENT("Movement"),
-    RENDER("Render"),
+    VISUAL("Visual"),
     PLAYER("Player"),
-    WORLD("World"),
-    MISC("Misc");
+    OTHER("Other");
 
     private final String displayName;
 
@@ -18,6 +17,5 @@ public enum Category {
     public final String getDisplayName() {
         return displayName;
     }
-
 
 }

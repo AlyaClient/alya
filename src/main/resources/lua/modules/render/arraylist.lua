@@ -1,14 +1,13 @@
-local moduleTable = alya.modules.register("ArrayList", "Displays enabled modules on screen", "RENDER")
+local moduleTable = alya.modules.register("ArrayList", "Displays enabled modules on screen", "VISUAL")
 
 local showVisual = moduleTable.addBooleanSetting("Show Visual Modules", "Show visual modules?", true)
 
 local categoryColors = {
-    COMBAT   = 0xFFE64D3A,
-    MOVEMENT = 0xFF2ECD6F,
-    RENDER   = 0xFF8F2DF7,
-    WORLD    = 0xFF3A9DE6,
-    PLAYER   = 0xFFF29D11,
-    MISC     = 0xFF230057,
+    COMBAT   = 0xFFE74C3C,
+    MOVEMENT = 0xFF2ECC71,
+    PLAYER   = 0xFF8E44AD,
+    VISUAL   = 0xFF3700CE,
+    OTHER    = 0xFFF39C12,
 }
 
 local function getCategoryColor(category)
@@ -40,7 +39,7 @@ alya.events.on("render2d", function(event)
             return
         end
 
-        if showVisual.isEnabled() or category ~= "RENDER" then
+        if showVisual.isEnabled() or category ~= "VISUAL" then
             local width = fontRenderer.getStringWidth(name) + padding * 2
             local positionX = screenWidth - width - 2
             local color = getCategoryColor(category)

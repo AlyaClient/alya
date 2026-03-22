@@ -1,10 +1,10 @@
 package dev.thoq.lua.api;
 
-import dev.thoq.util.render.RenderUtility;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
+import dev.thoq.util.render.RenderUtility;
 
 public final class LuaRenderApi extends LuaTable {
 
@@ -150,13 +150,13 @@ public final class LuaRenderApi extends LuaTable {
             @Override
             public Varargs invoke(Varargs arguments) {
                 RenderUtility.drawBox3D(
-                        arguments.arg(1).todouble(), // worldX
-                        arguments.arg(2).todouble(), // worldY
-                        arguments.arg(3).todouble(), // worldZ
-                        arguments.arg(4).todouble(), // width
-                        arguments.arg(5).todouble(), // height
-                        arguments.arg(6).toint(),    // color
-                        arguments.arg(7).tofloat()); // lineWidth
+                        arguments.arg(1).todouble(),
+                        arguments.arg(2).todouble(),
+                        arguments.arg(3).todouble(),
+                        arguments.arg(4).todouble(),
+                        arguments.arg(5).todouble(),
+                        arguments.arg(6).toint(),
+                        arguments.arg(7).tofloat()); 
                 return LuaValue.NIL;
             }
         });

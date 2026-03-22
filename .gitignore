@@ -1,10 +1,12 @@
 .idea/
 .mvn/
 target/
+
 jars/*
 
 !jars/versions/
 !jars/run_config/
+!jars/assets/log_configs/
 
 *.ipr
 *.iws
