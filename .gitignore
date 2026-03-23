@@ -8,6 +8,7 @@ jars/*
 !jars/run_config/
 !jars/.minecraft/assets/log_configs
 !jars/.minecraft/assets/indexes/1.8.json
+!jars/start.sh
 
 *.ipr
 *.iws

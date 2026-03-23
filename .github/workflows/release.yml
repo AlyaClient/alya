@@ -21,11 +21,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 8
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
-          distribution: 'temurin'
+          java-version: '21'
+          distribution: 'zulu'
           cache: maven
 
       - name: Build with Maven
@@ -36,6 +36,7 @@ jobs:
           mkdir -p release/natives
           cp target/Alya-*.jar release/Alya.jar
           cp target/libs release/libs
+          cp jars/start.sh release/start.sh
           cp -r jars/versions/1.8.9/1.8.9-natives/. release/natives/
           cd release
           zip -r ../alya-release.zip .
