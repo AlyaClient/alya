@@ -1,14 +1,11 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.util.movement.MovementUtil;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-
 public final class LuaMovementApi extends LuaTable {
-
     public LuaMovementApi() {
         set("isMoving", new ZeroArgFunction() {
             @Override

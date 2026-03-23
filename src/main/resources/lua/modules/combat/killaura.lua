@@ -1,5 +1,4 @@
 local moduleTable = alya.modules.register("KillAura", "Automatically attacks players within range", "COMBAT")
-
 local minCps = moduleTable.addNumberSetting("Minimum CPS", "", 10, 1, 100, 0.1)
 local maxCps = moduleTable.addNumberSetting("Maximum CPS", "", 10, 1, 100, 0.1)
 local seekRange = moduleTable.addNumberSetting("Seek Range", "", 6, 1, 16, 0.1)
@@ -21,10 +20,8 @@ local smoothness = moduleTable.addNumberSetting("Smoothness", "", 3.0, 1.0, 10.0
 local targetPlayers = moduleTable.addBooleanSetting("Target Players", "", true)
 local targetHostile = moduleTable.addBooleanSetting("Target Hostile", "", false)
 local targetPassive = moduleTable.addBooleanSetting("Target Passive", "", false)
-
 jitterStr.setVisibility(function() return rotMode.is("Legit") end)
 smoothness.setVisibility(function() return rotMode.is("Legit") end)
-
 local timer = alya.timer.create()
 local blocking    = false
 local wasBlocked  = false
@@ -34,60 +31,46 @@ local lastPitch   = alya.combat.getPlayerPitch()
 local lastRotTime = alya.mc.getCurrentTime()
 local jitterPhase = 0
 local spinProgress = 0
-
 local function clampCps()
     if minCps.getValue() > maxCps.getValue() then minCps.setValue(maxCps.getValue()) end
     if maxCps.getValue() < minCps.getValue() then maxCps.setValue(minCps.getValue()) end
 end
-
 local function randomInRange(a, b)
     return a + math.random() * (b - a)
 end
-
 local function wrapDelta(delta)
     delta = delta % 360
     if delta > 180 then delta = delta - 360 end
     return delta
 end
-
 local rwYaw   = 0
 local rwPitch = 0
-
 local function addJitter(yaw, pitch)
     local now = alya.mc.getCurrentTime()
     local dt  = math.min((now - lastRotTime) / 1000.0, 0.1)
     lastRotTime = now
-
     local js = jitterStr.getValue()
     local sf = 1.0 / smoothness.getValue()
-
     rwYaw   = rwYaw   * 0.75 + (math.random() - 0.5) * js * dt * 60
     rwPitch = rwPitch * 0.75 + (math.random() - 0.5) * js * 0.55 * dt * 60
-
     rwYaw   = math.max(-js, math.min(js, rwYaw))
     rwPitch = math.max(-js * 0.6, math.min(js * 0.6, rwPitch))
-
     local ty = yaw + rwYaw
     local tp = pitch + rwPitch
-
     local dyaw   = wrapDelta(ty - lastYaw)
     local dpitch = wrapDelta(tp - lastPitch)
-
     local ny = lastYaw  + dyaw   * sf
     local np = lastPitch + dpitch * sf
     np = math.max(-90, math.min(90, np))
-
     lastYaw   = ny
     lastPitch = np
     return ny, np
 end
-
 local function snapRotation(yaw, pitch)
     local sens = alya.combat.getSensitivityMultiplier() / 14
     local fixedYaw = yaw - (yaw % sens)
     return fixedYaw, pitch
 end
-
 local function doAttack(target)
     if target.distance > attackRange.getValue() then return end
     if target.distance <= swingRange.getValue() then
@@ -98,7 +81,6 @@ local function doAttack(target)
         alya.combat.swingItem()
     end
 end
-
 local function shouldAttack()
     if noDelay.isEnabled() then return true end
     clampCps()
@@ -109,7 +91,6 @@ local function shouldAttack()
     end
     return timer.hasElapsedAndReset(math.floor(interval), true)
 end
-
 local function doBlock()
     if not blocking then return end
     local mode = blockMode.getValue()
@@ -129,19 +110,15 @@ local function doBlock()
         end
     end
 end
-
 alya.events.on("motion", function(event)
     if not moduleTable.isEnabled() then return end
     if not event.isPre() then return end
-
     local targets = alya.combat.getEntities(seekRange.getValue(), raycast.isEnabled(), targetPlayers.isEnabled(), targetHostile.isEnabled(), targetPassive.isEnabled())
-
     for i = #targets, 1, -1 do
         if alya.combat.isFriend(targets[i].name) or targets[i].health <= 0 then
             table.remove(targets, i)
         end
     end
-
     local primary = nil
     if lockedTargetId ~= nil then
         local locked = alya.combat.getEntityById(lockedTargetId)
@@ -157,9 +134,7 @@ alya.events.on("motion", function(event)
             lockedTargetId = primary.id
         end
     end
-
     blocking = autoBlock.isEnabled() and primary ~= nil and alya.combat.isHoldingSword()
-
     if primary == nil then
         if wasBlocked then
             alya.combat.sendReleaseUseItem()
@@ -167,12 +142,10 @@ alya.events.on("motion", function(event)
         end
         return
     end
-
     if rotate.isEnabled() and primary ~= nil then
         local rot = alya.combat.getRotationToEntity(primary)
         local yaw, pitch = rot.yaw, rot.pitch
         local mode = rotMode.getValue()
-
         if mode == "Blatant" then
             yaw, pitch = snapRotation(yaw, pitch)
         elseif mode == "Legit" then
@@ -195,15 +168,12 @@ alya.events.on("motion", function(event)
             yaw = spinProgress
             pitch = 90
         end
-
         event.setYaw(yaw)
         event.setPitch(pitch)
-
         if clientRotate.isEnabled() then
             alya.combat.setClientRotation(yaw, pitch)
         end
     end
-
     if tomfoolery.isEnabled() then
         for _, target in ipairs(targets) do
             if shouldAttack() then doAttack(target) end
@@ -211,10 +181,8 @@ alya.events.on("motion", function(event)
     else
         if shouldAttack() then doAttack(primary) end
     end
-
     doBlock()
 end)
-
 moduleTable.onDisable(function()
     if wasBlocked and not alya.combat.isSwingInProgress() then
         alya.combat.sendReleaseUseItem()

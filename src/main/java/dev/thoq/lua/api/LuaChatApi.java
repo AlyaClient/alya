@@ -1,12 +1,9 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.util.player.ChatUtil;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
-
 public final class LuaChatApi extends LuaTable {
-
     public LuaChatApi() {
         set("info", new OneArgFunction() {
             @Override

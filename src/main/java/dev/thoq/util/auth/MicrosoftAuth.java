@@ -1,5 +1,4 @@
 package dev.thoq.util.auth;
-
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpServer;
 import dev.thoq.Alya;
@@ -18,7 +17,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-
 import java.awt.*;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -30,53 +28,41 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 @SuppressWarnings("HttpUrlsUsage")
 public final class MicrosoftAuth {
-
     private static final AtomicReference<HttpServer> activeServer = new AtomicReference<>(null);
-
     public static final RequestConfig REQUEST_CONFIG = RequestConfig
             .custom()
             .setConnectionRequestTimeout(30_000)
             .setConnectTimeout(30_000)
             .setSocketTimeout(30_000)
             .build();
-
     public static final String CLIENT_ID = "42a60a84-599d-44b2-a7c6-b00cdef1d6a2";
     public static final int PORT = 25575;
-
     public static CompletableFuture<String> acquireMSAuthCode(final Executor executor) {
         return acquireMSAuthCode(MicrosoftAuth::openWebLink, executor);
     }
-
     public static CompletableFuture<String> acquireMSAuthCode(final Consumer<URI> browserAction, final Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 StringBuilder sb = new StringBuilder();
                 SecureRandom random = new SecureRandom();
-
                 random.ints(8, 0, 62).mapToObj("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"::charAt)
                         .forEach(sb::append);
                 String state = sb.toString();
-
                 HttpServer existing = activeServer.getAndSet(null);
                 if (existing != null) {
                     existing.stop(0);
                 }
-
                 HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
                 activeServer.set(server);
-
                 CountDownLatch latch = new CountDownLatch(1);
                 AtomicReference<String> authCode = new AtomicReference<>(null);
                 AtomicReference<String> errorMsg = new AtomicReference<>(null);
-
                 server.createContext("/callback", exchange -> {
                     Map<String, String> queryParams = URLEncodedUtils
                             .parse(exchange.getRequestURI().toString().replaceAll("/callback\\?", ""), StandardCharsets.UTF_8)
                             .stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
-
                     if (!state.equals(queryParams.get("state"))) {
                         String em = String.format("State mismatch expected %s got %s", state, queryParams.get("state"));
                         errorMsg.set(em);
@@ -88,7 +74,6 @@ public final class MicrosoftAuth {
                         errorMsg.set(em);
                         Alya.getInstance().getLogger().error("error from callback {}", em);
                     }
-
                     try {
                         InputStream stream = MicrosoftAuth.class.getResourceAsStream("/assets/minecraft/Alya/Assets/Web/auth_login_sucess.html");
                         byte[] respBytes = stream != null ? IOUtils.toByteArray(stream) : new byte[0];
@@ -99,10 +84,8 @@ public final class MicrosoftAuth {
                     } catch (Exception e) {
                         Alya.getInstance().getLogger().error("error writing response", e);
                     }
-
                     latch.countDown();
                 });
-
                 URI uri = new URIBuilder("https://login.live.com/oauth20_authorize.srf")
                         .addParameter("client_id", CLIENT_ID)
                         .addParameter("response_type", "code")
@@ -111,14 +94,11 @@ public final class MicrosoftAuth {
                         .addParameter("state", state)
                         .addParameter("prompt", "select_account")
                         .build();
-
                 browserAction.accept(uri);
                 server.start();
                 latch.await();
-
                 server.stop(0);
                 activeServer.compareAndSet(server, null);
-
                 String code = authCode.get();
                 if (StringUtils.isBlank(code)) {
                     String err = Optional.ofNullable(errorMsg.get()).orElse("no auth or error");
@@ -135,7 +115,6 @@ public final class MicrosoftAuth {
             }
         }, executor);
     }
-
     public static CompletableFuture<String> acquireMSAccessToken(final String authCode, final Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
@@ -161,7 +140,6 @@ public final class MicrosoftAuth {
             }
         }, executor);
     }
-
     public static CompletableFuture<String> acquireXboxAccessToken(final String accessToken, final Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
@@ -189,7 +167,6 @@ public final class MicrosoftAuth {
             }
         }, executor);
     }
-
     public static CompletableFuture<Map<String, String>> acquireXboxXstsToken(final String accessToken, final Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
@@ -223,7 +200,6 @@ public final class MicrosoftAuth {
             }
         }, executor);
     }
-
     public static CompletableFuture<String> acquireMCAccessToken(final String xstsToken, final String userHash, final Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
@@ -244,7 +220,6 @@ public final class MicrosoftAuth {
             }
         }, executor);
     }
-
     public static CompletableFuture<Session> login(final String mcToken, final Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             try (CloseableHttpClient client = HttpClients.createMinimal()) {
@@ -265,7 +240,6 @@ public final class MicrosoftAuth {
             }
         }, executor);
     }
-
     public static void openWebLink(URI uri) {
         boolean opened = false;
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
@@ -290,5 +264,4 @@ public final class MicrosoftAuth {
             }
         }
     }
-
 }

@@ -1,5 +1,4 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.Alya;
 import dev.thoq.event.IEvent;
 import dev.thoq.event.IEventListener;
@@ -9,6 +8,7 @@ import dev.thoq.event.events.Render3DEvent;
 import dev.thoq.event.events.MoveEntityEvent;
 import dev.thoq.event.events.PacketReceiveEvent;
 import dev.thoq.event.events.PacketSendEvent;
+import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import dev.thoq.event.events.PlayerInputEvent;
@@ -25,20 +25,15 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 public final class LuaEventApi extends LuaTable {
-
     private static final net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
     private static final Map<String, Class<? extends IEvent>> EVENT_CLASS_MAP = new HashMap<>();
-
     private final List<Map.Entry<Class<IEvent>, IEventListener<IEvent>>> subscriptions = new ArrayList<>();
-
     static {
         EVENT_CLASS_MAP.put("motion", MotionEvent.class);
         EVENT_CLASS_MAP.put("update", UpdateEvent.class);
@@ -54,7 +49,6 @@ public final class LuaEventApi extends LuaTable {
         EVENT_CLASS_MAP.put("blockplaceable", BlockPlaceableEvent.class);
         EVENT_CLASS_MAP.put("render3d", Render3DEvent.class);
     }
-
     public LuaEventApi() {
         set("on", new TwoArgFunction() {
             @Override
@@ -84,7 +78,6 @@ public final class LuaEventApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("getNames", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
@@ -97,14 +90,12 @@ public final class LuaEventApi extends LuaTable {
             }
         });
     }
-
     public void clearSubscriptions() {
         for (Map.Entry<Class<IEvent>, IEventListener<IEvent>> entry : subscriptions) {
             Alya.getInstance().getEventBus().unsubscribe(entry.getKey(), entry.getValue());
         }
         subscriptions.clear();
     }
-
     private LuaTable buildEventTable(final IEvent event) {
         LuaTable eventTable = new LuaTable();
         eventTable.set("getType", new ZeroArgFunction() {
@@ -113,7 +104,6 @@ public final class LuaEventApi extends LuaTable {
                 return LuaValue.valueOf(event.getClass().getSimpleName());
             }
         });
-
         if (event instanceof MotionEvent) {
             final MotionEvent motionEvent = (MotionEvent) event;
             eventTable.set("getX", new ZeroArgFunction() {
@@ -315,7 +305,15 @@ public final class LuaEventApi extends LuaTable {
                     return LuaValue.valueOf(packetSendEvent.getPacket().getClass().getSimpleName());
                 }
             });
-         } else if (event instanceof PacketReceiveEvent) {
+            eventTable.set("getEntityAction", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    if (packetSendEvent.getPacket() instanceof C0BPacketEntityAction)
+                        return LuaValue.valueOf(((C0BPacketEntityAction) packetSendEvent.getPacket()).getAction().name());
+                    return LuaValue.NIL;
+                }
+            });
+        } else if (event instanceof PacketReceiveEvent) {
             final PacketReceiveEvent packetReceiveEvent = (PacketReceiveEvent) event;
             eventTable.set("cancel", new ZeroArgFunction() {
                 @Override
@@ -429,6 +427,12 @@ public final class LuaEventApi extends LuaTable {
             });
         } else if (event instanceof SlowDownEvent) {
             final SlowDownEvent slowDownEvent = (SlowDownEvent) event;
+            eventTable.set("getReason", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    return LuaValue.valueOf(slowDownEvent.getReason());
+                }
+            });
             eventTable.set("cancel", new ZeroArgFunction() {
                 @Override
                 public LuaValue call() {
@@ -443,7 +447,6 @@ public final class LuaEventApi extends LuaTable {
                 }
             });
         }
-
         return eventTable;
     }
 }

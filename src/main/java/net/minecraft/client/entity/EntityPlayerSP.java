@@ -668,8 +668,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
      * use this to react to sunlight and start to burn.
      */
     public void onLivingUpdate() {
-        final SlowDownEvent slowDownEvent = new SlowDownEvent();
-        Alya.getInstance().getEventBus().dispatch(slowDownEvent);
 
         if(this.sprintingTicksLeft > 0) {
             --this.sprintingTicksLeft;
@@ -728,6 +726,19 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.movementInput.updatePlayerMoveState();
 
         if(this.isUsingItem() && !this.isRiding()) {
+            String slowReason = "unknown";
+            net.minecraft.item.ItemStack usingItem = this.getItemInUse();
+            if(usingItem != null) {
+                switch(usingItem.getItemUseAction()) {
+                    case EAT:   slowReason = "eat";   break;
+                    case DRINK: slowReason = "drink"; break;
+                    case BLOCK: slowReason = "block"; break;
+                    case BOW:   slowReason = "bow";   break;
+                    default:    break;
+                }
+            }
+            final SlowDownEvent slowDownEvent = new SlowDownEvent(slowReason);
+            Alya.getInstance().getEventBus().dispatch(slowDownEvent);
             if(!slowDownEvent.isCanceled()) {
                 this.movementInput.moveStrafe *= 0.2F;
                 this.movementInput.moveForward *= 0.2F;

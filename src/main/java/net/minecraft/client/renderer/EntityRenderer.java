@@ -501,7 +501,10 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 }
             }
 
-            if(this.pointedEntity != null && flag && vec3.distanceTo(vec33) > 3.0D) {
+            dev.thoq.event.events.ReachEvent reachEvent = new dev.thoq.event.events.ReachEvent(3.0D);
+            dev.thoq.Alya.getInstance().getEventBus().dispatch(reachEvent);
+
+            if(this.pointedEntity != null && flag && vec3.distanceTo(vec33) > reachEvent.getReachDistance()) {
                 this.pointedEntity = null;
                 this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, vec33, (EnumFacing) null, new BlockPos(vec33));
             }

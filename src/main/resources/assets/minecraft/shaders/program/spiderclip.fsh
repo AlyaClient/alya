@@ -15,7 +15,6 @@ void main() {
     vec4 BlurTexel = texture2D(BlurSampler, texCoord);
     vec4 OutTexel = ScaledTexel;
 
-    // -- Alpha Clipping --
     if (scaledCoord.x < Scissor.x) OutTexel = BlurTexel;
     if (scaledCoord.y < Scissor.y) OutTexel = BlurTexel;
     if (scaledCoord.x > Scissor.z) OutTexel = BlurTexel;

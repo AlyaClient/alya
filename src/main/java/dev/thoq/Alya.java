@@ -1,5 +1,4 @@
 package dev.thoq;
-
 import dev.thoq.command.CommandManager;
 import dev.thoq.command.commands.BindCommand;
 import dev.thoq.command.commands.ConfigCommand;
@@ -18,26 +17,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
-
 public final class Alya {
-
     private static final Alya INSTANCE = new Alya();
     private static final String NAME = "Alya", VERSION = "1.0";
     private static final ResourceLocation OPENING_SOUND = new ResourceLocation("Alya/Sounds/Opening.wav");
-
     private final Logger LOGGER = LogManager.getLogger(Alya.class);
     private final EventBus eventBus = new EventBus();
     private final ModuleManager moduleManager = new ModuleManager();
     private final CommandManager commandManager = new CommandManager();
     private final ConfigManager configManager = new ConfigManager();
     private final LuaEngine luaEngine = new LuaEngine();
-
     private AlyaFontRenderer fontRenderer;
     private AlyaFontRenderer fontRendererSmall;
     private AlyaFontRenderer fontRendererMedium;
@@ -45,56 +39,82 @@ public final class Alya {
     private AlyaFontRenderer fontRendererTitle;
     private AlyaFontRenderer fontRendererTiny;
     private boolean audioStarted;
-
     private Alya() {
     }
 
-
     public String[] getScripts() {
-        final String[] scripts = {"util/movement.lua",
+        final String[] scripts = {
+            "util/movement.lua",
             "util/chat.lua",
             "util/render.lua",
-
+            "util/timer.lua",
+            
             "core/module.lua",
             "core/submodule.lua",
             "core/command.lua",
-
+            
             "modules/render/fullbright.lua",
             "modules/render/arraylist.lua",
             "modules/render/ambience.lua",
             "modules/render/esp.lua",
-
+            
             "modules/movement/flight.lua",
+            "modules/movement/flight/static.lua",
+            "modules/movement/flight/motion.lua",
             "modules/movement/speed.lua",
-
+            "modules/movement/speed/vanilla.lua",
+            "modules/movement/speed/verus.lua",
+            "modules/movement/speed/bhop.lua",
+            "modules/movement/step.lua",
+            "modules/movement/jesus.lua",
+            "modules/movement/keepsprint.lua",
+            "modules/movement/longjump.lua",
+            "modules/movement/longjump/verus.lua",
+            "modules/movement/longjump/mineland.lua",
+            "modules/movement/longjump/grim.lua",
+            "modules/movement/longjump/ncp.lua",
+            "modules/movement/longjump/fireball.lua",
+            "modules/movement/longjump/vulcan.lua",
+            "modules/movement/highjump.lua",
+            "modules/movement/wee.lua",
+            
             "modules/player/sprint.lua",
+            "modules/player/noslow.lua",
+            "modules/player/inventory.lua",
+            "modules/player/blink.lua",
             "modules/player/nojumpdelay.lua",
             "modules/player/norightclickdelay.lua",
             "modules/player/nofall.lua",
-
+            "modules/player/nofall/vanilla.lua",
+            "modules/player/nofall/verus.lua",
+            "modules/player/legitscaffold.lua",
+            
             "modules/combat/killaura.lua",
             "modules/combat/velocity.lua",
+            "modules/combat/velocity/motion.lua",
             "modules/combat/criticals.lua",
+            "modules/combat/criticals/watchdog.lua",
+            "modules/combat/criticals/packet.lua",
             "modules/combat/autoclicker.lua",
+            "modules/combat/autoclicker/drag.lua",
+            "modules/combat/autoclicker/normal.lua",
             "modules/combat/clickassist.lua",
+            "modules/combat/hitboxes.lua",
+            "modules/combat/reach.lua",
             "modules/combat/targetstrafe.lua",
-
-            "modules/movement/longjump.lua",
-
-            "modules/player/legitscaffold.lua",
-
-            "modules/misc/disabler.lua",
-
+            
+            "modules/world/scaffold.lua",
             "modules/world/timer.lua",
-
-            "modules/movement/highjump.lua",
-            "modules/movement/wee.lua"
+            
+            "modules/misc/disabler.lua",
+            "modules/misc/disabler/omnisprint.lua",
+            "modules/misc/hackerdetector.lua"
         };
         return scripts;
     }
-
     public void initialize() {
         Title.update(this.getClass());
+        dev.thoq.lua.api.LuaMinecraftApi.registerEvents(eventBus);
         moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
         commandManager.putAll(new HelpCommand(), new BindCommand(), new ConfigCommand(), new ReloadCommand());
         bindFontRenderersToLua();
@@ -104,7 +124,6 @@ public final class Alya {
         configManager.load();
         playStartupSound();
     }
-
     private void bindFontRenderersToLua() {
         luaEngine.getGlobals().set("getFontRenderer", new org.luaj.vm2.lib.ZeroArgFunction() {
             @Override public org.luaj.vm2.LuaValue call() {
@@ -131,7 +150,6 @@ public final class Alya {
                 return buildFontRendererTable(getFontRendererTitle());
             }
         });
-
         org.luaj.vm2.LuaTable alyaTable = (org.luaj.vm2.LuaTable) luaEngine.getGlobals().get("alya");
         alyaTable.set("getFontRenderer", luaEngine.getGlobals().get("getFontRenderer"));
         alyaTable.set("getFontRendererSmall", luaEngine.getGlobals().get("getFontRendererSmall"));
@@ -139,7 +157,6 @@ public final class Alya {
         alyaTable.set("getFontRendererBold", luaEngine.getGlobals().get("getFontRendererBold"));
         alyaTable.set("getFontRendererTitle", luaEngine.getGlobals().get("getFontRendererTitle"));
     }
-
     private org.luaj.vm2.LuaTable buildFontRendererTable(final AlyaFontRenderer renderer) {
         org.luaj.vm2.LuaTable table = new org.luaj.vm2.LuaTable();
         table.set("drawString", new org.luaj.vm2.lib.VarArgFunction() {
@@ -166,14 +183,12 @@ public final class Alya {
         });
         return table;
     }
-
     private void playStartupSound() {
         CompletableFuture.runAsync(() -> {
             if(!audioStarted) {
                 try {
                     final Minecraft mc = Minecraft.getMinecraft();
                     final InputStream inputStream = mc.getResourceManager().getResource(OPENING_SOUND).getInputStream();
-
                     try(final AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(inputStream))) {
                         final Clip clip = AudioSystem.getClip();
                         clip.open(audioStream);
@@ -183,95 +198,77 @@ public final class Alya {
                 } catch(final UnsupportedAudioFileException | IOException | LineUnavailableException exception) {
                     LOGGER.error("Failed to play startup chime", exception);
                 }
-
                 audioStarted = true;
             }
         });
     }
-
     public void terminate() {
         LOGGER.info("Shutting down {}...", NAME);
         configManager.save();
         moduleManager.disableAll();
     }
-
     public static String getName() {
         return NAME;
     }
-
     public static String getVersion() {
         return VERSION;
     }
-
     public static Alya getInstance() {
         return INSTANCE;
     }
-
     public EventBus getEventBus() {
         return eventBus;
     }
-
     public ModuleManager getModuleManager() {
         return moduleManager;
     }
-
     public CommandManager getCommandManager() {
         return commandManager;
     }
-
     public ConfigManager getConfigManager() {
         return configManager;
     }
-
     public LuaEngine getLuaEngine() {
         return luaEngine;
     }
-
     public AlyaFontRenderer getFontRenderer() {
         if(fontRenderer == null) {
             fontRenderer = new AlyaFontRenderer(15f);
         }
         return fontRenderer;
     }
-
     public AlyaFontRenderer getFontRendererSmall() {
         if(fontRendererSmall == null) {
             fontRendererSmall = new AlyaFontRenderer(8f);
         }
         return fontRendererSmall;
     }
-
     public AlyaFontRenderer getFontRendererMedium() {
         if(fontRendererMedium == null) {
             fontRendererMedium = new AlyaFontRenderer(10f);
         }
         return fontRendererMedium;
     }
-
     public AlyaFontRenderer getFontRendererBold() {
         if(fontRendererBold == null) {
             fontRendererBold = new AlyaFontRenderer("Alya/Fonts/OpenSans-Bold.ttf", 12f);
         }
         return fontRendererBold;
     }
-
     public AlyaFontRenderer getFontRendererTitle() {
         if(fontRendererTitle == null) {
             fontRendererTitle = new AlyaFontRenderer("Alya/Fonts/OpenSans-Bold.ttf", 32f);
         }
         return fontRendererTitle;
     }
-
     public AlyaFontRenderer getFontRendererTiny() {
         if(fontRendererTiny == null) {
             fontRendererTiny = new AlyaFontRenderer(7f);
         }
         return fontRendererTiny;
     }
-
     public Logger getLogger() {
         return LOGGER;
     }
-
 
 }

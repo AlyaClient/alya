@@ -1,14 +1,10 @@
 package dev.thoq.util.misc;
-
 import dev.thoq.Alya;
 import dev.thoq.util.IUtil;
 import org.lwjgl.opengl.Display;
-
 public final class Title implements IUtil {
-
     public static void update(final Class<?> clazz) {
         final String name = clazz.getName();
-
         switch(name) {
             case "net.minecraft.client.gui.GuiSelectWorld":
                 set("Singleplayer");
@@ -27,7 +23,6 @@ public final class Title implements IUtil {
                 break;
         }
     }
-
     public static void set(final String title) {
         final String base = String.format("%s %s | Minecraft 1.8.9", Alya.getName(), Alya.getVersion());
         if(title.isEmpty()) {
@@ -36,6 +31,5 @@ public final class Title implements IUtil {
             Display.setTitle(String.format("%s - %s", base, title));
         }
     }
-
 
 }
