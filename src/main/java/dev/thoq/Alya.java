@@ -4,10 +4,13 @@ import dev.thoq.command.CommandManager;
 import dev.thoq.command.commands.BindCommand;
 import dev.thoq.command.commands.ConfigCommand;
 import dev.thoq.command.commands.HelpCommand;
+import dev.thoq.command.commands.NameCommand;
 import dev.thoq.command.commands.ReloadCommand;
 import dev.thoq.config.ConfigManager;
 import dev.thoq.event.EventBus;
 import dev.thoq.lua.LuaEngine;
+import dev.thoq.lua.api.LuaFontApi;
+import dev.thoq.lua.api.LuaMinecraftApi;
 import dev.thoq.module.ModuleManager;
 import dev.thoq.module.modules.clickgui.ClickGUI;
 import dev.thoq.module.modules.render.HUDModule;
@@ -25,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 public final class Alya {
   private static final Alya INSTANCE = new Alya();
-  private static final String NAME = "Alya", VERSION = "1.0";
+  private static String NAME = "Alya", VERSION = "1.0";
   private static final ResourceLocation OPENING_SOUND =
       new ResourceLocation("Alya/Sounds/Opening.wav");
   private final Logger LOGGER = LogManager.getLogger(Alya.class);
@@ -108,12 +111,21 @@ public final class Alya {
     return scripts;
   }
 
+  public void initCommands() {
+	  commandManager.putAll(
+		        new HelpCommand(),
+		        new BindCommand(),
+		        new ConfigCommand(),
+		        new ReloadCommand(),
+		        new NameCommand()
+	  );
+  }
+
   public void initialize() {
-    dev.thoq.lua.api.LuaMinecraftApi.registerEvents(eventBus);
+    LuaMinecraftApi.registerEvents(eventBus);
     moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
-    commandManager.putAll(
-        new HelpCommand(), new BindCommand(), new ConfigCommand(), new ReloadCommand());
-    bindFontRenderersToLua();
+    initCommands();
+    LuaFontApi.bind(luaEngine.getGlobals());
     luaEngine.loadAll();
     LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
     LOGGER.info("Initialized {} commands", commandManager.getCommands().size());
@@ -121,112 +133,6 @@ public final class Alya {
     playStartupSound();
   }
 
-  private void bindFontRenderersToLua() {
-    luaEngine
-        .getGlobals()
-        .set(
-            "getFontRenderer",
-            new org.luaj.vm2.lib.ZeroArgFunction() {
-              @Override
-              public org.luaj.vm2.LuaValue call() {
-                return buildFontRendererTable(getFontRenderer());
-              }
-            });
-    luaEngine
-        .getGlobals()
-        .set(
-            "getFontRendererSmall",
-            new org.luaj.vm2.lib.ZeroArgFunction() {
-              @Override
-              public org.luaj.vm2.LuaValue call() {
-                return buildFontRendererTable(getFontRendererSmall());
-              }
-            });
-    luaEngine
-        .getGlobals()
-        .set(
-            "getFontRendererMedium",
-            new org.luaj.vm2.lib.ZeroArgFunction() {
-              @Override
-              public org.luaj.vm2.LuaValue call() {
-                return buildFontRendererTable(getFontRendererMedium());
-              }
-            });
-    luaEngine
-        .getGlobals()
-        .set(
-            "getFontRendererBold",
-            new org.luaj.vm2.lib.ZeroArgFunction() {
-              @Override
-              public org.luaj.vm2.LuaValue call() {
-                return buildFontRendererTable(getFontRendererBold());
-              }
-            });
-    luaEngine
-        .getGlobals()
-        .set(
-            "getFontRendererTitle",
-            new org.luaj.vm2.lib.ZeroArgFunction() {
-              @Override
-              public org.luaj.vm2.LuaValue call() {
-                return buildFontRendererTable(getFontRendererTitle());
-              }
-            });
-    org.luaj.vm2.LuaTable alyaTable = (org.luaj.vm2.LuaTable) luaEngine.getGlobals().get("alya");
-    alyaTable.set("getFontRenderer", luaEngine.getGlobals().get("getFontRenderer"));
-    alyaTable.set("getFontRendererSmall", luaEngine.getGlobals().get("getFontRendererSmall"));
-    alyaTable.set("getFontRendererMedium", luaEngine.getGlobals().get("getFontRendererMedium"));
-    alyaTable.set("getFontRendererBold", luaEngine.getGlobals().get("getFontRendererBold"));
-    alyaTable.set("getFontRendererTitle", luaEngine.getGlobals().get("getFontRendererTitle"));
-  }
-
-  private org.luaj.vm2.LuaTable buildFontRendererTable(final AlyaFontRenderer renderer) {
-    org.luaj.vm2.LuaTable table = new org.luaj.vm2.LuaTable();
-    table.set(
-        "drawString",
-        new org.luaj.vm2.lib.VarArgFunction() {
-          @Override
-          public org.luaj.vm2.Varargs invoke(org.luaj.vm2.Varargs args) {
-            renderer.drawString(
-                args.arg(1).tojstring(),
-                args.arg(2).tofloat(),
-                args.arg(3).tofloat(),
-                args.arg(4).toint());
-            return org.luaj.vm2.LuaValue.NIL;
-          }
-        });
-    table.set(
-        "drawStringWithShadow",
-        new org.luaj.vm2.lib.VarArgFunction() {
-          @Override
-          public org.luaj.vm2.Varargs invoke(org.luaj.vm2.Varargs args) {
-            renderer.drawStringWithShadow(
-                args.arg(1).tojstring(),
-                args.arg(2).tofloat(),
-                args.arg(3).tofloat(),
-                args.arg(4).toint());
-            return org.luaj.vm2.LuaValue.NIL;
-          }
-        });
-    table.set(
-        "getStringWidth",
-        new org.luaj.vm2.lib.OneArgFunction() {
-          @Override
-          public org.luaj.vm2.LuaValue call(org.luaj.vm2.LuaValue text) {
-            return org.luaj.vm2.LuaValue.valueOf(
-                (double) renderer.getStringWidth(text.tojstring()));
-          }
-        });
-    table.set(
-        "getFontHeight",
-        new org.luaj.vm2.lib.ZeroArgFunction() {
-          @Override
-          public org.luaj.vm2.LuaValue call() {
-            return org.luaj.vm2.LuaValue.valueOf((double) renderer.getFontHeight());
-          }
-        });
-    return table;
-  }
 
   private void playStartupSound() {
     CompletableFuture.runAsync(
@@ -269,6 +175,10 @@ public final class Alya {
 
   public static Alya getInstance() {
     return INSTANCE;
+  }
+
+  public void setName(final String name) {
+	  Alya.NAME = name;
   }
 
   public EventBus getEventBus() {

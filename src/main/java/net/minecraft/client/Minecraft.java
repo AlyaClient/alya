@@ -394,6 +394,7 @@ public class Minecraft implements IThreadListener {
       this.displayHeight = this.gameSettings.overrideHeight;
     }
 
+    Display.setTitle("Minecraft 1.8.9");
     logger.info("LWJGL Version: {}", Sys.getVersion());
     this.setWindowIcon();
     this.setInitialDisplayMode();

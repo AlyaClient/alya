@@ -53,6 +53,7 @@ public final class ConfigManager {
       modules.add(module.getName(), moduleData);
     }
     root.add("modules", modules);
+    root.addProperty("clientName", Alya.getName());
     try (final FileWriter writer = new FileWriter(configFile)) {
       GSON.toJson(root, writer);
       Alya.getInstance().getLogger().info("Saved config: {}", configName);
@@ -73,6 +74,9 @@ public final class ConfigManager {
     }
     try (final FileReader reader = new FileReader(configFile)) {
       final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+      if (root.has("clientName")) {
+        Alya.getInstance().setName(root.get("clientName").getAsString());
+      }
       if (root.has("modules")) {
         final JsonObject modules = root.getAsJsonObject("modules");
         for (final Map.Entry<String, JsonElement> entry : modules.entrySet()) {

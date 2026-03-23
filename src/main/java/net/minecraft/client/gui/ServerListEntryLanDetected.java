@@ -1,13 +1,10 @@
 package net.minecraft.client.gui;
 
-import dev.thoq.Alya;
-import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.LanServerDetector;
 import net.minecraft.client.resources.I18n;
 
 public class ServerListEntryLanDetected implements GuiListExtended.IGuiListEntry {
-  private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
   private final GuiMultiplayer field_148292_c;
   protected final Minecraft mc;
   protected final LanServerDetector.LanServer field_148291_b;
@@ -29,17 +26,17 @@ public class ServerListEntryLanDetected implements GuiListExtended.IGuiListEntry
       int mouseX,
       int mouseY,
       boolean isSelected) {
-    font.drawString(I18n.format("lanServer.title", new Object[0]), x + 32 + 3, y + 1, 16777215);
-    font.drawString(this.field_148291_b.getServerMotd(), x + 32 + 3, y + 12, 8421504);
+    this.mc.fontRendererObj.drawString(I18n.format("lanServer.title", new Object[0]), x + 32 + 3, y + 1, 16777215);
+    this.mc.fontRendererObj.drawString(this.field_148291_b.getServerMotd(), x + 32 + 3, y + 12, 8421504);
 
     if (this.mc.gameSettings.hideServerAddress) {
-      font.drawString(
+      this.mc.fontRendererObj.drawString(
           I18n.format("selectServer.hiddenAddress", new Object[0]),
           x + 32 + 3,
           y + 12 + 11,
           3158064);
     } else {
-      font.drawString(this.field_148291_b.getServerIpPort(), x + 32 + 3, y + 12 + 11, 3158064);
+      this.mc.fontRendererObj.drawString(this.field_148291_b.getServerIpPort(), x + 32 + 3, y + 12 + 11, 3158064);
     }
   }
 

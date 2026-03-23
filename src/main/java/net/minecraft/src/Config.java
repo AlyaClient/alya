@@ -1145,7 +1145,7 @@ public class Config {
         }
 
         Set<Dimension> set = getDisplayModeDimensions(adisplaymode);
-        List list = new ArrayList();
+        List<DisplayMode> list = new ArrayList<>();
 
         for (Dimension dimension : set) {
           DisplayMode[] adisplaymode1 = getDisplayModes(adisplaymode, dimension);

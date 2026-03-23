@@ -49,9 +49,12 @@ public final class HUDModule extends Module {
     final int whiteColor = 0xFFFFFFFF;
     float x = 4;
     final float y = 4;
-    fontRenderer.drawStringWithShadow("A", x, y, purpleColor);
-    x += fontRenderer.getStringWidth("A");
-    fontRenderer.drawStringWithShadow("lya", x, y, whiteColor);
+    final String name = Alya.getName();
+    final String firstChar = name.substring(0, 1);
+    final String rest = name.substring(1);
+    fontRenderer.drawStringWithShadow(firstChar, x, y, purpleColor);
+    x += fontRenderer.getStringWidth(firstChar);
+    fontRenderer.drawStringWithShadow(rest, x, y, whiteColor);
     final List<String> infoLines = new ArrayList<>();
     if (showFPS.isEnabled()) {
       infoLines.add("FPS: " + Minecraft.getDebugFPS());

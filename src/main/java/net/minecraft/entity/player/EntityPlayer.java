@@ -1,10 +1,13 @@
 package net.minecraft.entity.player;
 
+import dev.thoq.Alya;
+import dev.thoq.module.Module;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -1191,9 +1194,12 @@ public abstract class EntityPlayer extends EntityLivingBase {
                       (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F)
                           * (float) i
                           * 0.5F));
-              this.motionX *= 0.6D;
-              this.motionZ *= 0.6D;
-              this.setSprinting(false);
+              if (!Alya.getInstance().getModuleManager().getModule("KeepSprint")
+                  .map(Module::isEnabled).orElse(false)) {
+                this.motionX *= 0.6D;
+                this.motionZ *= 0.6D;
+                this.setSprinting(false);
+              }
             }
 
             if (targetEntity instanceof EntityPlayerMP && targetEntity.velocityChanged) {

@@ -13,7 +13,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import org.lwjgl.opengl.Display;
 
 public class WebLoginLauncher extends GuiScreen {
   private ExecutorService executor = null;
@@ -34,7 +33,6 @@ public class WebLoginLauncher extends GuiScreen {
 
   @Override
   public void initGui() {
-    Display.setTitle(String.format("%s %s - Alt Manager", Alya.getName(), Alya.getVersion()));
     final ScaledResolution sr = new ScaledResolution(this.mc);
     final int textY = sr.getScaledHeight() / 2 - 65;
     final int buttonY = textY + 30;
