@@ -1,13 +1,10 @@
 package dev.thoq.lua.api;
-
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 import dev.thoq.util.render.RenderUtility;
-
 public final class LuaRenderApi extends LuaTable {
-
     public LuaRenderApi() {
         set("drawRect", new VarArgFunction() {
             @Override
@@ -21,7 +18,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawRectAbsolute", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -34,7 +30,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawRectOutline", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -48,7 +43,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawRoundedRect", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -62,7 +56,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawArc", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -76,7 +69,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawCircle", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -88,7 +80,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawHorizontalGradient", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -102,7 +93,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawVerticalGradient", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -116,7 +106,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawLine", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -130,7 +119,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("worldToScreen", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -145,7 +133,6 @@ public final class LuaRenderApi extends LuaTable {
                 return t;
             }
         });
-
         set("drawBox3D", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -160,7 +147,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("drawCircle3D", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -175,7 +161,6 @@ public final class LuaRenderApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("toARGB", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -186,7 +171,6 @@ public final class LuaRenderApi extends LuaTable {
                         arguments.arg(4).toint()));
             }
         });
-
         set("toRGB", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {
@@ -196,7 +180,6 @@ public final class LuaRenderApi extends LuaTable {
                         arguments.arg(3).toint()));
             }
         });
-
         set("withAlpha", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arguments) {

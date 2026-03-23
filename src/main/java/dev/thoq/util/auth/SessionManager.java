@@ -1,16 +1,11 @@
 package dev.thoq.util.auth;
-
 import dev.thoq.Alya;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
-
 import java.lang.reflect.Field;
-
 public class SessionManager {
-
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static Field sessionField;
-
     private static Field getSessionField() {
         if (sessionField == null) {
             for (Field field : Minecraft.class.getDeclaredFields()) {
@@ -23,11 +18,9 @@ public class SessionManager {
         }
         return sessionField;
     }
-
     public static Session getSession() {
         return mc.getSession();
     }
-
     public static void setSession(final Session session) {
         Alya.getInstance().getLogger().info("[SessionManager] setSession called: username={}, uuid={}", session.getUsername(), session.getPlayerID());
         mc.addScheduledTask(() -> {
@@ -46,6 +39,5 @@ public class SessionManager {
             }
         });
     }
-
 
 }

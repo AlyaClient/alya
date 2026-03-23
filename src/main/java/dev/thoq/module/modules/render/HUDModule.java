@@ -1,5 +1,4 @@
 package dev.thoq.module.modules.render;
-
 import dev.thoq.Alya;
 import dev.thoq.event.EventHandler;
 import dev.thoq.event.events.Render2DEvent;
@@ -8,14 +7,11 @@ import dev.thoq.module.Module;
 import dev.thoq.module.setting.BooleanSetting;
 import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 public final class HUDModule extends Module {
-
     private final BooleanSetting showFPS = new BooleanSetting("Show FPS", "Display FPS counter", true);
     private final BooleanSetting showBPS = new BooleanSetting("Show BPS", "Display blocks per second", false);
     private final BooleanSetting showTime = new BooleanSetting("Show Time", "Display current time", false);
@@ -24,12 +20,10 @@ public final class HUDModule extends Module {
     private double lastX, lastY, lastZ;
     private double blocksPerSecond = 0;
     private long lastBPSUpdate = 0;
-
     public HUDModule() {
         super("HUD", "Displays client information on screen", Category.VISUAL);
         initializeSettings(showFPS, showBPS, showTime, smoothChat);
     }
-
     @Override
     public void onEnable() {
         super.onEnable();
@@ -39,21 +33,17 @@ public final class HUDModule extends Module {
             lastZ = MC.thePlayer.posZ;
         }
     }
-
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         final int purpleColor = 0xFF8B5CF6;
         final int whiteColor = 0xFFFFFFFF;
-
         float x = 4;
         final float y = 4;
         fontRenderer.drawStringWithShadow("A", x, y, purpleColor);
         x += fontRenderer.getStringWidth("A");
         fontRenderer.drawStringWithShadow("lya", x, y, whiteColor);
-
         final List<String> infoLines = new ArrayList<>();
-
         if(showFPS.isEnabled()) {
             infoLines.add("FPS: " + Minecraft.getDebugFPS());
         }
@@ -64,21 +54,17 @@ public final class HUDModule extends Module {
         if(showTime.isEnabled()) {
             infoLines.add(timeFormat.format(new Date()));
         }
-
         if(!infoLines.isEmpty()) {
             infoLines.sort((a, b) -> Float.compare(fontRenderer.getStringWidth(a), fontRenderer.getStringWidth(b)));
-
             final int screenHeight = event.scaledResolution().getScaledHeight();
             final float lineHeight = fontRenderer.getFontHeight() + 2;
             float infoY = screenHeight - 4 - lineHeight;
-
             for(int i = infoLines.size() - 1; i >= 0; i--) {
                 fontRenderer.drawStringWithShadow(infoLines.get(i), 4, infoY, whiteColor);
                 infoY -= lineHeight;
             }
         }
     }
-
     private void updateBPS() {
         if(MC.thePlayer == null) { blocksPerSecond = 0; return; }
         final long currentTime = System.currentTimeMillis();
@@ -95,7 +81,6 @@ public final class HUDModule extends Module {
             lastBPSUpdate = currentTime;
         }
     }
-
     public boolean getSmoothChatEnabled() {
         return smoothChat.isEnabled();
     }

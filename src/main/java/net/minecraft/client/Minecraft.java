@@ -114,7 +114,7 @@ import java.util.concurrent.FutureTask;
 
 public class Minecraft implements IThreadListener {
     private static final Logger logger = LogManager.getLogger(Minecraft.class);
-    private static final ResourceLocation locationMojangPng = new ResourceLocation("Alya/Assets/Title/Alya.png");
+    private static final ResourceLocation locationMojangPng = new ResourceLocation("Alya/Assets/Title/splash.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
 
     /**
@@ -791,18 +791,17 @@ public class Minecraft implements IThreadListener {
             IOUtils.closeQuietly(inputstream);
         }
 
-        // Scale logo to fit window maintaining 16:9 aspect ratio
         int scaledW = this.splashScaledResolution.getScaledWidth();
         int scaledH = this.splashScaledResolution.getScaledHeight();
         float imgAspect = (float) this.splashImageWidth / this.splashImageHeight;
         float screenAspect = (float) scaledW / scaledH;
         int logoDisplayWidth, logoDisplayHeight;
         if (imgAspect > screenAspect) {
-            logoDisplayWidth = scaledW;
-            logoDisplayHeight = (int) (scaledW / imgAspect);
-        } else {
             logoDisplayHeight = scaledH;
             logoDisplayWidth = (int) (scaledH * imgAspect);
+        } else {
+            logoDisplayWidth = scaledW;
+            logoDisplayHeight = (int) (scaledW / imgAspect);
         }
         this.splashLogoX = (scaledW - logoDisplayWidth) / 2;
         this.splashLogoY = (scaledH - logoDisplayHeight) / 2;
@@ -810,9 +809,9 @@ public class Minecraft implements IThreadListener {
         this.splashLogoDisplayHeight = logoDisplayHeight;
 
         this.splashProgressBarWidth = 200;
-        this.splashProgressBarHeight = 6;
+        this.splashProgressBarHeight = 12;
         this.splashProgressBarX = (scaledW - this.splashProgressBarWidth) / 2;
-        this.splashProgressBarY = scaledH / 4 - this.splashProgressBarHeight / 2;
+        this.splashProgressBarY = (scaledH - this.splashProgressBarHeight) / 2;
 
         this.updateSplashProgress(0);
     }

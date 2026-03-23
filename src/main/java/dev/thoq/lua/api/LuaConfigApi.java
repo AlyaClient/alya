@@ -1,13 +1,10 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.Alya;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-
 public final class LuaConfigApi extends LuaTable {
-
     public LuaConfigApi() {
         set("save", new OneArgFunction() {
             @Override
@@ -20,7 +17,6 @@ public final class LuaConfigApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("load", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue configNameValue) {
@@ -32,7 +28,6 @@ public final class LuaConfigApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("exists", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue configNameValue) {
@@ -40,7 +35,6 @@ public final class LuaConfigApi extends LuaTable {
                         .valueOf(Alya.getInstance().getConfigManager().configExists(configNameValue.tojstring()));
             }
         });
-
         set("getNames", new ZeroArgFunction() {
             @Override
             public LuaValue call() {

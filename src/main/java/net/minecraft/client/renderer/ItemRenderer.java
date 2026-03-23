@@ -350,9 +350,9 @@ public class ItemRenderer
                     this.renderItemMap(abstractclientplayer, f2, f, f1);
                 }
                 //todo: kilaura block check
-                else if (abstractclientplayer.getItemInUseCount() > 0)
+                else if (abstractclientplayer.getItemInUseCount() > 0 || dev.thoq.lua.api.LuaCombatApi.isForcedBlocking)
                 {
-                    EnumAction enumaction = this.itemToRender.getItemUseAction();
+                    EnumAction enumaction = dev.thoq.lua.api.LuaCombatApi.isForcedBlocking ? net.minecraft.item.EnumAction.BLOCK : this.itemToRender.getItemUseAction();
 
                     switch (enumaction)
                     {

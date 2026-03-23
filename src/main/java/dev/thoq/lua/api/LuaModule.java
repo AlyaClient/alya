@@ -1,5 +1,4 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.Alya;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
@@ -15,26 +14,20 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-
 public final class LuaModule extends Module {
-
     private final LuaTable luaTable;
     private LuaFunction onEnableFunction;
     private LuaFunction onDisableFunction;
-
     public LuaModule(final String name, final String description, final Category category) {
         super(name, description, category);
         this.luaTable = buildTable();
     }
-
     public LuaModule(final String name, final String description, final Category category, final int keyCode) {
         super(name, description, category, keyCode);
         this.luaTable = buildTable();
     }
-
     private LuaTable buildTable() {
         final LuaTable table = new LuaTable();
-
         table.set("getName", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
@@ -164,10 +157,8 @@ public final class LuaModule extends Module {
                         .orElse(LuaValue.NIL);
             }
         });
-
         return table;
     }
-
     static LuaTable buildBooleanSettingTable(final BooleanSetting booleanSetting) {
         LuaTable settingTable = new LuaTable();
         settingTable.set("getName", new ZeroArgFunction() {
@@ -220,7 +211,6 @@ public final class LuaModule extends Module {
         });
         return settingTable;
     }
-
     static LuaTable buildNumberSettingTable(final NumberSetting numberSetting) {
         LuaTable settingTable = new LuaTable();
         settingTable.set("getName", new ZeroArgFunction() {
@@ -334,7 +324,6 @@ public final class LuaModule extends Module {
         });
         return settingTable;
     }
-
     static LuaTable buildModeSettingTable(final ModeSetting modeSetting) {
         LuaTable settingTable = new LuaTable();
         settingTable.set("getName", new ZeroArgFunction() {
@@ -407,7 +396,6 @@ public final class LuaModule extends Module {
         });
         return settingTable;
     }
-
     @Override
     public void onEnable() {
         if (onEnableFunction != null) {
@@ -418,7 +406,6 @@ public final class LuaModule extends Module {
             }
         }
     }
-
     @Override
     public void onDisable() {
         if (onDisableFunction != null) {
@@ -429,7 +416,6 @@ public final class LuaModule extends Module {
             }
         }
     }
-
     public LuaTable getLuaTable() {
         return luaTable;
     }

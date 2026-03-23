@@ -28,6 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
+import dev.thoq.Alya;
+import dev.thoq.event.events.ReachEvent;
 
 @SuppressWarnings({"UnusedReturnValue", "unused", "ConstantValue"})
 public class PlayerControllerMP {
@@ -300,7 +302,10 @@ public class PlayerControllerMP {
      * player reach distance = 4F
      */
     public float getBlockReachDistance() {
-        return this.currentGameType.isCreative() ? 5.0F : 4.5F;
+        float defaultReach = this.currentGameType.isCreative() ? 5.0F : 4.5F;
+        ReachEvent reachEvent = new ReachEvent(defaultReach);
+        Alya.getInstance().getEventBus().dispatch(reachEvent);
+        return (float) reachEvent.getReachDistance();
     }
 
     public void updateController() {

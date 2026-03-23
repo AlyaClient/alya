@@ -1,5 +1,4 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.Alya;
 import dev.thoq.command.Command;
 import org.luaj.vm2.LuaError;
@@ -9,12 +8,9 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-
 import java.util.ArrayList;
 import java.util.List;
-
 public final class LuaCommandApi extends LuaTable {
-
     public LuaCommandApi() {
         set("register", new VarArgFunction() {
             @Override
@@ -27,7 +23,6 @@ public final class LuaCommandApi extends LuaTable {
                 for (int argumentIndex = 4; argumentIndex <= arguments.narg(); argumentIndex++) {
                     aliasList.add(arguments.arg(argumentIndex).tojstring());
                 }
-
                 Command command = new Command(commandName, commandDescription, aliasList.toArray(new String[0])) {
                     @Override
                     public void execute(String[] commandArgs) {
@@ -45,19 +40,16 @@ public final class LuaCommandApi extends LuaTable {
                         }
                     }
                 };
-
                 Alya.getInstance().getCommandManager().register(command);
                 return LuaValue.NIL;
             }
         });
-
         set("getPrefix", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
                 return LuaValue.valueOf(Alya.getInstance().getCommandManager().prefix());
             }
         });
-
         set("getAll", new ZeroArgFunction() {
             @Override
             public LuaValue call() {

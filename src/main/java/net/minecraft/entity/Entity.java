@@ -28,6 +28,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import dev.thoq.Alya;
+import dev.thoq.event.events.HitboxEvent;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
@@ -2037,7 +2039,9 @@ public abstract class Entity implements ICommandSender
 
     public float getCollisionBorderSize()
     {
-        return 0.1F;
+        HitboxEvent hitboxEvent = new HitboxEvent(0.1F);
+        Alya.getInstance().getEventBus().dispatch(hitboxEvent);
+        return hitboxEvent.getExpansion();
     }
 
     /**

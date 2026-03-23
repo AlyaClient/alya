@@ -1,22 +1,17 @@
 package dev.thoq.command.commands;
-
 import dev.thoq.Alya;
 import dev.thoq.command.Command;
 import dev.thoq.module.Module;
 import dev.thoq.util.player.ChatUtil;
 import org.lwjgl.input.Keyboard;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 public final class BindCommand extends Command {
-
     public BindCommand() {
         super("bind", "Bind a key to a module", "b", "keybind");
     }
-
     @Override
     public void execute(final String[] args) {
         if (args.length < 1) {
@@ -25,9 +20,7 @@ public final class BindCommand extends Command {
             ChatUtil.sendInfo("Usage: .bind list");
             return;
         }
-
         final String action = args[0].toLowerCase();
-
         if (action.equals("add") || action.equals("set")) {
             if (args.length < 3) {
                 ChatUtil.sendError("Usage: .bind add <module> <key>");
@@ -45,7 +38,6 @@ public final class BindCommand extends Command {
             }
             module.get().setKeyCode(keyCode);
             ChatUtil.sendSuccess("Bound " + module.get().getName() + " to " + Keyboard.getKeyName(keyCode));
-
         } else if (action.equals("remove") || action.equals("clear")) {
             if (args.length < 2) {
                 ChatUtil.sendError("Usage: .bind remove <module>");
@@ -58,7 +50,6 @@ public final class BindCommand extends Command {
             }
             module.get().setKeyCode(0);
             ChatUtil.sendSuccess("Removed keybind from " + module.get().getName());
-
         } else if (action.equals("list")) {
             ChatUtil.sendInfo("Module Keybinds:");
             for (final Module module : Alya.getInstance().getModuleManager().getModules()) {
@@ -66,13 +57,11 @@ public final class BindCommand extends Command {
                     ChatUtil.sendRaw("  " + module.getName() + " -> " + Keyboard.getKeyName(module.getKeyCode()));
                 }
             }
-
         } else {
             ChatUtil.sendError("Unknown action: " + action);
             ChatUtil.sendInfo("Available actions: add, remove, list");
         }
     }
-
     @Override
     public List<String> getCompletions(final String[] args) {
         List<String> completions = new ArrayList<>();
@@ -90,7 +79,6 @@ public final class BindCommand extends Command {
         }
         return completions;
     }
-
     private int resolveKey(final String input) {
         try {
             return Integer.parseInt(input);

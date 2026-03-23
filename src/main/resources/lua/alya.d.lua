@@ -32,6 +32,9 @@
 ---@field getValueAsInt fun(): integer
 ---@field getValueAsFloat fun(): number
 ---@field setValue fun(value: number)
+---@field getSecondValue fun(): number
+---@field getSecondValueAsInt fun(): integer
+---@field setSecondValue fun(value: number)
 ---@field getMin fun(): number
 ---@field getMax fun(): number
 ---@field getIncrement fun(): number
@@ -77,8 +80,12 @@
 ---@field cancel fun()
 ---@field isCanceled fun(): boolean
 
+---@class AlyaSlowDownEvent : AlyaCancelableEvent
+---@field getReason fun(): "eat"|"drink"|"block"|"bow"|"unknown"
+
 ---@class AlyaPacketSendEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
+---@field getEntityAction fun(): string|nil action name for C0BPacketEntityAction (e.g. "STOP_SPRINTING"), nil otherwise
 
 ---@class AlyaPacketReceiveEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
@@ -96,7 +103,7 @@ local AlyaModules = {}
 ---registers a new Lua module and returns its control table
 ---@param name string
 ---@param description string
----@param category "COMBAT"|"MOVEMENT"|"VISUAL"|"PLAYER"|"OTHER"
+---@param category "COMBAT"|"MOVEMENT"|"VISUAL"|"PLAYER"|"EXPLOIT"|"OTHER"
 ---@return AlyaModuleTable
 function AlyaModules.register(name, description, category) end
 
@@ -114,7 +121,7 @@ function AlyaModules.getAll() end
 function AlyaModules.getEnabled() end
 
 ---returns all Lua module tables for the given category
----@param category "COMBAT"|"MOVEMENT"|"VISUAL"|"PLAYER"|"OTHER"
+---@param category "COMBAT"|"MOVEMENT"|"VISUAL"|"PLAYER"|"EXPLOIT"|"OTHER"
 ---@return AlyaModuleTable[]
 function AlyaModules.getByCategory(category) end
 
@@ -340,6 +347,58 @@ function AlyaMC.setFallDistance(distance) end
 function AlyaMC.getHurtTime() end
 ---@return integer
 function AlyaMC.getEntityId() end
+
+---sets the player's step height (vanilla default is 0.5)
+---@param height number
+function AlyaMC.setStepHeight(height) end
+
+---resets the player's step height to the vanilla default (0.5)
+function AlyaMC.resetStepHeight() end
+
+---starts or stops buffering outgoing packets instead of sending them
+---@param enabled boolean
+function AlyaMC.holdPackets(enabled) end
+
+---sends all buffered packets immediately (bypasses event) then clears the buffer
+function AlyaMC.flushPackets() end
+
+---discards all buffered packets without sending them
+function AlyaMC.clearPackets() end
+
+---returns true if the player is submerged in water
+---@return boolean
+function AlyaMC.isInWater() end
+
+---returns true if the block directly below the player is a liquid
+---@return boolean
+function AlyaMC.isOnLiquid() end
+
+---returns true if any GUI screen is currently open
+---@return boolean
+function AlyaMC.isGuiOpen() end
+
+---returns the simple class name of the open GUI, or "none"
+---@return string
+function AlyaMC.getGuiClass() end
+
+---returns the LWJGL key code for a named keybind
+---@param name "forward"|"back"|"left"|"right"|"sprint"|"sneak"|"jump"
+---@return integer
+function AlyaMC.getKeyCode(name) end
+
+---sets the player's reach override distance
+---@param reach number
+function AlyaMC.setReach(reach) end
+
+---resets the player's reach to the default game value
+function AlyaMC.resetReach() end
+
+---sets the entity hitbox expansion (added to all sides)
+---@param expansion number
+function AlyaMC.setHitboxExpansion(expansion) end
+
+---resets entity hitbox expansion to default
+function AlyaMC.resetHitboxExpansion() end
 
 ---@class AlyaFontRenderer
 ---@field drawString fun(text: string, x: number, y: number, color: integer)

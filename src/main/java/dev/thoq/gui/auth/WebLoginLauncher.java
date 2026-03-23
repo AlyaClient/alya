@@ -1,5 +1,4 @@
 package dev.thoq.gui.auth;
-
 import dev.thoq.Alya;
 import dev.thoq.util.auth.MicrosoftAuth;
 import dev.thoq.util.auth.SessionManager;
@@ -10,34 +9,26 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.Display;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 public class WebLoginLauncher extends GuiScreen {
-
     private ExecutorService executor = null;
     private CompletableFuture<Void> task = null;
     private static final AlyaFontRenderer FONT_MD = Alya.getInstance().getFontRendererMedium();
-
     private final AtomicBoolean authComplete = new AtomicBoolean(false);
     private volatile String statusMessage = "Waiting for browser login...";
-
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
-
         float cx = (float) this.width / 2;
         float cy = (float) this.height / 2;
-
         FONT_MD.drawString(statusMessage,
                 cx - FONT_MD.getStringWidth(statusMessage) / 2,
                 Math.round(cy - 70), -1);
     }
-
     @Override
     public void initGui() {
         Display.setTitle(String.format("%s %s - Alt Manager", Alya.getName(), Alya.getVersion()));
@@ -47,22 +38,17 @@ public class WebLoginLauncher extends GuiScreen {
         final int buttonWidth = 120;
         final int buttonHeight = 20;
         final int buttonX = (this.width / 2) - (buttonWidth / 2);
-
         GuiButton doneBtn = new GuiButton(0, buttonX, buttonY, buttonWidth, buttonHeight, "Done");
         GuiButton cancelBtn = new GuiButton(1, buttonX, buttonY + buttonHeight + 5, buttonWidth, buttonHeight, "Cancel");
-
         doneBtn.enabled = false;
         this.buttonList.add(doneBtn);
         this.buttonList.add(cancelBtn);
         super.initGui();
-
         if (task == null) {
             if (executor == null) {
                 executor = Executors.newSingleThreadExecutor();
             }
-
             Alya.getInstance().getLogger().info("[Auth] Starting Microsoft auth flow");
-
             try {
                 task = MicrosoftAuth.acquireMSAuthCode(executor)
                         .thenComposeAsync(msAuthCode -> {
@@ -117,7 +103,6 @@ public class WebLoginLauncher extends GuiScreen {
             }
         }
     }
-
     @Override
     protected void actionPerformed(final GuiButton button) {
         if (button.id == 0 && authComplete.get()) {
@@ -129,7 +114,6 @@ public class WebLoginLauncher extends GuiScreen {
             mc.displayGuiScreen(new AltManagerGui());
         }
     }
-
     private void cleanup() {
         try {
             if (task != null) {
@@ -144,5 +128,4 @@ public class WebLoginLauncher extends GuiScreen {
             Alya.getInstance().getLogger().error("[Auth] Failed to close executor/task", exception);
         }
     }
-
 }

@@ -1,15 +1,11 @@
 package dev.thoq.command.commands;
-
 import dev.thoq.Alya;
 import dev.thoq.command.Command;
 import dev.thoq.util.player.ChatUtil;
-
 public final class HelpCommand extends Command {
-
     public HelpCommand() {
         super("help", "Displays a list of available commands", "h", "?");
     }
-
     @Override
     public void execute(final String[] args) {
         final String prefix = Alya.getInstance().getCommandManager().prefix();

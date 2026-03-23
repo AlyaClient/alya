@@ -2,7 +2,6 @@
  * Copyright 2015-2021 Adrien 'Litarvan' Navratil
  *
  * This file is part of OpenAuth.
-
  * OpenAuth is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,20 +16,16 @@
  * along with OpenAuth.  If not, see <http://www.gnu.org/licenses/>.
  */
 package dev.thoq.util.openauth;
-
 public class AuthTokens {
     private final String accessToken;
     private final String refreshToken;
-
     public AuthTokens(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
-
     public String getAccessToken() {
         return accessToken;
     }
-
     public String getRefreshToken() {
         return refreshToken;
     }

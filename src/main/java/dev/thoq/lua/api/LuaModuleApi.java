@@ -1,5 +1,4 @@
 package dev.thoq.lua.api;
-
 import dev.thoq.Alya;
 import dev.thoq.module.Category;
 import dev.thoq.module.Module;
@@ -8,11 +7,8 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-
 import java.util.Optional;
-
 public final class LuaModuleApi extends LuaTable {
-
     public LuaModuleApi() {
         set("register", new ThreeArgFunction() {
             @Override
@@ -30,7 +26,6 @@ public final class LuaModuleApi extends LuaTable {
                 return luaModule.getLuaTable();
             }
         });
-
         set("get", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue nameValue) {
@@ -42,7 +37,6 @@ public final class LuaModuleApi extends LuaTable {
                 return LuaValue.NIL;
             }
         });
-
         set("getAll", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
@@ -56,7 +50,6 @@ public final class LuaModuleApi extends LuaTable {
                 return resultTable;
             }
         });
-
         set("getEnabled", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
@@ -70,7 +63,6 @@ public final class LuaModuleApi extends LuaTable {
                 return resultTable;
             }
         });
-
         set("getByCategory", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue categoryString) {
