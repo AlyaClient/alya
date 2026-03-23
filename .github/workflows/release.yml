@@ -37,6 +37,7 @@ jobs:
           cp target/Alya-*.jar release/Alya.jar
           cp target/libs release/libs
           cp jars/start.sh release/start.sh
+          cp jars/README.md release/README.md
           cp -r jars/versions/1.8.9/1.8.9-natives/. release/natives/
           cd release
           zip -r ../alya-release.zip .
