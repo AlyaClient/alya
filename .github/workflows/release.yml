@@ -34,7 +34,7 @@ jobs:
       - name: Package release zip
         run: |
           mkdir -p release/natives
-          mkidr -p release/include
+          mkdir -p release/include
           cp target/Alya-*.jar release/Alya.jar
           cp target/libs release/libs
           cp jars/start.sh release/start.sh
