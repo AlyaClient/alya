@@ -10,6 +10,7 @@ jars/*
 !jars/.minecraft/assets/indexes/1.8.json
 !jars/start.sh
 !jars/README.md
+!jars/include
 
 *.ipr
 *.iws
