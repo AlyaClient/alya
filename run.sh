@@ -1,8 +1,13 @@
 #!/bin/bash
-JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-tem/bin/java"
+
+JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-zulu/bin/java"
+echo "JDK PATH: $JDK_PATH"
+
 SCRIPT_DIR=$(pwd)
 
 CP="$SCRIPT_DIR/target/Alya-1.0.jar:$SCRIPT_DIR/target/libs"
+
+cd "$SCRIPT_DIR/jars"
 
 $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.heapdump" \
   "-Djava.library.path=$SCRIPT_DIR/jars/versions/1.8.9/1.8.9-natives" \

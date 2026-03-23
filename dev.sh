@@ -2,12 +2,16 @@
 
 set -euo pipefail
 
-JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-tem/bin/java"
+JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-zulu/bin/java"
+echo "JDK PATH: $JDK_PATH"
+
 SCRIPT_DIR=$(pwd)
 
 CP="$SCRIPT_DIR/target/classes:$SCRIPT_DIR/jars/versions/1.8.9/1.8.9.jar:$SCRIPT_DIR/target/libs"
 
 ./mvnw compile
+
+cd "$SCRIPT_DIR/jars"
 
 $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.dev.heapdump" \
   "-Dalya.dev.resources=$SCRIPT_DIR/src/main/resources" \

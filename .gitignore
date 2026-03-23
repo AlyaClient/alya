@@ -3,17 +3,17 @@
 target/
 
 jars/*
-logs/
-assets/
 
 !jars/versions/
 !jars/run_config/
-!jars/assets/log_configs/
+!jars/.minecraft/assets/log_configs
+!jars/.minecraft/assets/indexes/1.8.json
 
 *.ipr
 *.iws
 *.iml
 *.class
+*.log
 
 .DS_Store
 dependency-reduced-pom.xml
