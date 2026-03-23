@@ -193,11 +193,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     if (menuShader == null) menuShader = new ShaderUtil("Alya/Shaders/MainMenuBg.glsl");
     menuShader.render();
 
-    GlStateManager.enableAlpha();
-    GlStateManager.pushMatrix();
-    GlStateManager.enableBlend();
-    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-
     int firstButtonY = this.height / 4 + 48;
     int availableHeight = firstButtonY - 10;
     int scaledSize = Math.min(140, availableHeight - 20);
@@ -206,19 +201,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     this.mc.getTextureManager().bindTexture(new ResourceLocation("Alya/Assets/GUI/logo.png"));
-
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
-    GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-    GL11.glTexParameteri(
-        GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
-    drawModalRectWithCustomSizedTexture(
-        logoX, logoY, 0, 0, scaledSize, scaledSize, scaledSize, scaledSize);
-
-    GlStateManager.disableBlend();
-    GlStateManager.popMatrix();
+    drawModalRectWithCustomSizedTexture(logoX, logoY, 0, 0, scaledSize, scaledSize, scaledSize, scaledSize);
 
     if (Reflector.FMLCommonHandler_getBrandings.exists()) {
       Object object = Reflector.call(Reflector.FMLCommonHandler_instance);

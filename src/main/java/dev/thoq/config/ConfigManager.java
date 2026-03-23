@@ -75,7 +75,7 @@ public final class ConfigManager {
     try (final FileReader reader = new FileReader(configFile)) {
       final JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
       if (root.has("clientName")) {
-        Alya.getInstance().setName(root.get("clientName").getAsString());
+        Alya.getInstance().setClientName(root.get("clientName").getAsString());
       }
       if (root.has("modules")) {
         final JsonObject modules = root.getAsJsonObject("modules");

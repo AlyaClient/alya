@@ -49,7 +49,7 @@ public final class HUDModule extends Module {
     final int whiteColor = 0xFFFFFFFF;
     float x = 4;
     final float y = 4;
-    final String name = Alya.getName();
+    final String name = Alya.getInstance().getClientName();
     final String firstChar = name.substring(0, 1);
     final String rest = name.substring(1);
     fontRenderer.drawStringWithShadow(firstChar, x, y, purpleColor);

@@ -28,7 +28,8 @@ import org.apache.logging.log4j.Logger;
 
 public final class Alya {
   private static final Alya INSTANCE = new Alya();
-  private static String NAME = "Alya", VERSION = "1.0";
+  private static final String NAME = "Alya", VERSION = "1.0";
+  private static String CLIENT_NAME = "Alya";
   private static final ResourceLocation OPENING_SOUND =
       new ResourceLocation("Alya/Sounds/Opening.wav");
   private final Logger LOGGER = LogManager.getLogger(Alya.class);
@@ -53,9 +54,11 @@ public final class Alya {
       "util/chat.lua",
       "util/render.lua",
       "util/timer.lua",
+
       "core/module.lua",
       "core/submodule.lua",
       "core/command.lua",
+
       "modules/render/fullbright.lua",
       "modules/render/arraylist.lua",
       "modules/render/ambience.lua",
@@ -177,8 +180,12 @@ public final class Alya {
     return INSTANCE;
   }
 
-  public void setName(final String name) {
-	  Alya.NAME = name;
+  public String getClientName() {
+	  return Alya.CLIENT_NAME;
+  }
+
+  public void setClientName(final String name) {
+	  Alya.CLIENT_NAME = name;
   }
 
   public EventBus getEventBus() {

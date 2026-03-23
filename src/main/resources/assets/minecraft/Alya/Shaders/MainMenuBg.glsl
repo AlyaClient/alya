@@ -64,12 +64,13 @@ vec3 star(inout vec2 p) {
 }
 
 void main() {
-    vec2 vUv = gl_FragCoord.xy / resolution;
-    vec2 duv = 0.9 * gl_FragCoord.xy / DITHER_RES * mat2(0.8, -0.6, 0.6, 0.8);
+    vec2 fragPx = gl_FragCoord.xy;
+    vec2 vUv = fragPx / resolution;
+    vec2 duv = 0.9 * fragPx / DITHER_RES * mat2(0.8, -0.6, 0.6, 0.8);
     float dither = hash(duv + time * 0.1) - 0.5;
     vec2 suv = vUv * 2.0 - 1.0;
-    vec2 starUv = vUv;
-    vec3 col = star(starUv);
+
+    vec3 col = star(vUv);
     float vig = 1.0 - abs(suv.x);
     vig *= 0.5 + 0.5 * suv.y;
     col *= vig * vig;
@@ -77,12 +78,13 @@ void main() {
     col = clamp(col, 0.0, 1.0);
     col = gamma_encode(col);
     float xx = suv.x + 0.03;
-    xx = max(1.0 - 1e1 * xx * xx / max(0.5 + 1.5 * starUv.y, 0.1), 0.0);
-    float light = max(0.5 + 0.5 * starUv.y, 0.0) * xx;
+    xx = max(1.0 - 1e1 * xx * xx / max(0.5 + 1.5 * vUv.y, 0.1), 0.0);
+    float light = max(0.5 + 0.5 * vUv.y, 0.0) * xx;
     vec3 hue = mix(vec3(0.5, 0.2, 0.2), vec3(0.3, 0.3, 0.6), 1.0 + suv.y);
     vec3 rim = 12.0 * light * light * light * light * (0.5 + 0.5 * suv.y) * hue;
     rim /= (1.0 + rim);
     col += (1.0 - col) * rim * rim;
     col += DITHER * dither;
+
     gl_FragColor = vec4(col, 1.0);
 }

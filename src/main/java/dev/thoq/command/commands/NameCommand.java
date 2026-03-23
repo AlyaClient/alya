@@ -13,7 +13,7 @@ public final class NameCommand extends Command {
   public void execute(final String[] args) {
 	final String name = String.join(" ", args);
 
-    Alya.getInstance().setName(name);
+    Alya.getInstance().setClientName(name);
     Alya.getInstance().getConfigManager().save();
     ChatUtil.sendInfo("Client name set to: " + name);
   }

@@ -24,6 +24,7 @@ const vec4 InvCRange = vec4(1.0 / 3.2366);
 void main() {
     vec2 InverseP = vec2(P, 0.0) * oneTexel;
     
+    // UVs for four linearly-interpolated samples spread 0.25 texels apart
     vec2 C0 = texCoord;
     vec2 C1 = texCoord + InverseP * 0.25;
     vec2 C2 = texCoord + InverseP * 0.50;
@@ -36,6 +37,7 @@ void main() {
     vec4 Texel2 = texture2D(DiffuseSampler, C2);
     vec4 Texel3 = texture2D(DiffuseSampler, C3);
 
+    // Calculate the expected time of the sample.
     vec4 T = A2 * Cy * vec4(InSize.y) + B + Cx;
     vec4 W = vec4(Pi2ScanTime * CCFrequency);
     vec4 TW = T * W;

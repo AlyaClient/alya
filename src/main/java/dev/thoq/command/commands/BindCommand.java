@@ -19,7 +19,7 @@ public final class BindCommand extends Command {
   public void execute(final String[] args) {
     if (args.length < 1) {
       ChatUtil.sendInfo("Usage: .bind add <module> <key>");
-      ChatUtil.sendInfo("Usage: .bind remove <module>");
+      ChatUtil.sendInfo("Usage: .bind del <module>");
       ChatUtil.sendInfo("Usage: .bind list");
       return;
     }
@@ -43,9 +43,9 @@ public final class BindCommand extends Command {
       module.get().setKeyCode(keyCode);
       ChatUtil.sendSuccess(
           "Bound " + module.get().getName() + " to " + Keyboard.getKeyName(keyCode));
-    } else if (action.equals("remove") || action.equals("clear")) {
+    } else if (action.equals("del") || action.equals("clear")) {
       if (args.length < 2) {
-        ChatUtil.sendError("Usage: .bind remove <module>");
+        ChatUtil.sendError("Usage: .bind del <module>");
         return;
       }
       final Optional<Module> module = Alya.getInstance().getModuleManager().getModule(args[1]);
@@ -65,7 +65,7 @@ public final class BindCommand extends Command {
       }
     } else {
       ChatUtil.sendError("Unknown action: " + action);
-      ChatUtil.sendInfo("Available actions: add, remove, list");
+      ChatUtil.sendInfo("Available actions: add, del, list");
     }
   }
 
@@ -73,13 +73,13 @@ public final class BindCommand extends Command {
   public List<String> getCompletions(final String[] args) {
     List<String> completions = new ArrayList<>();
     if (args.length == 1) {
-      for (String action : new String[] {"add", "remove", "list", "clear"}) {
+      for (String action : new String[] {"add", "del", "list", "clear"}) {
         if (action.startsWith(args[0].toLowerCase())) completions.add(action);
       }
     } else if (args.length == 2
         && (args[0].equalsIgnoreCase("add")
             || args[0].equalsIgnoreCase("set")
-            || args[0].equalsIgnoreCase("remove")
+            || args[0].equalsIgnoreCase("del")
             || args[0].equalsIgnoreCase("clear"))) {
       final String prefix = args[1].toLowerCase();
       completions =

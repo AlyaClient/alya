@@ -19,12 +19,17 @@ public final class ShaderUtil {
   private int mouseUniform = -1;
   private int mouseVelocityUniform = -1;
   private int deltaTimeUniform = -1;
+  private int logoRectUniform = -1;
   private final long startTime;
   private boolean initialized = false;
   private final String shaderPath;
   private float mouseX = 0.5f;
   private float mouseY = 0.5f;
   private long lastFrameTime = 0;
+  private float logoRectX = -9999f;
+  private float logoRectY = -9999f;
+  private float logoRectW = 1f;
+  private float logoRectH = 1f;
 
   public ShaderUtil(final String shaderPath) {
     this.shaderPath = shaderPath;
@@ -79,6 +84,7 @@ public final class ShaderUtil {
       mouseUniform = GL20.glGetUniformLocation(programId, "mouse");
       mouseVelocityUniform = GL20.glGetUniformLocation(programId, "mouseVelocity");
       deltaTimeUniform = GL20.glGetUniformLocation(programId, "deltaTime");
+      logoRectUniform = GL20.glGetUniformLocation(programId, "logoRect");
       GL20.glDeleteShader(vertexShader);
       GL20.glDeleteShader(fragmentShader);
       initialized = true;
@@ -109,7 +115,9 @@ public final class ShaderUtil {
     GlStateManager.pushMatrix();
     GlStateManager.disableTexture2D();
     GlStateManager.disableCull();
-    GlStateManager.disableAlpha();
+    GlStateManager.enableBlend();
+    GlStateManager.tryBlendFuncSeparate(770, 771, 770, 771);
+    GlStateManager.enableAlpha();
     GL20.glUseProgram(programId);
     if (timeUniform != -1) {
       GL20.glUniform1f(timeUniform, time);
@@ -126,6 +134,9 @@ public final class ShaderUtil {
     if (deltaTimeUniform != -1) {
       GL20.glUniform1f(deltaTimeUniform, deltaTime);
     }
+    if (logoRectUniform != -1) {
+      GL20.glUniform4f(logoRectUniform, logoRectX, logoRectY, logoRectW, logoRectH);
+    }
     GL11.glBegin(GL11.GL_QUADS);
     GL11.glVertex2f(0, 0);
     GL11.glVertex2f(0, scaledResolution.getScaledHeight());
@@ -137,6 +148,13 @@ public final class ShaderUtil {
     GlStateManager.enableCull();
     GlStateManager.enableTexture2D();
     GlStateManager.popMatrix();
+  }
+
+  public void setLogoRect(float x, float y, float w, float h) {
+    this.logoRectX = x;
+    this.logoRectY = y;
+    this.logoRectW = w;
+    this.logoRectH = h;
   }
 
   public boolean isInitialized() {
