@@ -14,81 +14,74 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-public class ItemRecord extends Item
-{
-    private static final Map<String, ItemRecord> RECORDS = Maps.<String, ItemRecord>newHashMap();
+public class ItemRecord extends Item {
+  private static final Map<String, ItemRecord> RECORDS = Maps.<String, ItemRecord>newHashMap();
 
-    /** The name of the record. */
-    public final String recordName;
+  /** The name of the record. */
+  public final String recordName;
 
-    protected ItemRecord(String name)
-    {
-        this.recordName = name;
-        this.maxStackSize = 1;
-        this.setCreativeTab(CreativeTabs.tabMisc);
-        RECORDS.put("records." + name, this);
+  protected ItemRecord(String name) {
+    this.recordName = name;
+    this.maxStackSize = 1;
+    this.setCreativeTab(CreativeTabs.tabMisc);
+    RECORDS.put("records." + name, this);
+  }
+
+  /**
+   * Called when a Block is right-clicked with this Item
+   *
+   * @param pos The block being right-clicked
+   * @param side The side being right-clicked
+   */
+  public boolean onItemUse(
+      ItemStack stack,
+      EntityPlayer playerIn,
+      World worldIn,
+      BlockPos pos,
+      EnumFacing side,
+      float hitX,
+      float hitY,
+      float hitZ) {
+    IBlockState iblockstate = worldIn.getBlockState(pos);
+
+    if (iblockstate.getBlock() == Blocks.jukebox
+        && !((Boolean) iblockstate.getValue(BlockJukebox.HAS_RECORD)).booleanValue()) {
+      if (worldIn.isRemote) {
+        return true;
+      } else {
+        ((BlockJukebox) Blocks.jukebox).insertRecord(worldIn, pos, iblockstate, stack);
+        worldIn.playAuxSFXAtEntity((EntityPlayer) null, 1005, pos, Item.getIdFromItem(this));
+        --stack.stackSize;
+        playerIn.triggerAchievement(StatList.field_181740_X);
+        return true;
+      }
+    } else {
+      return false;
     }
+  }
 
-    /**
-     * Called when a Block is right-clicked with this Item
-     *  
-     * @param pos The block being right-clicked
-     * @param side The side being right-clicked
-     */
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-        IBlockState iblockstate = worldIn.getBlockState(pos);
+  /**
+   * allows items to add custom lines of information to the mouseover description
+   *
+   * @param tooltip All lines to display in the Item's tooltip. This is a List of Strings.
+   * @param advanced Whether the setting "Advanced tooltips" is enabled
+   */
+  public void addInformation(
+      ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+    tooltip.add(this.getRecordNameLocal());
+  }
 
-        if (iblockstate.getBlock() == Blocks.jukebox && !((Boolean)iblockstate.getValue(BlockJukebox.HAS_RECORD)).booleanValue())
-        {
-            if (worldIn.isRemote)
-            {
-                return true;
-            }
-            else
-            {
-                ((BlockJukebox)Blocks.jukebox).insertRecord(worldIn, pos, iblockstate, stack);
-                worldIn.playAuxSFXAtEntity((EntityPlayer)null, 1005, pos, Item.getIdFromItem(this));
-                --stack.stackSize;
-                playerIn.triggerAchievement(StatList.field_181740_X);
-                return true;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
+  public String getRecordNameLocal() {
+    return StatCollector.translateToLocal("item.record." + this.recordName + ".desc");
+  }
 
-    /**
-     * allows items to add custom lines of information to the mouseover description
-     *  
-     * @param tooltip All lines to display in the Item's tooltip. This is a List of Strings.
-     * @param advanced Whether the setting "Advanced tooltips" is enabled
-     */
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
-    {
-        tooltip.add(this.getRecordNameLocal());
-    }
+  /** Return an item rarity from EnumRarity */
+  public EnumRarity getRarity(ItemStack stack) {
+    return EnumRarity.RARE;
+  }
 
-    public String getRecordNameLocal()
-    {
-        return StatCollector.translateToLocal("item.record." + this.recordName + ".desc");
-    }
-
-    /**
-     * Return an item rarity from EnumRarity
-     */
-    public EnumRarity getRarity(ItemStack stack)
-    {
-        return EnumRarity.RARE;
-    }
-
-    /**
-     * Return the record item corresponding to the given name.
-     */
-    public static ItemRecord getRecord(String name)
-    {
-        return (ItemRecord)RECORDS.get(name);
-    }
+  /** Return the record item corresponding to the given name. */
+  public static ItemRecord getRecord(String name) {
+    return (ItemRecord) RECORDS.get(name);
+  }
 }

@@ -1,14 +1,8 @@
-local function createNormalMode(moduleTable, mode, minCps, maxCps)
+local function createNormalMode(moduleTable, mode, cps)
     local clickTimer = alya.timer.create()
     local function getCpsTicks()
-        if minCps.getValue() > maxCps.getValue() then
-            minCps.setValue(maxCps.getValue())
-        end
-        if maxCps.getValue() < minCps.getValue() then
-            maxCps.setValue(minCps.getValue())
-        end
-        local maxVal = (20 - maxCps.getValue()) * 20
-        local minVal = (20 - minCps.getValue()) * 20
+        local minVal = (20 - cps.getSecondValue()) * 20
+        local maxVal = (20 - cps.getValue()) * 20
         if minVal > maxVal then
             minVal, maxVal = maxVal, minVal
         end

@@ -16,18 +16,22 @@
  * along with OpenAuth.  If not, see <http://www.gnu.org/licenses/>.
  */
 package dev.thoq.util.openauth.model.request;
+
 @SuppressWarnings("unused")
 public class XSTSAuthorizationProperties {
-    private final String SandboxId;
-    private final String[] UserTokens;
-    public XSTSAuthorizationProperties(String SandboxId, String[] UserTokens) {
-        this.SandboxId = SandboxId;
-        this.UserTokens = UserTokens;
-    }
-    public String getSandboxId() {
-        return SandboxId;
-    }
-    public String[] getUserTokens() {
-        return UserTokens;
-    }
+  private final String SandboxId;
+  private final String[] UserTokens;
+
+  public XSTSAuthorizationProperties(String SandboxId, String[] UserTokens) {
+    this.SandboxId = SandboxId;
+    this.UserTokens = UserTokens;
+  }
+
+  public String getSandboxId() {
+    return SandboxId;
+  }
+
+  public String[] getUserTokens() {
+    return UserTokens;
+  }
 }

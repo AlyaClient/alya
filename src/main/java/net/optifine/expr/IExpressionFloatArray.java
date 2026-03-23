@@ -1,6 +1,5 @@
 package net.optifine.expr;
 
-public interface IExpressionFloatArray extends IExpression
-{
-    float[] eval();
+public interface IExpressionFloatArray extends IExpression {
+  float[] eval();
 }

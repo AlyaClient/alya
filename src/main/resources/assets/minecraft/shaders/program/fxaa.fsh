@@ -24,9 +24,9 @@ varying vec4 posPos;
 #endif
 
 vec3 FxaaPixelShader(
-  vec4 posPos,
-  sampler2D tex,
-  vec2 rcpFrame)
+  vec4 posPos,   // Output of FxaaVertexShader interpolated across screen.
+  sampler2D tex, // Input texture.
+  vec2 rcpFrame) // Constant {1.0/frameWidth, 1.0/frameHeight}.
 {
 
     #define FXAA_REDUCE_MIN   (1.0/128.0)

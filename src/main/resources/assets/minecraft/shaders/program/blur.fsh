@@ -9,6 +9,7 @@ uniform vec2 InSize;
 
 uniform vec2 BlurDir;
 uniform float Radius;
+uniform float Opacity;
 
 void main() {
     vec4 blurred = vec4(0.0);
@@ -19,7 +20,5 @@ void main() {
         totalStrength = totalStrength + strength;
         blurred = blurred + sample * strength;
     }
-    vec4 finalColor = vec4(blurred.rgb / totalStrength, blurred.a / totalStrength);
-    finalColor.a *= 1.3;
-    gl_FragColor = finalColor;
+    gl_FragColor = vec4(blurred.rgb / totalStrength, Opacity);
 }

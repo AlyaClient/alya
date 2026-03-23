@@ -1,112 +1,122 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
-
 import java.io.IOException;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class GuiSnooper extends GuiScreen {
-    private final GuiScreen field_146608_a;
+  private final GuiScreen field_146608_a;
 
-    /**
-     * Reference to the GameSettings object.
-     */
-    private final GameSettings game_settings_2;
-    private final java.util.List<String> field_146604_g = Lists.newArrayList();
-    private final java.util.List<String> field_146609_h = Lists.newArrayList();
-    private String field_146610_i;
-    private String[] field_146607_r;
-    private GuiSnooper.List field_146606_s;
+  /** Reference to the GameSettings object. */
+  private final GameSettings game_settings_2;
 
-    public GuiSnooper(GuiScreen p_i1061_1_, GameSettings p_i1061_2_) {
-        this.field_146608_a = p_i1061_1_;
-        this.game_settings_2 = p_i1061_2_;
+  private final java.util.List<String> field_146604_g = Lists.newArrayList();
+  private final java.util.List<String> field_146609_h = Lists.newArrayList();
+  private String field_146610_i;
+  private String[] field_146607_r;
+  private GuiSnooper.List field_146606_s;
+
+  public GuiSnooper(GuiScreen p_i1061_1_, GameSettings p_i1061_2_) {
+    this.field_146608_a = p_i1061_1_;
+    this.game_settings_2 = p_i1061_2_;
+  }
+
+  /**
+   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * displayed and when the window resizes, the buttonList is cleared beforehand.
+   */
+  public void initGui() {
+    this.field_146610_i = I18n.format("options.snooper.title");
+    String s = I18n.format("options.snooper.desc");
+    java.util.List<String> list = Lists.newArrayList();
+
+    list.addAll(this.fontRendererObj.listFormattedStringToWidth(s, this.width - 30));
+
+    this.field_146607_r = list.toArray(new String[0]);
+
+    this.field_146606_s = new GuiSnooper.List();
+    this.buttonList.add(
+        new GuiButton(2, this.width / 2 - 100, this.height - 32, 200, 20, I18n.format("gui.done")));
+  }
+
+  /** Handles mouse input. */
+  public void handleMouseInput() throws IOException {
+    super.handleMouseInput();
+    this.field_146606_s.handleMouseInput();
+  }
+
+  /** Called by the controls from the buttonList when activated. (Mouse pressed for buttons) */
+  protected void actionPerformed(GuiButton button) throws IOException {
+    if (button.enabled) {
+      if (button.id == 2) {
+        this.game_settings_2.saveOptions();
+        this.game_settings_2.saveOptions();
+        this.mc.displayGuiScreen(this.field_146608_a);
+      }
+    }
+  }
+
+  /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
+  public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    this.drawDefaultBackground();
+    this.field_146606_s.drawScreen(mouseX, mouseY, partialTicks);
+    drawCenteredString(this.field_146610_i, this.width / 2, 8, 16777215);
+    int i = 22;
+
+    for (String s : this.field_146607_r) {
+      drawCenteredString(s, this.width / 2, i, 8421504);
+      i += (int) font.getFontHeight();
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
-    public void initGui() {
-        this.field_146610_i = I18n.format("options.snooper.title");
-        String s = I18n.format("options.snooper.desc");
-        java.util.List<String> list = Lists.newArrayList();
+    super.drawScreen(mouseX, mouseY, partialTicks);
+  }
 
-        list.addAll(this.fontRendererObj.listFormattedStringToWidth(s, this.width - 30));
-
-        this.field_146607_r = list.toArray(new String[0]);
-
-        this.field_146606_s = new GuiSnooper.List();
-        this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height - 32, 200, 20, I18n.format("gui.done")));
+  class List extends GuiSlot {
+    public List() {
+      super(
+          GuiSnooper.this.mc,
+          GuiSnooper.this.width,
+          GuiSnooper.this.height,
+          80,
+          GuiSnooper.this.height - 40,
+          GuiSnooper.this.fontRendererObj.FONT_HEIGHT + 1);
     }
 
-    /**
-     * Handles mouse input.
-     */
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        this.field_146606_s.handleMouseInput();
+    protected int getSize() {
+      return GuiSnooper.this.field_146604_g.size();
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
-    protected void actionPerformed(GuiButton button) throws IOException {
-        if(button.enabled) {
-            if(button.id == 2) {
-                this.game_settings_2.saveOptions();
-                this.game_settings_2.saveOptions();
-                this.mc.displayGuiScreen(this.field_146608_a);
-            }
-        }
+    protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {}
+
+    protected boolean isSelected(int slotIndex) {
+      return false;
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        this.drawDefaultBackground();
-        this.field_146606_s.drawScreen(mouseX, mouseY, partialTicks);
-        drawCenteredString(this.field_146610_i, this.width / 2, 8, 16777215);
-        int i = 22;
+    protected void drawBackground() {}
 
-        for(String s : this.field_146607_r) {
-            drawCenteredString(s, this.width / 2, i, 8421504);
-            i += (int) font.getFontHeight();
-        }
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
+    protected void drawSlot(
+        int entryID,
+        int p_180791_2_,
+        int p_180791_3_,
+        int p_180791_4_,
+        int mouseXIn,
+        int mouseYIn) {
+      font.drawString(
+          GuiSnooper.this.field_146604_g.get(entryID),
+          (float) (10),
+          (float) (p_180791_3_),
+          16777215);
+      font.drawString(
+          GuiSnooper.this.field_146609_h.get(entryID),
+          (float) (230),
+          (float) (p_180791_3_),
+          16777215);
     }
 
-    class List extends GuiSlot {
-        public List() {
-            super(GuiSnooper.this.mc, GuiSnooper.this.width, GuiSnooper.this.height, 80, GuiSnooper.this.height - 40, GuiSnooper.this.fontRendererObj.FONT_HEIGHT + 1);
-        }
-
-        protected int getSize() {
-            return GuiSnooper.this.field_146604_g.size();
-        }
-
-        protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
-        }
-
-        protected boolean isSelected(int slotIndex) {
-            return false;
-        }
-
-        protected void drawBackground() {
-        }
-
-        protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn) {
-            font.drawString(GuiSnooper.this.field_146604_g.get(entryID), (float)(10), (float)(p_180791_3_), 16777215);
-            font.drawString(GuiSnooper.this.field_146609_h.get(entryID), (float)(230), (float)(p_180791_3_), 16777215);
-        }
-
-        protected int getScrollBarX() {
-            return this.width - 10;
-        }
+    protected int getScrollBarX() {
+      return this.width - 10;
     }
+  }
 }

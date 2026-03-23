@@ -43,16 +43,19 @@ void main() {
     ScreenClipCoord += Half.xy;
     ScreenClipCoord += CurvatureClipCurve;
 
+    // -- Alpha Clipping --
     if (ScanCoord.x < 0.0) discard;
     if (ScanCoord.y < 0.0) discard;
     if (ScanCoord.x > 1.0) discard;
     if (ScanCoord.y > 1.0) discard;
 
+    // -- Scanline Simulation --
     float InnerSine = ScanCoord.y * InSize.y * ScanlineScale * 0.25;
     float ScanBrightMod = sin(InnerSine * Pi + ScanlineOffset * InSize.y * 0.25);
     float ScanBrightness = mix(1.0, (pow(ScanBrightMod * ScanBrightMod, ScanlineHeight) * ScanlineBrightScale + 1.0) * 0.5, ScanlineAmount);
     vec3 ScanlineTexel = InTexel.rgb * ScanBrightness;
 
+    // -- Color Compression (increasing the floor of the signal without affecting the ceiling) --
     ScanlineTexel = Floor + (One.xyz - Floor) * ScanlineTexel;
 
     ScanlineTexel.rgb = pow(ScanlineTexel.rgb, Power);
