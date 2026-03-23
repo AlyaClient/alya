@@ -16,88 +16,90 @@ import net.optifine.shaders.ShadersTex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class LayeredColorMaskTexture extends AbstractTexture
-{
-    /** Access to the Logger, for all your logging needs. */
-    private static final Logger LOG = LogManager.getLogger(LayeredColorMaskTexture.class);
+public class LayeredColorMaskTexture extends AbstractTexture {
+  /** Access to the Logger, for all your logging needs. */
+  private static final Logger LOG = LogManager.getLogger(LayeredColorMaskTexture.class);
 
-    /** The location of the texture. */
-    private final ResourceLocation textureLocation;
-    private final List<String> field_174949_h;
-    private final List<EnumDyeColor> field_174950_i;
+  /** The location of the texture. */
+  private final ResourceLocation textureLocation;
 
-    public LayeredColorMaskTexture(ResourceLocation textureLocationIn, List<String> p_i46101_2_, List<EnumDyeColor> p_i46101_3_)
-    {
-        this.textureLocation = textureLocationIn;
-        this.field_174949_h = p_i46101_2_;
-        this.field_174950_i = p_i46101_3_;
-    }
+  private final List<String> field_174949_h;
+  private final List<EnumDyeColor> field_174950_i;
 
-    public void loadTexture(IResourceManager resourceManager) throws IOException
-    {
-        this.deleteGlTexture();
-        BufferedImage bufferedimage;
+  public LayeredColorMaskTexture(
+      ResourceLocation textureLocationIn,
+      List<String> p_i46101_2_,
+      List<EnumDyeColor> p_i46101_3_) {
+    this.textureLocation = textureLocationIn;
+    this.field_174949_h = p_i46101_2_;
+    this.field_174950_i = p_i46101_3_;
+  }
 
-        try
-        {
-            BufferedImage bufferedimage1 = TextureUtil.readBufferedImage(resourceManager.getResource(this.textureLocation).getInputStream());
-            int i = bufferedimage1.getType();
+  public void loadTexture(IResourceManager resourceManager) throws IOException {
+    this.deleteGlTexture();
+    BufferedImage bufferedimage;
 
-            if (i == 0)
-            {
-                i = 6;
-            }
+    try {
+      BufferedImage bufferedimage1 =
+          TextureUtil.readBufferedImage(
+              resourceManager.getResource(this.textureLocation).getInputStream());
+      int i = bufferedimage1.getType();
 
-            bufferedimage = new BufferedImage(bufferedimage1.getWidth(), bufferedimage1.getHeight(), i);
-            Graphics graphics = bufferedimage.getGraphics();
-            graphics.drawImage(bufferedimage1, 0, 0, (ImageObserver)null);
+      if (i == 0) {
+        i = 6;
+      }
 
-            for (int j = 0; j < 17 && j < this.field_174949_h.size() && j < this.field_174950_i.size(); ++j)
-            {
-                String s = (String)this.field_174949_h.get(j);
-                MapColor mapcolor = ((EnumDyeColor)this.field_174950_i.get(j)).getMapColor();
+      bufferedimage = new BufferedImage(bufferedimage1.getWidth(), bufferedimage1.getHeight(), i);
+      Graphics graphics = bufferedimage.getGraphics();
+      graphics.drawImage(bufferedimage1, 0, 0, (ImageObserver) null);
 
-                if (s != null)
-                {
-                    InputStream inputstream = resourceManager.getResource(new ResourceLocation(s)).getInputStream();
-                    BufferedImage bufferedimage2 = TextureUtil.readBufferedImage(inputstream);
+      for (int j = 0;
+          j < 17 && j < this.field_174949_h.size() && j < this.field_174950_i.size();
+          ++j) {
+        String s = (String) this.field_174949_h.get(j);
+        MapColor mapcolor = ((EnumDyeColor) this.field_174950_i.get(j)).getMapColor();
 
-                    if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6)
-                    {
-                        for (int k = 0; k < bufferedimage2.getHeight(); ++k)
-                        {
-                            for (int l = 0; l < bufferedimage2.getWidth(); ++l)
-                            {
-                                int i1 = bufferedimage2.getRGB(l, k);
+        if (s != null) {
+          InputStream inputstream =
+              resourceManager.getResource(new ResourceLocation(s)).getInputStream();
+          BufferedImage bufferedimage2 = TextureUtil.readBufferedImage(inputstream);
 
-                                if ((i1 & -16777216) != 0)
-                                {
-                                    int j1 = (i1 & 16711680) << 8 & -16777216;
-                                    int k1 = bufferedimage1.getRGB(l, k);
-                                    int l1 = MathHelper.func_180188_d(k1, mapcolor.colorValue) & 16777215;
-                                    bufferedimage2.setRGB(l, k, j1 | l1);
-                                }
-                            }
-                        }
+          if (bufferedimage2.getWidth() == bufferedimage.getWidth()
+              && bufferedimage2.getHeight() == bufferedimage.getHeight()
+              && bufferedimage2.getType() == 6) {
+            for (int k = 0; k < bufferedimage2.getHeight(); ++k) {
+              for (int l = 0; l < bufferedimage2.getWidth(); ++l) {
+                int i1 = bufferedimage2.getRGB(l, k);
 
-                        bufferedimage.getGraphics().drawImage(bufferedimage2, 0, 0, (ImageObserver)null);
-                    }
+                if ((i1 & -16777216) != 0) {
+                  int j1 = (i1 & 16711680) << 8 & -16777216;
+                  int k1 = bufferedimage1.getRGB(l, k);
+                  int l1 = MathHelper.func_180188_d(k1, mapcolor.colorValue) & 16777215;
+                  bufferedimage2.setRGB(l, k, j1 | l1);
                 }
+              }
             }
-        }
-        catch (IOException ioexception)
-        {
-            LOG.error((String)"Couldn\'t load layered image", (Throwable)ioexception);
-            return;
-        }
 
-        if (Config.isShaders())
-        {
-            ShadersTex.loadSimpleTexture(this.getGlTextureId(), bufferedimage, false, false, resourceManager, this.textureLocation, this.getMultiTexID());
+            bufferedimage.getGraphics().drawImage(bufferedimage2, 0, 0, (ImageObserver) null);
+          }
         }
-        else
-        {
-            TextureUtil.uploadTextureImage(this.getGlTextureId(), bufferedimage);
-        }
+      }
+    } catch (IOException ioexception) {
+      LOG.error((String) "Couldn\'t load layered image", (Throwable) ioexception);
+      return;
     }
+
+    if (Config.isShaders()) {
+      ShadersTex.loadSimpleTexture(
+          this.getGlTextureId(),
+          bufferedimage,
+          false,
+          false,
+          resourceManager,
+          this.textureLocation,
+          this.getMultiTexID());
+    } else {
+      TextureUtil.uploadTextureImage(this.getGlTextureId(), bufferedimage);
+    }
+  }
 }

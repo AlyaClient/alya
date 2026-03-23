@@ -1,6 +1,5 @@
 package net.optifine.util;
 
-public interface LongSupplier
-{
-    long getAsLong();
+public interface LongSupplier {
+  long getAsLong();
 }

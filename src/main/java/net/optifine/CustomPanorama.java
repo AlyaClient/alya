@@ -11,149 +11,123 @@ import net.minecraft.util.ResourceLocation;
 import net.optifine.util.MathUtils;
 import net.optifine.util.PropertiesOrdered;
 
-public class CustomPanorama
-{
-    private static CustomPanoramaProperties customPanoramaProperties = null;
-    private static final Random random = new Random();
+public class CustomPanorama {
+  private static CustomPanoramaProperties customPanoramaProperties = null;
+  private static final Random random = new Random();
 
-    public static CustomPanoramaProperties getCustomPanoramaProperties()
-    {
-        return customPanoramaProperties;
+  public static CustomPanoramaProperties getCustomPanoramaProperties() {
+    return customPanoramaProperties;
+  }
+
+  public static void update() {
+    customPanoramaProperties = null;
+    String[] astring = getPanoramaFolders();
+
+    if (astring.length > 1) {
+      Properties[] aproperties = getPanoramaProperties(astring);
+      int[] aint = getWeights(aproperties);
+      int i = getRandomIndex(aint);
+      String s = astring[i];
+      Properties properties = aproperties[i];
+
+      if (properties == null) {
+        properties = aproperties[0];
+      }
+
+      if (properties == null) {
+        properties = new PropertiesOrdered();
+      }
+
+      CustomPanoramaProperties custompanoramaproperties =
+          new CustomPanoramaProperties(s, properties);
+      customPanoramaProperties = custompanoramaproperties;
+    }
+  }
+
+  private static String[] getPanoramaFolders() {
+    List<String> list = new ArrayList();
+    list.add("textures/gui/title/background");
+
+    for (int i = 0; i < 100; ++i) {
+      String s = "optifine/gui/background" + i;
+      String s1 = s + "/panorama_0.png";
+      ResourceLocation resourcelocation = new ResourceLocation(s1);
+
+      if (Config.hasResource(resourcelocation)) {
+        list.add(s);
+      }
     }
 
-    public static void update()
-    {
-        customPanoramaProperties = null;
-        String[] astring = getPanoramaFolders();
+    String[] astring = (String[]) ((String[]) list.toArray(new String[list.size()]));
+    return astring;
+  }
 
-        if (astring.length > 1)
-        {
-            Properties[] aproperties = getPanoramaProperties(astring);
-            int[] aint = getWeights(aproperties);
-            int i = getRandomIndex(aint);
-            String s = astring[i];
-            Properties properties = aproperties[i];
+  private static Properties[] getPanoramaProperties(String[] folders) {
+    Properties[] aproperties = new Properties[folders.length];
 
-            if (properties == null)
-            {
-                properties = aproperties[0];
-            }
+    for (int i = 0; i < folders.length; ++i) {
+      String s = folders[i];
 
-            if (properties == null)
-            {
-                properties = new PropertiesOrdered();
-            }
+      if (i == 0) {
+        s = "optifine/gui";
+      } else {
+        Config.dbg("CustomPanorama: " + s);
+      }
 
-            CustomPanoramaProperties custompanoramaproperties = new CustomPanoramaProperties(s, properties);
-            customPanoramaProperties = custompanoramaproperties;
+      ResourceLocation resourcelocation = new ResourceLocation(s + "/background.properties");
+
+      try {
+        InputStream inputstream = Config.getResourceStream(resourcelocation);
+
+        if (inputstream != null) {
+          Properties properties = new PropertiesOrdered();
+          properties.load(inputstream);
+          Config.dbg("CustomPanorama: " + resourcelocation.getResourcePath());
+          aproperties[i] = properties;
+          inputstream.close();
         }
+      } catch (IOException var7) {
+        ;
+      }
     }
 
-    private static String[] getPanoramaFolders()
-    {
-        List<String> list = new ArrayList();
-        list.add("textures/gui/title/background");
+    return aproperties;
+  }
 
-        for (int i = 0; i < 100; ++i)
-        {
-            String s = "optifine/gui/background" + i;
-            String s1 = s + "/panorama_0.png";
-            ResourceLocation resourcelocation = new ResourceLocation(s1);
+  private static int[] getWeights(Properties[] propertiess) {
+    int[] aint = new int[propertiess.length];
 
-            if (Config.hasResource(resourcelocation))
-            {
-                list.add(s);
-            }
-        }
+    for (int i = 0; i < aint.length; ++i) {
+      Properties properties = propertiess[i];
 
-        String[] astring = (String[])((String[])list.toArray(new String[list.size()]));
-        return astring;
+      if (properties == null) {
+        properties = propertiess[0];
+      }
+
+      if (properties == null) {
+        aint[i] = 1;
+      } else {
+        String s = properties.getProperty("weight", (String) null);
+        aint[i] = Config.parseInt(s, 1);
+      }
     }
 
-    private static Properties[] getPanoramaProperties(String[] folders)
-    {
-        Properties[] aproperties = new Properties[folders.length];
+    return aint;
+  }
 
-        for (int i = 0; i < folders.length; ++i)
-        {
-            String s = folders[i];
+  private static int getRandomIndex(int[] weights) {
+    int i = MathUtils.getSum(weights);
+    int j = random.nextInt(i);
+    int k = 0;
 
-            if (i == 0)
-            {
-                s = "optifine/gui";
-            }
-            else
-            {
-                Config.dbg("CustomPanorama: " + s);
-            }
+    for (int l = 0; l < weights.length; ++l) {
+      k += weights[l];
 
-            ResourceLocation resourcelocation = new ResourceLocation(s + "/background.properties");
-
-            try
-            {
-                InputStream inputstream = Config.getResourceStream(resourcelocation);
-
-                if (inputstream != null)
-                {
-                    Properties properties = new PropertiesOrdered();
-                    properties.load(inputstream);
-                    Config.dbg("CustomPanorama: " + resourcelocation.getResourcePath());
-                    aproperties[i] = properties;
-                    inputstream.close();
-                }
-            }
-            catch (IOException var7)
-            {
-                ;
-            }
-        }
-
-        return aproperties;
+      if (k > j) {
+        return l;
+      }
     }
 
-    private static int[] getWeights(Properties[] propertiess)
-    {
-        int[] aint = new int[propertiess.length];
-
-        for (int i = 0; i < aint.length; ++i)
-        {
-            Properties properties = propertiess[i];
-
-            if (properties == null)
-            {
-                properties = propertiess[0];
-            }
-
-            if (properties == null)
-            {
-                aint[i] = 1;
-            }
-            else
-            {
-                String s = properties.getProperty("weight", (String)null);
-                aint[i] = Config.parseInt(s, 1);
-            }
-        }
-
-        return aint;
-    }
-
-    private static int getRandomIndex(int[] weights)
-    {
-        int i = MathUtils.getSum(weights);
-        int j = random.nextInt(i);
-        int k = 0;
-
-        for (int l = 0; l < weights.length; ++l)
-        {
-            k += weights[l];
-
-            if (k > j)
-            {
-                return l;
-            }
-        }
-
-        return weights.length - 1;
-    }
+    return weights.length - 1;
+  }
 }

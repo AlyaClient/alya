@@ -3,17 +3,16 @@ package net.optifine;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public interface IRandomEntity
-{
-    int getId();
+public interface IRandomEntity {
+  int getId();
 
-    BlockPos getSpawnPosition();
+  BlockPos getSpawnPosition();
 
-    BiomeGenBase getSpawnBiome();
+  BiomeGenBase getSpawnBiome();
 
-    String getName();
+  String getName();
 
-    int getHealth();
+  int getHealth();
 
-    int getMaxHealth();
+  int getMaxHealth();
 }

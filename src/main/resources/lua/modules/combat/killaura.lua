@@ -1,6 +1,7 @@
 local moduleTable = alya.modules.register("KillAura", "Automatically attacks players within range", "COMBAT")
-local minCps = moduleTable.addNumberSetting("Minimum CPS", "", 10, 1, 100, 0.1)
-local maxCps = moduleTable.addNumberSetting("Maximum CPS", "", 10, 1, 100, 0.1)
+local cps = moduleTable.addNumberSetting("CPS", "", 10, 1, 100, 0.1)
+cps.setRangeEnabled(true)
+cps.setSecondValue(10)
 local seekRange = moduleTable.addNumberSetting("Seek Range", "", 6, 1, 16, 0.1)
 local swingRange = moduleTable.addNumberSetting("Swing Range", "", 4, 1, 8, 0.1)
 local attackRange = moduleTable.addNumberSetting("Attack Range", "", 3.5, 1, 8, 0.1)
@@ -31,9 +32,10 @@ local lastPitch   = alya.combat.getPlayerPitch()
 local lastRotTime = alya.mc.getCurrentTime()
 local jitterPhase = 0
 local spinProgress = 0
-local function clampCps()
-    if minCps.getValue() > maxCps.getValue() then minCps.setValue(maxCps.getValue()) end
-    if maxCps.getValue() < minCps.getValue() then maxCps.setValue(minCps.getValue()) end
+local function getCpsRange()
+    local a = cps.getValue()
+    local b = cps.getSecondValue()
+    if a > b then return b, a else return a, b end
 end
 local function randomInRange(a, b)
     return a + math.random() * (b - a)
@@ -83,8 +85,8 @@ local function doAttack(target)
 end
 local function shouldAttack()
     if noDelay.isEnabled() then return true end
-    clampCps()
-    local cps = math.floor(randomInRange(minCps.getValue(), maxCps.getValue()) + 0.5)
+    local minC, maxC = getCpsRange()
+    local cps = math.floor(randomInRange(minC, maxC) + 0.5)
     local interval = 1000 / cps
     if extraRand.isEnabled() then
         interval = interval * math.floor(randomInRange(1, 2) + 0.5)

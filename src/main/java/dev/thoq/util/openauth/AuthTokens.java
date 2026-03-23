@@ -16,17 +16,21 @@
  * along with OpenAuth.  If not, see <http://www.gnu.org/licenses/>.
  */
 package dev.thoq.util.openauth;
+
 public class AuthTokens {
-    private final String accessToken;
-    private final String refreshToken;
-    public AuthTokens(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-    }
-    public String getAccessToken() {
-        return accessToken;
-    }
-    public String getRefreshToken() {
-        return refreshToken;
-    }
+  private final String accessToken;
+  private final String refreshToken;
+
+  public AuthTokens(String accessToken, String refreshToken) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+  }
+
+  public String getAccessToken() {
+    return accessToken;
+  }
+
+  public String getRefreshToken() {
+    return refreshToken;
+  }
 }

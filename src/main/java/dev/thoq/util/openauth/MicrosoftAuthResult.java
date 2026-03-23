@@ -16,35 +16,40 @@
  * along with OpenAuth.  If not, see <http://www.gnu.org/licenses/>.
  */
 package dev.thoq.util.openauth;
+
 import dev.thoq.util.openauth.model.response.MinecraftProfile;
 
 @SuppressWarnings("unused")
 public class MicrosoftAuthResult {
-    private final MinecraftProfile profile;
-    private final String accessToken;
-    private final String refreshToken;
-    public MicrosoftAuthResult(MinecraftProfile profile, String accessToken, String refreshToken) {
-        this.profile = profile;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-    }
-    /**
-     * @return The player Minecraft profile (contains its UUID and username)
-     */
-    public MinecraftProfile getProfile() {
-        return profile;
-    }
-    /**
-     * @return The Minecraft access token
-     */
-    public String getAccessToken() {
-        return accessToken;
-    }
-    /**
-     * @return The Microsoft refresh token that can be used to log the user back silently using
-     * {@link MicrosoftAuthenticator#loginWithRefreshToken(String)}
-     */
-    public String getRefreshToken() {
-        return refreshToken;
-    }
+  private final MinecraftProfile profile;
+  private final String accessToken;
+  private final String refreshToken;
+
+  public MicrosoftAuthResult(MinecraftProfile profile, String accessToken, String refreshToken) {
+    this.profile = profile;
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+  }
+
+  /**
+   * @return The player Minecraft profile (contains its UUID and username)
+   */
+  public MinecraftProfile getProfile() {
+    return profile;
+  }
+
+  /**
+   * @return The Minecraft access token
+   */
+  public String getAccessToken() {
+    return accessToken;
+  }
+
+  /**
+   * @return The Microsoft refresh token that can be used to log the user back silently using {@link
+   *     MicrosoftAuthenticator#loginWithRefreshToken(String)}
+   */
+  public String getRefreshToken() {
+    return refreshToken;
+  }
 }
