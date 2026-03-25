@@ -18,19 +18,19 @@
 package dev.thoq.util.openauth;
 
 public class PreAuthData {
-  private final String ppft;
-  private final String urlPost;
+    private final String ppft;
+    private final String urlPost;
 
-  public PreAuthData(String ppft, String urlPost) {
-    this.ppft = ppft;
-    this.urlPost = urlPost;
-  }
+    public PreAuthData(String ppft, String urlPost) {
+        this.ppft = ppft;
+        this.urlPost = urlPost;
+    }
 
-  public String getPPFT() {
-    return ppft;
-  }
+    public String getPPFT() {
+        return ppft;
+    }
 
-  public String getUrlPost() {
-    return urlPost;
-  }
+    public String getUrlPost() {
+        return urlPost;
+    }
 }

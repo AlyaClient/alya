@@ -1,0 +1,7 @@
+{
+    "diagnostics.disable": [
+        "lowercase-global",
+        "missing-fields",
+        "undefined-global"
+    ]
+}

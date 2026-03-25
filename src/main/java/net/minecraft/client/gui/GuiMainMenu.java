@@ -251,7 +251,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
       this.mc.getTextureManager().bindTexture(this.randomImage);
       final int texW = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
       final int texH = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
-      final int maxSize = 100;
+      final int maxSize = 150;
       final float scale = Math.min((float) maxSize / texW, (float) maxSize / texH);
       final int drawW = (int) (texW * scale);
       final int drawH = (int) (texH * scale);

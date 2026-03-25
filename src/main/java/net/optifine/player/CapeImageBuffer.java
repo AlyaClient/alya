@@ -1,40 +1,41 @@
 package net.optifine.player;
 
-import java.awt.image.BufferedImage;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.util.ResourceLocation;
 
+import java.awt.image.BufferedImage;
+
 public class CapeImageBuffer extends ImageBufferDownload {
-  private AbstractClientPlayer player;
-  private ResourceLocation resourceLocation;
-  private boolean elytraOfCape;
+    private AbstractClientPlayer player;
+    private ResourceLocation resourceLocation;
+    private boolean elytraOfCape;
 
-  public CapeImageBuffer(AbstractClientPlayer player, ResourceLocation resourceLocation) {
-    this.player = player;
-    this.resourceLocation = resourceLocation;
-  }
-
-  public BufferedImage parseUserSkin(BufferedImage imageRaw) {
-    BufferedImage bufferedimage = CapeUtils.parseCape(imageRaw);
-    this.elytraOfCape = CapeUtils.isElytraCape(imageRaw, bufferedimage);
-    return bufferedimage;
-  }
-
-  public void skinAvailable() {
-    if (this.player != null) {
-      this.player.setLocationOfCape(this.resourceLocation);
-      this.player.setElytraOfCape(this.elytraOfCape);
+    public CapeImageBuffer(AbstractClientPlayer player, ResourceLocation resourceLocation) {
+        this.player = player;
+        this.resourceLocation = resourceLocation;
     }
 
-    this.cleanup();
-  }
+    public BufferedImage parseUserSkin(BufferedImage imageRaw) {
+        BufferedImage bufferedimage = CapeUtils.parseCape(imageRaw);
+        this.elytraOfCape = CapeUtils.isElytraCape(imageRaw, bufferedimage);
+        return bufferedimage;
+    }
 
-  public void cleanup() {
-    this.player = null;
-  }
+    public void skinAvailable() {
+        if(this.player != null) {
+            this.player.setLocationOfCape(this.resourceLocation);
+            this.player.setElytraOfCape(this.elytraOfCape);
+        }
 
-  public boolean isElytraOfCape() {
-    return this.elytraOfCape;
-  }
+        this.cleanup();
+    }
+
+    public void cleanup() {
+        this.player = null;
+    }
+
+    public boolean isElytraOfCape() {
+        return this.elytraOfCape;
+    }
 }

@@ -4,56 +4,56 @@ import net.optifine.expr.IExpression;
 import net.optifine.shaders.SMCLog;
 
 public class CustomUniform {
-  private String name;
-  private UniformType type;
-  private IExpression expression;
-  private ShaderUniformBase shaderUniform;
+    private String name;
+    private UniformType type;
+    private IExpression expression;
+    private ShaderUniformBase shaderUniform;
 
-  public CustomUniform(String name, UniformType type, IExpression expression) {
-    this.name = name;
-    this.type = type;
-    this.expression = expression;
-    this.shaderUniform = type.makeShaderUniform(name);
-  }
-
-  public void setProgram(int program) {
-    this.shaderUniform.setProgram(program);
-  }
-
-  public void update() {
-    if (this.shaderUniform.isDefined()) {
-      try {
-        this.type.updateUniform(this.expression, this.shaderUniform);
-      } catch (RuntimeException runtimeexception) {
-        SMCLog.severe("Error updating custom uniform: " + this.shaderUniform.getName());
-        SMCLog.severe(runtimeexception.getClass().getName() + ": " + runtimeexception.getMessage());
-        this.shaderUniform.disable();
-        SMCLog.severe("Custom uniform disabled: " + this.shaderUniform.getName());
-      }
+    public CustomUniform(String name, UniformType type, IExpression expression) {
+        this.name = name;
+        this.type = type;
+        this.expression = expression;
+        this.shaderUniform = type.makeShaderUniform(name);
     }
-  }
 
-  public void reset() {
-    this.shaderUniform.reset();
-  }
+    public void setProgram(int program) {
+        this.shaderUniform.setProgram(program);
+    }
 
-  public String getName() {
-    return this.name;
-  }
+    public void update() {
+        if(this.shaderUniform.isDefined()) {
+            try {
+                this.type.updateUniform(this.expression, this.shaderUniform);
+            } catch(RuntimeException runtimeexception) {
+                SMCLog.severe("Error updating custom uniform: " + this.shaderUniform.getName());
+                SMCLog.severe(runtimeexception.getClass().getName() + ": " + runtimeexception.getMessage());
+                this.shaderUniform.disable();
+                SMCLog.severe("Custom uniform disabled: " + this.shaderUniform.getName());
+            }
+        }
+    }
 
-  public UniformType getType() {
-    return this.type;
-  }
+    public void reset() {
+        this.shaderUniform.reset();
+    }
 
-  public IExpression getExpression() {
-    return this.expression;
-  }
+    public String getName() {
+        return this.name;
+    }
 
-  public ShaderUniformBase getShaderUniform() {
-    return this.shaderUniform;
-  }
+    public UniformType getType() {
+        return this.type;
+    }
 
-  public String toString() {
-    return this.type.name().toLowerCase() + " " + this.name;
-  }
+    public IExpression getExpression() {
+        return this.expression;
+    }
+
+    public ShaderUniformBase getShaderUniform() {
+        return this.shaderUniform;
+    }
+
+    public String toString() {
+        return this.type.name().toLowerCase() + " " + this.name;
+    }
 }
