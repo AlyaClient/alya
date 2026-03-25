@@ -2,9 +2,9 @@ package dev.thoq.event;
 
 @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "unused"})
 public interface TemporalEvent {
-  boolean isPre();
+    boolean isPre();
 
-  boolean isPost();
+    boolean isPost();
 
-  void setPost();
+    void setPost();
 }

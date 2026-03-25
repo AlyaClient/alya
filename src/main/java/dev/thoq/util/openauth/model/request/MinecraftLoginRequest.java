@@ -19,13 +19,13 @@ package dev.thoq.util.openauth.model.request;
 
 @SuppressWarnings("unused")
 public class MinecraftLoginRequest {
-  private final String identityToken;
+    private final String identityToken;
 
-  public MinecraftLoginRequest(String identityToken) {
-    this.identityToken = identityToken;
-  }
+    public MinecraftLoginRequest(String identityToken) {
+        this.identityToken = identityToken;
+    }
 
-  public String getIdentityToken() {
-    return identityToken;
-  }
+    public String getIdentityToken() {
+        return identityToken;
+    }
 }

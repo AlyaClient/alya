@@ -19,25 +19,25 @@ package dev.thoq.util.openauth.model.request;
 
 @SuppressWarnings("unused")
 public class XboxLiveLoginProperties {
-  private final String AuthMethod;
-  private final String SiteName;
-  private final String RpsTicket;
+    private final String AuthMethod;
+    private final String SiteName;
+    private final String RpsTicket;
 
-  public XboxLiveLoginProperties(String AuthMethod, String SiteName, String RpsTicket) {
-    this.AuthMethod = AuthMethod;
-    this.SiteName = SiteName;
-    this.RpsTicket = RpsTicket;
-  }
+    public XboxLiveLoginProperties(String AuthMethod, String SiteName, String RpsTicket) {
+        this.AuthMethod = AuthMethod;
+        this.SiteName = SiteName;
+        this.RpsTicket = RpsTicket;
+    }
 
-  public String getAuthMethod() {
-    return AuthMethod;
-  }
+    public String getAuthMethod() {
+        return AuthMethod;
+    }
 
-  public String getSiteName() {
-    return SiteName;
-  }
+    public String getSiteName() {
+        return SiteName;
+    }
 
-  public String getRpsTicket() {
-    return RpsTicket;
-  }
+    public String getRpsTicket() {
+        return RpsTicket;
+    }
 }

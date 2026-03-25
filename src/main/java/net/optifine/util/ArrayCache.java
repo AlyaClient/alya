@@ -4,34 +4,34 @@ import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 
 public class ArrayCache {
-  private Class elementClass = null;
-  private int maxCacheSize = 0;
-  private ArrayDeque cache = new ArrayDeque();
+    private Class elementClass = null;
+    private int maxCacheSize = 0;
+    private ArrayDeque cache = new ArrayDeque();
 
-  public ArrayCache(Class elementClass, int maxCacheSize) {
-    this.elementClass = elementClass;
-    this.maxCacheSize = maxCacheSize;
-  }
-
-  public synchronized Object allocate(int size) {
-    Object object = this.cache.pollLast();
-
-    if (object == null || Array.getLength(object) < size) {
-      object = Array.newInstance(this.elementClass, size);
+    public ArrayCache(Class elementClass, int maxCacheSize) {
+        this.elementClass = elementClass;
+        this.maxCacheSize = maxCacheSize;
     }
 
-    return object;
-  }
+    public synchronized Object allocate(int size) {
+        Object object = this.cache.pollLast();
 
-  public synchronized void free(Object arr) {
-    if (arr != null) {
-      Class oclass = arr.getClass();
+        if(object == null || Array.getLength(object) < size) {
+            object = Array.newInstance(this.elementClass, size);
+        }
 
-      if (oclass.getComponentType() != this.elementClass) {
-        throw new IllegalArgumentException("Wrong component type");
-      } else if (this.cache.size() < this.maxCacheSize) {
-        this.cache.add(arr);
-      }
+        return object;
     }
-  }
+
+    public synchronized void free(Object arr) {
+        if(arr != null) {
+            Class oclass = arr.getClass();
+
+            if(oclass.getComponentType() != this.elementClass) {
+                throw new IllegalArgumentException("Wrong component type");
+            } else if(this.cache.size() < this.maxCacheSize) {
+                this.cache.add(arr);
+            }
+        }
+    }
 }

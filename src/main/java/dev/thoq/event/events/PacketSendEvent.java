@@ -5,28 +5,28 @@ import dev.thoq.event.IEvent;
 import net.minecraft.network.Packet;
 
 public final class PacketSendEvent implements IEvent, ICancelable {
-  private Packet<?> packet;
-  private boolean cancled = false;
+    private Packet<?> packet;
+    private boolean cancled = false;
 
-  public PacketSendEvent(final Packet<?> packet) {
-    this.packet = packet;
-  }
+    public PacketSendEvent(final Packet<?> packet) {
+        this.packet = packet;
+    }
 
-  public void setPacket(final Packet<?> packet) {
-    this.packet = packet;
-  }
+    public void setPacket(final Packet<?> packet) {
+        this.packet = packet;
+    }
 
-  public Packet<?> getPacket() {
-    return this.packet;
-  }
+    public Packet<?> getPacket() {
+        return this.packet;
+    }
 
-  @Override
-  public boolean isCanceled() {
-    return this.cancled;
-  }
+    @Override
+    public boolean isCanceled() {
+        return this.cancled;
+    }
 
-  @Override
-  public void cancel() {
-    this.cancled = true;
-  }
+    @Override
+    public void cancel() {
+        this.cancled = true;
+    }
 }

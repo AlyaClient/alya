@@ -4,21 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ModuleRepository {
-  void save(final Module module);
+    void save(final Module module);
 
-  void remove(final Module module);
+    void remove(final Module module);
 
-  Optional<Module> findByName(final String name);
+    Optional<Module> findByName(final String name);
 
-  <T extends Module> Optional<T> findByClass(final Class<T> clazz);
+    <T extends Module> Optional<T> findByClass(final Class<T> clazz);
 
-  List<Module> findAll();
+    List<Module> findAll();
 
-  List<Module> findByCategory(final Category category);
+    List<Module> findByCategory(final Category category);
 
-  List<Module> findEnabled();
+    List<Module> findEnabled();
 
-  boolean exists(final String name);
+    boolean exists(final String name);
 
-  int count();
+    int count();
 }

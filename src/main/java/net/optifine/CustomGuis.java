@@ -1,28 +1,8 @@
 package net.optifine;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Properties;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiEnchantment;
-import net.minecraft.client.gui.GuiHopper;
-import net.minecraft.client.gui.GuiMerchant;
-import net.minecraft.client.gui.GuiRepair;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiBeacon;
-import net.minecraft.client.gui.inventory.GuiBrewingStand;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.client.gui.inventory.GuiCrafting;
-import net.minecraft.client.gui.inventory.GuiDispenser;
-import net.minecraft.client.gui.inventory.GuiFurnace;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.inventory.*;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.Entity;
 import net.minecraft.src.Config;
@@ -33,308 +13,312 @@ import net.optifine.override.PlayerControllerOF;
 import net.optifine.util.PropertiesOrdered;
 import net.optifine.util.ResUtils;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.*;
+
 public class CustomGuis {
-  private static Minecraft mc = Config.getMinecraft();
-  private static PlayerControllerOF playerControllerOF = null;
-  private static CustomGuiProperties[][] guiProperties = (CustomGuiProperties[][]) null;
-  public static boolean isChristmas = isChristmas();
+    private static Minecraft mc = Config.getMinecraft();
+    private static PlayerControllerOF playerControllerOF = null;
+    private static CustomGuiProperties[][] guiProperties = (CustomGuiProperties[][]) null;
+    public static boolean isChristmas = isChristmas();
 
-  public static ResourceLocation getTextureLocation(ResourceLocation loc) {
-    if (guiProperties == null) {
-      return loc;
-    } else {
-      GuiScreen guiscreen = mc.currentScreen;
-
-      if (!(guiscreen instanceof GuiContainer)) {
-        return loc;
-      } else if (loc.getResourceDomain().equals("minecraft")
-          && loc.getResourcePath().startsWith("textures/gui/")) {
-        if (playerControllerOF == null) {
-          return loc;
-        } else {
-          IBlockAccess iblockaccess = mc.theWorld;
-
-          if (iblockaccess == null) {
+    public static ResourceLocation getTextureLocation(ResourceLocation loc) {
+        if(guiProperties == null) {
             return loc;
-          } else if (guiscreen instanceof GuiContainerCreative) {
-            return getTexturePos(
-                CustomGuiProperties.EnumContainer.CREATIVE,
-                mc.thePlayer.getPosition(),
-                iblockaccess,
-                loc,
-                guiscreen);
-          } else if (guiscreen instanceof GuiInventory) {
-            return getTexturePos(
-                CustomGuiProperties.EnumContainer.INVENTORY,
-                mc.thePlayer.getPosition(),
-                iblockaccess,
-                loc,
-                guiscreen);
-          } else {
-            BlockPos blockpos = playerControllerOF.getLastClickBlockPos();
+        } else {
+            GuiScreen guiscreen = mc.currentScreen;
 
-            if (blockpos != null) {
-              if (guiscreen instanceof GuiRepair) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.ANVIL,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+            if(!(guiscreen instanceof GuiContainer)) {
+                return loc;
+            } else if(loc.getResourceDomain().equals("minecraft")
+                    && loc.getResourcePath().startsWith("textures/gui/")) {
+                if(playerControllerOF == null) {
+                    return loc;
+                } else {
+                    IBlockAccess iblockaccess = mc.theWorld;
 
-              if (guiscreen instanceof GuiBeacon) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.BEACON,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                    if(iblockaccess == null) {
+                        return loc;
+                    } else if(guiscreen instanceof GuiContainerCreative) {
+                        return getTexturePos(
+                                CustomGuiProperties.EnumContainer.CREATIVE,
+                                mc.thePlayer.getPosition(),
+                                iblockaccess,
+                                loc,
+                                guiscreen);
+                    } else if(guiscreen instanceof GuiInventory) {
+                        return getTexturePos(
+                                CustomGuiProperties.EnumContainer.INVENTORY,
+                                mc.thePlayer.getPosition(),
+                                iblockaccess,
+                                loc,
+                                guiscreen);
+                    } else {
+                        BlockPos blockpos = playerControllerOF.getLastClickBlockPos();
 
-              if (guiscreen instanceof GuiBrewingStand) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.BREWING_STAND,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                        if(blockpos != null) {
+                            if(guiscreen instanceof GuiRepair) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.ANVIL,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
 
-              if (guiscreen instanceof GuiChest) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.CHEST,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                            if(guiscreen instanceof GuiBeacon) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.BEACON,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
 
-              if (guiscreen instanceof GuiCrafting) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.CRAFTING,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                            if(guiscreen instanceof GuiBrewingStand) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.BREWING_STAND,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
 
-              if (guiscreen instanceof GuiDispenser) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.DISPENSER,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                            if(guiscreen instanceof GuiChest) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.CHEST,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
 
-              if (guiscreen instanceof GuiEnchantment) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.ENCHANTMENT,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                            if(guiscreen instanceof GuiCrafting) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.CRAFTING,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
 
-              if (guiscreen instanceof GuiFurnace) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.FURNACE,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                            if(guiscreen instanceof GuiDispenser) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.DISPENSER,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
 
-              if (guiscreen instanceof GuiHopper) {
-                return getTexturePos(
-                    CustomGuiProperties.EnumContainer.HOPPER,
-                    blockpos,
-                    iblockaccess,
-                    loc,
-                    guiscreen);
-              }
+                            if(guiscreen instanceof GuiEnchantment) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.ENCHANTMENT,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
+
+                            if(guiscreen instanceof GuiFurnace) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.FURNACE,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
+
+                            if(guiscreen instanceof GuiHopper) {
+                                return getTexturePos(
+                                        CustomGuiProperties.EnumContainer.HOPPER,
+                                        blockpos,
+                                        iblockaccess,
+                                        loc,
+                                        guiscreen);
+                            }
+                        }
+
+                        Entity entity = playerControllerOF.getLastClickEntity();
+
+                        if(entity != null) {
+                            if(guiscreen instanceof GuiScreenHorseInventory) {
+                                return getTextureEntity(
+                                        CustomGuiProperties.EnumContainer.HORSE, entity, iblockaccess, loc);
+                            }
+
+                            if(guiscreen instanceof GuiMerchant) {
+                                return getTextureEntity(
+                                        CustomGuiProperties.EnumContainer.VILLAGER, entity, iblockaccess, loc);
+                            }
+                        }
+
+                        return loc;
+                    }
+                }
+            } else {
+                return loc;
+            }
+        }
+    }
+
+    private static ResourceLocation getTexturePos(
+            CustomGuiProperties.EnumContainer container,
+            BlockPos pos,
+            IBlockAccess blockAccess,
+            ResourceLocation loc,
+            GuiScreen screen) {
+        CustomGuiProperties[] acustomguiproperties = guiProperties[container.ordinal()];
+
+        if(acustomguiproperties == null) {
+            return loc;
+        } else {
+            for(int i = 0; i < acustomguiproperties.length; ++i) {
+                CustomGuiProperties customguiproperties = acustomguiproperties[i];
+
+                if(customguiproperties.matchesPos(container, pos, blockAccess, screen)) {
+                    return customguiproperties.getTextureLocation(loc);
+                }
             }
 
-            Entity entity = playerControllerOF.getLastClickEntity();
+            return loc;
+        }
+    }
 
-            if (entity != null) {
-              if (guiscreen instanceof GuiScreenHorseInventory) {
-                return getTextureEntity(
-                    CustomGuiProperties.EnumContainer.HORSE, entity, iblockaccess, loc);
-              }
+    private static ResourceLocation getTextureEntity(
+            CustomGuiProperties.EnumContainer container,
+            Entity entity,
+            IBlockAccess blockAccess,
+            ResourceLocation loc) {
+        CustomGuiProperties[] acustomguiproperties = guiProperties[container.ordinal()];
 
-              if (guiscreen instanceof GuiMerchant) {
-                return getTextureEntity(
-                    CustomGuiProperties.EnumContainer.VILLAGER, entity, iblockaccess, loc);
-              }
+        if(acustomguiproperties == null) {
+            return loc;
+        } else {
+            for(int i = 0; i < acustomguiproperties.length; ++i) {
+                CustomGuiProperties customguiproperties = acustomguiproperties[i];
+
+                if(customguiproperties.matchesEntity(container, entity, blockAccess)) {
+                    return customguiproperties.getTextureLocation(loc);
+                }
             }
 
             return loc;
-          }
         }
-      } else {
-        return loc;
-      }
     }
-  }
 
-  private static ResourceLocation getTexturePos(
-      CustomGuiProperties.EnumContainer container,
-      BlockPos pos,
-      IBlockAccess blockAccess,
-      ResourceLocation loc,
-      GuiScreen screen) {
-    CustomGuiProperties[] acustomguiproperties = guiProperties[container.ordinal()];
+    public static void update() {
+        guiProperties = (CustomGuiProperties[][]) null;
 
-    if (acustomguiproperties == null) {
-      return loc;
-    } else {
-      for (int i = 0; i < acustomguiproperties.length; ++i) {
-        CustomGuiProperties customguiproperties = acustomguiproperties[i];
+        if(Config.isCustomGuis()) {
+            List<List<CustomGuiProperties>> list = new ArrayList();
+            IResourcePack[] airesourcepack = Config.getResourcePacks();
 
-        if (customguiproperties.matchesPos(container, pos, blockAccess, screen)) {
-          return customguiproperties.getTextureLocation(loc);
+            for(int i = airesourcepack.length - 1; i >= 0; --i) {
+                IResourcePack iresourcepack = airesourcepack[i];
+                update(iresourcepack, list);
+            }
+
+            guiProperties = propertyListToArray(list);
         }
-      }
-
-      return loc;
     }
-  }
 
-  private static ResourceLocation getTextureEntity(
-      CustomGuiProperties.EnumContainer container,
-      Entity entity,
-      IBlockAccess blockAccess,
-      ResourceLocation loc) {
-    CustomGuiProperties[] acustomguiproperties = guiProperties[container.ordinal()];
-
-    if (acustomguiproperties == null) {
-      return loc;
-    } else {
-      for (int i = 0; i < acustomguiproperties.length; ++i) {
-        CustomGuiProperties customguiproperties = acustomguiproperties[i];
-
-        if (customguiproperties.matchesEntity(container, entity, blockAccess)) {
-          return customguiproperties.getTextureLocation(loc);
-        }
-      }
-
-      return loc;
-    }
-  }
-
-  public static void update() {
-    guiProperties = (CustomGuiProperties[][]) null;
-
-    if (Config.isCustomGuis()) {
-      List<List<CustomGuiProperties>> list = new ArrayList();
-      IResourcePack[] airesourcepack = Config.getResourcePacks();
-
-      for (int i = airesourcepack.length - 1; i >= 0; --i) {
-        IResourcePack iresourcepack = airesourcepack[i];
-        update(iresourcepack, list);
-      }
-
-      guiProperties = propertyListToArray(list);
-    }
-  }
-
-  private static CustomGuiProperties[][] propertyListToArray(
-      List<List<CustomGuiProperties>> listProps) {
-    if (listProps.isEmpty()) {
-      return (CustomGuiProperties[][]) null;
-    } else {
-      CustomGuiProperties[][] acustomguiproperties =
-          new CustomGuiProperties[CustomGuiProperties.EnumContainer.VALUES.length][];
-
-      for (int i = 0; i < acustomguiproperties.length; ++i) {
-        if (listProps.size() > i) {
-          List<CustomGuiProperties> list = (List) listProps.get(i);
-
-          if (list != null) {
-            CustomGuiProperties[] acustomguiproperties1 =
-                (CustomGuiProperties[])
-                    ((CustomGuiProperties[]) list.toArray(new CustomGuiProperties[list.size()]));
-            acustomguiproperties[i] = acustomguiproperties1;
-          }
-        }
-      }
-
-      return acustomguiproperties;
-    }
-  }
-
-  private static void update(IResourcePack rp, List<List<CustomGuiProperties>> listProps) {
-    String[] astring =
-        ResUtils.collectFiles(
-            rp, (String) "optifine/gui/container/", (String) ".properties", (String[]) null);
-    Arrays.sort((Object[]) astring);
-
-    for (int i = 0; i < astring.length; ++i) {
-      String s = astring[i];
-      Config.dbg("CustomGuis: " + s);
-
-      try {
-        ResourceLocation resourcelocation = new ResourceLocation(s);
-        InputStream inputstream = rp.getInputStream(resourcelocation);
-
-        if (inputstream == null) {
-          Config.warn("CustomGuis file not found: " + s);
+    private static CustomGuiProperties[][] propertyListToArray(
+            List<List<CustomGuiProperties>> listProps) {
+        if(listProps.isEmpty()) {
+            return (CustomGuiProperties[][]) null;
         } else {
-          Properties properties = new PropertiesOrdered();
-          properties.load(inputstream);
-          inputstream.close();
-          CustomGuiProperties customguiproperties = new CustomGuiProperties(properties, s);
+            CustomGuiProperties[][] acustomguiproperties =
+                    new CustomGuiProperties[CustomGuiProperties.EnumContainer.VALUES.length][];
 
-          if (customguiproperties.isValid(s)) {
-            addToList(customguiproperties, listProps);
-          }
+            for(int i = 0; i < acustomguiproperties.length; ++i) {
+                if(listProps.size() > i) {
+                    List<CustomGuiProperties> list = (List) listProps.get(i);
+
+                    if(list != null) {
+                        CustomGuiProperties[] acustomguiproperties1 =
+                                (CustomGuiProperties[])
+                                        ((CustomGuiProperties[]) list.toArray(new CustomGuiProperties[list.size()]));
+                        acustomguiproperties[i] = acustomguiproperties1;
+                    }
+                }
+            }
+
+            return acustomguiproperties;
         }
-      } catch (FileNotFoundException var9) {
-        Config.warn("CustomGuis file not found: " + s);
-      } catch (Exception exception) {
-        exception.printStackTrace();
-      }
     }
-  }
 
-  private static void addToList(
-      CustomGuiProperties cgp, List<List<CustomGuiProperties>> listProps) {
-    if (cgp.getContainer() == null) {
-      warn("Invalid container: " + cgp.getContainer());
-    } else {
-      int i = cgp.getContainer().ordinal();
+    private static void update(IResourcePack rp, List<List<CustomGuiProperties>> listProps) {
+        String[] astring =
+                ResUtils.collectFiles(
+                        rp, (String) "optifine/gui/container/", (String) ".properties", (String[]) null);
+        Arrays.sort((Object[]) astring);
 
-      while (listProps.size() <= i) {
-        listProps.add(null);
-      }
+        for(int i = 0; i < astring.length; ++i) {
+            String s = astring[i];
+            Config.dbg("CustomGuis: " + s);
 
-      List<CustomGuiProperties> list = (List) listProps.get(i);
+            try {
+                ResourceLocation resourcelocation = new ResourceLocation(s);
+                InputStream inputstream = rp.getInputStream(resourcelocation);
 
-      if (list == null) {
-        list = new ArrayList();
-        listProps.set(i, list);
-      }
+                if(inputstream == null) {
+                    Config.warn("CustomGuis file not found: " + s);
+                } else {
+                    Properties properties = new PropertiesOrdered();
+                    properties.load(inputstream);
+                    inputstream.close();
+                    CustomGuiProperties customguiproperties = new CustomGuiProperties(properties, s);
 
-      list.add(cgp);
+                    if(customguiproperties.isValid(s)) {
+                        addToList(customguiproperties, listProps);
+                    }
+                }
+            } catch(FileNotFoundException var9) {
+                Config.warn("CustomGuis file not found: " + s);
+            } catch(Exception exception) {
+                exception.printStackTrace();
+            }
+        }
     }
-  }
 
-  public static PlayerControllerOF getPlayerControllerOF() {
-    return playerControllerOF;
-  }
+    private static void addToList(
+            CustomGuiProperties cgp, List<List<CustomGuiProperties>> listProps) {
+        if(cgp.getContainer() == null) {
+            warn("Invalid container: " + cgp.getContainer());
+        } else {
+            int i = cgp.getContainer().ordinal();
 
-  public static void setPlayerControllerOF(PlayerControllerOF playerControllerOF) {
-    playerControllerOF = playerControllerOF;
-  }
+            while(listProps.size() <= i) {
+                listProps.add(null);
+            }
 
-  private static boolean isChristmas() {
-    Calendar calendar = Calendar.getInstance();
-    return calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26;
-  }
+            List<CustomGuiProperties> list = (List) listProps.get(i);
 
-  private static void warn(String str) {
-    Config.warn("[CustomGuis] " + str);
-  }
+            if(list == null) {
+                list = new ArrayList();
+                listProps.set(i, list);
+            }
+
+            list.add(cgp);
+        }
+    }
+
+    public static PlayerControllerOF getPlayerControllerOF() {
+        return playerControllerOF;
+    }
+
+    public static void setPlayerControllerOF(PlayerControllerOF playerControllerOF) {
+        playerControllerOF = playerControllerOF;
+    }
+
+    private static boolean isChristmas() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26;
+    }
+
+    private static void warn(String str) {
+        Config.warn("[CustomGuis] " + str);
+    }
 }
