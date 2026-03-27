@@ -1,6 +1,5 @@
 .idea/
-.mvn/
-target/
+build/
 
 jars/*
 
@@ -19,4 +18,3 @@ jars/*
 *.log
 
 .DS_Store
-dependency-reduced-pom.xml
