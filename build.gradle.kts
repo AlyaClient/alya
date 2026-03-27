@@ -1,4 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
+import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
 
 plugins {
     java
@@ -44,8 +45,8 @@ dependencies {
     implementation("net.java.dev.jna:jna:5.6.0")
     implementation("net.java.dev.jna:jna-platform:5.6.0")
     implementation("net.sf.jopt-simple:jopt-simple:5.0.4")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    implementation("org.apache.logging.log4j:log4j-api:2.25.3")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.3")
     implementation("com.mojang:authlib:1.5.25")
     implementation("com.github.dblock:oshi-core:1.2")
     implementation("io.netty:netty-all:4.0.23.Final")
@@ -71,16 +72,24 @@ configurations.all {
     exclude(group = "org.lwjgl.lwjgl")
 }
 
+tasks.jar {
+    from(sourceSets.main.get().output.resourcesDir)
+}
+
 tasks.shadowJar {
     archiveFileName = "libs"
     manifest {
         attributes["Multi-Release"] = "true"
     }
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+    exclude("log4j2*.xml")
+    transform(Log4j2PluginsCacheFileTransformer::class.java)
     // exclude the project's own classes, only bundle dependencies
     dependencies {
         exclude(dependency("${project.group}:${project.name}"))
     }
+    // include project resources
+    from(sourceSets.main.get().output.resourcesDir)
 }
 
 tasks.build {
