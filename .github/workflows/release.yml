@@ -38,7 +38,7 @@ jobs:
         run: |
           mkdir -p release/libs
           cp build/libs/Alya-1.0.jar release/Alya.jar
-          cp -r build/libs/libs/. release/libs/
+          cp build/libs/libs release/libs/libs
           cp jars/start.sh release/start.sh
           cp jars/README.md release/README.md
           cd release
