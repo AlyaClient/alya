@@ -969,7 +969,7 @@ public class ConnectedParser {
                 if(j < 0) {
                     this.warn("Item has no ID: " + item + ", name: " + s);
                 } else {
-                    set.add(new Integer(j));
+                    set.add(j);
                 }
             }
         }
@@ -991,12 +991,11 @@ public class ConnectedParser {
             if(j < 0) {
                 this.warn("Entity not found: " + s);
             } else {
-                set.add(new Integer(j));
+                set.add(j);
             }
         }
 
-        Integer[] ainteger = (Integer[]) ((Integer[]) set.toArray(new Integer[set.size()]));
-        int[] aint = Config.toPrimitive(ainteger);
-        return aint;
+        Integer[] ainteger = (Integer[]) ((Integer[]) set.toArray(new Integer[0]));
+        return Config.toPrimitive(ainteger);
     }
 }

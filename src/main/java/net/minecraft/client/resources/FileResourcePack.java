@@ -83,6 +83,7 @@ public class FileResourcePack extends AbstractResourcePack implements Closeable 
     return set;
   }
 
+  @SuppressWarnings("removal")
   protected void finalize() throws Throwable {
     this.close();
     super.finalize();

@@ -92,9 +92,11 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +109,7 @@ import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -660,9 +663,9 @@ public class Minecraft implements IThreadListener {
                 InputStream macStream =
                         this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/32x32.png"));
                 if(macStream != null) {
-                    java.awt.image.BufferedImage icon = ImageIO.read(macStream);
+                    BufferedImage icon = ImageIO.read(macStream);
                     if(icon != null) {
-                        java.awt.Taskbar.getTaskbar().setIconImage(icon);
+                        Taskbar.getTaskbar().setIconImage(icon);
                     }
                     macStream.close();
                 }
