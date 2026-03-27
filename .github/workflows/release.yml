@@ -36,14 +36,10 @@ jobs:
 
       - name: Package release zip
         run: |
-          mkdir -p release/natives
-          mkdir -p release/include
           cp build/classes/java/main release/Alya.jar || true
           cp build/libs/libs release/libs
           cp jars/start.sh release/start.sh
           cp jars/README.md release/README.md
-          cp -r jars/include/* release/include
-          cp -r jars/versions/1.8.9/1.8.9-natives/. release/natives/
           cd release
           zip -r ../alya-release.zip .
 
