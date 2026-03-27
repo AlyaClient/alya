@@ -797,11 +797,10 @@ public class EntityPlayerSP extends AbstractClientPlayer {
       }
     }
 
-    // todo: check noslow
     if (!this.isSprinting()
         && this.movementInput.moveForward >= f
         && flag3
-        && (!this.isUsingItem() /* todo: || here */)
+        && (!this.isUsingItem())
         && !this.isPotionActive(Potion.blindness)
         && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
       this.setSprinting(true);

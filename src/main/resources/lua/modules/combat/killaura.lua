@@ -94,22 +94,30 @@ local function shouldAttack()
     return timer.hasElapsedAndReset(math.floor(interval), true)
 end
 local function doBlock()
-    if not blocking then return end
+    if not blocking then
+        alya.combat.setForcedBlocking(false)
+        return
+    end
     local mode = blockMode.getValue()
     if mode == "Vanilla" then
+        alya.combat.setForcedBlocking(true)
         if not wasBlocked then
             alya.combat.sendBlockPlacement()
             wasBlocked = true
         end
     elseif mode == "Hurt Time" then
         if alya.combat.getHurtTime() == 9 and not wasBlocked then
+            alya.combat.setForcedBlocking(true)
             alya.combat.sendBlockPlacement()
             wasBlocked = true
         end
         if alya.combat.getHurtTime() == 0 and wasBlocked and not alya.combat.isSwingInProgress() then
+            alya.combat.setForcedBlocking(false)
             alya.combat.sendReleaseUseItem()
             wasBlocked = false
         end
+    elseif mode == "Fake" then
+        alya.combat.setForcedBlocking(true)
     end
 end
 alya.events.on("motion", function(event)
@@ -138,6 +146,7 @@ alya.events.on("motion", function(event)
     end
     blocking = autoBlock.isEnabled() and primary ~= nil and alya.combat.isHoldingSword()
     if primary == nil then
+        alya.combat.setForcedBlocking(false)
         if wasBlocked then
             alya.combat.sendReleaseUseItem()
             wasBlocked = false
@@ -186,6 +195,7 @@ alya.events.on("motion", function(event)
     doBlock()
 end)
 moduleTable.onDisable(function()
+    alya.combat.setForcedBlocking(false)
     if wasBlocked and not alya.combat.isSwingInProgress() then
         alya.combat.sendReleaseUseItem()
     end
