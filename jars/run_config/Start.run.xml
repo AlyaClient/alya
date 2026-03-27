@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Start" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="Pyroclast 25" />
     <option name="MAIN_CLASS_NAME" value="start.Main" />
-    <module name="Alya" />
-    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/jars/versions/1.8.9/1.8.9-natives" />
+    <module name="Alya.main" />
+    <option name="VM_PARAMETERS" value="-XstartOnFirstThread -Djava.library.path=$PROJECT_DIR$/jars/versions/1.8.9/1.8.9-natives --enable-native-access=ALL-UNNAMED" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/jars" />
     <method v="2">
       <option name="Make" enabled="true" />

@@ -57,19 +57,17 @@ public final class HUDModule extends Module {
         x += fontRenderer.getStringWidth(firstChar);
         fontRenderer.drawStringWithShadow(rest, x, y, whiteColor);
         final List<String> infoLines = new ArrayList<>();
-        if(showFPS.isEnabled()) {
-            infoLines.add("FPS: " + Minecraft.getDebugFPS());
+        if(showTime.isEnabled()) {
+            infoLines.add(timeFormat.format(new Date()));
         }
         if(showBPS.isEnabled()) {
             updateBPS();
             infoLines.add("BPS: " + String.format("%.1f", blocksPerSecond));
         }
-        if(showTime.isEnabled()) {
-            infoLines.add(timeFormat.format(new Date()));
+        if(showFPS.isEnabled()) {
+            infoLines.add("FPS: " + Minecraft.getDebugFPS());
         }
         if(!infoLines.isEmpty()) {
-            infoLines.sort(
-                    (a, b) -> Float.compare(fontRenderer.getStringWidth(a), fontRenderer.getStringWidth(b)));
             final int screenHeight = event.scaledResolution().getScaledHeight();
             final float lineHeight = fontRenderer.getFontHeight() + 2;
             float infoY = screenHeight - 4 - lineHeight;

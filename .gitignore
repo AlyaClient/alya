@@ -1,6 +1,6 @@
 .idea/
-.mvn/
-target/
+.gradle/
+build/
 
 jars/*
 
@@ -19,4 +19,3 @@ jars/*
 *.log
 
 .DS_Store
-dependency-reduced-pom.xml
