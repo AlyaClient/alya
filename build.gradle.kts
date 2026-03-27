@@ -19,7 +19,7 @@ repositories {
     mavenCentral()
     maven("https://libraries.minecraft.net/")
     maven("https://litarvan.github.io/maven")
-    maven { url = uri("https://jitpack.io") }
+    maven("https://jitpack.io")
 }
 
 val lwjglVersion = "3.3.4"
