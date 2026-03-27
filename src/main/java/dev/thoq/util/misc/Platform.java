@@ -1,5 +1,7 @@
 package dev.thoq.util.misc;
 
+import org.lwjgl.glfw.GLFW;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +20,10 @@ public final class Platform {
             """;
 
     public static void apply() {
+        if(OS.contains("linux")) {
+            GLFW.glfwInitHint(GLFW.GLFW_PLATFORM, GLFW.GLFW_PLATFORM_X11);
+        }
+
         if(!OS.contains("mac")) return;
 
         System.setProperty("apple.awt.application.appearance", "system");
