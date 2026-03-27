@@ -36,6 +36,7 @@ jobs:
 
       - name: Package release zip
         run: |
+          mkdir -p release
           cp build/libs/Alya-1.0.jar release/Alya.jar
           cp build/libs/libs release/
           cp jars/start.sh release/start.sh
