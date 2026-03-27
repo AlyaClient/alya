@@ -1,9 +1,9 @@
-import org.gradle.internal.os.OperatingSystem
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     java
-    id("com.gradleup.shadow") version "8.3.6"
+    id("com.gradleup.shadow") version "9.4.0"
 }
 
 group = "dev.thoq"
@@ -11,7 +11,7 @@ version = "1.0"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -22,11 +22,11 @@ repositories {
     maven { url = uri("https://jitpack.io") }
 }
 
-val lwjglVersion = "3.4.1"
+val lwjglVersion = "3.3.4"
 val lwjglNatives: String = when {
     OperatingSystem.current().isWindows -> "natives-windows"
-    OperatingSystem.current().isLinux   -> "natives-linux"
-    OperatingSystem.current().isMacOsX  -> "natives-macos-arm64"
+    OperatingSystem.current().isLinux -> "natives-linux"
+    OperatingSystem.current().isMacOsX -> "natives-macos-arm64"
     else -> throw GradleException("Unsupported OS: ${OperatingSystem.current().name}")
 }
 
@@ -52,12 +52,12 @@ dependencies {
     implementation("io.netty:netty-all:4.0.23.Final")
     implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:cb4dd06464")
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
-    implementation("org.lwjgl:lwjgl")
-    implementation("org.lwjgl:lwjgl-glfw")
-    implementation("org.lwjgl:lwjgl-openal")
-    implementation("org.lwjgl:lwjgl-opengl")
-    implementation("org.lwjgl:lwjgl-stb")
-    implementation("org.lwjgl:lwjgl-tinyfd")
+    implementation("org.lwjgl:lwjgl:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-openal:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-tinyfd:$lwjglVersion")
     runtimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-openal::$lwjglNatives")
@@ -102,6 +102,10 @@ tasks.register<JavaExec>("start") {
     workingDir = file("${project.projectDir}/jars")
     mainClass.set("start.Main")
     classpath = sourceSets.main.get().runtimeClasspath + files("${project.projectDir}/jars/versions/1.8.9/1.8.9.jar")
+
+    if (OperatingSystem.current().isMacOsX) {
+        jvmArgs("-XstartOnFirstThread")
+    }
 
     dependsOn("processResources")
 }
