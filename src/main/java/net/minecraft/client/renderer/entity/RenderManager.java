@@ -515,14 +515,14 @@ public class RenderManager {
     worldrenderer.begin(3, DefaultVertexFormats.field_181706_f);
     worldrenderer
         .pos(p_85094_2_, p_85094_4_ + (double) entityIn.getEyeHeight(), p_85094_6_)
-        .func_181669_b(0, 0, 255, 255)
+        .setColor(0, 0, 255, 255)
         .endVertex();
     worldrenderer
         .pos(
             p_85094_2_ + vec3.xCoord * 2.0D,
             p_85094_4_ + (double) entityIn.getEyeHeight() + vec3.yCoord * 2.0D,
             p_85094_6_ + vec3.zCoord * 2.0D)
-        .func_181669_b(0, 0, 255, 255)
+        .setColor(0, 0, 255, 255)
         .endVertex();
     tessellator.draw();
     GlStateManager.enableTexture2D();

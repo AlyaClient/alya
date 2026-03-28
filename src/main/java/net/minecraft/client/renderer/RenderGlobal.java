@@ -1621,22 +1621,22 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         worldrenderer
             .pos(-100.0D, -100.0D, -100.0D)
             .tex(0.0D, 0.0D)
-            .func_181669_b(j, k, l, 255)
+            .setColor(j, k, l, 255)
             .endVertex();
         worldrenderer
             .pos(-100.0D, -100.0D, 100.0D)
             .tex(0.0D, 16.0D)
-            .func_181669_b(j, k, l, 255)
+            .setColor(j, k, l, 255)
             .endVertex();
         worldrenderer
             .pos(100.0D, -100.0D, 100.0D)
             .tex(16.0D, 16.0D)
-            .func_181669_b(j, k, l, 255)
+            .setColor(j, k, l, 255)
             .endVertex();
         worldrenderer
             .pos(100.0D, -100.0D, -100.0D)
             .tex(16.0D, 0.0D)
-            .func_181669_b(j, k, l, 255)
+            .setColor(j, k, l, 255)
             .endVertex();
         tessellator.draw();
         GlStateManager.popMatrix();
@@ -1926,26 +1926,26 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         float f22 = -((float) (d0 + 65.0D));
         float f24 = -1.0F;
         worldrenderer.begin(7, DefaultVertexFormats.field_181706_f);
-        worldrenderer.pos(-1.0D, (double) f22, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, (double) f22, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, -1.0D, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, -1.0D, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, -1.0D, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, -1.0D, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, (double) f22, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, (double) f22, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, -1.0D, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, -1.0D, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, (double) f22, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, (double) f22, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, (double) f22, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, (double) f22, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, -1.0D, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, -1.0D, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, -1.0D, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(-1.0D, -1.0D, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, -1.0D, 1.0D).func_181669_b(0, 0, 0, 255).endVertex();
-        worldrenderer.pos(1.0D, -1.0D, -1.0D).func_181669_b(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, (double) f22, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, (double) f22, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, -1.0D, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, -1.0D, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, -1.0D, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, -1.0D, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, (double) f22, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, (double) f22, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, -1.0D, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, -1.0D, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, (double) f22, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, (double) f22, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, (double) f22, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, (double) f22, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, -1.0D, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, -1.0D, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, -1.0D, -1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(-1.0D, -1.0D, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, -1.0D, 1.0D).setColor(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(1.0D, -1.0D, -1.0D).setColor(0, 0, 0, 255).endVertex();
         tessellator.draw();
       }
 
@@ -2956,79 +2956,79 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     worldrenderer.begin(3, DefaultVertexFormats.field_181706_f);
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.minY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.minY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.minY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.minY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.minY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     tessellator.draw();
     worldrenderer.begin(3, DefaultVertexFormats.field_181706_f);
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.maxY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.maxY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.maxY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.maxY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.maxY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     tessellator.draw();
     worldrenderer.begin(1, DefaultVertexFormats.field_181706_f);
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.minY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.maxY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.minY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.maxY, p_181563_0_.minZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.minY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.maxX, p_181563_0_.maxY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.minY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     worldrenderer
         .pos(p_181563_0_.minX, p_181563_0_.maxY, p_181563_0_.maxZ)
-        .func_181669_b(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
+        .setColor(p_181563_1_, p_181563_2_, p_181563_3_, p_181563_4_)
         .endVertex();
     tessellator.draw();
   }

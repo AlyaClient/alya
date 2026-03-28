@@ -185,12 +185,12 @@ public class RenderDragon extends RenderLiving<EntityDragon> {
       worldrenderer
           .pos((double) (f9 * 0.2F), (double) (f10 * 0.2F), 0.0D)
           .tex((double) f11, (double) f8)
-          .func_181669_b(0, 0, 0, 255)
+          .setColor(0, 0, 0, 255)
           .endVertex();
       worldrenderer
           .pos((double) f9, (double) f10, (double) f6)
           .tex((double) f11, (double) f7)
-          .func_181669_b(255, 255, 255, 255)
+          .setColor(255, 255, 255, 255)
           .endVertex();
     }
 

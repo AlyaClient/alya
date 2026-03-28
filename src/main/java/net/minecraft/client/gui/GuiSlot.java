@@ -228,44 +228,44 @@ public abstract class GuiSlot {
       worldrenderer
           .pos((double) this.left, (double) (this.top + i1), 0.0D)
           .tex(0.0D, 1.0D)
-          .func_181669_b(0, 0, 0, 0)
+          .setColor(0, 0, 0, 0)
           .endVertex();
       worldrenderer
           .pos((double) this.right, (double) (this.top + i1), 0.0D)
           .tex(1.0D, 1.0D)
-          .func_181669_b(0, 0, 0, 0)
+          .setColor(0, 0, 0, 0)
           .endVertex();
       worldrenderer
           .pos((double) this.right, (double) this.top, 0.0D)
           .tex(1.0D, 0.0D)
-          .func_181669_b(0, 0, 0, 255)
+          .setColor(0, 0, 0, 255)
           .endVertex();
       worldrenderer
           .pos((double) this.left, (double) this.top, 0.0D)
           .tex(0.0D, 0.0D)
-          .func_181669_b(0, 0, 0, 255)
+          .setColor(0, 0, 0, 255)
           .endVertex();
       tessellator.draw();
       worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
       worldrenderer
           .pos((double) this.left, (double) this.bottom, 0.0D)
           .tex(0.0D, 1.0D)
-          .func_181669_b(0, 0, 0, 255)
+          .setColor(0, 0, 0, 255)
           .endVertex();
       worldrenderer
           .pos((double) this.right, (double) this.bottom, 0.0D)
           .tex(1.0D, 1.0D)
-          .func_181669_b(0, 0, 0, 255)
+          .setColor(0, 0, 0, 255)
           .endVertex();
       worldrenderer
           .pos((double) this.right, (double) (this.bottom - i1), 0.0D)
           .tex(1.0D, 0.0D)
-          .func_181669_b(0, 0, 0, 0)
+          .setColor(0, 0, 0, 0)
           .endVertex();
       worldrenderer
           .pos((double) this.left, (double) (this.bottom - i1), 0.0D)
           .tex(0.0D, 0.0D)
-          .func_181669_b(0, 0, 0, 0)
+          .setColor(0, 0, 0, 0)
           .endVertex();
       tessellator.draw();
       int j1 = this.func_148135_f();
@@ -283,66 +283,66 @@ public abstract class GuiSlot {
         worldrenderer
             .pos((double) i, (double) this.bottom, 0.0D)
             .tex(0.0D, 1.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         worldrenderer
             .pos((double) j, (double) this.bottom, 0.0D)
             .tex(1.0D, 1.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         worldrenderer
             .pos((double) j, (double) this.top, 0.0D)
             .tex(1.0D, 0.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         worldrenderer
             .pos((double) i, (double) this.top, 0.0D)
             .tex(0.0D, 0.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         tessellator.draw();
         worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
         worldrenderer
             .pos((double) i, (double) (l1 + k1), 0.0D)
             .tex(0.0D, 1.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) j, (double) (l1 + k1), 0.0D)
             .tex(1.0D, 1.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) j, (double) l1, 0.0D)
             .tex(1.0D, 0.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) i, (double) l1, 0.0D)
             .tex(0.0D, 0.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         tessellator.draw();
         worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
         worldrenderer
             .pos((double) i, (double) (l1 + k1 - 1), 0.0D)
             .tex(0.0D, 1.0D)
-            .func_181669_b(192, 192, 192, 255)
+            .setColor(192, 192, 192, 255)
             .endVertex();
         worldrenderer
             .pos((double) (j - 1), (double) (l1 + k1 - 1), 0.0D)
             .tex(1.0D, 1.0D)
-            .func_181669_b(192, 192, 192, 255)
+            .setColor(192, 192, 192, 255)
             .endVertex();
         worldrenderer
             .pos((double) (j - 1), (double) l1, 0.0D)
             .tex(1.0D, 0.0D)
-            .func_181669_b(192, 192, 192, 255)
+            .setColor(192, 192, 192, 255)
             .endVertex();
         worldrenderer
             .pos((double) i, (double) l1, 0.0D)
             .tex(0.0D, 0.0D)
-            .func_181669_b(192, 192, 192, 255)
+            .setColor(192, 192, 192, 255)
             .endVertex();
         tessellator.draw();
       }
@@ -491,42 +491,42 @@ public abstract class GuiSlot {
         worldrenderer
             .pos((double) i1, (double) (k + l + 2), 0.0D)
             .tex(0.0D, 1.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) j1, (double) (k + l + 2), 0.0D)
             .tex(1.0D, 1.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) j1, (double) (k - 2), 0.0D)
             .tex(1.0D, 0.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) i1, (double) (k - 2), 0.0D)
             .tex(0.0D, 0.0D)
-            .func_181669_b(128, 128, 128, 255)
+            .setColor(128, 128, 128, 255)
             .endVertex();
         worldrenderer
             .pos((double) (i1 + 1), (double) (k + l + 1), 0.0D)
             .tex(0.0D, 1.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         worldrenderer
             .pos((double) (j1 - 1), (double) (k + l + 1), 0.0D)
             .tex(1.0D, 1.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         worldrenderer
             .pos((double) (j1 - 1), (double) (k - 1), 0.0D)
             .tex(1.0D, 0.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         worldrenderer
             .pos((double) (i1 + 1), (double) (k - 1), 0.0D)
             .tex(0.0D, 0.0D)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
@@ -552,22 +552,22 @@ public abstract class GuiSlot {
     worldrenderer
         .pos((double) this.left, (double) endY, 0.0D)
         .tex(0.0D, 1.0D)
-        .func_181669_b(0, 0, 0, endAlpha)
+        .setColor(0, 0, 0, endAlpha)
         .endVertex();
     worldrenderer
         .pos((double) (this.left + this.width), (double) endY, 0.0D)
         .tex(1.0D, 1.0D)
-        .func_181669_b(0, 0, 0, endAlpha)
+        .setColor(0, 0, 0, endAlpha)
         .endVertex();
     worldrenderer
         .pos((double) (this.left + this.width), (double) startY, 0.0D)
         .tex(1.0D, 0.0D)
-        .func_181669_b(0, 0, 0, startAlpha)
+        .setColor(0, 0, 0, startAlpha)
         .endVertex();
     worldrenderer
         .pos((double) this.left, (double) startY, 0.0D)
         .tex(0.0D, 0.0D)
-        .func_181669_b(0, 0, 0, startAlpha)
+        .setColor(0, 0, 0, startAlpha)
         .endVertex();
     tessellator.draw();
     GlStateManager.enableTexture2D();
@@ -593,22 +593,22 @@ public abstract class GuiSlot {
     worldrenderer
         .pos((double) this.left, (double) this.bottom, 0.0D)
         .tex(0.0D, 1.0D)
-        .func_181669_b(15, 15, 15, 255)
+        .setColor(15, 15, 15, 255)
         .endVertex();
     worldrenderer
         .pos((double) this.right, (double) this.bottom, 0.0D)
         .tex(1.0D, 1.0D)
-        .func_181669_b(15, 15, 15, 255)
+        .setColor(15, 15, 15, 255)
         .endVertex();
     worldrenderer
         .pos((double) this.right, (double) this.top, 0.0D)
         .tex(1.0D, 0.0D)
-        .func_181669_b(15, 15, 15, 255)
+        .setColor(15, 15, 15, 255)
         .endVertex();
     worldrenderer
         .pos((double) this.left, (double) this.top, 0.0D)
         .tex(0.0D, 0.0D)
-        .func_181669_b(15, 15, 15, 255)
+        .setColor(15, 15, 15, 255)
         .endVertex();
     p_drawContainerBackground_1_.draw();
     GlStateManager.enableTexture2D();

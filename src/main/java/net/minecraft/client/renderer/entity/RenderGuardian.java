@@ -152,24 +152,24 @@ public class RenderGuardian extends RenderLiving<EntityGuardian> {
       double d21 = 0.4999D;
       double d22 = (double) (-1.0F + f3);
       double d23 = d0 * (0.5D / d2) + d22;
-      worldrenderer.pos(d12, d0, d13).tex(0.4999D, d23).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d12, 0.0D, d13).tex(0.4999D, d22).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d14, 0.0D, d15).tex(0.0D, d22).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d14, d0, d15).tex(0.0D, d23).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d16, d0, d17).tex(0.4999D, d23).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d16, 0.0D, d17).tex(0.4999D, d22).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d18, 0.0D, d19).tex(0.0D, d22).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d18, d0, d19).tex(0.0D, d23).func_181669_b(j, k, l, 255).endVertex();
+      worldrenderer.pos(d12, d0, d13).tex(0.4999D, d23).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d12, 0.0D, d13).tex(0.4999D, d22).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d14, 0.0D, d15).tex(0.0D, d22).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d14, d0, d15).tex(0.0D, d23).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d16, d0, d17).tex(0.4999D, d23).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d16, 0.0D, d17).tex(0.4999D, d22).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d18, 0.0D, d19).tex(0.0D, d22).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d18, d0, d19).tex(0.0D, d23).setColor(j, k, l, 255).endVertex();
       double d24 = 0.0D;
 
       if (entity.ticksExisted % 2 == 0) {
         d24 = 0.5D;
       }
 
-      worldrenderer.pos(d4, d0, d5).tex(0.5D, d24 + 0.5D).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d6, d0, d7).tex(1.0D, d24 + 0.5D).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d10, d0, d11).tex(1.0D, d24).func_181669_b(j, k, l, 255).endVertex();
-      worldrenderer.pos(d8, d0, d9).tex(0.5D, d24).func_181669_b(j, k, l, 255).endVertex();
+      worldrenderer.pos(d4, d0, d5).tex(0.5D, d24 + 0.5D).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d6, d0, d7).tex(1.0D, d24 + 0.5D).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d10, d0, d11).tex(1.0D, d24).setColor(j, k, l, 255).endVertex();
+      worldrenderer.pos(d8, d0, d9).tex(0.5D, d24).setColor(j, k, l, 255).endVertex();
       tessellator.draw();
       GlStateManager.popMatrix();
     }
