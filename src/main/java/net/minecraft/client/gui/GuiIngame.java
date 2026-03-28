@@ -1,6 +1,5 @@
 package net.minecraft.client.gui;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import dev.thoq.Alya;
@@ -357,10 +356,9 @@ public class GuiIngame extends Gui {
     }
 
     protected void renderTooltip(ScaledResolution sr, float partialTicks) {
-        if(this.mc.getRenderViewEntity() instanceof EntityPlayer) {
+        if(this.mc.getRenderViewEntity() instanceof EntityPlayer entityplayer) {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.mc.getTextureManager().bindTexture(widgetsTexPath);
-            EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
             int i = sr.getScaledWidth() / 2;
             float f = this.zLevel;
             this.zLevel = -90.0F;
@@ -435,7 +433,6 @@ public class GuiIngame extends Gui {
             String s = "" + this.mc.thePlayer.experienceLevel;
             int l1 = (p_175176_1_.getScaledWidth() - this.getFontRenderer().getStringWidth(s)) / 2;
             int i1 = p_175176_1_.getScaledHeight() - 31 - 4;
-            int j1 = 0;
             this.getFontRenderer().drawString(s, l1 + 1, i1, 0);
             this.getFontRenderer().drawString(s, l1 - 1, i1, 0);
             this.getFontRenderer().drawString(s, l1, i1 + 1, 0);
@@ -494,9 +491,7 @@ public class GuiIngame extends Gui {
                         && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
                     BlockPos blockpos = this.mc.objectMouseOver.getBlockPos();
 
-                    if(this.mc.theWorld.getTileEntity(blockpos) instanceof IInventory) {
-                        return true;
-                    }
+                    return this.mc.theWorld.getTileEntity(blockpos) instanceof IInventory;
                 }
 
                 return false;
@@ -513,12 +508,8 @@ public class GuiIngame extends Gui {
                 Lists.newArrayList(
                         Iterables.filter(
                                 collection,
-                                new Predicate<Score>() {
-                                    public boolean apply(Score p_apply_1_) {
-                                        return p_apply_1_.getPlayerName() != null
-                                                && !p_apply_1_.getPlayerName().startsWith("#");
-                                    }
-                                }));
+                                p_apply_1_ -> p_apply_1_.getPlayerName() != null
+                                        && !p_apply_1_.getPlayerName().startsWith("#")));
 
         if(list.size() > 15) {
             collection = Lists.newArrayList(Iterables.skip(list, collection.size() - 15));
@@ -540,7 +531,6 @@ public class GuiIngame extends Gui {
 
         int fontHeight = this.getFontRenderer().FONT_HEIGHT;
         int lineCount = collection.size();
-        int totalHeight = lineCount * fontHeight + fontHeight + 1; // lines + header + separator
         int bottomPadding = 3;
         int screenHeight = p_180475_2_.getScaledHeight();
 
@@ -582,8 +572,7 @@ public class GuiIngame extends Gui {
     }
 
     private void renderPlayerStats(ScaledResolution p_180477_1_) {
-        if(this.mc.getRenderViewEntity() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
+        if(this.mc.getRenderViewEntity() instanceof EntityPlayer entityplayer) {
             int i = MathHelper.ceiling_float_int(entityplayer.getHealth());
             boolean flag =
                     this.healthUpdateCounter > (long) this.updateCounter
@@ -591,10 +580,10 @@ public class GuiIngame extends Gui {
 
             if(i < this.playerHealth && entityplayer.hurtResistantTime > 0) {
                 this.lastSystemTime = Minecraft.getSystemTime();
-                this.healthUpdateCounter = (long) (this.updateCounter + 20);
+                this.healthUpdateCounter = this.updateCounter + 20;
             } else if(i > this.playerHealth && entityplayer.hurtResistantTime > 0) {
                 this.lastSystemTime = Minecraft.getSystemTime();
-                this.healthUpdateCounter = (long) (this.updateCounter + 10);
+                this.healthUpdateCounter = this.updateCounter + 10;
             }
 
             if(Minecraft.getSystemTime() - this.lastSystemTime > 1000L) {
@@ -605,11 +594,9 @@ public class GuiIngame extends Gui {
 
             this.playerHealth = i;
             int j = this.lastPlayerHealth;
-            this.rand.setSeed((long) (this.updateCounter * 312871));
-            boolean flag1 = false;
+            this.rand.setSeed(this.updateCounter * 312871L);
             FoodStats foodstats = entityplayer.getFoodStats();
             int k = foodstats.getFoodLevel();
-            int l = foodstats.getPrevFoodLevel();
             IAttributeInstance iattributeinstance =
                     entityplayer.getEntityAttribute(SharedMonsterAttributes.maxHealth);
             int i1 = p_180477_1_.getScaledWidth() / 2 - 91;
@@ -734,22 +721,8 @@ public class GuiIngame extends Gui {
                         j7 = k1 + (this.rand.nextInt(3) - 1);
                     }
 
-                    if(flag1) {
-                        k8 = 1;
-                    }
-
                     int j9 = j1 - k6 * 8 - 9;
                     this.drawTexturedModalRect(j9, j7, 16 + k8 * 9, 27, 9, 9);
-
-                    if(flag1) {
-                        if(k6 * 2 + 1 < l) {
-                            this.drawTexturedModalRect(j9, j7, l7 + 54, 27, 9, 9);
-                        }
-
-                        if(k6 * 2 + 1 == l) {
-                            this.drawTexturedModalRect(j9, j7, l7 + 63, 27, 9, 9);
-                        }
-                    }
 
                     if(k6 * 2 + 1 < k) {
                         this.drawTexturedModalRect(j9, j7, l7 + 36, 27, 9, 9);
@@ -759,10 +732,9 @@ public class GuiIngame extends Gui {
                         this.drawTexturedModalRect(j9, j7, l7 + 45, 27, 9, 9);
                     }
                 }
-            } else if(entity instanceof EntityLivingBase) {
+            } else if(entity instanceof EntityLivingBase entitylivingbase) {
                 this.mc.mcProfiler.endStartSection("mountHealth");
-                EntityLivingBase entitylivingbase = (EntityLivingBase) entity;
-                int i7 = (int) Math.ceil((double) entitylivingbase.getHealth());
+                int i7 = (int) Math.ceil(entitylivingbase.getHealth());
                 float f3 = entitylivingbase.getMaxHealth();
                 int j8 = (int) (f3 + 0.5F) / 2;
 
@@ -778,14 +750,9 @@ public class GuiIngame extends Gui {
 
                     for(int i5 = 0; i5 < l4; ++i5) {
                         int j5 = 52;
-                        int k5 = 0;
-
-                        if(flag1) {
-                            k5 = 1;
-                        }
 
                         int l5 = j1 - i5 * 8 - 9;
-                        this.drawTexturedModalRect(l5, i9, j5 + k5 * 9, 9, 9, 9);
+                        this.drawTexturedModalRect(l5, i9, j5, 9, 9, 9);
 
                         if(i5 * 2 + 1 + k9 < i7) {
                             this.drawTexturedModalRect(l5, i9, j5 + 36, 9, 9, 9);
@@ -826,7 +793,6 @@ public class GuiIngame extends Gui {
     private void renderBossHealth() {
         if(BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
             --BossStatus.statusBarTime;
-            FontRenderer fontrenderer = this.mc.fontRendererObj;
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaledWidth();
             int j = 182;
@@ -863,15 +829,15 @@ public class GuiIngame extends Gui {
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
         worldrenderer
-                .pos(0.0D, (double) p_180476_1_.getScaledHeight(), -90.0D)
+                .pos(0.0D, p_180476_1_.getScaledHeight(), -90.0D)
                 .tex(0.0D, 1.0D)
                 .endVertex();
         worldrenderer
-                .pos((double) p_180476_1_.getScaledWidth(), (double) p_180476_1_.getScaledHeight(), -90.0D)
+                .pos(p_180476_1_.getScaledWidth(), p_180476_1_.getScaledHeight(), -90.0D)
                 .tex(1.0D, 1.0D)
                 .endVertex();
         worldrenderer
-                .pos((double) p_180476_1_.getScaledWidth(), 0.0D, -90.0D)
+                .pos(p_180476_1_.getScaledWidth(), 0.0D, -90.0D)
                 .tex(1.0D, 0.0D)
                 .endVertex();
         worldrenderer.pos(0.0D, 0.0D, -90.0D).tex(0.0D, 0.0D).endVertex();
@@ -898,7 +864,7 @@ public class GuiIngame extends Gui {
                     Math.min(
                             worldborder.getResizeSpeed() * (double) worldborder.getWarningTime() * 1000.0D,
                             Math.abs(worldborder.getTargetSize() - worldborder.getDiameter()));
-            double d1 = Math.max((double) worldborder.getWarningDistance(), d0);
+            double d1 = Math.max(worldborder.getWarningDistance(), d0);
 
             if((double) f < d1) {
                 f = 1.0F - (float) ((double) f / d1);
@@ -929,16 +895,16 @@ public class GuiIngame extends Gui {
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
             worldrenderer
-                    .pos(0.0D, (double) p_180480_2_.getScaledHeight(), -90.0D)
+                    .pos(0.0D, p_180480_2_.getScaledHeight(), -90.0D)
                     .tex(0.0D, 1.0D)
                     .endVertex();
             worldrenderer
                     .pos(
-                            (double) p_180480_2_.getScaledWidth(), (double) p_180480_2_.getScaledHeight(), -90.0D)
+                            p_180480_2_.getScaledWidth(), p_180480_2_.getScaledHeight(), -90.0D)
                     .tex(1.0D, 1.0D)
                     .endVertex();
             worldrenderer
-                    .pos((double) p_180480_2_.getScaledWidth(), 0.0D, -90.0D)
+                    .pos(p_180480_2_.getScaledWidth(), 0.0D, -90.0D)
                     .tex(1.0D, 0.0D)
                     .endVertex();
             worldrenderer.pos(0.0D, 0.0D, -90.0D).tex(0.0D, 0.0D).endVertex();
@@ -976,18 +942,18 @@ public class GuiIngame extends Gui {
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
         worldrenderer
-                .pos(0.0D, (double) p_180474_2_.getScaledHeight(), -90.0D)
-                .tex((double) f, (double) f3)
+                .pos(0.0D, p_180474_2_.getScaledHeight(), -90.0D)
+                .tex(f, f3)
                 .endVertex();
         worldrenderer
-                .pos((double) p_180474_2_.getScaledWidth(), (double) p_180474_2_.getScaledHeight(), -90.0D)
-                .tex((double) f2, (double) f3)
+                .pos(p_180474_2_.getScaledWidth(), p_180474_2_.getScaledHeight(), -90.0D)
+                .tex(f2, f3)
                 .endVertex();
         worldrenderer
-                .pos((double) p_180474_2_.getScaledWidth(), 0.0D, -90.0D)
-                .tex((double) f2, (double) f1)
+                .pos(p_180474_2_.getScaledWidth(), 0.0D, -90.0D)
+                .tex(f2, f1)
                 .endVertex();
-        worldrenderer.pos(0.0D, 0.0D, -90.0D).tex((double) f, (double) f1).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, -90.0D).tex(f, f1).endVertex();
         tessellator.draw();
         GlStateManager.depthMask(true);
         GlStateManager.enableDepth();
@@ -1061,7 +1027,7 @@ public class GuiIngame extends Gui {
     }
 
     public void setRecordPlayingMessage(String p_73833_1_) {
-        this.setRecordPlaying(I18n.format("record.nowPlaying", new Object[]{p_73833_1_}), true);
+        this.setRecordPlaying(I18n.format("record.nowPlaying", p_73833_1_), true);
     }
 
     public void setRecordPlaying(String p_110326_1_, boolean p_110326_2_) {

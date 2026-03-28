@@ -14,6 +14,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import dev.thoq.Alya;
 import dev.thoq.event.events.BlockPlaceableEvent;
 import dev.thoq.event.events.TickEvent;
+import dev.thoq.util.misc.Vector4i;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -92,9 +93,12 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Vector4f;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +111,7 @@ import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -116,6 +121,8 @@ public class Minecraft implements IThreadListener {
     private static final ResourceLocation locationMojangPng =
             new ResourceLocation("Alya/Assets/Title/splash.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
+    private static final Vector4i PROGRESS_FILL_COLOR = new Vector4i(163, 117, 180, 255);
+    private static final Vector4i PROGRESS_BACKGROUND_COLOR = new Vector4i(75, 61, 101, 100);
 
     /**
      * A 10MiB preallocation to ensure the heap is reasonably sized.
@@ -288,7 +295,7 @@ public class Minecraft implements IThreadListener {
     private TextureMap textureMapBlocks;
     private SoundHandler mcSoundHandler;
     private MusicTicker mcMusicTicker;
-    private ResourceLocation mojangLogo;
+    private ResourceLocation backgroundSplash;
     private Framebuffer splashFramebuffer;
     private ScaledResolution splashScaledResolution;
     private int splashLogoX, splashLogoY, splashLogoDisplayWidth, splashLogoDisplayHeight;
@@ -480,7 +487,7 @@ public class Minecraft implements IThreadListener {
                         new ResourceLocation("textures/font/ascii.png"),
                         this.renderEngine,
                         false);
-        net.minecraft.client.gui.Gui.font = this.fontRendererObj;
+        Gui.font = this.fontRendererObj;
 
         if(this.gameSettings.language != null) {
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
@@ -569,8 +576,8 @@ public class Minecraft implements IThreadListener {
             this.displayGuiScreen(new GuiMainMenu());
         }
 
-        this.renderEngine.deleteTexture(this.mojangLogo);
-        this.mojangLogo = null;
+        this.renderEngine.deleteTexture(this.backgroundSplash);
+        this.backgroundSplash = null;
         this.loadingScreen = new LoadingScreenRenderer(this);
 
         if(this.gameSettings.fullScreen && !this.fullscreen) {
@@ -660,9 +667,9 @@ public class Minecraft implements IThreadListener {
                 InputStream macStream =
                         this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/32x32.png"));
                 if(macStream != null) {
-                    java.awt.image.BufferedImage icon = ImageIO.read(macStream);
+                    BufferedImage icon = ImageIO.read(macStream);
                     if(icon != null) {
-                        java.awt.Taskbar.getTaskbar().setIconImage(icon);
+                        Taskbar.getTaskbar().setIconImage(icon);
                     }
                     macStream.close();
                 }
@@ -854,7 +861,7 @@ public class Minecraft implements IThreadListener {
         this.displayHeight = displaymode.getHeight();
     }
 
-    private void drawSplashScreen(TextureManager textureManagerInstance) throws LWJGLException {
+    private void drawSplashScreen(final TextureManager textureManagerInstance) {
         this.splashScaledResolution = new ScaledResolution(this);
         this.splashScaleFactor = this.splashScaledResolution.getScaleFactor();
         this.splashFramebuffer =
@@ -886,22 +893,22 @@ public class Minecraft implements IThreadListener {
 
         try {
             inputstream = this.mcDefaultResourcePack.getInputStream(locationMojangPng);
-            BufferedImage logoImage = ImageIO.read(inputstream);
+            final BufferedImage logoImage = ImageIO.read(inputstream);
             this.splashImageWidth = logoImage.getWidth();
             this.splashImageHeight = logoImage.getHeight();
-            this.mojangLogo =
+            this.backgroundSplash =
                     textureManagerInstance.getDynamicTextureLocation("logo", new DynamicTexture(logoImage));
-        } catch(IOException ioexception) {
-            logger.error("Unable to load logo: " + locationMojangPng, ioexception);
+        } catch(final IOException ioexception) {
+            logger.error("Unable to load logo: {}", locationMojangPng, ioexception);
         } finally {
             IOUtils.closeQuietly(inputstream);
         }
 
-        int scaledW = this.splashScaledResolution.getScaledWidth();
-        int scaledH = this.splashScaledResolution.getScaledHeight();
-        float imgAspect = (float) this.splashImageWidth / this.splashImageHeight;
-        float screenAspect = (float) scaledW / scaledH;
-        int logoDisplayWidth, logoDisplayHeight;
+        final int scaledW = this.splashScaledResolution.getScaledWidth();
+        final int scaledH = this.splashScaledResolution.getScaledHeight();
+        final float imgAspect = (float) this.splashImageWidth / this.splashImageHeight;
+        final float screenAspect = (float) scaledW / scaledH;
+        final int logoDisplayWidth, logoDisplayHeight;
         if(imgAspect > screenAspect) {
             logoDisplayHeight = scaledH;
             logoDisplayWidth = (int) (scaledH * imgAspect);
@@ -922,8 +929,8 @@ public class Minecraft implements IThreadListener {
         this.updateSplashProgress(0);
     }
 
-    private void updateSplashProgress(int progress) {
-        if(this.splashFramebuffer == null || this.mojangLogo == null) {
+    private void updateSplashProgress(final int progress) {
+        if(this.splashFramebuffer == null || this.backgroundSplash == null) {
             return;
         }
 
@@ -946,7 +953,7 @@ public class Minecraft implements IThreadListener {
 
         GlStateManager.enableTexture2D();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.renderEngine.bindTexture(this.mojangLogo);
+        this.renderEngine.bindTexture(this.backgroundSplash);
         this.drawScaledLogo(
                 this.splashLogoX,
                 this.splashLogoY,
@@ -962,22 +969,22 @@ public class Minecraft implements IThreadListener {
         bgRenderer.begin(7, DefaultVertexFormats.field_181706_f);
         bgRenderer
                 .pos(this.splashProgressBarX, this.splashProgressBarY + this.splashProgressBarHeight, 0.0D)
-                .func_181669_b(30, 30, 30, 255)
+                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgRenderer
                 .pos(
                         this.splashProgressBarX + this.splashProgressBarWidth,
                         this.splashProgressBarY + this.splashProgressBarHeight,
                         0.0D)
-                .func_181669_b(30, 30, 30, 255)
+                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgRenderer
                 .pos(this.splashProgressBarX + this.splashProgressBarWidth, this.splashProgressBarY, 0.0D)
-                .func_181669_b(30, 30, 30, 255)
+                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgRenderer
                 .pos(this.splashProgressBarX, this.splashProgressBarY, 0.0D)
-                .func_181669_b(30, 30, 30, 255)
+                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgTessellator.draw();
 
@@ -989,22 +996,22 @@ public class Minecraft implements IThreadListener {
             fillRenderer
                     .pos(
                             this.splashProgressBarX, this.splashProgressBarY + this.splashProgressBarHeight, 0.0D)
-                    .func_181669_b(200, 100, 180, 255)
+                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillRenderer
                     .pos(
                             this.splashProgressBarX + filledWidth,
                             this.splashProgressBarY + this.splashProgressBarHeight,
                             0.0D)
-                    .func_181669_b(200, 100, 180, 255)
+                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillRenderer
                     .pos(this.splashProgressBarX + filledWidth, this.splashProgressBarY, 0.0D)
-                    .func_181669_b(200, 100, 180, 255)
+                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillRenderer
                     .pos(this.splashProgressBarX, this.splashProgressBarY, 0.0D)
-                    .func_181669_b(200, 100, 180, 255)
+                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillTessellator.draw();
         }
@@ -1022,46 +1029,6 @@ public class Minecraft implements IThreadListener {
         this.updateDisplay();
     }
 
-    public void func_181536_a(
-            int p_181536_1_,
-            int p_181536_2_,
-            int p_181536_3_,
-            int p_181536_4_,
-            int p_181536_5_,
-            int p_181536_6_,
-            int p_181536_7_,
-            int p_181536_8_,
-            int p_181536_9_,
-            int p_181536_10_,
-            int textureWidth,
-            int textureHeight) {
-        float f = 1.0F / (float) textureWidth;
-        float f1 = 1.0F / (float) textureHeight;
-        WorldRenderer worldrenderer = Tessellator.getInstance().getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-        worldrenderer
-                .pos(p_181536_1_, p_181536_2_ + p_181536_6_, 0.0D)
-                .tex((float) p_181536_3_ * f, (float) (p_181536_4_ + p_181536_6_) * f1)
-                .func_181669_b(p_181536_7_, p_181536_8_, p_181536_9_, p_181536_10_)
-                .endVertex();
-        worldrenderer
-                .pos(p_181536_1_ + p_181536_5_, p_181536_2_ + p_181536_6_, 0.0D)
-                .tex((float) (p_181536_3_ + p_181536_5_) * f, (float) (p_181536_4_ + p_181536_6_) * f1)
-                .func_181669_b(p_181536_7_, p_181536_8_, p_181536_9_, p_181536_10_)
-                .endVertex();
-        worldrenderer
-                .pos(p_181536_1_ + p_181536_5_, p_181536_2_, 0.0D)
-                .tex((float) (p_181536_3_ + p_181536_5_) * f, (float) p_181536_4_ * f1)
-                .func_181669_b(p_181536_7_, p_181536_8_, p_181536_9_, p_181536_10_)
-                .endVertex();
-        worldrenderer
-                .pos(p_181536_1_, p_181536_2_, 0.0D)
-                .tex((float) p_181536_3_ * f, (float) p_181536_4_ * f1)
-                .func_181669_b(p_181536_7_, p_181536_8_, p_181536_9_, p_181536_10_)
-                .endVertex();
-        Tessellator.getInstance().draw();
-    }
-
     public void drawScaledLogo(
             int x, int y, int displayWidth, int displayHeight, int textureWidth, int textureHeight) {
         WorldRenderer worldrenderer = Tessellator.getInstance().getWorldRenderer();
@@ -1069,19 +1036,19 @@ public class Minecraft implements IThreadListener {
         worldrenderer
                 .pos(x, y + displayHeight, 0.0D)
                 .tex(0.0D, 1.0D)
-                .func_181669_b(255, 255, 255, 255)
+                .setColor(255, 255, 255, 255)
                 .endVertex();
         worldrenderer
                 .pos(x + displayWidth, y + displayHeight, 0.0D)
                 .tex(1.0D, 1.0D)
-                .func_181669_b(255, 255, 255, 255)
+                .setColor(255, 255, 255, 255)
                 .endVertex();
         worldrenderer
                 .pos(x + displayWidth, y, 0.0D)
                 .tex(1.0D, 0.0D)
-                .func_181669_b(255, 255, 255, 255)
+                .setColor(255, 255, 255, 255)
                 .endVertex();
-        worldrenderer.pos(x, y, 0.0D).tex(0.0D, 0.0D).func_181669_b(255, 255, 255, 255).endVertex();
+        worldrenderer.pos(x, y, 0.0D).tex(0.0D, 0.0D).setColor(255, 255, 255, 255).endVertex();
         Tessellator.getInstance().draw();
     }
 
@@ -1415,19 +1382,19 @@ public class Minecraft implements IThreadListener {
             worldrenderer.begin(7, DefaultVertexFormats.field_181706_f);
             worldrenderer
                     .pos((float) j - (float) i * 1.1F, (float) k - (float) i * 0.6F - 16.0F, 0.0D)
-                    .func_181669_b(200, 0, 0, 0)
+                    .setColor(200, 0, 0, 0)
                     .endVertex();
             worldrenderer
                     .pos((float) j - (float) i * 1.1F, k + i * 2, 0.0D)
-                    .func_181669_b(200, 0, 0, 0)
+                    .setColor(200, 0, 0, 0)
                     .endVertex();
             worldrenderer
                     .pos((float) j + (float) i * 1.1F, k + i * 2, 0.0D)
-                    .func_181669_b(200, 0, 0, 0)
+                    .setColor(200, 0, 0, 0)
                     .endVertex();
             worldrenderer
                     .pos((float) j + (float) i * 1.1F, (float) k - (float) i * 0.6F - 16.0F, 0.0D)
-                    .func_181669_b(200, 0, 0, 0)
+                    .setColor(200, 0, 0, 0)
                     .endVertex();
             tessellator.draw();
             GlStateManager.disableBlend();
@@ -1441,7 +1408,7 @@ public class Minecraft implements IThreadListener {
                 int k1 = j1 >> 16 & 255;
                 int l1 = j1 >> 8 & 255;
                 int i2 = j1 & 255;
-                worldrenderer.pos(j, k, 0.0D).func_181669_b(k1, l1, i2, 255).endVertex();
+                worldrenderer.pos(j, k, 0.0D).setColor(k1, l1, i2, 255).endVertex();
 
                 for(int j2 = i1; j2 >= 0; --j2) {
                     float f =
@@ -1454,7 +1421,7 @@ public class Minecraft implements IThreadListener {
                     float f2 = MathHelper.cos(f) * (float) i * 0.5F;
                     worldrenderer
                             .pos((float) j + f1, (float) k - f2, 0.0D)
-                            .func_181669_b(k1, l1, i2, 255)
+                            .setColor(k1, l1, i2, 255)
                             .endVertex();
                 }
 
@@ -1472,11 +1439,11 @@ public class Minecraft implements IThreadListener {
                     float f5 = MathHelper.cos(f3) * (float) i * 0.5F;
                     worldrenderer
                             .pos((float) j + f4, (float) k - f5, 0.0D)
-                            .func_181669_b(k1 >> 1, l1 >> 1, i2 >> 1, 255)
+                            .setColor(k1 >> 1, l1 >> 1, i2 >> 1, 255)
                             .endVertex();
                     worldrenderer
                             .pos((float) j + f4, (float) k - f5 + 10.0F, 0.0D)
-                            .func_181669_b(k1 >> 1, l1 >> 1, i2 >> 1, 255)
+                            .setColor(k1 >> 1, l1 >> 1, i2 >> 1, 255)
                             .endVertex();
                 }
 

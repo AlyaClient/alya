@@ -126,6 +126,7 @@ public class FallbackResourceManager implements IResourceManager {
       this.field_177329_c = true;
     }
 
+    @SuppressWarnings("removal")
     protected void finalize() throws Throwable {
       if (!this.field_177329_c) {
         FallbackResourceManager.logger.warn(this.field_177328_b);

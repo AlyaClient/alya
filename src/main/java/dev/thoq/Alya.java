@@ -229,7 +229,7 @@ public final class Alya {
 
     public AlyaFontRenderer getFontRendererBold() {
         if(fontRendererBold == null) {
-            fontRendererBold = new AlyaFontRenderer("Alya/Fonts/OpenSans-Bold.ttf", 12f);
+            fontRendererBold = new AlyaFontRenderer("Alya/Fonts/Lato-Bold.ttf", 12f);
         }
         return fontRendererBold;
     }

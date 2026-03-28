@@ -153,7 +153,7 @@ public class RenderFish extends Render<EntityFishHook> {
                 x + d9 * (double) f10,
                 y + d11 * (double) (f10 * f10 + f10) * 0.5D + 0.25D,
                 z + d12 * (double) f10)
-            .func_181669_b(0, 0, 0, 255)
+            .setColor(0, 0, 0, 255)
             .endVertex();
       }
 

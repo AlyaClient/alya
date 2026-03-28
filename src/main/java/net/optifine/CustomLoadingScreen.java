@@ -129,19 +129,19 @@ public class CustomLoadingScreen {
         worldrenderer
                 .pos(0.0D, (double) height, 0.0D)
                 .tex(d3, d4 + d2)
-                .func_181669_b(255, 255, 255, 255)
+                .setColor(255, 255, 255, 255)
                 .endVertex();
         worldrenderer
                 .pos((double) width, (double) height, 0.0D)
                 .tex(d3 + d1, d4 + d2)
-                .func_181669_b(255, 255, 255, 255)
+                .setColor(255, 255, 255, 255)
                 .endVertex();
         worldrenderer
                 .pos((double) width, 0.0D, 0.0D)
                 .tex(d3 + d1, d4)
-                .func_181669_b(255, 255, 255, 255)
+                .setColor(255, 255, 255, 255)
                 .endVertex();
-        worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(d3, d4).func_181669_b(255, 255, 255, 255).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(d3, d4).setColor(255, 255, 255, 255).endVertex();
         tessellator.draw();
     }
 }

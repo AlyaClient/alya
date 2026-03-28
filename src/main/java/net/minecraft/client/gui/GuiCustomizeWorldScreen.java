@@ -1781,22 +1781,22 @@ public class GuiCustomizeWorldScreen extends GuiScreen
       worldrenderer
           .pos((double) (this.width / 2 - 90), 185.0D, 0.0D)
           .tex(0.0D, 2.65625D)
-          .func_181669_b(64, 64, 64, 64)
+          .setColor(64, 64, 64, 64)
           .endVertex();
       worldrenderer
           .pos((double) (this.width / 2 + 90), 185.0D, 0.0D)
           .tex(5.625D, 2.65625D)
-          .func_181669_b(64, 64, 64, 64)
+          .setColor(64, 64, 64, 64)
           .endVertex();
       worldrenderer
           .pos((double) (this.width / 2 + 90), 100.0D, 0.0D)
           .tex(5.625D, 0.0D)
-          .func_181669_b(64, 64, 64, 64)
+          .setColor(64, 64, 64, 64)
           .endVertex();
       worldrenderer
           .pos((double) (this.width / 2 - 90), 100.0D, 0.0D)
           .tex(0.0D, 0.0D)
-          .func_181669_b(64, 64, 64, 64)
+          .setColor(64, 64, 64, 64)
           .endVertex();
       tessellator.draw();
       this.drawCenteredString(

@@ -1182,7 +1182,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
   public void attackTargetEntityWithCurrentItem(Entity targetEntity) {
     if (this.theItemInWorldManager.getGameType() == WorldSettings.GameType.SPECTATOR) {
       this.setSpectatingEntity(targetEntity);
-    } else {
+    } else if (!this.isBlocking()) {
       super.attackTargetEntityWithCurrentItem(targetEntity);
     }
   }

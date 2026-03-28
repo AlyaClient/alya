@@ -478,14 +478,14 @@ public class WorldRenderer {
 
   public WorldRenderer func_181666_a(
       float p_181666_1_, float p_181666_2_, float p_181666_3_, float p_181666_4_) {
-    return this.func_181669_b(
+    return this.setColor(
         (int) (p_181666_1_ * 255.0F),
         (int) (p_181666_2_ * 255.0F),
         (int) (p_181666_3_ * 255.0F),
         (int) (p_181666_4_ * 255.0F));
   }
 
-  public WorldRenderer func_181669_b(
+  public WorldRenderer setColor(
       int p_181669_1_, int p_181669_2_, int p_181669_3_, int p_181669_4_) {
     if (this.needsUpdate) {
       return this;
