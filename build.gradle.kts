@@ -23,12 +23,14 @@ repositories {
 }
 
 val lwjglVersion = "3.3.4"
-val lwjglNatives: String = when {
-    OperatingSystem.current().isWindows -> "natives-windows"
-    OperatingSystem.current().isLinux -> "natives-linux"
-    OperatingSystem.current().isMacOsX -> "natives-macos-arm64"
-    else -> throw GradleException("Unsupported OS: ${OperatingSystem.current().name}")
-}
+val lwjglAllNatives = listOf(
+    "natives-windows",
+    "natives-windows-arm64",
+    "natives-linux",
+    "natives-linux-arm64",
+    "natives-macos",
+    "natives-macos-arm64",
+)
 
 dependencies {
     implementation("com.paulscode:codecjorbis:20101023")
@@ -58,12 +60,14 @@ dependencies {
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-tinyfd:$lwjglVersion")
-    runtimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-openal::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-tinyfd::$lwjglNatives")
+    for (natives in lwjglAllNatives) {
+        runtimeOnly("org.lwjgl:lwjgl::$natives")
+        runtimeOnly("org.lwjgl:lwjgl-glfw::$natives")
+        runtimeOnly("org.lwjgl:lwjgl-openal::$natives")
+        runtimeOnly("org.lwjgl:lwjgl-opengl::$natives")
+        runtimeOnly("org.lwjgl:lwjgl-stb::$natives")
+        runtimeOnly("org.lwjgl:lwjgl-tinyfd::$natives")
+    }
     implementation("fr.litarvan:openauth:1.1.3")
     implementation("org.luaj:luaj-jse:3.0.1")
 }
