@@ -52,7 +52,12 @@ dependencies {
     implementation("com.mojang:authlib:1.5.25")
     implementation("com.github.dblock:oshi-core:1.2")
     implementation("io.netty:netty-all:4.0.23.Final")
-    implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:cb4dd06464")
+    val useLocalLwjglBridge = gradle.extra["useLocalLwjglBridge"] as Boolean
+    if (useLocalLwjglBridge) {
+        implementation("org.mcphackers:legacy-lwjgl3")
+    } else {
+        implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:cb4dd06464")
+    }
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
