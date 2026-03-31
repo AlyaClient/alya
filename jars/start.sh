@@ -4,7 +4,8 @@
 # This script is intended for end-users who do not want to
 # use a GUI launcher. Do not run if developing.
 
-JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-zulu/bin/java"
+# Modify this to match your Java installation
+JDK_PATH="$HOME/.sdkman/candidates/java/25.0.2-zulu/bin/java"
 echo "JDK PATH: $JDK_PATH"
 
 SCRIPT_DIR=$(pwd)
