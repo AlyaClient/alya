@@ -42,7 +42,7 @@ jobs:
           cp jars/start.sh release/start.sh
           cp jars/README.md release/README.md
           cd release
-          zip -r ../alya-release.zip .
+          zip -r ../client-release.zip .
 
       - name: Get short SHA
         id: sha
