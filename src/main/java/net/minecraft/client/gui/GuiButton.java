@@ -1,20 +1,22 @@
 package net.minecraft.client.gui;
 
+import dev.thoq.gui.UIConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+@SuppressWarnings("unused")
 public class GuiButton extends Gui {
   protected static final ResourceLocation buttonTextures =
       new ResourceLocation("textures/gui/widgets.png");
 
-  private static final int BACKGROUND_COLOR = 0x4D181818;
+  private static final int BACKGROUND_COLOR = 0x6D181818;
   private static final int BACKGROUND_HOVER = 0x5A252525;
   private static final int BACKGROUND_DISABLED = 0x40101010;
   private static final int BORDER_COLOR = 0xFF303030;
-  private static final int BORDER_HOVER = 0xFFFA7DD6;
+  private static final int BORDER_HOVER = UIConstants.ACCENT_COLOR;
   private static final int TEXT_COLOR = 0xFFFFFFFF;
   private static final int TEXT_DISABLED = 0xFF666666;
 
@@ -175,7 +177,7 @@ public class GuiButton extends Gui {
     String text = this.displayString;
     int maxWidth = this.width - 6;
     if (fr.getStringWidth(text) > maxWidth) {
-      while (text.length() > 0 && fr.getStringWidth(text + "...") > maxWidth) {
+      while (!text.isEmpty() && fr.getStringWidth(text + "...") > maxWidth) {
         text = text.substring(0, text.length() - 1);
       }
       text = text + "...";

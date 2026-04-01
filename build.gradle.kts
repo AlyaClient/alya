@@ -56,7 +56,7 @@ dependencies {
     if (useLocalLwjglBridge) {
         implementation("org.mcphackers:legacy-lwjgl3")
     } else {
-        implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:cb4dd06464")
+        implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:7295cb9ab7")
     }
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
@@ -112,7 +112,7 @@ tasks.register<JavaExec>("start") {
     mainClass.set("start.Main")
     classpath = sourceSets.main.get().runtimeClasspath + files("${project.projectDir}/jars/versions/1.8.9/1.8.9.jar")
 
-    if (OperatingSystem.current().isMacOsX) {
+    if(OperatingSystem.current().isMacOsX) {
         jvmArgs("-XstartOnFirstThread")
     }
 
