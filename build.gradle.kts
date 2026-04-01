@@ -104,17 +104,3 @@ tasks.shadowJar {
 tasks.build {
     dependsOn(tasks.shadowJar)
 }
-
-tasks.register<JavaExec>("start") {
-    group = "application"
-    description = "Launches Alya client"
-    workingDir = file("${project.projectDir}/jars")
-    mainClass.set("start.Main")
-    classpath = sourceSets.main.get().runtimeClasspath + files("${project.projectDir}/jars/versions/1.8.9/1.8.9.jar")
-
-    if(OperatingSystem.current().isMacOsX) {
-        jvmArgs("-XstartOnFirstThread")
-    }
-
-    dependsOn("processResources")
-}

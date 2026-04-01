@@ -1677,7 +1677,7 @@ public class Config {
         }
     }
 
-    private static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException {
+    public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException {
         BufferedImage bufferedimage = ImageIO.read(p_readIconImage_0_);
         int[] aint =
                 bufferedimage.getRGB(

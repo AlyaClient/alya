@@ -95,7 +95,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.vector.Vector4f;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -112,9 +111,13 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+
+import static net.minecraft.src.Config.getDefaultResourcePack;
+import static net.minecraft.src.Config.readIconImage;
 
 public class Minecraft implements IThreadListener {
     private static final Logger logger = LogManager.getLogger(Minecraft.class);
@@ -645,15 +648,17 @@ public class Minecraft implements IThreadListener {
 
         try {
             inputstream =
-                    this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/16x16.png"));
+                    getDefaultResourcePack()
+                            .getInputStreamAssets(new ResourceLocation("Alya/Icons/icon_32x32.png"));
             inputstream1 =
-                    this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/32x32.png"));
+                    getDefaultResourcePack()
+                            .getInputStreamAssets(new ResourceLocation("Alya/Icons/icon_32x32.png"));
 
             if(inputstream != null && inputstream1 != null) {
-                Display.setIcon(
-                        new ByteBuffer[]{
-                                this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1)
-                        });
+                if(Util.getOSType() != Util.EnumOS.OSX) {
+                    Display.setIcon(
+                            new ByteBuffer[]{readIconImage(inputstream), readIconImage(inputstream1)});
+                }
             }
         } catch(IOException ioexception) {
             logger.error("Couldn't set icon", ioexception);
@@ -665,7 +670,7 @@ public class Minecraft implements IThreadListener {
         if(Util.getOSType() == Util.EnumOS.OSX) {
             try {
                 InputStream macStream =
-                        this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/32x32.png"));
+                        this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Assets/GUI/logo.png"));
                 if(macStream != null) {
                     BufferedImage icon = ImageIO.read(macStream);
                     if(icon != null) {
@@ -2583,8 +2588,8 @@ public class Minecraft implements IThreadListener {
                                 return !s.equals("vanilla")
                                         ? "Definitely; Client brand changed to '" + s + "'"
                                         : (Minecraft.class.getSigners() == null
-                                        ? "Very likely; Jar signature invalidated"
-                                        : "Probably not. Jar signature remains and client brand is untouched.");
+                                           ? "Very likely; Jar signature invalidated"
+                                           : "Probably not. Jar signature remains and client brand is untouched.");
                             }
                         });
         theCrash
@@ -2804,15 +2809,15 @@ public class Minecraft implements IThreadListener {
     public MusicTicker.MusicType getAmbientMusicType() {
         return this.thePlayer != null
                 ? (this.thePlayer.worldObj.provider instanceof WorldProviderHell
-                ? MusicTicker.MusicType.NETHER
-                : (this.thePlayer.worldObj.provider instanceof WorldProviderEnd
-                ? (BossStatus.bossName != null && BossStatus.statusBarTime > 0
-                ? MusicTicker.MusicType.END_BOSS
-                : MusicTicker.MusicType.END)
-                : (this.thePlayer.capabilities.isCreativeMode
+                   ? MusicTicker.MusicType.NETHER
+                   : (this.thePlayer.worldObj.provider instanceof WorldProviderEnd
+                      ? (BossStatus.bossName != null && BossStatus.statusBarTime > 0
+                         ? MusicTicker.MusicType.END_BOSS
+                         : MusicTicker.MusicType.END)
+                      : (this.thePlayer.capabilities.isCreativeMode
                 && this.thePlayer.capabilities.allowFlying
-                ? MusicTicker.MusicType.CREATIVE
-                : MusicTicker.MusicType.GAME)))
+                         ? MusicTicker.MusicType.CREATIVE
+                         : MusicTicker.MusicType.GAME)))
                 : MusicTicker.MusicType.MENU;
     }
 
