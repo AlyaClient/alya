@@ -42,7 +42,7 @@ jobs:
           cp jars/start.sh release/start.sh
           cp jars/README.md release/README.md
           cd release
-          zip -r ../client-release.zip .
+          zip -r ../alya-release.zip .
 
       - name: Get short SHA
         id: sha
@@ -61,7 +61,7 @@ jobs:
           body: |
             Automated release from commit ${{ github.sha }}
             ${{ github.event.head_commit.message || github.event.pull_request.title }}
-          files: client-release.zip
+          files: alya-release.zip
           draft: false
           prerelease: false
           make_latest: true
@@ -77,7 +77,7 @@ jobs:
             Always points to the most recent successful build.
             Current commit: ${{ github.sha }} (${{ steps.sha.outputs.short }})
             ${{ github.event.head_commit.message || github.event.pull_request.title }}
-          files: client-release.zip
+          files: alya-release.zip
           draft: false
           prerelease: false
         env:
