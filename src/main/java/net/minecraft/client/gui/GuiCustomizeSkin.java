@@ -7,10 +7,10 @@ import net.optifine.gui.GuiButtonOF;
 import net.optifine.gui.GuiScreenCapeOF;
 
 public class GuiCustomizeSkin extends GuiScreen {
-  /** The parent GUI for this GUI */
+  /** The parent gui for this gui */
   private final GuiScreen parentScreen;
 
-  /** The title of the GUI. */
+  /** The title of the gui. */
   private String title;
 
   public GuiCustomizeSkin(GuiScreen parentScreenIn) {
@@ -18,7 +18,7 @@ public class GuiCustomizeSkin extends GuiScreen {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {

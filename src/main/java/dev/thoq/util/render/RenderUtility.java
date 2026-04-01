@@ -224,7 +224,7 @@ public final class RenderUtility {
 
     /**
      * Projects a world position to screen coordinates. Returns null if the point is behind the
-     * camera. Result is in display pixels (not scaled GUI coords).
+     * camera. Result is in display pixels (not scaled gui coords).
      */
     public static float[] worldToScreen(double worldX, double worldY, double worldZ) {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
@@ -383,6 +383,112 @@ public final class RenderUtility {
 
     public static int withAlpha(final int color, final int alpha) {
         return (alpha << 24) | (color & 0x00FFFFFF);
+    }
+
+    public static void renderEntityChams(
+            final int entityId, final float red, final float green, final float blue, final float alpha) {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+        if(mc.theWorld == null || mc.thePlayer == null) return;
+        net.minecraft.entity.Entity entity = mc.theWorld.getEntityByID(entityId);
+        if(!(entity instanceof net.minecraft.entity.EntityLivingBase)) return;
+        net.minecraft.entity.Entity view = mc.getRenderViewEntity();
+        if(view == null) return;
+        final float pt = mc.timer.renderPartialTicks;
+        final double cx = view.lastTickPosX + (view.posX - view.lastTickPosX) * pt;
+        final double cy = view.lastTickPosY + (view.posY - view.lastTickPosY) * pt;
+        final double cz = view.lastTickPosZ + (view.posZ - view.lastTickPosZ) * pt;
+        final double ix = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * pt;
+        final double iy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * pt;
+        final double iz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * pt;
+        net.minecraft.util.AxisAlignedBB aabb = entity.getEntityBoundingBox();
+        final double x0 = aabb.minX - entity.posX + ix - cx;
+        final double y0 = aabb.minY - entity.posY + iy - cy;
+        final double z0 = aabb.minZ - entity.posZ + iz - cz;
+        final double x1 = aabb.maxX - entity.posX + ix - cx;
+        final double y1 = aabb.maxY - entity.posY + iy - cy;
+        final double z1 = aabb.maxZ - entity.posZ + iz - cz;
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
+        GL11.glDepthFunc(GL11.GL_ALWAYS);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GlStateManager.color(red, green, blue, alpha);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.field_181705_e);
+        worldRenderer.pos(x0, y0, z0).endVertex();
+        worldRenderer.pos(x1, y0, z0).endVertex();
+        worldRenderer.pos(x1, y0, z1).endVertex();
+        worldRenderer.pos(x0, y0, z1).endVertex();
+        worldRenderer.pos(x0, y1, z0).endVertex();
+        worldRenderer.pos(x0, y1, z1).endVertex();
+        worldRenderer.pos(x1, y1, z1).endVertex();
+        worldRenderer.pos(x1, y1, z0).endVertex();
+        worldRenderer.pos(x0, y0, z0).endVertex();
+        worldRenderer.pos(x0, y1, z0).endVertex();
+        worldRenderer.pos(x1, y1, z0).endVertex();
+        worldRenderer.pos(x1, y0, z0).endVertex();
+        worldRenderer.pos(x1, y0, z0).endVertex();
+        worldRenderer.pos(x1, y1, z0).endVertex();
+        worldRenderer.pos(x1, y1, z1).endVertex();
+        worldRenderer.pos(x1, y0, z1).endVertex();
+        worldRenderer.pos(x1, y0, z1).endVertex();
+        worldRenderer.pos(x1, y1, z1).endVertex();
+        worldRenderer.pos(x0, y1, z1).endVertex();
+        worldRenderer.pos(x0, y0, z1).endVertex();
+        worldRenderer.pos(x0, y0, z1).endVertex();
+        worldRenderer.pos(x0, y1, z1).endVertex();
+        worldRenderer.pos(x0, y1, z0).endVertex();
+        worldRenderer.pos(x0, y0, z0).endVertex();
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+    }
+
+    public static void renderEntityOutline(
+            final int entityId,
+            final float red,
+            final float green,
+            final float blue,
+            final float alpha,
+            final float lineWidth) {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+        if(mc.theWorld == null || mc.thePlayer == null) return;
+        net.minecraft.entity.Entity entity = mc.theWorld.getEntityByID(entityId);
+        if(!(entity instanceof net.minecraft.entity.EntityLivingBase)) return;
+        net.minecraft.entity.Entity view = mc.getRenderViewEntity();
+        if(view == null) return;
+        final float pt = mc.timer.renderPartialTicks;
+        final double cx = view.lastTickPosX + (view.posX - view.lastTickPosX) * pt;
+        final double cy = view.lastTickPosY + (view.posY - view.lastTickPosY) * pt;
+        final double cz = view.lastTickPosZ + (view.posZ - view.lastTickPosZ) * pt;
+        final double ix = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * pt;
+        final double iy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * pt;
+        final double iz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * pt;
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
+        GL11.glDepthFunc(GL11.GL_ALWAYS);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        GL11.glLineWidth(lineWidth);
+        GlStateManager.color(red, green, blue, alpha);
+        mc.getRenderManager().renderEntityWithPosYaw(entity, ix - cx, iy - cy, iz - cz, entity.rotationYaw, pt);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawImage(

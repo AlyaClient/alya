@@ -8,16 +8,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonSerializableSet;
 
 public class AchievementList {
-  /** Is the smallest column used to display a achievement on the GUI. */
+  /** Is the smallest column used to display a achievement on the gui. */
   public static int minDisplayColumn;
 
-  /** Is the smallest row used to display a achievement on the GUI. */
+  /** Is the smallest row used to display a achievement on the gui. */
   public static int minDisplayRow;
 
-  /** Is the biggest column used to display a achievement on the GUI. */
+  /** Is the biggest column used to display a achievement on the gui. */
   public static int maxDisplayColumn;
 
-  /** Is the biggest row used to display a achievement on the GUI. */
+  /** Is the biggest row used to display a achievement on the gui. */
   public static int maxDisplayRow;
 
   public static List<Achievement> achievementList = Lists.<Achievement>newArrayList();

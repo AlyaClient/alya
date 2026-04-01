@@ -37,7 +37,7 @@ public abstract class MobSpawnerBaseLogic {
   private int maxSpawnDelay = 800;
   private int spawnCount = 4;
 
-  /** Cached instance of the entity to render inside the spawner. */
+  /** Cached instance of the entity to visual inside the spawner. */
   private Entity cachedEntity;
 
   private int maxNearbyEntities = 6;

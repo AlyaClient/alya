@@ -658,12 +658,12 @@ public class InventoryPlayer implements IInventory {
     this.inventoryChanged = true;
   }
 
-  /** Set the stack helds by mouse, used in GUI/Container */
+  /** Set the stack helds by mouse, used in gui/Container */
   public void setItemStack(ItemStack itemStackIn) {
     this.itemStack = itemStackIn;
   }
 
-  /** Stack helds by mouse, used in GUI and Containers */
+  /** Stack helds by mouse, used in gui and Containers */
   public ItemStack getItemStack() {
     return this.itemStack;
   }

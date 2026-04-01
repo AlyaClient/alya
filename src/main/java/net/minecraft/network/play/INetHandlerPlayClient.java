@@ -116,7 +116,7 @@ public interface INetHandlerPlayClient extends INetHandler {
   void handleBlockBreakAnim(S25PacketBlockBreakAnim packetIn);
 
   /**
-   * Creates a sign in the specified location if it didn't exist and opens the GUI to edit its text
+   * Creates a sign in the specified location if it didn't exist and opens the gui to edit its text
    */
   void handleSignEditorOpen(S36PacketSignEditorOpen packetIn);
 
@@ -136,7 +136,7 @@ public interface INetHandlerPlayClient extends INetHandler {
   /** Updates the block and metadata and generates a blockupdate (and notify the clients) */
   void handleBlockChange(S23PacketBlockChange packetIn);
 
-  /** Prints a chatmessage in the chat GUI */
+  /** Prints a chatmessage in the chat gui */
   void handleChat(S02PacketChat packetIn);
 
   /** Displays the available command-completion options the server knows of */
@@ -168,7 +168,7 @@ public interface INetHandlerPlayClient extends INetHandler {
   void handleWindowItems(S30PacketWindowItems packetIn);
 
   /**
-   * Displays a GUI by ID. In order starting from id 0: Chest, Workbench, Furnace, Dispenser,
+   * Displays a gui by ID. In order starting from id 0: Chest, Workbench, Furnace, Dispenser,
    * Enchanting table, Brewing stand, Villager merchant, Beacon, Anvil, Hopper, Dropper, Horse
    */
   void handleOpenWindow(S2DPacketOpenWindow packetIn);

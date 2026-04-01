@@ -38,7 +38,7 @@ public class EntityWitherSkull extends EntityFireball {
     this.setSize(0.3125F, 0.3125F);
   }
 
-  /** Returns true if the entity is on fire. Used by render to add the fire effect on rendering. */
+  /** Returns true if the entity is on fire. Used by visual to add the fire effect on rendering. */
   public boolean isBurning() {
     return false;
   }

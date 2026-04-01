@@ -34,7 +34,7 @@ public class BlockCarpet extends Block {
     return ((EnumDyeColor) state.getValue(COLOR)).getMapColor();
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

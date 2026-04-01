@@ -275,7 +275,7 @@ public class OpenGlHelper {
             || contextcapabilities.GL_ARB_vertex_shader
                 && contextcapabilities.GL_ARB_fragment_shader
                 && contextcapabilities.GL_ARB_shader_objects;
-    logText = logText + "Shaders are " + (shadersAvailable ? "" : "not ") + "available because ";
+    logText = logText + "shaders are " + (shadersAvailable ? "" : "not ") + "available because ";
 
     if (shadersAvailable) {
       if (contextcapabilities.OpenGL21) {

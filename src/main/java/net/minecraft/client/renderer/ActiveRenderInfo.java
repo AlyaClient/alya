@@ -45,7 +45,7 @@ public class ActiveRenderInfo {
   private static float rotationXY;
 
   /**
-   * Updates the current render info and camera location based on entity look angles and 1st/3rd
+   * Updates the current visual info and camera location based on entity look angles and 1st/3rd
    * person view mode
    */
   public static void updateRenderInfo(EntityPlayer entityplayerIn, boolean p_74583_1_) {

@@ -10,9 +10,9 @@ public class NativeMemory {
     private static LongSupplier bufferAllocatedSupplier =
             makeLongSupplier(
                     new String[][]{
-                            {"sun.misc.SharedSecrets", "getJavaNioAccess", "getDirectBufferPool", "getMemoryUsed"},
+                            {"sun.other.SharedSecrets", "getJavaNioAccess", "getDirectBufferPool", "getMemoryUsed"},
                             {
-                                    "jdk.internal.misc.SharedSecrets",
+                                    "jdk.internal.other.SharedSecrets",
                                     "getJavaNioAccess",
                                     "getDirectBufferPool",
                                     "getMemoryUsed"
@@ -21,7 +21,7 @@ public class NativeMemory {
     private static LongSupplier bufferMaximumSupplier =
             makeLongSupplier(
                     new String[][]{
-                            {"sun.misc.VM", "maxDirectMemory"}, {"jdk.internal.misc.VM", "maxDirectMemory"}
+                            {"sun.other.VM", "maxDirectMemory"}, {"jdk.internal.other.VM", "maxDirectMemory"}
                     });
 
     public static long getBufferAllocated() {

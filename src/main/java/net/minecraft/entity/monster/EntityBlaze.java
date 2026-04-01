@@ -144,7 +144,7 @@ public class EntityBlaze extends EntityMob {
     return Items.blaze_rod;
   }
 
-  /** Returns true if the entity is on fire. Used by render to add the fire effect on rendering. */
+  /** Returns true if the entity is on fire. Used by visual to add the fire effect on rendering. */
   public boolean isBurning() {
     return this.func_70845_n();
   }

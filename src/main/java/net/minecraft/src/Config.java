@@ -1677,7 +1677,7 @@ public class Config {
         }
     }
 
-    private static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException {
+    public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException {
         BufferedImage bufferedimage = ImageIO.read(p_readIconImage_0_);
         int[] aint =
                 bufferedimage.getRGB(
@@ -1984,7 +1984,7 @@ public class Config {
 
     public static DynamicTexture getMojangLogoTexture(DynamicTexture p_getMojangLogoTexture_0_) {
         try {
-            ResourceLocation resourcelocation = new ResourceLocation("Alya/Assets/Title/Alya.png");
+            ResourceLocation resourcelocation = new ResourceLocation("client/assets/title/client.png");
             InputStream inputstream = getResourceStream(resourcelocation);
 
             if(inputstream == null) {

@@ -95,7 +95,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.vector.Vector4f;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -112,16 +111,20 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import static net.minecraft.src.Config.getDefaultResourcePack;
+import static net.minecraft.src.Config.readIconImage;
+
 public class Minecraft implements IThreadListener {
     private static final Logger logger = LogManager.getLogger(Minecraft.class);
-    private static final ResourceLocation locationMojangPng =
-            new ResourceLocation("Alya/Assets/Title/splash.png");
+    private static final ResourceLocation splashScreenBg =
+            new ResourceLocation("client/assets/title/splash.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
-    private static final Vector4i PROGRESS_FILL_COLOR = new Vector4i(163, 117, 180, 255);
+    private static final Vector4i PROGRESS_FILL_COLOR = new Vector4i(209, 143, 242, 100);
     private static final Vector4i PROGRESS_BACKGROUND_COLOR = new Vector4i(75, 61, 101, 100);
 
     /**
@@ -215,7 +218,7 @@ public class Minecraft implements IThreadListener {
     public GuiIngame ingameGUI;
 
     /**
-     * Skip render world
+     * Skip visual world
      */
     public boolean skipRenderWorld;
 
@@ -645,15 +648,17 @@ public class Minecraft implements IThreadListener {
 
         try {
             inputstream =
-                    this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/16x16.png"));
+                    getDefaultResourcePack()
+                            .getInputStreamAssets(new ResourceLocation("client/icons/icon_32x32.png"));
             inputstream1 =
-                    this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/32x32.png"));
+                    getDefaultResourcePack()
+                            .getInputStreamAssets(new ResourceLocation("client/icons/icon_32x32.png"));
 
             if(inputstream != null && inputstream1 != null) {
-                Display.setIcon(
-                        new ByteBuffer[]{
-                                this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1)
-                        });
+                if(Util.getOSType() != Util.EnumOS.OSX) {
+                    Display.setIcon(
+                            new ByteBuffer[]{readIconImage(inputstream), readIconImage(inputstream1)});
+                }
             }
         } catch(IOException ioexception) {
             logger.error("Couldn't set icon", ioexception);
@@ -665,7 +670,7 @@ public class Minecraft implements IThreadListener {
         if(Util.getOSType() == Util.EnumOS.OSX) {
             try {
                 InputStream macStream =
-                        this.mcDefaultResourcePack.getInputStream(new ResourceLocation("Alya/Icons/32x32.png"));
+                        this.mcDefaultResourcePack.getInputStream(new ResourceLocation("client/assets/gui/logo.png"));
                 if(macStream != null) {
                     BufferedImage icon = ImageIO.read(macStream);
                     if(icon != null) {
@@ -892,14 +897,14 @@ public class Minecraft implements IThreadListener {
         this.splashImageHeight = 800;
 
         try {
-            inputstream = this.mcDefaultResourcePack.getInputStream(locationMojangPng);
+            inputstream = this.mcDefaultResourcePack.getInputStream(splashScreenBg);
             final BufferedImage logoImage = ImageIO.read(inputstream);
             this.splashImageWidth = logoImage.getWidth();
             this.splashImageHeight = logoImage.getHeight();
             this.backgroundSplash =
                     textureManagerInstance.getDynamicTextureLocation("logo", new DynamicTexture(logoImage));
         } catch(final IOException ioexception) {
-            logger.error("Unable to load logo: {}", locationMojangPng, ioexception);
+            logger.error("Unable to load logo: {}", splashScreenBg, ioexception);
         } finally {
             IOUtils.closeQuietly(inputstream);
         }
@@ -921,7 +926,7 @@ public class Minecraft implements IThreadListener {
         this.splashLogoDisplayWidth = logoDisplayWidth;
         this.splashLogoDisplayHeight = logoDisplayHeight;
 
-        this.splashProgressBarWidth = 200;
+        this.splashProgressBarWidth = 100;
         this.splashProgressBarHeight = 12;
         this.splashProgressBarX = (scaledW - this.splashProgressBarWidth) / 2;
         this.splashProgressBarY = (scaledH - this.splashProgressBarHeight) / 2;
@@ -1172,11 +1177,11 @@ public class Minecraft implements IThreadListener {
 
         this.mcProfiler.endStartSection("preRenderErrors");
         long i1 = System.nanoTime() - l;
-        this.checkGLError("Pre render");
+        this.checkGLError("Pre visual");
         this.mcProfiler.endStartSection("sound");
         this.mcSoundHandler.setListener(this.thePlayer, this.timer.renderPartialTicks);
         this.mcProfiler.endSection();
-        this.mcProfiler.startSection("render");
+        this.mcProfiler.startSection("visual");
         GlStateManager.pushMatrix();
         GlStateManager.clear(16640);
         this.framebufferMc.bindFramebuffer(true);
@@ -1227,7 +1232,7 @@ public class Minecraft implements IThreadListener {
         this.mcProfiler.endStartSection("submit");
         this.mcProfiler.endSection();
         this.mcProfiler.endSection();
-        this.checkGLError("Post render");
+        this.checkGLError("Post visual");
         ++this.fpsCounter;
         this.isGamePaused =
                 this.isSingleplayer()
@@ -1513,7 +1518,7 @@ public class Minecraft implements IThreadListener {
 
     /**
      * Will set the focus to ingame if the Minecraft window is the active with focus. Also clears any
-     * GUI screen currently displayed
+     * gui screen currently displayed
      */
     public void setIngameFocus() {
         if(Display.isActive()) {
@@ -2583,8 +2588,8 @@ public class Minecraft implements IThreadListener {
                                 return !s.equals("vanilla")
                                         ? "Definitely; Client brand changed to '" + s + "'"
                                         : (Minecraft.class.getSigners() == null
-                                        ? "Very likely; Jar signature invalidated"
-                                        : "Probably not. Jar signature remains and client brand is untouched.");
+                                           ? "Very likely; Jar signature invalidated"
+                                           : "Probably not. Jar signature remains and client brand is untouched.");
                             }
                         });
         theCrash
@@ -2804,15 +2809,15 @@ public class Minecraft implements IThreadListener {
     public MusicTicker.MusicType getAmbientMusicType() {
         return this.thePlayer != null
                 ? (this.thePlayer.worldObj.provider instanceof WorldProviderHell
-                ? MusicTicker.MusicType.NETHER
-                : (this.thePlayer.worldObj.provider instanceof WorldProviderEnd
-                ? (BossStatus.bossName != null && BossStatus.statusBarTime > 0
-                ? MusicTicker.MusicType.END_BOSS
-                : MusicTicker.MusicType.END)
-                : (this.thePlayer.capabilities.isCreativeMode
+                   ? MusicTicker.MusicType.NETHER
+                   : (this.thePlayer.worldObj.provider instanceof WorldProviderEnd
+                      ? (BossStatus.bossName != null && BossStatus.statusBarTime > 0
+                         ? MusicTicker.MusicType.END_BOSS
+                         : MusicTicker.MusicType.END)
+                      : (this.thePlayer.capabilities.isCreativeMode
                 && this.thePlayer.capabilities.allowFlying
-                ? MusicTicker.MusicType.CREATIVE
-                : MusicTicker.MusicType.GAME)))
+                         ? MusicTicker.MusicType.CREATIVE
+                         : MusicTicker.MusicType.GAME)))
                 : MusicTicker.MusicType.MENU;
     }
 

@@ -76,7 +76,7 @@ public class EntityMagmaCube extends EntitySlime {
     }
   }
 
-  /** Returns true if the entity is on fire. Used by render to add the fire effect on rendering. */
+  /** Returns true if the entity is on fire. Used by visual to add the fire effect on rendering. */
   public boolean isBurning() {
     return false;
   }

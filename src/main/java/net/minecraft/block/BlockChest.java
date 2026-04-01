@@ -41,7 +41,7 @@ public class BlockChest extends BlockContainer {
     this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }
@@ -51,8 +51,8 @@ public class BlockChest extends BlockContainer {
   }
 
   /**
-   * The type of render function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
-   * -1 is no render
+   * The type of visual function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
+   * -1 is no visual
    */
   public int getRenderType() {
     return 2;

@@ -703,7 +703,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
     this.openContainer.onCraftGuiOpened(this);
   }
 
-  /** Displays the GUI for interacting with a chest inventory. Args: chestInventory */
+  /** Displays the gui for interacting with a chest inventory. Args: chestInventory */
   public void displayGUIChest(IInventory chestInventory) {
     if (this.openContainer != this.inventoryContainer) {
       this.closeScreen();
@@ -793,7 +793,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
     this.openContainer.onCraftGuiOpened(this);
   }
 
-  /** Displays the GUI for interacting with a book. */
+  /** Displays the gui for interacting with a book. */
   public void displayGUIBook(ItemStack bookStack) {
     Item item = bookStack.getItem();
 

@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
-import org.gradle.internal.os.OperatingSystem
 
 plugins {
     java
@@ -32,8 +31,48 @@ val lwjglAllNatives = listOf(
     "natives-macos-arm64",
 )
 
-dependencies {
-    implementation("com.paulscode:codecjorbis:20101023")
+    val generatedSrcDir = layout.buildDirectory.dir("generated/src/main/java")
+
+    sourceSets {
+        main {
+            java.srcDir(generatedSrcDir)
+        }
+    }
+
+    val generateBuildConfig by tasks.registering {
+        val gitHash = try {
+            providers.exec {
+                commandLine("git", "rev-parse", "--short", "HEAD")
+            }.standardOutput.asText.get().trim()
+        } catch (e: Exception) {
+            "unknown"
+        }
+        
+        val outputDir = generatedSrcDir.get().asFile
+        val packageDir = File(outputDir, "dev/thoq/alya")
+        
+        outputs.dir(outputDir)
+        
+        doLast {
+            packageDir.mkdirs()
+            File(packageDir, "BuildConfig.java").writeText(
+                """
+                package dev.thoq.alya;
+                
+                public class BuildConfig {
+                    public static final String GIT_HASH = "$gitHash";
+                }
+                """.trimIndent()
+            )
+        }
+    }
+
+    tasks.compileJava {
+        dependsOn(generateBuildConfig)
+    }
+
+    dependencies {
+        implementation("com.paulscode:codecjorbis:20101023")
     implementation("com.paulscode:codecwav:20101023")
     implementation("com.paulscode:libraryjavasound:20101123")
     implementation("com.paulscode:librarylwjglopenal:20100824")
@@ -52,7 +91,12 @@ dependencies {
     implementation("com.mojang:authlib:1.5.25")
     implementation("com.github.dblock:oshi-core:1.2")
     implementation("io.netty:netty-all:4.0.23.Final")
-    implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:cb4dd06464")
+    val useLocalLwjglBridge = gradle.extra["useLocalLwjglBridge"] as Boolean
+    if (useLocalLwjglBridge) {
+        implementation("org.mcphackers:legacy-lwjgl3")
+    } else {
+        implementation("com.github.RareHyperIonYT:LWJGL3-Bridge:7983e08837")
+    }
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
@@ -98,18 +142,4 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn(tasks.shadowJar)
-}
-
-tasks.register<JavaExec>("start") {
-    group = "application"
-    description = "Launches Alya client"
-    workingDir = file("${project.projectDir}/jars")
-    mainClass.set("start.Main")
-    classpath = sourceSets.main.get().runtimeClasspath + files("${project.projectDir}/jars/versions/1.8.9/1.8.9.jar")
-
-    if (OperatingSystem.current().isMacOsX) {
-        jvmArgs("-XstartOnFirstThread")
-    }
-
-    dependsOn("processResources")
 }

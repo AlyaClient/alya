@@ -559,7 +559,7 @@ public class PlayerControllerMP {
     return this.currentGameType.isCreative();
   }
 
-  /** Checks if the player is riding a horse, used to chose the GUI to open */
+  /** Checks if the player is riding a horse, used to chose the gui to open */
   public boolean isRidingHorse() {
     return this.mc.thePlayer.isRiding() && this.mc.thePlayer.ridingEntity instanceof EntityHorse;
   }

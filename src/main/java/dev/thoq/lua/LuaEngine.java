@@ -11,15 +11,13 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public final class LuaEngine {
     private final Globals globals;
     private final List<String> loadedScripts = new ArrayList<>();
@@ -39,7 +37,9 @@ public final class LuaEngine {
         alyaTable.set("config", new LuaConfigApi());
         alyaTable.set("chat", new LuaChatApi());
         alyaTable.set("movement", new LuaMovementApi());
-        alyaTable.set("render", new LuaRenderApi());
+        LuaRenderApi renderApi = new LuaRenderApi();
+        alyaTable.set("visual", renderApi);
+        alyaTable.set("render", renderApi);
         alyaTable.set("timer", new LuaTimerApi());
         alyaTable.set("mc", new LuaMinecraftApi());
         alyaTable.set("combat", new LuaCombatApi());
@@ -76,14 +76,24 @@ public final class LuaEngine {
                     public LuaValue call(LuaValue resourcePathValue) {
                         final String resourcePath = resourcePathValue.tojstring();
                         try {
-                            final InputStream inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
+                            final String devDir = System.getProperty("client.dev.resources");
+                            InputStream inputStream = null;
+                            if(devDir != null) {
+                                final File devFile = new File(devDir + resourcePath);
+                                if(devFile.exists()) {
+                                    inputStream = new FileInputStream(devFile);
+                                }
+                            }
+                            if(inputStream == null) {
+                                inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
+                            }
                             if(inputStream == null) {
                                 Alya.getInstance().getLogger().error("Lua script not found: {}", resourcePath);
                                 return LuaValue.NIL;
                             }
                             final LuaValue chunk = globals.load(new InputStreamReader(inputStream), resourcePath);
                             return chunk.call();
-                        } catch(final LuaError luaError) {
+                        } catch(final LuaError | FileNotFoundException luaError) {
                             Alya.getInstance()
                                     .getLogger()
                                     .error("Lua error loading {}: {}", resourcePath, luaError.getMessage());
@@ -95,7 +105,7 @@ public final class LuaEngine {
 
     public void loadScript(final String resourcePath) {
         try {
-            final String devDir = System.getProperty("alya.dev.resources");
+            final String devDir = System.getProperty("client.dev.resources");
             InputStream inputStream = null;
             if(devDir != null) {
                 final File devFile = new File(devDir + resourcePath);
@@ -213,4 +223,6 @@ public final class LuaEngine {
     public List<String> getLoadedScripts() {
         return loadedScripts;
     }
+
+
 }

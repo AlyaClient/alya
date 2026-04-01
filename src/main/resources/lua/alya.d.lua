@@ -129,7 +129,7 @@ function AlyaModules.getByCategory(category) end
 local AlyaEvents = {}
 
 ---subscribes a callback to named game event
----@param eventName "motion"|"update"|"render2d"|"tick"|"timeupdate"|"playermove"|"playerinput"|"packetsend"|"packetreceive"|"moveentity"|"slowdown"|"blockplaceable"
+---@param eventName "motion"|"update"|"render2d"|"render3d"|"tick"|"timeupdate"|"playermove"|"playerinput"|"packetsend"|"packetreceive"|"moveentity"|"slowdown"|"blockplaceable"
 ---@param callback fun(event: AlyaMotionEvent|AlyaRender2DEvent|AlyaCancelableEvent|AlyaPacketSendEvent)
 function AlyaEvents.on(eventName, callback) end
 
@@ -373,11 +373,11 @@ function AlyaMC.isInWater() end
 ---@return boolean
 function AlyaMC.isOnLiquid() end
 
----returns true if any GUI screen is currently open
+---returns true if any gui screen is currently open
 ---@return boolean
 function AlyaMC.isGuiOpen() end
 
----returns the simple class name of the open GUI, or "none"
+---returns the simple class name of the open gui, or "none"
 ---@return string
 function AlyaMC.getGuiClass() end
 
@@ -528,14 +528,14 @@ function AlyaCombat.getPlayerYaw() end
 ---@return number
 function AlyaCombat.getPlayerPitch() end
 
----@class Alya
+---@class client
 ---@field modules AlyaModules
 ---@field events AlyaEvents
 ---@field commands AlyaCommands
 ---@field config AlyaConfig
 ---@field chat AlyaChat
 ---@field movement AlyaMovement
----@field render AlyaRender
+---@field visual AlyaRender
 ---@field timer AlyaTimer
 ---@field mc AlyaMC
 ---@field combat AlyaCombat
@@ -548,8 +548,8 @@ function AlyaCombat.getPlayerPitch() end
 ---@field getFontRendererBold fun(): AlyaFontRenderer
 ---@field getFontRendererTitle fun(): AlyaFontRenderer
 
----global Alya API table
----@type Alya
+---global client API table
+---@type client
 alya = {}
 
 ---loads and executes Lua script from classpath resource path, returns script's return value

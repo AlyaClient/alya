@@ -10,7 +10,7 @@ public class GuiDispenser extends GuiContainer {
   private static final ResourceLocation dispenserGuiTextures =
       new ResourceLocation("textures/gui/container/dispenser.png");
 
-  /** The player inventory bound to this GUI. */
+  /** The player inventory bound to this gui. */
   private final InventoryPlayer playerInventory;
 
   /** The inventory contained within the corresponding Dispenser. */

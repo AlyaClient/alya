@@ -49,7 +49,7 @@ public class BlockEndPortal extends BlockContainer {
       List<AxisAlignedBB> list,
       Entity collidingEntity) {}
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

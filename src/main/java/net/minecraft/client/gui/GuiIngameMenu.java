@@ -8,7 +8,7 @@ import net.minecraft.client.resources.I18n;
 
 public class GuiIngameMenu extends GuiScreen {
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {
@@ -121,5 +121,10 @@ public class GuiIngameMenu extends GuiScreen {
     this.drawDefaultBackground();
     this.drawCenteredString(I18n.format("menu.game", new Object[0]), this.width / 2, 40, 16777215);
     super.drawScreen(mouseX, mouseY, partialTicks);
+  }
+
+  @Override
+  public boolean doesGuiPauseGame() {
+    return false;
   }
 }

@@ -572,7 +572,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     this.mc.displayGuiScreen(new GuiCommandBlock(cmdBlockLogic));
   }
 
-  /** Displays the GUI for interacting with a book. */
+  /** Displays the gui for interacting with a book. */
   public void displayGUIBook(ItemStack bookStack) {
     Item item = bookStack.getItem();
 
@@ -581,7 +581,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     }
   }
 
-  /** Displays the GUI for interacting with a chest inventory. Args: chestInventory */
+  /** Displays the gui for interacting with a chest inventory. Args: chestInventory */
   public void displayGUIChest(IInventory chestInventory) {
     String s =
         chestInventory instanceof IInteractionObject

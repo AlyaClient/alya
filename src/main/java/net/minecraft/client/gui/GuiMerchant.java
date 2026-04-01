@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 public class GuiMerchant extends GuiContainer {
   private static final Logger logger = LogManager.getLogger(GuiMerchant.class);
 
-  /** The GUI texture for the villager merchant GUI. */
+  /** The gui texture for the villager merchant gui. */
   private static final ResourceLocation MERCHANT_GUI_TEXTURE =
       new ResourceLocation("textures/gui/container/villager.png");
 
@@ -50,7 +50,7 @@ public class GuiMerchant extends GuiContainer {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {

@@ -71,7 +71,7 @@ public class GameSettings {
         }
       };
 
-  /** GUI scale values */
+  /** gui scale values */
   private static final String[] GUISCALES =
       new String[] {
         "options.guiScale.auto",
@@ -158,14 +158,14 @@ public class GameSettings {
       new KeyBinding("key.playerlist", 15, "key.categories.multiplayer");
   public KeyBinding keyBindCommand =
       new KeyBinding("key.command", 53, "key.categories.multiplayer");
-  public KeyBinding keyBindScreenshot = new KeyBinding("key.screenshot", 60, "key.categories.misc");
+  public KeyBinding keyBindScreenshot = new KeyBinding("key.screenshot", 60, "key.categories.other");
   public KeyBinding keyBindTogglePerspective =
-      new KeyBinding("key.togglePerspective", 63, "key.categories.misc");
+      new KeyBinding("key.togglePerspective", 63, "key.categories.other");
   public KeyBinding keyBindSmoothCamera =
-      new KeyBinding("key.smoothCamera", 0, "key.categories.misc");
-  public KeyBinding keyBindFullscreen = new KeyBinding("key.fullscreen", 87, "key.categories.misc");
+      new KeyBinding("key.smoothCamera", 0, "key.categories.other");
+  public KeyBinding keyBindFullscreen = new KeyBinding("key.fullscreen", 87, "key.categories.other");
   public KeyBinding keyBindSpectatorOutlines =
-      new KeyBinding("key.spectatorOutlines", 0, "key.categories.misc");
+      new KeyBinding("key.spectatorOutlines", 0, "key.categories.other");
   public KeyBinding keyBindStreamStartStop =
       new KeyBinding("key.streamStartStop", 64, "key.categories.stream");
   public KeyBinding keyBindStreamPauseUnpause =
@@ -210,7 +210,7 @@ public class GameSettings {
   public float gammaSetting;
   public float saturation;
 
-  /** GUI scale */
+  /** gui scale */
   public int guiScale;
 
   /** Determines amount of particles. 0 = All, 1 = Decreased, 2 = Minimal */
@@ -365,7 +365,7 @@ public class GameSettings {
     this.renderDistanceChunks = mcIn.isJava64bit() ? 12 : 8;
     this.optionsFileOF = new File(p_i46326_2_, "optionsof.txt");
     this.limitFramerate = (int) GameSettings.Options.FRAMERATE_LIMIT.getValueMax();
-    this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 46, "key.categories.misc");
+    this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 46, "key.categories.other");
     this.keyBindings =
         (KeyBinding[]) ((KeyBinding[]) ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom));
     KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
@@ -517,7 +517,7 @@ public class GameSettings {
   }
 
   /**
-   * For non-float options. Toggles the option on/off, or cycles through the list i.e. render
+   * For non-float options. Toggles the option on/off, or cycles through the list i.e. visual
    * distances.
    */
   public void setOptionValue(GameSettings.Options p_74306_1_, int p_74306_2_) {

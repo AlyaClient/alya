@@ -56,7 +56,7 @@ public class ChunkRenderWorker implements Runnable {
       if (generator.getStatus() != ChunkCompileTaskGenerator.Status.PENDING) {
         if (!generator.isFinished()) {
           LOGGER.warn(
-              "Chunk render task was "
+              "Chunk visual task was "
                   + generator.getStatus()
                   + " when I expected it to be pending; ignoring task");
         }
@@ -93,7 +93,7 @@ public class ChunkRenderWorker implements Runnable {
         if (generator.getStatus() != ChunkCompileTaskGenerator.Status.COMPILING) {
           if (!generator.isFinished()) {
             LOGGER.warn(
-                "Chunk render task was "
+                "Chunk visual task was "
                     + generator.getStatus()
                     + " when I expected it to be compiling; aborting task");
           }
@@ -158,7 +158,7 @@ public class ChunkRenderWorker implements Runnable {
 
                   if (!generator.isFinished()) {
                     ChunkRenderWorker.LOGGER.warn(
-                        "Chunk render task was "
+                        "Chunk visual task was "
                             + generator.getStatus()
                             + " when I expected it to be uploading; aborting task");
                   }

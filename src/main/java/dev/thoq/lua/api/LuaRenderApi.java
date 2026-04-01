@@ -189,6 +189,35 @@ public final class LuaRenderApi extends LuaTable {
                     }
                 });
         set(
+                "renderEntityChams",
+                new VarArgFunction() {
+                    @Override
+                    public Varargs invoke(Varargs arguments) {
+                        RenderUtility.renderEntityChams(
+                                arguments.arg(1).toint(),
+                                arguments.arg(2).tofloat(),
+                                arguments.arg(3).tofloat(),
+                                arguments.arg(4).tofloat(),
+                                arguments.arg(5).tofloat());
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "renderEntityOutline",
+                new VarArgFunction() {
+                    @Override
+                    public Varargs invoke(Varargs arguments) {
+                        RenderUtility.renderEntityOutline(
+                                arguments.arg(1).toint(),
+                                arguments.arg(2).tofloat(),
+                                arguments.arg(3).tofloat(),
+                                arguments.arg(4).tofloat(),
+                                arguments.arg(5).tofloat(),
+                                arguments.arg(6).tofloat());
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
                 "toARGB",
                 new VarArgFunction() {
                     @Override

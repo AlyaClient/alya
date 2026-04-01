@@ -41,7 +41,7 @@ public abstract class CreativeTabs {
         }
       };
   public static final CreativeTabs tabMisc =
-      (new CreativeTabs(4, "misc") {
+      (new CreativeTabs(4, "other") {
             public Item getTabIconItem() {
               return Items.lava_bucket;
             }
@@ -117,7 +117,7 @@ public abstract class CreativeTabs {
 
   private boolean hasScrollbar = true;
 
-  /** Whether to draw the title in the foreground of the creative GUI */
+  /** Whether to draw the title in the foreground of the creative gui */
   private boolean drawTitle = true;
 
   private EnumEnchantmentType[] enchantmentTypes;

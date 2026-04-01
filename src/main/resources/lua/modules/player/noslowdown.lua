@@ -1,4 +1,4 @@
-local moduleTable = alya.modules.register("NoSlow", "Prevents slowdown when using items", "PLAYER")
+local moduleTable = alya.modules.register("NoSlowDown", "Prevents slowdown when using items", "PLAYER")
 local eating    = moduleTable.addBooleanSetting("Eating", "", true)
 local drinking  = moduleTable.addBooleanSetting("Drinking", "", true)
 local blocking  = moduleTable.addBooleanSetting("Blocking", "", true)

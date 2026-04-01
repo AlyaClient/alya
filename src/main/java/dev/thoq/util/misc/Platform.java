@@ -11,9 +11,9 @@ import java.io.InputStream;
 public final class Platform {
 
     public static final String OS = System.getProperty("os.name").toLowerCase();
-    private static final String ICON_PATH = "/assets/minecraft/Alya/Icons/32x32.png";
+    private static final String ICON_PATH = "/assets/minecraft/client/icons/32x32.png";
     private static final String ABOUT = """
-            Alya Client is a free, open-source Minecraft hacked client.
+            client Client is a free, open-source Minecraft hacked client.
 
             (c) 2025-2026 Thoq
             GPL-2 License
@@ -28,8 +28,8 @@ public final class Platform {
 
         System.setProperty("apple.awt.application.appearance", "system");
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("apple.awt.application.name", "Alya");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Alya");
+        System.setProperty("apple.awt.application.name", "client");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "client");
 
         setDockIcon();
         setAboutHandler();
@@ -72,7 +72,7 @@ public final class Platform {
         JOptionPane.showMessageDialog(
                 null,
                 ABOUT,
-                "About Alya",
+                "About client",
                 JOptionPane.INFORMATION_MESSAGE,
                 icon
         );

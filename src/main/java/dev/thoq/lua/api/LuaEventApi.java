@@ -374,6 +374,33 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.NIL;
                         }
                     });
+            eventTable.set(
+                    "getUseAction",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity)
+                                return LuaValue.valueOf(
+                                        ((net.minecraft.network.play.client.C02PacketUseEntity) packetSendEvent.getPacket()).getAction().name());
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "getAttackedEntityId",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity) {
+                                net.minecraft.network.play.client.C02PacketUseEntity usePacket =
+                                        (net.minecraft.network.play.client.C02PacketUseEntity) packetSendEvent.getPacket();
+                                if(mc.theWorld != null) {
+                                    net.minecraft.entity.Entity attackedEntity = usePacket.getEntityFromWorld(mc.theWorld);
+                                    if(attackedEntity != null) return LuaValue.valueOf(attackedEntity.getEntityId());
+                                }
+                            }
+                            return LuaValue.valueOf(-1);
+                        }
+                    });
         } else if(event instanceof PacketReceiveEvent) {
             final PacketReceiveEvent packetReceiveEvent = (PacketReceiveEvent) event;
             eventTable.set(

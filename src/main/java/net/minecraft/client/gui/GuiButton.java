@@ -1,25 +1,30 @@
 package net.minecraft.client.gui;
 
+import dev.thoq.gui.UIConstants;
+import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+@SuppressWarnings("unused")
 public class GuiButton extends Gui {
   protected static final ResourceLocation buttonTextures =
       new ResourceLocation("textures/gui/widgets.png");
 
-  private static final int BACKGROUND_COLOR = 0x4D181818;
+  private static final int BACKGROUND_COLOR = 0x8D181818;
   private static final int BACKGROUND_HOVER = 0x5A252525;
   private static final int BACKGROUND_DISABLED = 0x40101010;
   private static final int BORDER_COLOR = 0xFF303030;
-  private static final int BORDER_HOVER = 0xFFFA7DD6;
+  private static final int BORDER_HOVER = UIConstants.ACCENT_COLOR;
   private static final int TEXT_COLOR = 0xFFFFFFFF;
+  private static final int TEXT_HOVER = UIConstants.ACCENT_COLOR;
   private static final int TEXT_DISABLED = 0xFF666666;
 
   private float hoverAnimation = 0.0F;
-  private static final float ANIMATION_SPEED = 0.15F;
+  private long lastTime = System.currentTimeMillis();
+  private static final float ANIMATION_SPEED = 6.0F;
 
   /** Button width in pixels */
   protected int width;
@@ -45,6 +50,8 @@ public class GuiButton extends Gui {
   public boolean visible;
 
   protected boolean hovered;
+  
+  public AlyaFontRenderer customFont = null;
 
   public GuiButton(int buttonId, int x, int y, String buttonText) {
     this(buttonId, x, y, 200, 20, buttonText);
@@ -101,6 +108,10 @@ public class GuiButton extends Gui {
   /** Draws this button to the screen. */
   public void drawButton(Minecraft mc, int mouseX, int mouseY) {
     if (this.visible) {
+      long currentTime = System.currentTimeMillis();
+      float deltaTime = (currentTime - lastTime) / 1000.0F;
+      this.lastTime = currentTime;
+
       this.hovered =
           mouseX >= this.xPosition
               && mouseY >= this.yPosition
@@ -108,9 +119,9 @@ public class GuiButton extends Gui {
               && mouseY < this.yPosition + this.height;
 
       if (this.hovered && this.enabled) {
-        hoverAnimation = Math.min(1.0F, hoverAnimation + ANIMATION_SPEED);
+        hoverAnimation = Math.min(1.0F, hoverAnimation + deltaTime * ANIMATION_SPEED);
       } else {
-        hoverAnimation = Math.max(0.0F, hoverAnimation - ANIMATION_SPEED);
+        hoverAnimation = Math.max(0.0F, hoverAnimation - deltaTime * ANIMATION_SPEED);
       }
 
       int bgColor;
@@ -124,7 +135,7 @@ public class GuiButton extends Gui {
       } else {
         bgColor = interpolateColor(BACKGROUND_COLOR, BACKGROUND_HOVER, hoverAnimation);
         borderColor = interpolateColor(BORDER_COLOR, BORDER_HOVER, hoverAnimation);
-        textColor = TEXT_COLOR;
+        textColor = interpolateColor(TEXT_COLOR, TEXT_HOVER, hoverAnimation);
       }
 
       GlStateManager.enableBlend();
@@ -171,21 +182,37 @@ public class GuiButton extends Gui {
 
   /** Draws the button text. Override this method to use a custom font renderer. */
   protected void drawButtonText(Minecraft mc, int textColor) {
-    FontRenderer fr = mc.fontRendererObj;
-    String text = this.displayString;
-    int maxWidth = this.width - 6;
-    if (fr.getStringWidth(text) > maxWidth) {
-      while (text.length() > 0 && fr.getStringWidth(text + "...") > maxWidth) {
-        text = text.substring(0, text.length() - 1);
+    if (this.customFont != null) {
+      String text = this.displayString;
+      int maxWidth = this.width - 6;
+      if (this.customFont.getStringWidth(text) > maxWidth) {
+        while (!text.isEmpty() && this.customFont.getStringWidth(text + "...") > maxWidth) {
+          text = text.substring(0, text.length() - 1);
+        }
+        text = text + "...";
       }
-      text = text + "...";
+      
+      float textWidth = this.customFont.getStringWidth(text);
+      float x = this.xPosition + (this.width - textWidth) / 2.0F;
+      float y = this.yPosition + (this.height - this.customFont.getHeight()) / 2.0F;
+      this.customFont.drawString(text, x, y, textColor);
+    } else {
+      FontRenderer fr = mc.fontRendererObj;
+      String text = this.displayString;
+      int maxWidth = this.width - 6;
+      if (fr.getStringWidth(text) > maxWidth) {
+        while (!text.isEmpty() && fr.getStringWidth(text + "...") > maxWidth) {
+          text = text.substring(0, text.length() - 1);
+        }
+        text = text + "...";
+      }
+      drawCenteredString(
+          fr,
+          text,
+          this.xPosition + this.width / 2,
+          this.yPosition + (this.height - 8) / 2,
+          textColor);
     }
-    drawCenteredString(
-        fr,
-        text,
-        this.xPosition + this.width / 2,
-        this.yPosition + (this.height - 8) / 2,
-        textColor);
   }
 
   /**

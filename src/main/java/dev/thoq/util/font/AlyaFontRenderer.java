@@ -58,7 +58,7 @@ public final class AlyaFontRenderer {
         try {
             final InputStream inputStream =
                     AlyaFontRenderer.class.getResourceAsStream(
-                            "/assets/minecraft/Alya/Fonts/SF-UI-Display-Regular.ttf");
+                            "/assets/minecraft/client/fonts/SF-UI-Display-Regular.ttf");
             if(inputStream != null) {
                 final Font baseFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
                 this.font = baseFont.deriveFont(Font.PLAIN, size * SCALE_FACTOR);

@@ -87,6 +87,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                             EntityPlayer ep = (EntityPlayer) obj;
                             if(ep == mc.thePlayer) continue;
                             LuaTable t = new LuaTable();
+                            t.set("id", LuaValue.valueOf(ep.getEntityId()));
                             t.set("name", LuaValue.valueOf(ep.getName()));
                             t.set("x", LuaValue.valueOf(ep.posX));
                             t.set("y", LuaValue.valueOf(ep.posY));
@@ -98,6 +99,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                             t.set("height", LuaValue.valueOf((double) ep.height));
                             t.set("health", LuaValue.valueOf((double) ep.getHealth()));
                             t.set("maxHealth", LuaValue.valueOf((double) ep.getMaxHealth()));
+                            t.set("hurtTime", LuaValue.valueOf(ep.hurtTime));
                             t.set("isInvisible", LuaValue.valueOf(ep.isInvisible()));
                             result.set(i++, t);
                         }

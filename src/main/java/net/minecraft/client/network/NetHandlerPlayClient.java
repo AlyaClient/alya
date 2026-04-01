@@ -858,7 +858,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
     }
   }
 
-  /** Prints a chatmessage in the chat GUI */
+  /** Prints a chatmessage in the chat gui */
   public void handleChat(S02PacketChat packetIn) {
     PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
 
@@ -1095,7 +1095,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
   }
 
   /**
-   * Displays a GUI by ID. In order starting from id 0: Chest, Workbench, Furnace, Dispenser,
+   * Displays a gui by ID. In order starting from id 0: Chest, Workbench, Furnace, Dispenser,
    * Enchanting table, Brewing stand, Villager merchant, Beacon, Anvil, Hopper, Dropper, Horse
    */
   public void handleOpenWindow(S2DPacketOpenWindow packetIn) {
@@ -1209,7 +1209,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
   }
 
   /**
-   * Creates a sign in the specified location if it didn't exist and opens the GUI to edit its text
+   * Creates a sign in the specified location if it didn't exist and opens the gui to edit its text
    */
   public void handleSignEditorOpen(S36PacketSignEditorOpen packetIn) {
     PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);

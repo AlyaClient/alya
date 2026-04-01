@@ -61,7 +61,7 @@ public class GuiAchievements extends GuiScreen implements IProgressMeter {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {
@@ -518,7 +518,7 @@ public class GuiAchievements extends GuiScreen implements IProgressMeter {
         .getTexture(p_175371_1_.getDefaultState());
   }
 
-  /** Returns true if this GUI should pause the game when it is displayed in single-player */
+  /** Returns true if this gui should pause the game when it is displayed in single-player */
   public boolean doesGuiPauseGame() {
     return !this.loadingAchievements;
   }

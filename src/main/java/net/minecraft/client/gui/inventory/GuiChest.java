@@ -7,7 +7,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiChest extends GuiContainer {
-  /** The ResourceLocation containing the chest GUI texture. */
+  /** The ResourceLocation containing the chest gui texture. */
   private static final ResourceLocation CHEST_GUI_TEXTURE =
       new ResourceLocation("textures/gui/container/generic_54.png");
 

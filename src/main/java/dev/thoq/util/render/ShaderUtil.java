@@ -58,7 +58,7 @@ public final class ShaderUtil {
             GL20.glCompileShader(vertexShader);
             if(GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
                 System.err.println(
-                        "[Alya] Vertex shader compilation failed: "
+                        "[client] Vertex shader compilation failed: "
                                 + GL20.glGetShaderInfoLog(vertexShader, 1024));
                 return false;
             }
@@ -67,7 +67,7 @@ public final class ShaderUtil {
             GL20.glCompileShader(fragmentShader);
             if(GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
                 System.err.println(
-                        "[Alya] Fragment shader compilation failed: "
+                        "[client] Fragment shader compilation failed: "
                                 + GL20.glGetShaderInfoLog(fragmentShader, 1024));
                 return false;
             }
@@ -77,7 +77,7 @@ public final class ShaderUtil {
             GL20.glLinkProgram(programId);
             if(GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
                 System.err.println(
-                        "[Alya] Shader program linking failed: " + GL20.glGetProgramInfoLog(programId, 1024));
+                        "[client] Shader program linking failed: " + GL20.glGetProgramInfoLog(programId, 1024));
                 return false;
             }
             timeUniform = GL20.glGetUniformLocation(programId, "time");

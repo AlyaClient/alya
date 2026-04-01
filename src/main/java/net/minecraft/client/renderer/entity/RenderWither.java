@@ -43,7 +43,7 @@ public class RenderWither extends RenderLiving<EntityWither> {
   }
 
   /**
-   * Allows the render to do any OpenGL state modifications necessary before the model is rendered.
+   * Allows the visual to do any OpenGL state modifications necessary before the model is rendered.
    * Args: entityLiving, partialTickTime
    */
   protected void preRenderCallback(EntityWither entitylivingbaseIn, float partialTickTime) {

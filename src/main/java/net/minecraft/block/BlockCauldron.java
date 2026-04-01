@@ -64,7 +64,7 @@ public class BlockCauldron extends Block {
     this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

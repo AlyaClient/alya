@@ -15,14 +15,14 @@ public class BlockBarrier extends Block {
   }
 
   /**
-   * The type of render function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
-   * -1 is no render
+   * The type of visual function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
+   * -1 is no visual
    */
   public int getRenderType() {
     return -1;
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

@@ -39,8 +39,8 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int ICON_SIZE = 7;
 
     //note: hides Gui.font
-    private static final AlyaFontRenderer font = new AlyaFontRenderer("Alya/Fonts/Lato-Bold.ttf", 7.5F);
-    private static final AlyaFontRenderer settingsFont = new AlyaFontRenderer("Alya/Fonts/Lato-Bold.ttf", 6.5F);
+    private static final AlyaFontRenderer font = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 7.5F);
+    private static final AlyaFontRenderer settingsFont = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 6.5F);
     private static final Map<Category, Integer> CATEGORY_COLORS = new HashMap<>();
 
     static {
@@ -64,6 +64,32 @@ public final class ClickGUIScreen extends GuiScreen {
     private int currentDraggedSettingX = 0;
     private boolean draggingSecondNub = false;
 
+    private float getScale() {
+        float userScale = Alya.getInstance()
+                .getModuleManager()
+                .getModule(ClickGUI.class)
+                .map(module -> module.scale.getValue().floatValue())
+                .orElse(1.0f);
+        
+        float maxScaleX = (float) width / (Category.values().length * PANEL_SPACING + 4);
+        
+        int maxHeight = 0;
+        for(final Category category : Category.values()) {
+            final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
+            if(modules == null) continue;
+            int totalHeight = PANEL_HEIGHT;
+            if(expandedCategories.getOrDefault(category, false)) {
+                totalHeight += calculateExpandedHeight(modules) + 1;
+            }
+            if(totalHeight > maxHeight) {
+                maxHeight = totalHeight;
+            }
+        }
+        float maxScaleY = maxHeight == 0 ? userScale : (float) height / (maxHeight + 8);
+        
+        return Math.min(userScale, Math.min(maxScaleX, maxScaleY));
+    }
+
     public ClickGUIScreen() {
         int positionX = 4;
         for(final Category category : Category.values()) {
@@ -76,9 +102,15 @@ public final class ClickGUIScreen extends GuiScreen {
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         drawRect(0, 0, width, height, 0x80000000);
+        final float scale = getScale();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scale, scale, 1.0f);
+        final int scaledMouseX = (int) (mouseX / scale);
+        final int scaledMouseY = (int) (mouseY / scale);
         for(final Category category : Category.values()) {
-            renderCategoryPanel(category, mouseX, mouseY);
+            renderCategoryPanel(category, scaledMouseX, scaledMouseY);
         }
+        GlStateManager.popMatrix();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -117,7 +149,7 @@ public final class ClickGUIScreen extends GuiScreen {
         final int iconY = panelY + (PANEL_HEIGHT - ICON_SIZE) / 2;
         GlStateManager.color(r, g, b, 1.0F);
         RenderUtility.drawImage(
-                new ResourceLocation("Alya/Icons/Categories/" + categoryName + "_good.png"),
+                new ResourceLocation("client/icons/categories/" + categoryName + "_good.png"),
                 panelX + PANEL_WIDTH - ICON_SIZE - 4, iconY, ICON_SIZE, ICON_SIZE);
         final boolean expanded = expandedCategories.get(category);
         if(expanded) {
@@ -127,7 +159,7 @@ public final class ClickGUIScreen extends GuiScreen {
         }
         final String eyeIconName = expanded ? "eye_open.png" : "eye_close.png";
         RenderUtility.drawImage(
-                new ResourceLocation("Alya/Icons/" + eyeIconName),
+                new ResourceLocation("client/icons/" + eyeIconName),
                 panelX + PANEL_WIDTH - (ICON_SIZE * 2) - 6, iconY, ICON_SIZE, ICON_SIZE);
     }
 
@@ -357,8 +389,12 @@ public final class ClickGUIScreen extends GuiScreen {
     @Override
     protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton)
             throws IOException {
+        final float scale = getScale();
+        final int scaledMouseX = (int) (mouseX / scale);
+        final int scaledMouseY = (int) (mouseY / scale);
+
         for(final Category category : Category.values()) {
-            if(handleCategoryClick(category, mouseX, mouseY, mouseButton)) return;
+            if(handleCategoryClick(category, scaledMouseX, scaledMouseY, mouseButton)) return;
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
@@ -422,7 +458,7 @@ public final class ClickGUIScreen extends GuiScreen {
     private void handleModuleClick(final Module module, final int mouseButton) {
         if(mouseButton == 0) {
             if(!(module instanceof ClickGUI)) module.toggle();
-        } else if(mouseButton == 1 && !module.getSettings().isEmpty()) {
+        } else if(mouseButton == 1 && countVisibleSettings(module) > 0) {
             expandedModules.put(module, !expandedModules.getOrDefault(module, false));
         }
     }
@@ -499,11 +535,14 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseY,
             final int clickedMouseButton,
             final long timeSinceLastClick) {
+        final float scale = getScale();
+        final int scaledMouseX = (int) (mouseX / scale);
+        
         if(dragging && draggingCategory != null) {
             return;
         }
         if(currentDraggedNumberSetting != null) {
-            updateNumberSettingFromMouse(mouseX);
+            updateNumberSettingFromMouse(scaledMouseX);
             return;
         }
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);

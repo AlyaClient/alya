@@ -422,7 +422,7 @@ public class ContainerRepair extends Container {
     return itemstack;
   }
 
-  /** used by the Anvil GUI to update the Item Name being typed by the player */
+  /** used by the Anvil gui to update the Item Name being typed by the player */
   public void updateItemName(String newName) {
     this.repairedItemName = newName;
 

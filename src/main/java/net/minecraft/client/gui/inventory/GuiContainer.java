@@ -79,7 +79,7 @@ public abstract class GuiContainer extends GuiScreen {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {
@@ -579,7 +579,7 @@ public abstract class GuiContainer extends GuiScreen {
   }
 
   /**
-   * Test if the 2D point is in a rectangle (relative to the GUI). Args : rectX, rectY, rectWidth,
+   * Test if the 2D point is in a rectangle (relative to the gui). Args : rectX, rectY, rectWidth,
    * rectHeight, pointX, pointY
    */
   protected boolean isPointInRegion(
@@ -649,7 +649,7 @@ public abstract class GuiContainer extends GuiScreen {
     }
   }
 
-  /** Returns true if this GUI should pause the game when it is displayed in single-player */
+  /** Returns true if this gui should pause the game when it is displayed in single-player */
   public boolean doesGuiPauseGame() {
     return false;
   }
