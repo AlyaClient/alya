@@ -49,7 +49,7 @@ public class GuiPlayerTabOverlay extends Gui {
 
   /**
    * Called by GuiIngame to update the information stored in the playerlist, does not actually
-   * render the list, however.
+   * visual the list, however.
    *
    * @param willBeRendered True if the playerlist is intended to be renderd subsequently.
    */

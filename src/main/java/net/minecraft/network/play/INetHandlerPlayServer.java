@@ -44,7 +44,7 @@ public interface INetHandlerPlayServer extends INetHandler {
   void processClientStatus(C16PacketClientStatus packetIn);
 
   /**
-   * Updates serverside copy of client settings: language, render distance, chat visibility, chat
+   * Updates serverside copy of client settings: language, visual distance, chat visibility, chat
    * colours, difficulty, and whether to show the cape
    */
   void processClientSettings(C15PacketClientSettings packetIn);
@@ -76,7 +76,7 @@ public interface INetHandlerPlayServer extends INetHandler {
   void processVanilla250Packet(C17PacketCustomPayload packetIn);
 
   /**
-   * Processes interactions ((un)leashing, opening command block GUI) and attacks on an entity with
+   * Processes interactions ((un)leashing, opening command block gui) and attacks on an entity with
    * players currently equipped item
    */
   void processUseEntity(C02PacketUseEntity packetIn);

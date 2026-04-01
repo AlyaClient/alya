@@ -27,9 +27,9 @@ public class CustomEntityModels {
         Map<Class, TileEntitySpecialRenderer> map1 = getTileEntityRenderMap();
 
         if(map == null) {
-            Config.warn("Entity render map not found, custom entity models are DISABLED.");
+            Config.warn("Entity visual map not found, custom entity models are DISABLED.");
         } else if(map1 == null) {
-            Config.warn("Tile entity render map not found, custom entity models are DISABLED.");
+            Config.warn("Tile entity visual map not found, custom entity models are DISABLED.");
         } else {
             active = false;
             map.clear();

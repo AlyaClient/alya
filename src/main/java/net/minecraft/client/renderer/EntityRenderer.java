@@ -144,7 +144,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
   /** Previous frame time in milliseconds */
   private long prevFrameTime = Minecraft.getSystemTime();
 
-  /** End time of last render (ns) */
+  /** End time of last visual (ns) */
   private long renderEndNanoTime;
 
   /** The texture id of the blocklight/skylight texture used for lighting effects */
@@ -1362,7 +1362,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering screen");
           CrashReportCategory crashreportcategory =
-              crashreport.makeCategory("Screen render details");
+              crashreport.makeCategory("Screen visual details");
           crashreportcategory.addCrashSectionCallable(
               "Screen name",
               new Callable<String>() {
@@ -2231,7 +2231,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     }
   }
 
-  /** Setup orthogonal projection for rendering GUI screen overlays */
+  /** Setup orthogonal projection for rendering gui screen overlays */
   public void setupOverlayRendering() {
     ScaledResolution scaledresolution = new ScaledResolution(this.mc);
     GlStateManager.clear(256);

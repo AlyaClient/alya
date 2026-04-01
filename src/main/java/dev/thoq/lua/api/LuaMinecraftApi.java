@@ -25,6 +25,8 @@ public final class LuaMinecraftApi extends LuaTable {
     private static boolean eventsRegistered = false;
     private static boolean holdingPackets = false;
     private static final List<Packet<?>> packetQueue = new ArrayList<>();
+    public static int scoreboardYOffset = 0;
+    public static boolean jesusActive = false;
 
     public static void registerEvents(dev.thoq.event.EventBus eventBus) {
         if(!eventsRegistered) {
@@ -173,6 +175,28 @@ public final class LuaMinecraftApi extends LuaTable {
                         return minecraft.thePlayer != null
                                 ? LuaValue.valueOf(minecraft.thePlayer.posZ)
                                 : LuaValue.valueOf(0d);
+                    }
+                });
+        set(
+                "setJesusActive",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue v) {
+                        jesusActive = v.toboolean();
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "setPlayerY",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue v) {
+                        if(minecraft.thePlayer == null) return LuaValue.NIL;
+                        minecraft.thePlayer.setPosition(
+                                minecraft.thePlayer.posX,
+                                v.todouble(),
+                                minecraft.thePlayer.posZ);
+                        return LuaValue.NIL;
                     }
                 });
         set(
@@ -448,6 +472,62 @@ public final class LuaMinecraftApi extends LuaTable {
                     @Override
                     public LuaValue call(LuaValue v) {
                         minecraft.gameSettings.keyBindSneak.pressed = v.toboolean();
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "getYaw",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        if(minecraft.thePlayer == null) return LuaValue.valueOf(0);
+                        return LuaValue.valueOf(minecraft.thePlayer.rotationYaw);
+                    }
+                });
+        set(
+                "getPitch",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        if(minecraft.thePlayer == null) return LuaValue.valueOf(0);
+                        return LuaValue.valueOf(minecraft.thePlayer.rotationPitch);
+                    }
+                });
+        set(
+                "getInputMoveForward",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.valueOf(0);
+                        return LuaValue.valueOf(minecraft.thePlayer.movementInput.moveForward);
+                    }
+                });
+        set(
+                "getInputMoveStrafe",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.valueOf(0);
+                        return LuaValue.valueOf(minecraft.thePlayer.movementInput.moveStrafe);
+                    }
+                });
+        set(
+                "setInputMoveForward",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue v) {
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.NIL;
+                        minecraft.thePlayer.movementInput.moveForward = (float) v.todouble();
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "setInputMoveStrafe",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue v) {
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.NIL;
+                        minecraft.thePlayer.movementInput.moveStrafe = (float) v.todouble();
                         return LuaValue.NIL;
                     }
                 });
@@ -806,6 +886,39 @@ public final class LuaMinecraftApi extends LuaTable {
                             return LuaValue.valueOf(success);
                         }
                         return LuaValue.FALSE;
+                    }
+                });
+        set(
+                "isOnIce",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
+                        if(!minecraft.thePlayer.onGround) return LuaValue.FALSE;
+                        BlockPos icePos = new BlockPos(
+                                minecraft.thePlayer.posX,
+                                minecraft.thePlayer.getEntityBoundingBox().minY - 0.1,
+                                minecraft.thePlayer.posZ);
+                        net.minecraft.block.Block block = minecraft.theWorld.getBlockState(icePos).getBlock();
+                        return LuaValue.valueOf(block instanceof net.minecraft.block.BlockIce || block instanceof net.minecraft.block.BlockPackedIce);
+                    }
+                });
+        set(
+                "setScoreboardYOffset",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue offsetValue) {
+                        scoreboardYOffset = offsetValue.toint();
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "resetScoreboardYOffset",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        scoreboardYOffset = 0;
+                        return LuaValue.NIL;
                     }
                 });
         set(

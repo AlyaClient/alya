@@ -37,7 +37,9 @@ public final class LuaEngine {
         alyaTable.set("config", new LuaConfigApi());
         alyaTable.set("chat", new LuaChatApi());
         alyaTable.set("movement", new LuaMovementApi());
-        alyaTable.set("render", new LuaRenderApi());
+        LuaRenderApi renderApi = new LuaRenderApi();
+        alyaTable.set("visual", renderApi);
+        alyaTable.set("render", renderApi);
         alyaTable.set("timer", new LuaTimerApi());
         alyaTable.set("mc", new LuaMinecraftApi());
         alyaTable.set("combat", new LuaCombatApi());
@@ -74,7 +76,7 @@ public final class LuaEngine {
                     public LuaValue call(LuaValue resourcePathValue) {
                         final String resourcePath = resourcePathValue.tojstring();
                         try {
-                            final String devDir = System.getProperty("alya.dev.resources");
+                            final String devDir = System.getProperty("client.dev.resources");
                             InputStream inputStream = null;
                             if(devDir != null) {
                                 final File devFile = new File(devDir + resourcePath);
@@ -103,7 +105,7 @@ public final class LuaEngine {
 
     public void loadScript(final String resourcePath) {
         try {
-            final String devDir = System.getProperty("alya.dev.resources");
+            final String devDir = System.getProperty("client.dev.resources");
             InputStream inputStream = null;
             if(devDir != null) {
                 final File devFile = new File(devDir + resourcePath);

@@ -215,7 +215,7 @@ public abstract class Entity implements ICommandSender {
 
   /**
    * Render entity even if it is outside the camera frustum. Only true in EntityFish for now. Used
-   * in RenderGlobal: render if ignoreFrustumCheck or in frustum.
+   * in RenderGlobal: visual if ignoreFrustumCheck or in frustum.
    */
   public boolean ignoreFrustumCheck;
 
@@ -1395,7 +1395,7 @@ public abstract class Entity implements ICommandSender {
   }
 
   /**
-   * Checks if the entity is in range to render by using the past in distance and comparing it to
+   * Checks if the entity is in range to visual by using the past in distance and comparing it to
    * its average edge length * 64 * renderDistanceWeight Args: distance
    */
   public boolean isInRangeToRenderDist(double distance) {
@@ -1894,14 +1894,14 @@ public abstract class Entity implements ICommandSender {
    */
   public void setCurrentItemOrArmor(int slotIn, ItemStack stack) {}
 
-  /** Returns true if the entity is on fire. Used by render to add the fire effect on rendering. */
+  /** Returns true if the entity is on fire. Used by visual to add the fire effect on rendering. */
   public boolean isBurning() {
     boolean flag = this.worldObj != null && this.worldObj.isRemote;
     return !this.isImmuneToFire && (this.fire > 0 || flag && this.getFlag(0));
   }
 
   /**
-   * Returns true if the entity is riding another entity, used by render to rotate the legs to be in
+   * Returns true if the entity is riding another entity, used by visual to rotate the legs to be in
    * 'sit' position for players.
    */
   public boolean isRiding() {
@@ -1935,7 +1935,7 @@ public abstract class Entity implements ICommandSender {
   /**
    * Only used by renderer in EntityLivingBase subclasses. Determines if an entity is visible or not
    * to a specfic player, if the entity is normally invisible. For EntityLivingBase subclasses,
-   * returning false when invisible will render the entity semitransparent.
+   * returning false when invisible will visual the entity semitransparent.
    */
   public boolean isInvisibleToPlayer(EntityPlayer player) {
     return player.isSpectator() ? false : this.isInvisible();

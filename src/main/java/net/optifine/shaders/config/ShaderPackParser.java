@@ -308,7 +308,7 @@ public class ShaderPackParser {
         String s1 = s + name;
 
         if(parsedProfiles.contains(s1)) {
-            Config.warn("[Shaders] Profile already parsed: " + name);
+            Config.warn("[shaders] Profile already parsed: " + name);
             return null;
         } else {
             parsedProfiles.add(name);
@@ -355,23 +355,23 @@ public class ShaderPackParser {
                             ShaderOption shaderoption1 = ShaderUtils.getShaderOption(s7, shaderOptions);
 
                             if(!(shaderoption1 instanceof ShaderOptionSwitch)) {
-                                Config.warn("[Shaders] Invalid option: " + s7);
+                                Config.warn("[shaders] Invalid option: " + s7);
                             } else {
                                 shaderprofile.addOptionValue(s7, String.valueOf(flag));
                                 shaderoption1.setVisible(true);
                             }
                         }
                     } else if(astring1.length != 2) {
-                        Config.warn("[Shaders] Invalid option value: " + s3);
+                        Config.warn("[shaders] Invalid option value: " + s3);
                     } else {
                         String s8 = astring1[0];
                         String s9 = astring1[1];
                         ShaderOption shaderoption = ShaderUtils.getShaderOption(s8, shaderOptions);
 
                         if(shaderoption == null) {
-                            Config.warn("[Shaders] Invalid option: " + s3);
+                            Config.warn("[shaders] Invalid option: " + s3);
                         } else if(!shaderoption.isValidValue(s9)) {
-                            Config.warn("[Shaders] Invalid value: " + s3);
+                            Config.warn("[shaders] Invalid value: " + s3);
                         } else {
                             shaderoption.setVisible(true);
                             shaderprofile.addOptionValue(s8, s9);
@@ -412,14 +412,14 @@ public class ShaderPackParser {
                 if(s1.equals("<empty>")) {
                     list.add((ShaderOption) null);
                 } else if(set.contains(s1)) {
-                    Config.warn("[Shaders] Duplicate option: " + s1 + ", key: " + key);
+                    Config.warn("[shaders] Duplicate option: " + s1 + ", key: " + key);
                 } else {
                     set.add(s1);
 
                     if(s1.equals("<profile>")) {
                         if(shaderProfiles == null) {
                             Config.warn(
-                                    "[Shaders] Option profile can not be used, no profiles defined: "
+                                    "[shaders] Option profile can not be used, no profiles defined: "
                                             + s1
                                             + ", key: "
                                             + key);
@@ -435,9 +435,9 @@ public class ShaderPackParser {
                         String s3 = StrUtils.removePrefixSuffix(s1, "[", "]");
 
                         if(!s3.matches("^[a-zA-Z0-9_]+$")) {
-                            Config.warn("[Shaders] Invalid screen: " + s1 + ", key: " + key);
+                            Config.warn("[shaders] Invalid screen: " + s1 + ", key: " + key);
                         } else if(!parseGuiScreen("screen." + s3, props, map, shaderProfiles, shaderOptions)) {
-                            Config.warn("[Shaders] Invalid screen: " + s1 + ", key: " + key);
+                            Config.warn("[shaders] Invalid screen: " + s1 + ", key: " + key);
                         } else {
                             ShaderOptionScreen shaderoptionscreen = new ShaderOptionScreen(s3);
                             list.add(shaderoptionscreen);
@@ -446,7 +446,7 @@ public class ShaderPackParser {
                         ShaderOption shaderoption = ShaderUtils.getShaderOption(s1, shaderOptions);
 
                         if(shaderoption == null) {
-                            Config.warn("[Shaders] Invalid option: " + s1 + ", key: " + key);
+                            Config.warn("[shaders] Invalid option: " + s1 + ", key: " + key);
                             list.add((ShaderOption) null);
                         } else {
                             shaderoption.setVisible(true);
@@ -870,7 +870,7 @@ public class ShaderPackParser {
 
         if(astring.length > 1) {
             if(astring.length != 3) {
-                SMCLog.severe("Invalid render scale: " + str);
+                SMCLog.severe("Invalid visual scale: " + str);
                 return null;
             }
 
@@ -883,7 +883,7 @@ public class ShaderPackParser {
                 && Config.between(f2, 0.0F, 1.0F)) {
             return new RenderScale(f, f1, f2);
         } else {
-            SMCLog.severe("Invalid render scale: " + str);
+            SMCLog.severe("Invalid visual scale: " + str);
             return null;
         }
     }

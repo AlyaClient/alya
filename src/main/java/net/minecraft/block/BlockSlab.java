@@ -78,7 +78,7 @@ public abstract class BlockSlab extends Block {
     super.addCollisionBoxesToList(worldIn, pos, state, mask, list, collidingEntity);
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return this.isDouble();
   }

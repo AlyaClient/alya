@@ -100,7 +100,7 @@ public class CrashReporter {
             cat.addCrashSection("Multitexture", "" + Config.isMultiTexture());
         }
 
-        cat.addCrashSection("Shaders", "" + Shaders.getShaderPackName());
+        cat.addCrashSection("shaders", "" + Shaders.getShaderPackName());
         cat.addCrashSection("OpenGlVersion", "" + Config.openGlVersion);
         cat.addCrashSection("OpenGlRenderer", "" + Config.openGlRenderer);
         cat.addCrashSection("OpenGlVendor", "" + Config.openGlVendor);

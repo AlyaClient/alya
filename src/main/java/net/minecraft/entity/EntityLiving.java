@@ -637,7 +637,7 @@ public abstract class EntityLiving extends EntityLivingBase {
         && !this.worldObj.isAnyLiquid(this.getEntityBoundingBox());
   }
 
-  /** Returns render size modifier */
+  /** Returns visual size modifier */
   public float getRenderSizeModifier() {
     return 1.0F;
   }

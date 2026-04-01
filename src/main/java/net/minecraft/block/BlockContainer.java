@@ -31,8 +31,8 @@ public abstract class BlockContainer extends Block implements ITileEntityProvide
   }
 
   /**
-   * The type of render function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
-   * -1 is no render
+   * The type of visual function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
+   * -1 is no visual
    */
   public int getRenderType() {
     return -1;

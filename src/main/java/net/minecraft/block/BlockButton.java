@@ -45,7 +45,7 @@ public abstract class BlockButton extends Block {
     return this.wooden ? 30 : 20;
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

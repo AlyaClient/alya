@@ -71,7 +71,7 @@ public class BlockPane extends Block {
     return !this.canDrop ? null : super.getItemDropped(state, rand, fortune);
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

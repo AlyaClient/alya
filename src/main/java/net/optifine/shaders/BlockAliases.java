@@ -59,7 +59,7 @@ public class BlockAliases {
         if(shaderPack != null) {
             if(Reflector.Loader_getActiveModList.exists()
                     && Minecraft.getMinecraft().getResourcePackRepository() == null) {
-                Config.dbg("[Shaders] Delayed loading of block mappings after resources are loaded");
+                Config.dbg("[shaders] Delayed loading of block mappings after resources are loaded");
                 updateOnResourcesReloaded = true;
             } else {
                 List<List<BlockAlias>> list = new ArrayList();
@@ -103,8 +103,8 @@ public class BlockAliases {
                 Properties properties = new PropertiesOrdered();
                 properties.load(in);
                 in.close();
-                Config.dbg("[Shaders] Parsing block mappings: " + path);
-                ConnectedParser connectedparser = new ConnectedParser("Shaders");
+                Config.dbg("[shaders] Parsing block mappings: " + path);
+                ConnectedParser connectedparser = new ConnectedParser("shaders");
 
                 for(Object e : properties.keySet()) {
                     String s = (String) e;
@@ -120,13 +120,13 @@ public class BlockAliases {
                         String s2 = "block.";
 
                         if(!s.startsWith(s2)) {
-                            Config.warn("[Shaders] Invalid block ID: " + s);
+                            Config.warn("[shaders] Invalid block ID: " + s);
                         } else {
                             String s3 = StrUtils.removePrefix(s, s2);
                             int i = Config.parseInt(s3, -1);
 
                             if(i < 0) {
-                                Config.warn("[Shaders] Invalid block ID: " + s);
+                                Config.warn("[shaders] Invalid block ID: " + s);
                             } else {
                                 MatchBlock[] amatchblock = connectedparser.parseMatchBlocks(s1);
 
@@ -134,14 +134,14 @@ public class BlockAliases {
                                     BlockAlias blockalias = new BlockAlias(i, amatchblock);
                                     addToList(listBlockAliases, blockalias);
                                 } else {
-                                    Config.warn("[Shaders] Invalid block ID mapping: " + s + "=" + s1);
+                                    Config.warn("[shaders] Invalid block ID mapping: " + s + "=" + s1);
                                 }
                             }
                         }
                     }
                 }
             } catch(IOException var14) {
-                Config.warn("[Shaders] Error reading: " + path);
+                Config.warn("[shaders] Error reading: " + path);
             }
         }
     }

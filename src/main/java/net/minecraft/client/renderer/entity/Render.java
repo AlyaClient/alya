@@ -259,7 +259,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
     }
   }
 
-  /** Returns the render manager's world object */
+  /** Returns the visual manager's world object */
   private World getWorldFromRenderManager() {
     return this.renderManager.worldObj;
   }
@@ -459,7 +459,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
     }
   }
 
-  /** Returns the font renderer from the set render manager */
+  /** Returns the font renderer from the set visual manager */
   public FontRenderer getFontRendererFromRenderManager() {
     return this.renderManager.getFontRenderer();
   }

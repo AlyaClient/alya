@@ -155,7 +155,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
   private VertexBuffer skyVBO;
   private VertexBuffer sky2VBO;
 
-  /** counts the cloud render updates. Used with mod to stagger some updates */
+  /** counts the cloud visual updates. Used with mod to stagger some updates */
   private int cloudTickCounter;
 
   public final Map<Integer, DestroyBlockProgress> damagedBlocks =
@@ -983,7 +983,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     }
   }
 
-  /** Gets the render info for use on the Debug screen */
+  /** Gets the visual info for use on the Debug screen */
   public String getDebugInfoRenders() {
     int i = this.viewFrustum.renderChunks.length;
     int j = 0;

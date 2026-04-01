@@ -50,7 +50,7 @@ public class Item {
     private int maxDamage;
 
     /**
-     * If true, render the object in full 3D, like weapons and tools.
+     * If true, visual the object in full 3D, like weapons and tools.
      */
     protected boolean bFull3D;
 

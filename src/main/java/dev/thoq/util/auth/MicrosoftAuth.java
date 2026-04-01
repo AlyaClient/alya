@@ -100,7 +100,7 @@ public final class MicrosoftAuth {
                                     try {
                                         InputStream stream =
                                                 MicrosoftAuth.class.getResourceAsStream(
-                                                        "/assets/minecraft/Alya/Assets/Web/auth_login_sucess.html");
+                                                        "/assets/minecraft/client/assets/web/auth_login_sucess.html");
                                         byte[] respBytes = stream != null ? IOUtils.toByteArray(stream) : new byte[0];
                                         exchange.getResponseHeaders().add("Content-Type", "text/html");
                                         exchange.sendResponseHeaders(200, respBytes.length);

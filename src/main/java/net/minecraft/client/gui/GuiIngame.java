@@ -87,7 +87,7 @@ public class GuiIngame extends Gui {
     private final GuiOverlayDebug overlayDebug;
 
     /**
-     * The spectator GUI for this in-game GUI instance
+     * The spectator gui for this in-game gui instance
      */
     private final GuiSpectator spectatorGui;
 
@@ -534,7 +534,7 @@ public class GuiIngame extends Gui {
         int bottomPadding = 3;
         int screenHeight = p_180475_2_.getScaledHeight();
 
-        int j1 = screenHeight - bottomPadding;
+        int j1 = screenHeight - bottomPadding + dev.thoq.lua.api.LuaMinecraftApi.scoreboardYOffset;
 
         int topY = j1 - lineCount * fontHeight - fontHeight - 1;
         if(topY < 2) {
@@ -1075,7 +1075,7 @@ public class GuiIngame extends Gui {
     }
 
     /**
-     * returns a pointer to the persistant Chat GUI, containing all previous chat messages and such
+     * returns a pointer to the persistant Chat gui, containing all previous chat messages and such
      */
     public GuiNewChat getChatGUI() {
         return this.persistantChatGUI;

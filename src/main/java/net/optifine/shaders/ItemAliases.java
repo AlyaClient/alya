@@ -43,7 +43,7 @@ public class ItemAliases {
 
         if(shaderPack != null) {
             if(Reflector.Loader_getActiveModList.exists() && Config.getResourceManager() == null) {
-                Config.dbg("[Shaders] Delayed loading of item mappings after resources are loaded");
+                Config.dbg("[shaders] Delayed loading of item mappings after resources are loaded");
                 updateOnResourcesReloaded = true;
             } else {
                 List<Integer> list = new ArrayList();
@@ -86,8 +86,8 @@ public class ItemAliases {
                 Properties properties = new PropertiesOrdered();
                 properties.load(in);
                 in.close();
-                Config.dbg("[Shaders] Parsing item mappings: " + path);
-                ConnectedParser connectedparser = new ConnectedParser("Shaders");
+                Config.dbg("[shaders] Parsing item mappings: " + path);
+                ConnectedParser connectedparser = new ConnectedParser("shaders");
 
                 for(Object e : properties.keySet()) {
                     String s = (String) e;
@@ -95,13 +95,13 @@ public class ItemAliases {
                     String s2 = "item.";
 
                     if(!s.startsWith(s2)) {
-                        Config.warn("[Shaders] Invalid item ID: " + s);
+                        Config.warn("[shaders] Invalid item ID: " + s);
                     } else {
                         String s3 = StrUtils.removePrefix(s, s2);
                         int i = Config.parseInt(s3, -1);
 
                         if(i < 0) {
-                            Config.warn("[Shaders] Invalid item alias ID: " + i);
+                            Config.warn("[shaders] Invalid item alias ID: " + i);
                         } else {
                             int[] aint = connectedparser.parseItems(s1);
 
@@ -111,13 +111,13 @@ public class ItemAliases {
                                     addToList(listItemAliases, k, i);
                                 }
                             } else {
-                                Config.warn("[Shaders] Invalid item ID mapping: " + s + "=" + s1);
+                                Config.warn("[shaders] Invalid item ID mapping: " + s + "=" + s1);
                             }
                         }
                     }
                 }
             } catch(IOException var15) {
-                Config.warn("[Shaders] Error reading: " + path);
+                Config.warn("[shaders] Error reading: " + path);
             }
         }
     }

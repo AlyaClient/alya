@@ -137,7 +137,7 @@ public class BlockFence extends Block {
     this.setBlockBounds(f, 0.0F, f2, f1, 1.0F, f3);
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }

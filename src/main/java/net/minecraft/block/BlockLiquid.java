@@ -67,7 +67,7 @@ public abstract class BlockLiquid extends Block {
     return false;
   }
 
-  /** Used to determine ambient occlusion and culling when rebuilding chunks for render */
+  /** Used to determine ambient occlusion and culling when rebuilding chunks for visual */
   public boolean isOpaqueCube() {
     return false;
   }
@@ -109,12 +109,15 @@ public abstract class BlockLiquid extends Block {
   }
 
   public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+    if (dev.thoq.lua.api.LuaMinecraftApi.jesusActive) {
+      return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+    }
     return null;
   }
 
   /**
-   * The type of render function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
-   * -1 is no render
+   * The type of visual function called. 3 for standard block models, 2 for TESR's, 1 for liquids,
+   * -1 is no visual
    */
   public int getRenderType() {
     return 1;

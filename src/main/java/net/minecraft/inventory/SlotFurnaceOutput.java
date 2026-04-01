@@ -9,7 +9,7 @@ import net.minecraft.stats.AchievementList;
 import net.minecraft.util.MathHelper;
 
 public class SlotFurnaceOutput extends Slot {
-  /** The player that is using the GUI where this slot resides. */
+  /** The player that is using the gui where this slot resides. */
   private EntityPlayer thePlayer;
 
   private int field_75228_b;

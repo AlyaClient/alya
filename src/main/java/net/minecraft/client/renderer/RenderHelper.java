@@ -70,7 +70,7 @@ public class RenderHelper {
     return colorBuffer;
   }
 
-  /** Sets OpenGL lighting for rendering blocks as items inside GUI screens (such as containers). */
+  /** Sets OpenGL lighting for rendering blocks as items inside gui screens (such as containers). */
   public static void enableGUIStandardItemLighting() {
     GlStateManager.pushMatrix();
     GlStateManager.rotate(-30.0F, 0.0F, 1.0F, 0.0F);

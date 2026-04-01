@@ -142,7 +142,7 @@ public class GuiNewChat extends Gui {
 
   /**
    * prints the ChatComponent to Chat. If the ID is not 0, deletes an existing Chat Line of that ID
-   * from the GUI
+   * from the gui
    */
   public void printChatMessageWithOptionalDeletion(IChatComponent p_146234_1_, int p_146234_2_) {
     this.setChatLine(p_146234_1_, p_146234_2_, this.mc.ingameGUI.getUpdateCounter(), false);
@@ -209,7 +209,7 @@ public class GuiNewChat extends Gui {
     }
   }
 
-  /** Resets the chat scroll (executed when the GUI is closed, among others) */
+  /** Resets the chat scroll (executed when the gui is closed, among others) */
   public void resetScroll() {
     this.scrollPos = 0;
     this.isScrolled = false;
@@ -281,7 +281,7 @@ public class GuiNewChat extends Gui {
     }
   }
 
-  /** Returns true if the chat GUI is open */
+  /** Returns true if the chat gui is open */
   public boolean getChatOpen() {
     return this.mc.currentScreen instanceof GuiChat;
   }

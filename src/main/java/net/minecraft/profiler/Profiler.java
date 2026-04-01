@@ -28,12 +28,12 @@ public class Profiler {
   private static final String SCHEDULED_EXECUTABLES = "scheduledExecutables";
   private static final String TICK = "tick";
   private static final String PRE_RENDER_ERRORS = "preRenderErrors";
-  private static final String RENDER = "render";
+  private static final String RENDER = "visual";
   private static final String DISPLAY = "display";
   private static final int HASH_SCHEDULED_EXECUTABLES = "scheduledExecutables".hashCode();
   private static final int HASH_TICK = "tick".hashCode();
   private static final int HASH_PRE_RENDER_ERRORS = "preRenderErrors".hashCode();
-  private static final int HASH_RENDER = "render".hashCode();
+  private static final int HASH_RENDER = "visual".hashCode();
   private static final int HASH_DISPLAY = "display".hashCode();
 
   public Profiler() {
@@ -66,7 +66,7 @@ public class Profiler {
     if (Config.isFastRender()) {
       int j = name.hashCode();
 
-      if (j == HASH_RENDER && name.equals("render")) {
+      if (j == HASH_RENDER && name.equals("visual")) {
         GlStateManager.clearEnabled = false;
       } else if (j == HASH_DISPLAY && name.equals("display")) {
         GlStateManager.clearEnabled = true;

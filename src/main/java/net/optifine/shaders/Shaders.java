@@ -846,7 +846,7 @@ public class Shaders {
 
         if(Config.isAntialiasing()) {
             SMCLog.info(
-                    "Shaders can not be loaded, Antialiasing is enabled: "
+                    "shaders can not be loaded, Antialiasing is enabled: "
                             + Config.getAntialiasingLevel()
                             + "x");
             flag2 = true;
@@ -854,14 +854,14 @@ public class Shaders {
 
         if(Config.isAnisotropicFiltering()) {
             SMCLog.info(
-                    "Shaders can not be loaded, Anisotropic Filtering is enabled: "
+                    "shaders can not be loaded, Anisotropic Filtering is enabled: "
                             + Config.getAnisotropicFilterLevel()
                             + "x");
             flag2 = true;
         }
 
         if(Config.isFastRender()) {
-            SMCLog.info("Shaders can not be loaded, Fast Render is enabled.");
+            SMCLog.info("shaders can not be loaded, Fast Render is enabled.");
             flag2 = true;
         }
 
@@ -963,7 +963,7 @@ public class Shaders {
             Integer[] ainteger =
                     (Integer[])
                             ((Integer[]) shaderPackDimensions.toArray(new Integer[shaderPackDimensions.size()]));
-            Config.dbg("[Shaders] Worlds: " + Config.arrayToString((Object[]) ainteger));
+            Config.dbg("[shaders] Worlds: " + Config.arrayToString((Object[]) ainteger));
         }
     }
 
@@ -1051,7 +1051,7 @@ public class Shaders {
                 ShaderPackParser.parseRenderScales(properties);
                 ShaderPackParser.parseBuffersFlip(properties);
             } catch(IOException var3) {
-                Config.warn("[Shaders] Error reading: " + s);
+                Config.warn("[shaders] Error reading: " + s);
             }
         }
     }
@@ -1129,7 +1129,7 @@ public class Shaders {
     }
 
     private static ICustomTexture loadCustomTextureRaw(int textureUnit, String line) {
-        ConnectedParser connectedparser = new ConnectedParser("Shaders");
+        ConnectedParser connectedparser = new ConnectedParser("shaders");
         String[] astring = Config.tokenize(line, " ");
         Deque<String> deque = new ArrayDeque(Arrays.asList(astring));
         String s = (String) deque.poll();
@@ -1610,7 +1610,7 @@ public class Shaders {
         try {
             saveOptionProperties(sp, properties);
         } catch(IOException ioexception) {
-            Config.warn("[Shaders] Error saving configuration for " + shaderPack.getName());
+            Config.warn("[shaders] Error saving configuration for " + shaderPack.getName());
             ioexception.printStackTrace();
         }
     }
@@ -1645,14 +1645,14 @@ public class Shaders {
 
                     if(!shaderoption.setValue(s)) {
                         Config.warn(
-                                "[Shaders] Invalid value, option: " + shaderoption.getName() + ", value: " + s);
+                                "[shaders] Invalid value, option: " + shaderoption.getName() + ", value: " + s);
                     }
                 }
             }
 
             return ashaderoption;
         } catch(IOException ioexception) {
-            Config.warn("[Shaders] Error reading configuration for " + shaderPack.getName());
+            Config.warn("[shaders] Error reading configuration for " + shaderPack.getName());
             ioexception.printStackTrace();
             return null;
         }
@@ -2007,7 +2007,7 @@ public class Shaders {
         }
 
         if(!isShaderPackInitialized) {
-            checkGLError("Shaders.init pre");
+            checkGLError("shaders.init pre");
 
             if(getShaderPackName() != null) {
                 ;
@@ -2149,7 +2149,7 @@ public class Shaders {
 
             if(usedDrawBuffers > j1) {
                 printChatAndLogError(
-                        "[Shaders] Error: Not enough draw buffers, needed: "
+                        "[shaders] Error: Not enough draw buffers, needed: "
                                 + usedDrawBuffers
                                 + ", available: "
                                 + j1);
@@ -2200,7 +2200,7 @@ public class Shaders {
                 ;
             }
 
-            checkGLError("Shaders.init");
+            checkGLError("shaders.init");
         }
     }
 
@@ -2384,7 +2384,7 @@ public class Shaders {
 
                 if(i1 != 1) {
                     String s = "\"";
-                    printChatAndLogError("[Shaders] Error: Invalid program " + s + program.getName() + s);
+                    printChatAndLogError("[shaders] Error: Invalid program " + s + program.getName() + s);
                     ARBShaderObjects.glDeleteObjectARB(i);
                     i = 0;
                     program.resetId();
@@ -2620,7 +2620,7 @@ public class Shaders {
                                                 && !shaderline.isProperty("SHADOWHPL")) {
                                             if(shaderline.isConstFloat("shadowDistanceRenderMul")) {
                                                 shadowDistanceRenderMul = shaderline.getValueFloat();
-                                                SMCLog.info("Shadow distance render mul: " + shadowDistanceRenderMul);
+                                                SMCLog.info("Shadow distance visual mul: " + shadowDistanceRenderMul);
                                             } else if(shaderline.isConstFloat("shadowIntervalSize")) {
                                                 shadowIntervalSize = shaderline.getValueFloat();
                                                 SMCLog.info("Shadow map interval size: " + shadowIntervalSize);
@@ -3296,7 +3296,7 @@ public class Shaders {
 
     public static void uninit() {
         if(isShaderPackInitialized) {
-            checkGLError("Shaders.uninit pre");
+            checkGLError("shaders.uninit pre");
 
             for(int i = 0; i < ProgramsAll.length; ++i) {
                 Program program = ProgramsAll[i];
@@ -3364,7 +3364,7 @@ public class Shaders {
             shadowPassInterval = 0;
             shouldSkipDefaultShadow = false;
             isShaderPackInitialized = false;
-            checkGLError("Shaders.uninit");
+            checkGLError("shaders.uninit");
         }
     }
 
@@ -3474,7 +3474,7 @@ public class Shaders {
         int i1 = EXTFramebufferObject.glCheckFramebufferStatusEXT(36160);
 
         if(i1 == 36058) {
-            printChatAndLogError("[Shaders] Error: Failed framebuffer incomplete formats");
+            printChatAndLogError("[shaders] Error: Failed framebuffer incomplete formats");
 
             for(int j = 0; j < usedColorBuffers; ++j) {
                 GlStateManager.bindTexture(dfbColorTexturesFlip.getA(j));
@@ -3503,7 +3503,7 @@ public class Shaders {
         GlStateManager.bindTexture(0);
 
         if(i1 != 36053) {
-            printChatAndLogError("[Shaders] Error: Failed creating framebuffer! (Status " + i1 + ")");
+            printChatAndLogError("[shaders] Error: Failed creating framebuffer! (Status " + i1 + ")");
         } else {
             SMCLog.info("Framebuffer created.");
         }
@@ -3604,7 +3604,7 @@ public class Shaders {
 
             if(l != 36053) {
                 printChatAndLogError(
-                        "[Shaders] Error: Failed creating shadow framebuffer! (Status " + l + ")");
+                        "[shaders] Error: Failed creating shadow framebuffer! (Status " + l + ")");
             } else {
                 SMCLog.info("Shadow framebuffer created.");
             }
@@ -3624,7 +3624,7 @@ public class Shaders {
             } catch(IllegalStateException illegalstateexception) {
                 if(Config.normalize(illegalstateexception.getMessage())
                         .equals("Function is not supported")) {
-                    printChatAndLogError("[Shaders] Error: " + illegalstateexception.getMessage());
+                    printChatAndLogError("[shaders] Error: " + illegalstateexception.getMessage());
                     illegalstateexception.printStackTrace();
                     setShaderPack("OFF");
                     return;
@@ -4240,7 +4240,7 @@ public class Shaders {
             boolean flag = checkBufferFlip(ProgramDeferredPre);
 
             if(hasDeferredPrograms) {
-                checkGLError("pre-render Deferred");
+                checkGLError("pre-visual Deferred");
                 renderComposites(ProgramsDeferred, false);
                 flag = true;
             }
@@ -4268,7 +4268,7 @@ public class Shaders {
     public static void renderCompositeFinal() {
         if(!isShadowPass) {
             checkBufferFlip(ProgramCompositePre);
-            checkGLError("pre-render CompositeFinal");
+            checkGLError("pre-visual CompositeFinal");
             renderComposites(ProgramsComposite, true);
         }
     }
@@ -5055,7 +5055,7 @@ public class Shaders {
         }
 
         throw new RuntimeException(
-                "Shaders Mod detected. Please remove it, OptiFine has built-in support for shaders.");
+                "shaders Mod detected. Please remove it, OptiFine has built-in support for shaders.");
     }
 
     public static void resourcesReloaded() {

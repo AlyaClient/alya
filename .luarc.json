@@ -2,6 +2,7 @@
     "diagnostics.disable": [
         "lowercase-global",
         "missing-fields",
-        "undefined-global"
+        "undefined-global",
+        "param-type-mismatch"
     ]
 }

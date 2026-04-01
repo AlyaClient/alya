@@ -20,7 +20,7 @@ import java.net.URI;
 
 public class GuiShaders extends GuiScreen {
     protected GuiScreen parentGui;
-    protected String screenTitle = "Shaders";
+    protected String screenTitle = "shaders";
     private TooltipManager tooltipManager =
             new TooltipManager(this, new TooltipProviderEnumShaderOptions());
     private int updateTimer = -1;
@@ -43,7 +43,7 @@ public class GuiShaders extends GuiScreen {
     }
 
     /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+     * Adds the buttons (and other controls) to the screen in question. Called when the gui is
      * displayed and when the window resizes, the buttonList is cleared beforehand.
      */
     public void initGui() {

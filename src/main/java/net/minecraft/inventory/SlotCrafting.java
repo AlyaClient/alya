@@ -15,7 +15,7 @@ public class SlotCrafting extends Slot {
   /** The craft matrix inventory linked to this result slot. */
   private final InventoryCrafting craftMatrix;
 
-  /** The player that is using the GUI where this slot resides. */
+  /** The player that is using the gui where this slot resides. */
   private final EntityPlayer thePlayer;
 
   /**

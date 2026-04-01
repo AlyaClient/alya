@@ -25,7 +25,7 @@ public class GuiEditSign extends GuiScreen {
   /** The index of the line that is being edited. */
   private int editLine;
 
-  /** "Done" button for the GUI. */
+  /** "Done" button for the gui. */
   private GuiButton doneBtn;
 
   public GuiEditSign(TileEntitySign teSign) {
@@ -33,7 +33,7 @@ public class GuiEditSign extends GuiScreen {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {

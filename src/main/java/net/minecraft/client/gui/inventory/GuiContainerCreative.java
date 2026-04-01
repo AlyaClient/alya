@@ -213,7 +213,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {
@@ -646,7 +646,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer {
   }
 
   /**
-   * Renders the creative inventory hovering text if mouse is over it. Returns true if did render or
+   * Renders the creative inventory hovering text if mouse is over it. Returns true if did visual or
    * false otherwise. Params: current creative tab to be checked, current mouse x position, current
    * mouse y position.
    */

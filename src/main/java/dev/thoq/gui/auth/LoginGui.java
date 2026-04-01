@@ -30,8 +30,8 @@ public class LoginGui extends GuiScreen {
         this.drawDefaultBackground();
         this.username.drawTextBox();
         FONT_MD.drawString(
-                "Alya Portal - Cracked",
-                (float) this.width / 2 - FONT_MD.getStringWidth("Alya Portal - Cracked") / 2,
+                "client Portal - Cracked",
+                (float) this.width / 2 - FONT_MD.getStringWidth("client Portal - Cracked") / 2,
                 Math.round((float) this.height / 2 - 80),
                 -1);
         super.drawScreen(mouseX, mouseY, partialTicks);

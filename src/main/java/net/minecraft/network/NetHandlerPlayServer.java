@@ -918,7 +918,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
   }
 
   /**
-   * Processes interactions ((un)leashing, opening command block GUI) and attacks on an entity with
+   * Processes interactions ((un)leashing, opening command block gui) and attacks on an entity with
    * players currently equipped item
    */
   public void processUseEntity(C02PacketUseEntity packetIn) {
@@ -1254,7 +1254,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
   }
 
   /**
-   * Updates serverside copy of client settings: language, render distance, chat visibility, chat
+   * Updates serverside copy of client settings: language, visual distance, chat visibility, chat
    * colours, difficulty, and whether to show the cape
    */
   public void processClientSettings(C15PacketClientSettings packetIn) {

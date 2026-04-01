@@ -13,7 +13,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
   private boolean field_146346_f = false;
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {
@@ -132,7 +132,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
     super.drawScreen(mouseX, mouseY, partialTicks);
   }
 
-  /** Returns true if this GUI should pause the game when it is displayed in single-player */
+  /** Returns true if this gui should pause the game when it is displayed in single-player */
   public boolean doesGuiPauseGame() {
     return false;
   }

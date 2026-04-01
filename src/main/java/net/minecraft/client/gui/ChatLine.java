@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import net.minecraft.util.IChatComponent;
 
 public class ChatLine {
-  /** GUI Update Counter value this Line was created at */
+  /** gui Update Counter value this Line was created at */
   private final int updateCounterCreated;
 
   private final IChatComponent lineString;

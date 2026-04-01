@@ -68,7 +68,7 @@ public class RenderItem implements IResourceManagerReloadListener {
       new ResourceLocation("textures/misc/enchanted_item_glint.png");
   private boolean field_175058_l = true;
 
-  /** Defines the zLevel of rendering of item on GUI. */
+  /** Defines the zLevel of rendering of item on gui. */
   public float zLevel;
 
   private final ItemModelMesher itemModelMesher;

@@ -11,10 +11,10 @@ public class GuiScreenHorseInventory extends GuiContainer {
   private static final ResourceLocation horseGuiTextures =
       new ResourceLocation("textures/gui/container/horse.png");
 
-  /** The player inventory bound to this GUI. */
+  /** The player inventory bound to this gui. */
   private IInventory playerInventory;
 
-  /** The horse inventory bound to this GUI. */
+  /** The horse inventory bound to this gui. */
   private IInventory horseInventory;
 
   /** The EntityHorse whose inventory is currently being accessed. */

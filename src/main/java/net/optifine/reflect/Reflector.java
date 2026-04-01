@@ -364,7 +364,7 @@ public class Reflector {
     public static ReflectorClass IRenderHandler =
             new ReflectorClass("net.minecraftforge.client.IRenderHandler");
     public static ReflectorMethod IRenderHandler_render =
-            new ReflectorMethod(IRenderHandler, "render");
+            new ReflectorMethod(IRenderHandler, "visual");
     public static ReflectorClass ItemModelMesherForge =
             new ReflectorClass("net.minecraftforge.client.ItemModelMesherForge");
     public static ReflectorConstructor ItemModelMesherForge_Constructor =

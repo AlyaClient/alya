@@ -2,7 +2,7 @@
 
 # Hey you!
 # This script is intended for end-users who do not want to
-# use a GUI launcher. Do not run if developing.
+# use a gui launcher. Do not run if developing.
 
 # Modify this to match your Java installation
 JDK_PATH="$HOME/.sdkman/candidates/java/25.0.2-zulu/bin/java"

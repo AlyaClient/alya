@@ -157,7 +157,7 @@ public class WebLoginLauncher extends GuiScreen {
         }
         if(button.id == 1) {
             cleanup();
-            SessionChanger.getInstance().setUserOffline("Alya");
+            SessionChanger.getInstance().setUserOffline("client");
             mc.displayGuiScreen(new AltManagerGui());
         }
     }

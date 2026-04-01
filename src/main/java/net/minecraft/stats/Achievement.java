@@ -34,7 +34,7 @@ public class Achievement extends StatBase {
    */
   private IStatStringFormat statStringFormatter;
 
-  /** Holds the ItemStack that will be used to draw the achievement into the GUI. */
+  /** Holds the ItemStack that will be used to draw the achievement into the gui. */
   public final ItemStack theItemStack;
 
   /**

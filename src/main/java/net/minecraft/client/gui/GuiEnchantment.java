@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 import org.lwjgl.util.glu.Project;
 
 public class GuiEnchantment extends GuiContainer {
-  /** The ResourceLocation containing the Enchantment GUI texture location */
+  /** The ResourceLocation containing the Enchantment gui texture location */
   private static final ResourceLocation ENCHANTMENT_TABLE_GUI_TEXTURE =
       new ResourceLocation("textures/gui/container/enchanting_table.png");
 

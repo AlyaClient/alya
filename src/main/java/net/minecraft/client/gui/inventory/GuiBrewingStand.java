@@ -10,7 +10,7 @@ public class GuiBrewingStand extends GuiContainer {
   private static final ResourceLocation brewingStandGuiTextures =
       new ResourceLocation("textures/gui/container/brewing_stand.png");
 
-  /** The player inventory bound to this GUI. */
+  /** The player inventory bound to this gui. */
   private final InventoryPlayer playerInventory;
 
   private IInventory tileBrewingStand;

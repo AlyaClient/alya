@@ -1060,14 +1060,14 @@ public abstract class EntityPlayer extends EntityLivingBase {
 
   public void displayVillagerTradeGui(IMerchant villager) {}
 
-  /** Displays the GUI for interacting with a chest inventory. Args: chestInventory */
+  /** Displays the gui for interacting with a chest inventory. Args: chestInventory */
   public void displayGUIChest(IInventory chestInventory) {}
 
   public void displayGUIHorse(EntityHorse horse, IInventory horseInventory) {}
 
   public void displayGui(IInteractionObject guiOwner) {}
 
-  /** Displays the GUI for interacting with a book. */
+  /** Displays the gui for interacting with a book. */
   public void displayGUIBook(ItemStack bookStack) {}
 
   public boolean interactWith(Entity p_70998_1_) {
@@ -1937,7 +1937,7 @@ public abstract class EntityPlayer extends EntityLivingBase {
   /**
    * Only used by renderer in EntityLivingBase subclasses. Determines if an entity is visible or not
    * to a specfic player, if the entity is normally invisible. For EntityLivingBase subclasses,
-   * returning false when invisible will render the entity semitransparent.
+   * returning false when invisible will visual the entity semitransparent.
    */
   public boolean isInvisibleToPlayer(EntityPlayer player) {
     if (!this.isInvisible()) {

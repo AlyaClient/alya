@@ -56,7 +56,7 @@ public class Main {
         OptionSpec<String> optionspec7 = optionparser.accepts("proxyUser").withRequiredArg();
         OptionSpec<String> optionspec8 = optionparser.accepts("proxyPass").withRequiredArg();
         OptionSpec<String> optionspec9 =
-                optionparser.accepts("username").withRequiredArg().defaultsTo("Alya");
+                optionparser.accepts("username").withRequiredArg().defaultsTo("client");
         OptionSpec<String> optionspec10 = optionparser.accepts("uuid").withRequiredArg();
         OptionSpec<String> optionspec11 =
                 optionparser.accepts("accessToken").withRequiredArg().required();

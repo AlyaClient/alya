@@ -449,7 +449,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {}
@@ -536,7 +536,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     GlStateManager.enableTexture2D();
   }
 
-  /** Returns true if this GUI should pause the game when it is displayed in single-player */
+  /** Returns true if this gui should pause the game when it is displayed in single-player */
   public boolean doesGuiPauseGame() {
     return true;
   }
@@ -598,7 +598,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     return p_175278_0_ == 30 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
   }
 
-  /** Called when the GUI is resized in order to update the world and the resolution */
+  /** Called when the gui is resized in order to update the world and the resolution */
   public void onResize(Minecraft mcIn, int p_175273_2_, int p_175273_3_) {
     this.setWorldAndResolution(mcIn, p_175273_2_, p_175273_3_);
   }

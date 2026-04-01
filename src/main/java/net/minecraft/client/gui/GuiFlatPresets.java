@@ -25,7 +25,7 @@ public class GuiFlatPresets extends GuiScreen {
   private static final List<GuiFlatPresets.LayerItem> FLAT_WORLD_PRESETS =
       Lists.<GuiFlatPresets.LayerItem>newArrayList();
 
-  /** The parent GUI */
+  /** The parent gui */
   private final GuiCreateFlatWorld parentScreen;
 
   private String presetsTitle;
@@ -40,7 +40,7 @@ public class GuiFlatPresets extends GuiScreen {
   }
 
   /**
-   * Adds the buttons (and other controls) to the screen in question. Called when the GUI is
+   * Adds the buttons (and other controls) to the screen in question. Called when the gui is
    * displayed and when the window resizes, the buttonList is cleared beforehand.
    */
   public void initGui() {

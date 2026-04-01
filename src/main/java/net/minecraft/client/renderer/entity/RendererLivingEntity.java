@@ -262,7 +262,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
         GlStateManager.disableRescaleNormal();
       } catch (Exception exception) {
-        logger.error((String) "Couldn\'t render entity", (Throwable) exception);
+        logger.error((String) "Couldn\'t visual entity", (Throwable) exception);
       }
 
       GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -615,7 +615,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
   }
 
   /**
-   * Allows the render to do any OpenGL state modifications necessary before the model is rendered.
+   * Allows the visual to do any OpenGL state modifications necessary before the model is rendered.
    * Args: entityLiving, partialTickTime
    */
   protected void preRenderCallback(T entitylivingbaseIn, float partialTickTime) {}
