@@ -17,8 +17,8 @@ public class MapItemRenderer {
   private static final ResourceLocation mapIcons =
       new ResourceLocation("textures/map/map_icons.png");
   private final TextureManager textureManager;
-  private final Map<String, MapItemRenderer.Instance> loadedMaps =
-      Maps.<String, MapItemRenderer.Instance>newHashMap();
+  private final Map<String, Instance> loadedMaps =
+      Maps.<String, Instance>newHashMap();
 
   public MapItemRenderer(TextureManager textureManagerIn) {
     this.textureManager = textureManagerIn;
@@ -34,15 +34,15 @@ public class MapItemRenderer {
   }
 
   /**
-   * Returns {@link net.minecraft.client.gui.MapItemRenderer.Instance MapItemRenderer.Instance} with
+   * Returns {@link Instance MapItemRenderer.Instance} with
    * given map data
    */
-  private MapItemRenderer.Instance getMapRendererInstance(MapData mapdataIn) {
-    MapItemRenderer.Instance mapitemrenderer$instance =
-        (MapItemRenderer.Instance) this.loadedMaps.get(mapdataIn.mapName);
+  private Instance getMapRendererInstance(MapData mapdataIn) {
+    Instance mapitemrenderer$instance =
+        (Instance) this.loadedMaps.get(mapdataIn.mapName);
 
     if (mapitemrenderer$instance == null) {
-      mapitemrenderer$instance = new MapItemRenderer.Instance(mapdataIn);
+      mapitemrenderer$instance = new Instance(mapdataIn);
       this.loadedMaps.put(mapdataIn.mapName, mapitemrenderer$instance);
     }
 
@@ -51,7 +51,7 @@ public class MapItemRenderer {
 
   /** Clears the currently loaded maps and removes their corresponding textures */
   public void clearLoadedMaps() {
-    for (MapItemRenderer.Instance mapitemrenderer$instance : this.loadedMaps.values()) {
+    for (Instance mapitemrenderer$instance : this.loadedMaps.values()) {
       this.textureManager.deleteTexture(mapitemrenderer$instance.location);
     }
 
@@ -84,7 +84,7 @@ public class MapItemRenderer {
         if (j / 4 == 0) {
           this.mapTextureData[i] = (i + i / 128 & 1) * 8 + 16 << 24;
         } else {
-          this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
+          this.mapTextureData[i] = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
         }
       }
 
@@ -101,7 +101,7 @@ public class MapItemRenderer {
       GlStateManager.enableBlend();
       GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
       GlStateManager.disableAlpha();
-      worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
+      worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
       worldrenderer
           .pos(
               (double) ((float) (i + 0) + f),
@@ -136,7 +136,7 @@ public class MapItemRenderer {
       MapItemRenderer.this.textureManager.bindTexture(MapItemRenderer.mapIcons);
       int k = 0;
 
-      for (Vec4b vec4b : this.mapData.playersVisibleOnMap.values()) {
+      for (Vec4b vec4b : this.mapData.mapDecorations.values()) {
         if (!noOverlayRendering || vec4b.func_176110_a() == 1) {
           GlStateManager.pushMatrix();
           GlStateManager.translate(
@@ -151,7 +151,7 @@ public class MapItemRenderer {
           float f2 = (float) (b0 / 4 + 0) / 4.0F;
           float f3 = (float) (b0 % 4 + 1) / 4.0F;
           float f4 = (float) (b0 / 4 + 1) / 4.0F;
-          worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
+          worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
           float f5 = -0.001F;
           worldrenderer
               .pos(-1.0D, 1.0D, (double) ((float) k * -0.001F))

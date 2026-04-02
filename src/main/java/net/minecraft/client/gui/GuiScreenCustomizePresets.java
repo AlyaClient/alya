@@ -13,9 +13,9 @@ import net.minecraft.world.gen.ChunkProviderSettings;
 import org.lwjgl.input.Keyboard;
 
 public class GuiScreenCustomizePresets extends GuiScreen {
-  private static final List<GuiScreenCustomizePresets.Info> field_175310_f =
-      Lists.<GuiScreenCustomizePresets.Info>newArrayList();
-  private GuiScreenCustomizePresets.ListPreset field_175311_g;
+  private static final List<Info> field_175310_f =
+      Lists.<Info>newArrayList();
+  private ListPreset field_175311_g;
   private GuiButton field_175316_h;
   private GuiTextField field_175317_i;
   private GuiCustomizeWorldScreen field_175314_r;
@@ -38,7 +38,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
     this.field_175313_s = I18n.format("createWorld.customize.presets.share", new Object[0]);
     this.field_175312_t = I18n.format("createWorld.customize.presets.list", new Object[0]);
     this.field_175317_i = new GuiTextField(2, this.fontRendererObj, 50, 40, this.width - 100, 20);
-    this.field_175311_g = new GuiScreenCustomizePresets.ListPreset();
+    this.field_175311_g = new ListPreset();
     this.field_175317_i.setMaxStringLength(2000);
     this.field_175317_i.setText(this.field_175314_r.func_175323_a());
     this.buttonList.add(
@@ -145,7 +145,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"lavaLakeChance\":80, \"useLavaOceans\":false, \"seaLevel\":255 }");
     ResourceLocation resourcelocation = new ResourceLocation("textures/gui/presets/water.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.waterWorld", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -164,7 +164,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"useLavaOceans\":false, \"seaLevel\":63 }");
     resourcelocation = new ResourceLocation("textures/gui/presets/isles.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.isleLand", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -183,7 +183,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"lavaLakeChance\":80, \"useLavaOceans\":false, \"seaLevel\":63 }");
     resourcelocation = new ResourceLocation("textures/gui/presets/delight.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.caveDelight", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -203,7 +203,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"lavaLakeChance\":80, \"useLavaOceans\":false, \"seaLevel\":63 }");
     resourcelocation = new ResourceLocation("textures/gui/presets/madness.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.mountains", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -222,7 +222,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"lavaLakeChance\":80, \"useLavaOceans\":false, \"seaLevel\":20 }");
     resourcelocation = new ResourceLocation("textures/gui/presets/drought.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.drought", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -241,7 +241,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"useLavaOceans\":false, \"seaLevel\":6 }");
     resourcelocation = new ResourceLocation("textures/gui/presets/chaos.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.caveChaos", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -260,7 +260,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
                 + " \"useLavaOceans\":true, \"seaLevel\":40 }");
     resourcelocation = new ResourceLocation("textures/gui/presets/luck.png");
     field_175310_f.add(
-        new GuiScreenCustomizePresets.Info(
+        new Info(
             I18n.format("createWorld.customize.custom.preset.goodLuck", new Object[0]),
             resourcelocation,
             chunkprovidersettings$factory));
@@ -302,7 +302,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
       this.field_178053_u = slotIndex;
       GuiScreenCustomizePresets.this.func_175304_a();
       GuiScreenCustomizePresets.this.field_175317_i.setText(
-          ((GuiScreenCustomizePresets.Info)
+          ((Info)
                   GuiScreenCustomizePresets.field_175310_f.get(
                       GuiScreenCustomizePresets.this.field_175311_g.field_178053_u))
               .field_178954_c.toString());
@@ -328,7 +328,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
       int k = 32;
       Tessellator tessellator = Tessellator.getInstance();
       WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-      worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
+      worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
       worldrenderer
           .pos((double) (i + 0), (double) (p_178051_2_ + 32), 0.0D)
           .tex(0.0D, 1.0D)
@@ -355,8 +355,8 @@ public class GuiScreenCustomizePresets extends GuiScreen {
         int p_180791_4_,
         int mouseXIn,
         int mouseYIn) {
-      GuiScreenCustomizePresets.Info guiscreencustomizepresets$info =
-          (GuiScreenCustomizePresets.Info) GuiScreenCustomizePresets.field_175310_f.get(entryID);
+      Info guiscreencustomizepresets$info =
+          (Info) GuiScreenCustomizePresets.field_175310_f.get(entryID);
       this.func_178051_a(p_180791_2_, p_180791_3_, guiscreencustomizepresets$info.field_178953_b);
       font.drawString(
           guiscreencustomizepresets$info.field_178955_a,

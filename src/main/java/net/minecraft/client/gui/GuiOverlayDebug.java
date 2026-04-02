@@ -49,7 +49,7 @@ public class GuiOverlayDebug extends Gui {
     this.renderDebugInfoRight(scaledResolutionIn);
     GlStateManager.popMatrix();
 
-    if (this.mc.gameSettings.field_181657_aC) {
+    if (this.mc.gameSettings.showLagometer) {
       this.func_181554_e();
     }
 
@@ -339,7 +339,7 @@ public class GuiOverlayDebug extends Gui {
                   "Allocated: % 2d%% %03dMB",
                   new Object[] {Long.valueOf(j * 100L / i), Long.valueOf(bytesToMb(j))}),
               "",
-              String.format("CPU: %s", new Object[] {OpenGlHelper.func_183029_j()}),
+              String.format("CPU: %s", new Object[] {OpenGlHelper.getCpu()}),
               "",
               String.format(
                   "Display: %dx%d (%s)",

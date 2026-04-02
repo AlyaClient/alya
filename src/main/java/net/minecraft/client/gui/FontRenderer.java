@@ -525,7 +525,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
       Tessellator tessellator = Tessellator.getInstance();
       WorldRenderer worldrenderer = tessellator.getWorldRenderer();
       GlStateManager.disableTexture2D();
-      worldrenderer.begin(7, DefaultVertexFormats.field_181705_e);
+      worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
       worldrenderer
           .pos((double) this.posX, (double) (this.posY + (float) (this.FONT_HEIGHT / 2)), 0.0D)
           .endVertex();
@@ -555,7 +555,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
       Tessellator tessellator1 = Tessellator.getInstance();
       WorldRenderer worldrenderer1 = tessellator1.getWorldRenderer();
       GlStateManager.disableTexture2D();
-      worldrenderer1.begin(7, DefaultVertexFormats.field_181705_e);
+      worldrenderer1.begin(7, DefaultVertexFormats.POSITION_TEX);
       int i = this.underlineStyle ? -1 : 0;
       worldrenderer1
           .pos(

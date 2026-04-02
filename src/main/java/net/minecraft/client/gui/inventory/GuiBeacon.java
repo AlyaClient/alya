@@ -26,7 +26,7 @@ public class GuiBeacon extends GuiContainer {
   private static final ResourceLocation beaconGuiTextures =
       new ResourceLocation("textures/gui/container/beacon.png");
   private IInventory tileBeacon;
-  private GuiBeacon.ConfirmButton beaconConfirmButton;
+  private ConfirmButton beaconConfirmButton;
   private boolean buttonsNotDrawn;
 
   public GuiBeacon(InventoryPlayer playerInventory, IInventory tileBeaconIn) {
@@ -44,8 +44,8 @@ public class GuiBeacon extends GuiContainer {
     super.initGui();
     this.buttonList.add(
         this.beaconConfirmButton =
-            new GuiBeacon.ConfirmButton(-1, this.guiLeft + 164, this.guiTop + 107));
-    this.buttonList.add(new GuiBeacon.CancelButton(-2, this.guiLeft + 190, this.guiTop + 107));
+            new ConfirmButton(-1, this.guiLeft + 164, this.guiTop + 107));
+    this.buttonList.add(new CancelButton(-2, this.guiLeft + 190, this.guiTop + 107));
     this.buttonsNotDrawn = true;
     this.beaconConfirmButton.enabled = false;
   }
@@ -66,8 +66,8 @@ public class GuiBeacon extends GuiContainer {
 
         for (int k1 = 0; k1 < i1; ++k1) {
           int l1 = TileEntityBeacon.effectsList[l][k1].id;
-          GuiBeacon.PowerButton guibeacon$powerbutton =
-              new GuiBeacon.PowerButton(
+          PowerButton guibeacon$powerbutton =
+              new PowerButton(
                   l << 8 | l1,
                   this.guiLeft + 76 + k1 * 24 - j1 / 2,
                   this.guiTop + 22 + l * 25,
@@ -89,8 +89,8 @@ public class GuiBeacon extends GuiContainer {
 
       for (int l2 = 0; l2 < j2 - 1; ++l2) {
         int i3 = TileEntityBeacon.effectsList[i2][l2].id;
-        GuiBeacon.PowerButton guibeacon$powerbutton2 =
-            new GuiBeacon.PowerButton(
+        PowerButton guibeacon$powerbutton2 =
+            new PowerButton(
                 i2 << 8 | i3, this.guiLeft + 167 + l2 * 24 - k2 / 2, this.guiTop + 47, i3, i2);
         this.buttonList.add(guibeacon$powerbutton2);
 
@@ -102,8 +102,8 @@ public class GuiBeacon extends GuiContainer {
       }
 
       if (j > 0) {
-        GuiBeacon.PowerButton guibeacon$powerbutton1 =
-            new GuiBeacon.PowerButton(
+        PowerButton guibeacon$powerbutton1 =
+            new PowerButton(
                 i2 << 8 | j, this.guiLeft + 167 + (j2 - 1) * 24 - k2 / 2, this.guiTop + 47, j, i2);
         this.buttonList.add(guibeacon$powerbutton1);
 
@@ -129,8 +129,8 @@ public class GuiBeacon extends GuiContainer {
       packetbuffer.writeInt(this.tileBeacon.getField(2));
       this.mc.getNetHandler().addToSendQueue(new C17PacketCustomPayload(s, packetbuffer));
       this.mc.displayGuiScreen((GuiScreen) null);
-    } else if (button instanceof GuiBeacon.PowerButton) {
-      if (((GuiBeacon.PowerButton) button).func_146141_c()) {
+    } else if (button instanceof PowerButton) {
+      if (((PowerButton) button).func_146141_c()) {
         return;
       }
 
@@ -250,7 +250,7 @@ public class GuiBeacon extends GuiContainer {
     }
   }
 
-  class CancelButton extends GuiBeacon.Button {
+  class CancelButton extends Button {
     public CancelButton(int p_i1074_2_, int p_i1074_3_, int p_i1074_4_) {
       super(p_i1074_2_, p_i1074_3_, p_i1074_4_, GuiBeacon.beaconGuiTextures, 112, 220);
     }
@@ -261,7 +261,7 @@ public class GuiBeacon extends GuiContainer {
     }
   }
 
-  class ConfirmButton extends GuiBeacon.Button {
+  class ConfirmButton extends Button {
     public ConfirmButton(int p_i1075_2_, int p_i1075_3_, int p_i1075_4_) {
       super(p_i1075_2_, p_i1075_3_, p_i1075_4_, GuiBeacon.beaconGuiTextures, 90, 220);
     }
@@ -272,7 +272,7 @@ public class GuiBeacon extends GuiContainer {
     }
   }
 
-  class PowerButton extends GuiBeacon.Button {
+  class PowerButton extends Button {
     private final int field_146149_p;
     private final int field_146148_q;
 

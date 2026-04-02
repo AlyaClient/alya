@@ -130,6 +130,7 @@ public class GuiIngame extends Gui {
 
     public void renderGameOverlay(float partialTicks) {
         ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+        Alya.getInstance().getEventBus().dispatch(new Render2DEvent(scaledresolution));
         int i = scaledresolution.getScaledWidth();
         int j = scaledresolution.getScaledHeight();
         this.mc.entityRenderer.setupOverlayRendering();
@@ -247,7 +248,7 @@ public class GuiIngame extends Gui {
                 int l = 16777215;
 
                 if(this.recordIsPlaying) {
-                    l = MathHelper.func_181758_c(f2 / 50.0F, 0.7F, 0.6F) & 16777215;
+                    l = MathHelper.hsvToRGB(f2 / 50.0F, 0.7F, 0.6F) & 16777215;
                 }
 
                 this.getFontRenderer()
@@ -315,7 +316,7 @@ public class GuiIngame extends Gui {
         Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
         ScoreObjective scoreobjective = null;
         ScorePlayerTeam scoreplayerteam =
-                scoreboard.getPlayersTeam(this.mc.thePlayer.getCommandSenderName());
+                scoreboard.getPlayersTeam(this.mc.thePlayer.getCommandSenderEntity().getName());
 
         if(scoreplayerteam != null) {
             int i1 = scoreplayerteam.getChatFormat().getColorIndex();
@@ -830,7 +831,7 @@ public class GuiIngame extends Gui {
         this.mc.getTextureManager().bindTexture(pumpkinBlurTexPath);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
         worldrenderer
                 .pos(0.0D, p_180476_1_.getScaledHeight(), -90.0D)
                 .tex(0.0D, 1.0D)
@@ -896,7 +897,7 @@ public class GuiIngame extends Gui {
             this.mc.getTextureManager().bindTexture(vignetteTexPath);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
             worldrenderer
                     .pos(0.0D, p_180480_2_.getScaledHeight(), -90.0D)
                     .tex(0.0D, 1.0D)
@@ -943,7 +944,7 @@ public class GuiIngame extends Gui {
         float f3 = textureatlassprite.getMaxV();
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
         worldrenderer
                 .pos(0.0D, p_180474_2_.getScaledHeight(), -90.0D)
                 .tex(f, f3)

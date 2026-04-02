@@ -165,14 +165,14 @@ public class GuiScreenResourcePacks extends GuiScreen {
           Collections.reverse(list);
           this.mc.getResourcePackRepository().setRepositories(list);
           this.mc.gameSettings.resourcePacks.clear();
-          this.mc.gameSettings.field_183018_l.clear();
+          this.mc.gameSettings.incompatibleResourcePacks.clear();
 
           for (ResourcePackRepository.Entry resourcepackrepository$entry : list) {
             this.mc.gameSettings.resourcePacks.add(
                 resourcepackrepository$entry.getResourcePackName());
 
             if (resourcepackrepository$entry.func_183027_f() != 1) {
-              this.mc.gameSettings.field_183018_l.add(
+              this.mc.gameSettings.resourcePacks.add(
                   resourcepackrepository$entry.getResourcePackName());
             }
           }

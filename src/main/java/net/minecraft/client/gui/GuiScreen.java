@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import dev.thoq.gui.toast.ToastManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -40,79 +41,36 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import dev.thoq.gui.toast.ToastManager;
 
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
-    private static final Logger LOGGER = LogManager.getLogger(GuiScreen.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Set<String> PROTOCOLS = Sets.newHashSet(new String[]{"http", "https"});
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
-
-    /**
-     * Reference to the Minecraft object.
-     */
     protected Minecraft mc;
-
-    /**
-     * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on
-     * ItemStack)
-     */
     protected RenderItem itemRender;
-
-    /**
-     * The width of the screen object.
-     */
     public int width;
-
-    /**
-     * The height of the screen object.
-     */
     public int height;
-
     protected List<GuiButton> buttonList = Lists.<GuiButton>newArrayList();
     protected List<GuiLabel> labelList = Lists.<GuiLabel>newArrayList();
     public boolean allowUserInput;
-
-    /**
-     * The CustomFont used by GuiScreen
-     */
     protected FontRenderer fontRendererObj;
-
-    /**
-     * The button that was just pressed.
-     */
     private GuiButton selectedButton;
-
     private int eventButton;
     private long lastMouseEvent;
-
-    /**
-     * Incremented when the game is in touchscreen mode and the screen is tapped, decremented if the
-     * screen isn't tapped. Does not appear to be used.
-     */
     private int touchValue;
-
     private URI clickedLinkURI;
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         ToastManager.getInstance().render();
-
-        for(GuiButton guiButton : this.buttonList) {
-            guiButton.drawButton(this.mc, mouseX, mouseY);
+        for(int i = 0; i < this.buttonList.size(); ++i) {
+            ((GuiButton) this.buttonList.get(i)).drawButton(this.mc, mouseX, mouseY);
         }
 
-        for(GuiLabel guiLabel : this.labelList) {
-            guiLabel.drawLabel(this.mc, mouseX, mouseY);
+        for(int j = 0; j < this.labelList.size(); ++j) {
+            ((GuiLabel) this.labelList.get(j)).drawLabel(this.mc, mouseX, mouseY);
         }
     }
 
-    /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl
-     * Keyboard key code)
-     */
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if(keyCode == 1) {
             this.mc.displayGuiScreen((GuiScreen) null);
@@ -123,13 +81,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Returns a string stored in the system clipboard.
-     */
     public static String getClipboardString() {
         try {
-            Transferable transferable =
-                    Toolkit.getDefaultToolkit().getSystemClipboard().getContents((Object) null);
+            Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents((Object) null);
 
             if(transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 return (String) transferable.getTransferData(DataFlavor.stringFlavor);
@@ -141,16 +95,11 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         return "";
     }
 
-    /**
-     * Stores the given string in the system clipboard
-     */
     public static void setClipboardString(String copyText) {
         if(!StringUtils.isEmpty(copyText)) {
             try {
                 StringSelection stringselection = new StringSelection(copyText);
-                Toolkit.getDefaultToolkit()
-                        .getSystemClipboard()
-                        .setContents(stringselection, (ClipboardOwner) null);
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringselection, (ClipboardOwner) null);
             } catch(Exception var2) {
                 ;
             }
@@ -158,8 +107,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     }
 
     protected void renderToolTip(ItemStack stack, int x, int y) {
-        List<String> list =
-                stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+        List<String> list = stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
 
         for(int i = 0; i < list.size(); ++i) {
             if(i == 0) {
@@ -172,17 +120,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         this.drawHoveringText(list, x, y);
     }
 
-    /**
-     * Draws the text when mouse is over creative inventory tab. Params: current creative tab to be
-     * checked, current mouse x position, current mouse y position.
-     */
     protected void drawCreativeTabHoveringText(String tabName, int mouseX, int mouseY) {
         this.drawHoveringText(Arrays.<String>asList(new String[]{tabName}), mouseX, mouseY);
     }
 
-    /**
-     * Draws a List of strings as a tooltip. Every entry is drawn on a seperate line.
-     */
     protected void drawHoveringText(List<String> textLines, int x, int y) {
         if(!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
@@ -192,7 +133,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
             int i = 0;
 
             for(String s : textLines) {
-                int j = (int) font.getStringWidth(s);
+                int j = this.fontRendererObj.getStringWidth(s);
 
                 if(j > i) {
                     i = j;
@@ -232,7 +173,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
 
             for(int k1 = 0; k1 < textLines.size(); ++k1) {
                 String s1 = (String) textLines.get(k1);
-                font.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
+                this.fontRendererObj.drawStringWithShadow(s1, (float) l1, (float) i2, -1);
 
                 if(k1 == 0) {
                     i2 += 2;
@@ -250,13 +191,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Draws the hover event specified by the given chat component
-     */
-    protected void handleComponentHover(
-            IChatComponent p_175272_1_, int p_175272_2_, int p_175272_3_) {
-        if(p_175272_1_ != null && p_175272_1_.getChatStyle().getChatHoverEvent() != null) {
-            HoverEvent hoverevent = p_175272_1_.getChatStyle().getChatHoverEvent();
+    protected void handleComponentHover(IChatComponent component, int x, int y) {
+        if(component != null && component.getChatStyle().getChatHoverEvent() != null) {
+            HoverEvent hoverevent = component.getChatStyle().getChatHoverEvent();
 
             if(hoverevent.getAction() == HoverEvent.Action.SHOW_ITEM) {
                 ItemStack itemstack = null;
@@ -272,10 +209,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
                 }
 
                 if(itemstack != null) {
-                    this.renderToolTip(itemstack, p_175272_2_, p_175272_3_);
+                    this.renderToolTip(itemstack, x, y);
                 } else {
-                    this.drawCreativeTabHoveringText(
-                            EnumChatFormatting.RED + "Invalid Item!", p_175272_2_, p_175272_3_);
+                    this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid Item!", x, y);
                 }
             } else if(hoverevent.getAction() == HoverEvent.Action.SHOW_ENTITY) {
                 if(this.mc.gameSettings.advancedItemTooltips) {
@@ -293,47 +229,33 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
                             }
 
                             list1.add(nbttagcompound.getString("id"));
-                            this.drawHoveringText(list1, p_175272_2_, p_175272_3_);
+                            this.drawHoveringText(list1, x, y);
                         } else {
-                            this.drawCreativeTabHoveringText(
-                                    EnumChatFormatting.RED + "Invalid Entity!", p_175272_2_, p_175272_3_);
+                            this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid Entity!", x, y);
                         }
                     } catch(NBTException var10) {
-                        this.drawCreativeTabHoveringText(
-                                EnumChatFormatting.RED + "Invalid Entity!", p_175272_2_, p_175272_3_);
+                        this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid Entity!", x, y);
                     }
                 }
             } else if(hoverevent.getAction() == HoverEvent.Action.SHOW_TEXT) {
-                this.drawHoveringText(
-                        NEWLINE_SPLITTER.splitToList(hoverevent.getValue().getFormattedText()),
-                        p_175272_2_,
-                        p_175272_3_);
+                this.drawHoveringText(NEWLINE_SPLITTER.splitToList(hoverevent.getValue().getFormattedText()), x, y);
             } else if(hoverevent.getAction() == HoverEvent.Action.SHOW_ACHIEVEMENT) {
                 StatBase statbase = StatList.getOneShotStat(hoverevent.getValue().getUnformattedText());
 
                 if(statbase != null) {
                     IChatComponent ichatcomponent = statbase.getStatName();
-                    IChatComponent ichatcomponent1 =
-                            new ChatComponentTranslation(
-                                    "stats.tooltip.type." + (statbase.isAchievement() ? "achievement" : "statistic"),
-                                    new Object[0]);
+                    IChatComponent ichatcomponent1 = new ChatComponentTranslation("stats.tooltip.type." + (statbase.isAchievement() ? "achievement" : "statistic"), new Object[0]);
                     ichatcomponent1.getChatStyle().setItalic(Boolean.valueOf(true));
-                    String s1 =
-                            statbase instanceof Achievement ? ((Achievement) statbase).getDescription() : null;
-                    List<String> list =
-                            Lists.newArrayList(
-                                    new String[]{
-                                            ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText()
-                                    });
+                    String s1 = statbase instanceof Achievement ? ((Achievement) statbase).getDescription() : null;
+                    List<String> list = Lists.newArrayList(new String[]{ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText()});
 
                     if(s1 != null) {
                         list.addAll(this.fontRendererObj.listFormattedStringToWidth(s1, 150));
                     }
 
-                    this.drawHoveringText(list, p_175272_2_, p_175272_3_);
+                    this.drawHoveringText(list, x, y);
                 } else {
-                    this.drawCreativeTabHoveringText(
-                            EnumChatFormatting.RED + "Invalid statistic/achievement!", p_175272_2_, p_175272_3_);
+                    this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid statistic/achievement!", x, y);
                 }
             }
 
@@ -341,28 +263,18 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Sets the text of the chat
-     *
-     * @param newChatText     The new chat text to be set
-     * @param shouldOverwrite Determines if the text currently in the chat should be overwritten or
-     *                        appended
-     */
     protected void setText(String newChatText, boolean shouldOverwrite) {
     }
 
-    /**
-     * Executes the click event specified by the given chat component
-     */
-    protected boolean handleComponentClick(IChatComponent p_175276_1_) {
-        if(p_175276_1_ == null) {
+    protected boolean handleComponentClick(IChatComponent component) {
+        if(component == null) {
             return false;
         } else {
-            ClickEvent clickevent = p_175276_1_.getChatStyle().getChatClickEvent();
+            ClickEvent clickevent = component.getChatStyle().getChatClickEvent();
 
             if(isShiftKeyDown()) {
-                if(p_175276_1_.getChatStyle().getInsertion() != null) {
-                    this.setText(p_175276_1_.getChatStyle().getInsertion(), false);
+                if(component.getChatStyle().getInsertion() != null) {
+                    this.setText(component.getChatStyle().getInsertion(), false);
                 }
             } else if(clickevent != null) {
                 if(clickevent.getAction() == ClickEvent.Action.OPEN_URL) {
@@ -379,20 +291,17 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
                         }
 
                         if(!PROTOCOLS.contains(s.toLowerCase())) {
-                            throw new URISyntaxException(
-                                    clickevent.getValue(), "Unsupported protocol: " + s.toLowerCase());
+                            throw new URISyntaxException(clickevent.getValue(), "Unsupported protocol: " + s.toLowerCase());
                         }
 
                         if(this.mc.gameSettings.chatLinksPrompt) {
                             this.clickedLinkURI = uri;
-                            this.mc.displayGuiScreen(
-                                    new GuiConfirmOpenLink(this, clickevent.getValue(), 31102009, false));
+                            this.mc.displayGuiScreen(new GuiConfirmOpenLink(this, clickevent.getValue(), 31102009, false));
                         } else {
                             this.openWebLink(uri);
                         }
                     } catch(URISyntaxException urisyntaxexception) {
-                        LOGGER.error(
-                                (String) ("Can\'t open url for " + clickevent), (Throwable) urisyntaxexception);
+                        LOGGER.error((String) ("Can\'t open url for " + clickevent), (Throwable) urisyntaxexception);
                     }
                 } else if(clickevent.getAction() == ClickEvent.Action.OPEN_FILE) {
                     URI uri1 = (new File(clickevent.getValue())).toURI();
@@ -424,9 +333,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         this.mc.thePlayer.sendChatMessage(msg);
     }
 
-    /**
-     * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
-     */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if(mouseButton == 0) {
             for(int i = 0; i < this.buttonList.size(); ++i) {
@@ -441,9 +347,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Called when a mouse button is released. Args : mouseX, mouseY, releaseButton
-     */
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         if(this.selectedButton != null && state == 0) {
             this.selectedButton.mouseReleased(mouseX, mouseY);
@@ -451,24 +354,12 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Called when a mouse button is pressed and the mouse is moved around. Parameters are : mouseX,
-     * mouseY, lastButtonClicked & timeSinceMouseClick.
-     */
-    protected void mouseClickMove(
-            int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
     protected void actionPerformed(GuiButton button) throws IOException {
     }
 
-    /**
-     * Causes the screen to lay out its subcomponents again. This is the equivalent of the Java call
-     * Container.validate()
-     */
     public void setWorldAndResolution(Minecraft mc, int width, int height) {
         this.mc = mc;
         this.itemRender = mc.getRenderItem();
@@ -479,21 +370,14 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         this.initGui();
     }
 
-    public void func_183500_a(int p_183500_1_, int p_183500_2_) {
-        this.width = p_183500_1_;
-        this.height = p_183500_2_;
+    public void setGuiSize(int w, int h) {
+        this.width = w;
+        this.height = h;
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the gui is
-     * displayed and when the window resizes, the buttonList is cleared beforehand.
-     */
     public void initGui() {
     }
 
-    /**
-     * Delegates mouse and keyboard input.
-     */
     public void handleInput() throws IOException {
         if(Mouse.isCreated()) {
             while(Mouse.next()) {
@@ -508,9 +392,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Handles mouse input.
-     */
     public void handleMouseInput() throws IOException {
         int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
@@ -537,9 +418,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Handles keyboard input.
-     */
     public void handleKeyboardInput() throws IOException {
         if(Keyboard.getEventKeyState()) {
             this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
@@ -548,22 +426,12 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         this.mc.dispatchKeypresses();
     }
 
-    /**
-     * Called from the main game loop to update the screen.
-     */
     public void updateScreen() {
     }
 
-    /**
-     * Called when the screen is unloaded. Used to disable keyboard repeat events
-     */
     public void onGuiClosed() {
     }
 
-    /**
-     * Draws either a gradient over the background screen (when it exists) or a flat gradient over
-     * background.png
-     */
     public void drawDefaultBackground() {
         this.drawWorldBackground(0);
     }
@@ -576,20 +444,12 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    /**
-     * Draws the background (i is always 0 as of 1.2.2)
-     */
     public void drawBackground(int tint) {
         GlStateManager.disableLighting();
         GlStateManager.disableFog();
-        GlStateManager.disableTexture2D();
         this.drawGradientRect(0, 0, this.width, this.height, 0xFF000000, 0xFF0F0F0F);
-        GlStateManager.enableTexture2D();
     }
 
-    /**
-     * Returns true if this gui should pause the game when it is displayed in single-player
-     */
     public boolean doesGuiPauseGame() {
         return true;
     }
@@ -605,62 +465,45 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
         }
     }
 
-    private void openWebLink(URI p_175282_1_) {
+    private void openWebLink(URI url) {
         try {
             Class<?> oclass = Class.forName("java.awt.Desktop");
-            Object object =
-                    oclass.getMethod("getDesktop", new Class[0]).invoke((Object) null, new Object[0]);
-            oclass
-                    .getMethod("browse", new Class[]{URI.class})
-                    .invoke(object, new Object[]{p_175282_1_});
+            Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object) null, new Object[0]);
+            oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, new Object[]{url});
         } catch(Throwable throwable) {
             LOGGER.error("Couldn\'t open link", throwable);
         }
     }
 
-    /**
-     * Returns true if either windows ctrl key is down or if either mac meta key is down
-     */
     public static boolean isCtrlKeyDown() {
-        return Minecraft.isRunningOnMac
-                ? Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220)
-                : Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
+        return Minecraft.isRunningOnMac ? Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220) : Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
     }
 
-    /**
-     * Returns true if either shift key is down
-     */
     public static boolean isShiftKeyDown() {
         return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54);
     }
 
-    /**
-     * Returns true if either alt key is down
-     */
     public static boolean isAltKeyDown() {
         return Keyboard.isKeyDown(56) || Keyboard.isKeyDown(184);
     }
 
-    public static boolean isKeyComboCtrlX(int p_175277_0_) {
-        return p_175277_0_ == 45 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+    public static boolean isKeyComboCtrlX(int keyID) {
+        return keyID == 45 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
-    public static boolean isKeyComboCtrlV(int p_175279_0_) {
-        return p_175279_0_ == 47 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+    public static boolean isKeyComboCtrlV(int keyID) {
+        return keyID == 47 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
-    public static boolean isKeyComboCtrlC(int p_175280_0_) {
-        return p_175280_0_ == 46 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+    public static boolean isKeyComboCtrlC(int keyID) {
+        return keyID == 46 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
-    public static boolean isKeyComboCtrlA(int p_175278_0_) {
-        return p_175278_0_ == 30 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+    public static boolean isKeyComboCtrlA(int keyID) {
+        return keyID == 30 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
-    /**
-     * Called when the gui is resized in order to update the world and the resolution
-     */
-    public void onResize(Minecraft mcIn, int p_175273_2_, int p_175273_3_) {
-        this.setWorldAndResolution(mcIn, p_175273_2_, p_175273_3_);
+    public void onResize(Minecraft mcIn, int w, int h) {
+        this.setWorldAndResolution(mcIn, w, h);
     }
 }

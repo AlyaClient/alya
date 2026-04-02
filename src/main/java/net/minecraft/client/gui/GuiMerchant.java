@@ -32,10 +32,10 @@ public class GuiMerchant extends GuiContainer {
   private IMerchant merchant;
 
   /** The button which proceeds to the next available merchant recipe. */
-  private GuiMerchant.MerchantButton nextButton;
+  private MerchantButton nextButton;
 
   /** Returns to the previous Merchant recipe if one is applicable. */
-  private GuiMerchant.MerchantButton previousButton;
+  private MerchantButton previousButton;
 
   /** The integer value corresponding to the currently selected merchant recipe. */
   private int selectedMerchantRecipe;
@@ -58,9 +58,9 @@ public class GuiMerchant extends GuiContainer {
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
     this.buttonList.add(
-        this.nextButton = new GuiMerchant.MerchantButton(1, i + 120 + 27, j + 24 - 1, true));
+        this.nextButton = new MerchantButton(1, i + 120 + 27, j + 24 - 1, true));
     this.buttonList.add(
-        this.previousButton = new GuiMerchant.MerchantButton(2, i + 36 - 19, j + 24 - 1, false));
+        this.previousButton = new MerchantButton(2, i + 36 - 19, j + 24 - 1, false));
     this.nextButton.enabled = false;
     this.previousButton.enabled = false;
   }

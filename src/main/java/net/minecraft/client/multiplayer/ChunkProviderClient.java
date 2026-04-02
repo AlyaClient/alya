@@ -15,135 +15,119 @@ import net.minecraft.world.chunk.IChunkProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ChunkProviderClient implements IChunkProvider {
-  private static final Logger logger = LogManager.getLogger(ChunkProviderClient.class);
+public class ChunkProviderClient implements IChunkProvider
+{
+    private static final Logger logger = LogManager.getLogger();
+    private Chunk blankChunk;
+    private LongHashMap<Chunk> chunkMapping = new LongHashMap();
+    private List<Chunk> chunkListing = Lists.<Chunk>newArrayList();
+    private World worldObj;
 
-  /**
-   * The completely empty chunk used by ChunkProviderClient when chunkMapping doesn't contain the
-   * requested coordinates.
-   */
-  private Chunk blankChunk;
-
-  private LongHashMap<Chunk> chunkMapping = new LongHashMap();
-  private List<Chunk> chunkListing = Lists.<Chunk>newArrayList();
-
-  /** Reference to the World object. */
-  private World worldObj;
-
-  public ChunkProviderClient(World worldIn) {
-    this.blankChunk = new EmptyChunk(worldIn, 0, 0);
-    this.worldObj = worldIn;
-  }
-
-  /** Checks to see if a chunk exists at x, z */
-  public boolean chunkExists(int x, int z) {
-    return true;
-  }
-
-  /**
-   * Unload chunk from ChunkProviderClient's hashmap. Called in response to a Packet50PreChunk with
-   * its mode field set to false
-   */
-  public void unloadChunk(int p_73234_1_, int p_73234_2_) {
-    Chunk chunk = this.provideChunk(p_73234_1_, p_73234_2_);
-
-    if (!chunk.isEmpty()) {
-      chunk.onChunkUnload();
+    public ChunkProviderClient(World worldIn)
+    {
+        this.blankChunk = new EmptyChunk(worldIn, 0, 0);
+        this.worldObj = worldIn;
     }
 
-    this.chunkMapping.remove(ChunkCoordIntPair.chunkXZ2Int(p_73234_1_, p_73234_2_));
-    this.chunkListing.remove(chunk);
-  }
-
-  /** loads or generates the chunk at the chunk location specified */
-  public Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
-    Chunk chunk = new Chunk(this.worldObj, p_73158_1_, p_73158_2_);
-    this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_), chunk);
-    this.chunkListing.add(chunk);
-    chunk.setChunkLoaded(true);
-    return chunk;
-  }
-
-  /**
-   * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the
-   * blocks for the specified chunk from the map seed and chunk seed
-   */
-  public Chunk provideChunk(int x, int z) {
-    Chunk chunk = (Chunk) this.chunkMapping.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
-    return chunk == null ? this.blankChunk : chunk;
-  }
-
-  /**
-   * Two modes of operation: if passed true, save all Chunks in one go. If passed false, save up to
-   * two chunks. Return true if all chunks have been saved.
-   */
-  public boolean saveChunks(boolean p_73151_1_, IProgressUpdate progressCallback) {
-    return true;
-  }
-
-  /**
-   * Save extra data not associated with any Chunk. Not saved during autosave, only during world
-   * unload. Currently unimplemented.
-   */
-  public void saveExtraData() {}
-
-  /**
-   * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such
-   * chunk.
-   */
-  public boolean unloadQueuedChunks() {
-    long i = System.currentTimeMillis();
-
-    for (Chunk chunk : this.chunkListing) {
-      chunk.func_150804_b(System.currentTimeMillis() - i > 5L);
+    public boolean chunkExists(int x, int z)
+    {
+        return true;
     }
 
-    if (System.currentTimeMillis() - i > 100L) {
-      logger.info(
-          "Warning: Clientside chunk ticking took {} ms",
-          new Object[] {Long.valueOf(System.currentTimeMillis() - i)});
+    public void unloadChunk(int x, int z)
+    {
+        Chunk chunk = this.provideChunk(x, z);
+
+        if (!chunk.isEmpty())
+        {
+            chunk.onChunkUnload();
+        }
+
+        this.chunkMapping.remove(ChunkCoordIntPair.chunkXZ2Int(x, z));
+        this.chunkListing.remove(chunk);
     }
 
-    return false;
-  }
+    public Chunk loadChunk(int chunkX, int chunkZ)
+    {
+        Chunk chunk = new Chunk(this.worldObj, chunkX, chunkZ);
+        this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ), chunk);
+        this.chunkListing.add(chunk);
+        chunk.setChunkLoaded(true);
+        return chunk;
+    }
 
-  /** Returns if the IChunkProvider supports saving. */
-  public boolean canSave() {
-    return false;
-  }
+    public Chunk provideChunk(int x, int z)
+    {
+        Chunk chunk = (Chunk)this.chunkMapping.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
+        return chunk == null ? this.blankChunk : chunk;
+    }
 
-  /** Populates chunk with ores etc etc */
-  public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_) {}
+    public boolean saveChunks(boolean saveAllChunks, IProgressUpdate progressCallback)
+    {
+        return true;
+    }
 
-  public boolean func_177460_a(
-      IChunkProvider p_177460_1_, Chunk p_177460_2_, int p_177460_3_, int p_177460_4_) {
-    return false;
-  }
+    public void saveExtraData()
+    {
+    }
 
-  /** Converts the instance data to a readable string. */
-  public String makeString() {
-    return "MultiplayerChunkCache: "
-        + this.chunkMapping.getNumHashElements()
-        + ", "
-        + this.chunkListing.size();
-  }
+    public boolean unloadQueuedChunks()
+    {
+        long i = System.currentTimeMillis();
 
-  public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(
-      EnumCreatureType creatureType, BlockPos pos) {
-    return null;
-  }
+        for (Chunk chunk : this.chunkListing)
+        {
+            chunk.func_150804_b(System.currentTimeMillis() - i > 5L);
+        }
 
-  public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position) {
-    return null;
-  }
+        if (System.currentTimeMillis() - i > 100L)
+        {
+            logger.info("Warning: Clientside chunk ticking took {} ms", new Object[] {Long.valueOf(System.currentTimeMillis() - i)});
+        }
 
-  public int getLoadedChunkCount() {
-    return this.chunkListing.size();
-  }
+        return false;
+    }
 
-  public void recreateStructures(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_) {}
+    public boolean canSave()
+    {
+        return false;
+    }
 
-  public Chunk provideChunk(BlockPos blockPosIn) {
-    return this.provideChunk(blockPosIn.getX() >> 4, blockPosIn.getZ() >> 4);
-  }
+    public void populate(IChunkProvider chunkProvider, int x, int z)
+    {
+    }
+
+    public boolean populateChunk(IChunkProvider chunkProvider, Chunk chunkIn, int x, int z)
+    {
+        return false;
+    }
+
+    public String makeString()
+    {
+        return "MultiplayerChunkCache: " + this.chunkMapping.getNumHashElements() + ", " + this.chunkListing.size();
+    }
+
+    public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos)
+    {
+        return null;
+    }
+
+    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position)
+    {
+        return null;
+    }
+
+    public int getLoadedChunkCount()
+    {
+        return this.chunkListing.size();
+    }
+
+    public void recreateStructures(Chunk chunkIn, int x, int z)
+    {
+    }
+
+    public Chunk provideChunk(BlockPos blockPosIn)
+    {
+        return this.provideChunk(blockPosIn.getX() >> 4, blockPosIn.getZ() >> 4);
+    }
 }

@@ -435,10 +435,10 @@ public final class LuaEventApi extends LuaTable {
                         public LuaValue call() {
                             if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
                                 return LuaValue.valueOf(
-                                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionX);
+                                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionX());
                             if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
                                 return LuaValue.valueOf(
-                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionX);
+                                        ((S27PacketExplosion) packetReceiveEvent.getPacket()).getX());
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -449,10 +449,10 @@ public final class LuaEventApi extends LuaTable {
                         public LuaValue call() {
                             if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
                                 return LuaValue.valueOf(
-                                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionY);
+                                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionY());
                             if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
                                 return LuaValue.valueOf(
-                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionY);
+                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).getY());
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -463,10 +463,10 @@ public final class LuaEventApi extends LuaTable {
                         public LuaValue call() {
                             if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
                                 return LuaValue.valueOf(
-                                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionZ);
+                                        ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionZ());
                             if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
                                 return LuaValue.valueOf(
-                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionZ);
+                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).getZ());
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -478,7 +478,7 @@ public final class LuaEventApi extends LuaTable {
                             if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
                                 ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionX = val.toint();
                             else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
-                                ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionX =
+                                ((S27PacketExplosion) packetReceiveEvent.getPacket()).posX =
                                         (float) val.todouble();
                             return LuaValue.NIL;
                         }
@@ -491,7 +491,7 @@ public final class LuaEventApi extends LuaTable {
                             if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
                                 ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionY = val.toint();
                             else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
-                                ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionY =
+                                ((S27PacketExplosion) packetReceiveEvent.getPacket()).posY =
                                         (float) val.todouble();
                             return LuaValue.NIL;
                         }
@@ -504,7 +504,7 @@ public final class LuaEventApi extends LuaTable {
                             if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
                                 ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionZ = val.toint();
                             else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
-                                ((S27PacketExplosion) packetReceiveEvent.getPacket()).motionZ =
+                                ((S27PacketExplosion) packetReceiveEvent.getPacket()).posZ =
                                         (float) val.todouble();
                             return LuaValue.NIL;
                         }

@@ -1,3 +1,5 @@
 package net.minecraft.util;
 
-public class MinecraftError extends Error {}
+public class MinecraftError extends Error
+{
+}

@@ -3,121 +3,109 @@ package net.minecraft.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public class Slot {
-  /** The index of the slot in the inventory. */
-  private final int slotIndex;
+public class Slot
+{
+    private final int slotIndex;
+    public final IInventory inventory;
+    public int slotNumber;
+    public int xDisplayPosition;
+    public int yDisplayPosition;
 
-  /** The inventory we want to extract a slot from. */
-  public final IInventory inventory;
-
-  /** the id of the slot(also the index in the inventory arraylist) */
-  public int slotNumber;
-
-  /** display position of the inventory slot on the screen x axis */
-  public int xDisplayPosition;
-
-  /** display position of the inventory slot on the screen y axis */
-  public int yDisplayPosition;
-
-  public Slot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
-    this.inventory = inventoryIn;
-    this.slotIndex = index;
-    this.xDisplayPosition = xPosition;
-    this.yDisplayPosition = yPosition;
-  }
-
-  /** if par2 has more items than par1, onCrafting(item,countIncrease) is called */
-  public void onSlotChange(ItemStack p_75220_1_, ItemStack p_75220_2_) {
-    if (p_75220_1_ != null && p_75220_2_ != null) {
-      if (p_75220_1_.getItem() == p_75220_2_.getItem()) {
-        int i = p_75220_2_.stackSize - p_75220_1_.stackSize;
-
-        if (i > 0) {
-          this.onCrafting(p_75220_1_, i);
-        }
-      }
+    public Slot(IInventory inventoryIn, int index, int xPosition, int yPosition)
+    {
+        this.inventory = inventoryIn;
+        this.slotIndex = index;
+        this.xDisplayPosition = xPosition;
+        this.yDisplayPosition = yPosition;
     }
-  }
 
-  /**
-   * the itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood.
-   * Typically increases an internal count then calls onCrafting(item).
-   */
-  protected void onCrafting(ItemStack stack, int amount) {}
+    public void onSlotChange(ItemStack p_75220_1_, ItemStack p_75220_2_)
+    {
+        if (p_75220_1_ != null && p_75220_2_ != null)
+        {
+            if (p_75220_1_.getItem() == p_75220_2_.getItem())
+            {
+                int i = p_75220_2_.stackSize - p_75220_1_.stackSize;
 
-  /** the itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood. */
-  protected void onCrafting(ItemStack stack) {}
+                if (i > 0)
+                {
+                    this.onCrafting(p_75220_1_, i);
+                }
+            }
+        }
+    }
 
-  public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
-    this.onSlotChanged();
-  }
+    protected void onCrafting(ItemStack stack, int amount)
+    {
+    }
 
-  /** Check if the stack is a valid item for this slot. Always true beside for the armor slots. */
-  public boolean isItemValid(ItemStack stack) {
-    return true;
-  }
+    protected void onCrafting(ItemStack stack)
+    {
+    }
 
-  /** Helper fnct to get the stack in the slot. */
-  public ItemStack getStack() {
-    return this.inventory.getStackInSlot(this.slotIndex);
-  }
+    public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack)
+    {
+        this.onSlotChanged();
+    }
 
-  /** Returns if this slot contains a stack. */
-  public boolean getHasStack() {
-    return this.getStack() != null;
-  }
+    public boolean isItemValid(ItemStack stack)
+    {
+        return true;
+    }
 
-  /** Helper method to put a stack in the slot. */
-  public void putStack(ItemStack stack) {
-    this.inventory.setInventorySlotContents(this.slotIndex, stack);
-    this.onSlotChanged();
-  }
+    public ItemStack getStack()
+    {
+        return this.inventory.getStackInSlot(this.slotIndex);
+    }
 
-  /** Called when the stack in a Slot changes */
-  public void onSlotChanged() {
-    this.inventory.markDirty();
-  }
+    public boolean getHasStack()
+    {
+        return this.getStack() != null;
+    }
 
-  /**
-   * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(),
-   * but 1 in the case of armor slots)
-   */
-  public int getSlotStackLimit() {
-    return this.inventory.getInventoryStackLimit();
-  }
+    public void putStack(ItemStack stack)
+    {
+        this.inventory.setInventorySlotContents(this.slotIndex, stack);
+        this.onSlotChanged();
+    }
 
-  public int getItemStackLimit(ItemStack stack) {
-    return this.getSlotStackLimit();
-  }
+    public void onSlotChanged()
+    {
+        this.inventory.markDirty();
+    }
 
-  public String getSlotTexture() {
-    return null;
-  }
+    public int getSlotStackLimit()
+    {
+        return this.inventory.getInventoryStackLimit();
+    }
 
-  /**
-   * Decrease the size of the stack in slot (first int arg) by the amount of the second int arg.
-   * Returns the new stack.
-   */
-  public ItemStack decrStackSize(int amount) {
-    return this.inventory.decrStackSize(this.slotIndex, amount);
-  }
+    public int getItemStackLimit(ItemStack stack)
+    {
+        return this.getSlotStackLimit();
+    }
 
-  /** returns true if the slot exists in the given inventory and location */
-  public boolean isHere(IInventory inv, int slotIn) {
-    return inv == this.inventory && slotIn == this.slotIndex;
-  }
+    public String getSlotTexture()
+    {
+        return null;
+    }
 
-  /** Return whether this slot's stack can be taken from this slot. */
-  public boolean canTakeStack(EntityPlayer playerIn) {
-    return true;
-  }
+    public ItemStack decrStackSize(int amount)
+    {
+        return this.inventory.decrStackSize(this.slotIndex, amount);
+    }
 
-  /**
-   * Actualy only call when we want to visual the white square effect over the slots. Return always
-   * True, except for the armor slot of the Donkey/Mule (we can't interact with the Undead and
-   * Skeleton horses)
-   */
-  public boolean canBeHovered() {
-    return true;
-  }
+    public boolean isHere(IInventory inv, int slotIn)
+    {
+        return inv == this.inventory && slotIn == this.slotIndex;
+    }
+
+    public boolean canTakeStack(EntityPlayer playerIn)
+    {
+        return true;
+    }
+
+    public boolean canBeHovered()
+    {
+        return true;
+    }
 }

@@ -2,35 +2,32 @@ package net.minecraft.world;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class WorldSavedData {
-  /** The name of the map data nbt */
-  public final String mapName;
+public abstract class WorldSavedData
+{
+    public final String mapName;
+    private boolean dirty;
 
-  /** Whether this MapDataBase needs saving to disk. */
-  private boolean dirty;
+    public WorldSavedData(String name)
+    {
+        this.mapName = name;
+    }
 
-  public WorldSavedData(String name) {
-    this.mapName = name;
-  }
+    public abstract void readFromNBT(NBTTagCompound nbt);
 
-  /** reads in data from the NBTTagCompound into this MapDataBase */
-  public abstract void readFromNBT(NBTTagCompound nbt);
+    public abstract void writeToNBT(NBTTagCompound nbt);
 
-  /** write data to NBTTagCompound from this MapDataBase, similar to Entities and TileEntities */
-  public abstract void writeToNBT(NBTTagCompound nbt);
+    public void markDirty()
+    {
+        this.setDirty(true);
+    }
 
-  /** Marks this MapDataBase dirty, to be saved to disk when the level next saves. */
-  public void markDirty() {
-    this.setDirty(true);
-  }
+    public void setDirty(boolean isDirty)
+    {
+        this.dirty = isDirty;
+    }
 
-  /** Sets the dirty state of this MapDataBase, whether it needs saving to disk. */
-  public void setDirty(boolean isDirty) {
-    this.dirty = isDirty;
-  }
-
-  /** Whether this MapDataBase needs saving to disk. */
-  public boolean isDirty() {
-    return this.dirty;
-  }
+    public boolean isDirty()
+    {
+        return this.dirty;
+    }
 }

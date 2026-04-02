@@ -453,7 +453,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                         float pitch = (float) args.checkdouble(2);
                         mc.thePlayer.renderYawOffset = yaw;
                         mc.thePlayer.rotationYawHead = yaw;
-                        mc.thePlayer.rotationPitchHead = pitch;
+                        mc.thePlayer.rotationPitch = pitch;
                         return LuaValue.NIL;
                     }
                 });

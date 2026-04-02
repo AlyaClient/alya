@@ -11,7 +11,7 @@ public class GuiSlider extends GuiButton {
   private final float min;
   private final float max;
   private final GuiPageButtonList.GuiResponder responder;
-  private GuiSlider.FormatHelper formatHelper;
+  private FormatHelper formatHelper;
 
   public GuiSlider(
       GuiPageButtonList.GuiResponder guiResponder,
@@ -22,7 +22,7 @@ public class GuiSlider extends GuiButton {
       float min,
       float max,
       float defaultValue,
-      GuiSlider.FormatHelper formatter) {
+      FormatHelper formatter) {
     super(idIn, x, y, 150, 20, "");
     this.name = name;
     this.min = min;

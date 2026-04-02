@@ -49,7 +49,7 @@ public final class RenderUtility {
         GlStateManager.color(red, green, blue, alpha);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.field_181705_e);
+        worldRenderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_TEX);
         worldRenderer.pos(centerX, centerY, 0).endVertex();
         for(int i = startAngle; i <= endAngle; i++) {
             final double angle = Math.toRadians(i);
@@ -89,20 +89,20 @@ public final class RenderUtility {
         GlStateManager.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(7, DefaultVertexFormats.field_181706_f);
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
         worldRenderer
                 .pos(x, y + height, 0)
-                .func_181666_a(leftRed, leftGreen, leftBlue, leftAlpha)
+                .color(leftRed, leftGreen, leftBlue, leftAlpha)
                 .endVertex();
         worldRenderer
                 .pos(x + width, y + height, 0)
-                .func_181666_a(rightRed, rightGreen, rightBlue, rightAlpha)
+                .color(rightRed, rightGreen, rightBlue, rightAlpha)
                 .endVertex();
         worldRenderer
                 .pos(x + width, y, 0)
-                .func_181666_a(rightRed, rightGreen, rightBlue, rightAlpha)
+                .color(rightRed, rightGreen, rightBlue, rightAlpha)
                 .endVertex();
-        worldRenderer.pos(x, y, 0).func_181666_a(leftRed, leftGreen, leftBlue, leftAlpha).endVertex();
+        worldRenderer.pos(x, y, 0).color(leftRed, leftGreen, leftBlue, leftAlpha).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
@@ -132,20 +132,20 @@ public final class RenderUtility {
         GlStateManager.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(7, DefaultVertexFormats.field_181706_f);
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
         worldRenderer
                 .pos(x, y + height, 0)
-                .func_181666_a(bottomRed, bottomGreen, bottomBlue, bottomAlpha)
+                .color(bottomRed, bottomGreen, bottomBlue, bottomAlpha)
                 .endVertex();
         worldRenderer
                 .pos(x + width, y + height, 0)
-                .func_181666_a(bottomRed, bottomGreen, bottomBlue, bottomAlpha)
+                .color(bottomRed, bottomGreen, bottomBlue, bottomAlpha)
                 .endVertex();
         worldRenderer
                 .pos(x + width, y, 0)
-                .func_181666_a(topRed, topGreen, topBlue, topAlpha)
+                .color(topRed, topGreen, topBlue, topAlpha)
                 .endVertex();
-        worldRenderer.pos(x, y, 0).func_181666_a(topRed, topGreen, topBlue, topAlpha).endVertex();
+        worldRenderer.pos(x, y, 0).color(topRed, topGreen, topBlue, topAlpha).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
@@ -171,7 +171,7 @@ public final class RenderUtility {
         GL11.glLineWidth(thickness);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.field_181705_e);
+        worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_TEX);
         worldRenderer.pos(x1, y1, 0).endVertex();
         worldRenderer.pos(x2, y2, 0).endVertex();
         tessellator.draw();
@@ -253,7 +253,7 @@ public final class RenderUtility {
         GL11.glLineWidth(lineWidth);
         Tessellator tess = Tessellator.getInstance();
         WorldRenderer wr = tess.getWorldRenderer();
-        wr.begin(GL11.GL_LINES, DefaultVertexFormats.field_181705_e);
+        wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_TEX);
 
         wr.pos(x0, oy, z0).endVertex();
         wr.pos(x1, oy, z0).endVertex();
@@ -317,7 +317,7 @@ public final class RenderUtility {
         GL11.glLineWidth(lineWidth);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer wr = tessellator.getWorldRenderer();
-        wr.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.field_181705_e);
+        wr.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_TEX);
         for(int i = 0; i < segments; i++) {
             double angle = 2.0 * Math.PI * i / segments;
             wr.pos(Math.cos(angle) * radius, 0, Math.sin(angle) * radius).endVertex();
@@ -374,7 +374,7 @@ public final class RenderUtility {
         GlStateManager.color(red, green, blue, alpha);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.field_181705_e);
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         worldRenderer.pos(x0, y0, z0).endVertex();
         worldRenderer.pos(x1, y0, z0).endVertex();
         worldRenderer.pos(x1, y0, z1).endVertex();
@@ -465,7 +465,7 @@ public final class RenderUtility {
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(7, DefaultVertexFormats.field_181707_g);
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
         worldRenderer.pos(x, y + height, 0.0D).tex(0.0D, 1.0D).endVertex();
         worldRenderer.pos(x + width, y + height, 0.0D).tex(1.0D, 1.0D).endVertex();
         worldRenderer.pos(x + width, y, 0.0D).tex(1.0D, 0.0D).endVertex();

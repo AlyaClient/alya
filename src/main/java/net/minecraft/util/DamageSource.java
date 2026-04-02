@@ -7,230 +7,200 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.world.Explosion;
 
-public class DamageSource {
-  public static DamageSource inFire = (new DamageSource("inFire")).setFireDamage();
-  public static DamageSource lightningBolt = new DamageSource("lightningBolt");
-  public static DamageSource onFire =
-      (new DamageSource("onFire")).setDamageBypassesArmor().setFireDamage();
-  public static DamageSource lava = (new DamageSource("lava")).setFireDamage();
-  public static DamageSource inWall = (new DamageSource("inWall")).setDamageBypassesArmor();
-  public static DamageSource drown = (new DamageSource("drown")).setDamageBypassesArmor();
-  public static DamageSource starve =
-      (new DamageSource("starve")).setDamageBypassesArmor().setDamageIsAbsolute();
-  public static DamageSource cactus = new DamageSource("cactus");
-  public static DamageSource fall = (new DamageSource("fall")).setDamageBypassesArmor();
-  public static DamageSource outOfWorld =
-      (new DamageSource("outOfWorld")).setDamageBypassesArmor().setDamageAllowedInCreativeMode();
-  public static DamageSource generic = (new DamageSource("generic")).setDamageBypassesArmor();
-  public static DamageSource magic =
-      (new DamageSource("magic")).setDamageBypassesArmor().setMagicDamage();
-  public static DamageSource wither = (new DamageSource("wither")).setDamageBypassesArmor();
-  public static DamageSource anvil = new DamageSource("anvil");
-  public static DamageSource fallingBlock = new DamageSource("fallingBlock");
+public class DamageSource
+{
+    public static DamageSource inFire = (new DamageSource("inFire")).setFireDamage();
+    public static DamageSource lightningBolt = new DamageSource("lightningBolt");
+    public static DamageSource onFire = (new DamageSource("onFire")).setDamageBypassesArmor().setFireDamage();
+    public static DamageSource lava = (new DamageSource("lava")).setFireDamage();
+    public static DamageSource inWall = (new DamageSource("inWall")).setDamageBypassesArmor();
+    public static DamageSource drown = (new DamageSource("drown")).setDamageBypassesArmor();
+    public static DamageSource starve = (new DamageSource("starve")).setDamageBypassesArmor().setDamageIsAbsolute();
+    public static DamageSource cactus = new DamageSource("cactus");
+    public static DamageSource fall = (new DamageSource("fall")).setDamageBypassesArmor();
+    public static DamageSource outOfWorld = (new DamageSource("outOfWorld")).setDamageBypassesArmor().setDamageAllowedInCreativeMode();
+    public static DamageSource generic = (new DamageSource("generic")).setDamageBypassesArmor();
+    public static DamageSource magic = (new DamageSource("magic")).setDamageBypassesArmor().setMagicDamage();
+    public static DamageSource wither = (new DamageSource("wither")).setDamageBypassesArmor();
+    public static DamageSource anvil = new DamageSource("anvil");
+    public static DamageSource fallingBlock = new DamageSource("fallingBlock");
+    private boolean isUnblockable;
+    private boolean isDamageAllowedInCreativeMode;
+    private boolean damageIsAbsolute;
+    private float hungerDamage = 0.3F;
+    private boolean fireDamage;
+    private boolean projectile;
+    private boolean difficultyScaled;
+    private boolean magicDamage;
+    private boolean explosion;
+    public String damageType;
 
-  /** This kind of damage can be blocked or not. */
-  private boolean isUnblockable;
+    public static DamageSource causeMobDamage(EntityLivingBase mob)
+    {
+        return new EntityDamageSource("mob", mob);
+    }
 
-  private boolean isDamageAllowedInCreativeMode;
+    public static DamageSource causePlayerDamage(EntityPlayer player)
+    {
+        return new EntityDamageSource("player", player);
+    }
 
-  /** Whether or not the damage ignores modification by potion effects or enchantments. */
-  private boolean damageIsAbsolute;
+    public static DamageSource causeArrowDamage(EntityArrow arrow, Entity indirectEntityIn)
+    {
+        return (new EntityDamageSourceIndirect("arrow", arrow, indirectEntityIn)).setProjectile();
+    }
 
-  private float hungerDamage = 0.3F;
+    public static DamageSource causeFireballDamage(EntityFireball fireball, Entity indirectEntityIn)
+    {
+        return indirectEntityIn == null ? (new EntityDamageSourceIndirect("onFire", fireball, fireball)).setFireDamage().setProjectile() : (new EntityDamageSourceIndirect("fireball", fireball, indirectEntityIn)).setFireDamage().setProjectile();
+    }
 
-  /** This kind of damage is based on fire or not. */
-  private boolean fireDamage;
+    public static DamageSource causeThrownDamage(Entity source, Entity indirectEntityIn)
+    {
+        return (new EntityDamageSourceIndirect("thrown", source, indirectEntityIn)).setProjectile();
+    }
 
-  /** This kind of damage is based on a projectile or not. */
-  private boolean projectile;
+    public static DamageSource causeIndirectMagicDamage(Entity source, Entity indirectEntityIn)
+    {
+        return (new EntityDamageSourceIndirect("indirectMagic", source, indirectEntityIn)).setDamageBypassesArmor().setMagicDamage();
+    }
 
-  /**
-   * Whether this damage source will have its damage amount scaled based on the current difficulty.
-   */
-  private boolean difficultyScaled;
+    public static DamageSource causeThornsDamage(Entity source)
+    {
+        return (new EntityDamageSource("thorns", source)).setIsThornsDamage().setMagicDamage();
+    }
 
-  /** Whether the damage is magic based. */
-  private boolean magicDamage;
+    public static DamageSource setExplosionSource(Explosion explosionIn)
+    {
+        return explosionIn != null && explosionIn.getExplosivePlacedBy() != null ? (new EntityDamageSource("explosion.player", explosionIn.getExplosivePlacedBy())).setDifficultyScaled().setExplosion() : (new DamageSource("explosion")).setDifficultyScaled().setExplosion();
+    }
 
-  private boolean explosion;
-  public String damageType;
+    public boolean isProjectile()
+    {
+        return this.projectile;
+    }
 
-  public static DamageSource causeMobDamage(EntityLivingBase mob) {
-    return new EntityDamageSource("mob", mob);
-  }
+    public DamageSource setProjectile()
+    {
+        this.projectile = true;
+        return this;
+    }
 
-  /** returns an EntityDamageSource of type player */
-  public static DamageSource causePlayerDamage(EntityPlayer player) {
-    return new EntityDamageSource("player", player);
-  }
+    public boolean isExplosion()
+    {
+        return this.explosion;
+    }
 
-  /** returns EntityDamageSourceIndirect of an arrow */
-  public static DamageSource causeArrowDamage(EntityArrow arrow, Entity p_76353_1_) {
-    return (new EntityDamageSourceIndirect("arrow", arrow, p_76353_1_)).setProjectile();
-  }
+    public DamageSource setExplosion()
+    {
+        this.explosion = true;
+        return this;
+    }
 
-  /** returns EntityDamageSourceIndirect of a fireball */
-  public static DamageSource causeFireballDamage(EntityFireball fireball, Entity p_76362_1_) {
-    return p_76362_1_ == null
-        ? (new EntityDamageSourceIndirect("onFire", fireball, fireball))
-            .setFireDamage()
-            .setProjectile()
-        : (new EntityDamageSourceIndirect("fireball", fireball, p_76362_1_))
-            .setFireDamage()
-            .setProjectile();
-  }
+    public boolean isUnblockable()
+    {
+        return this.isUnblockable;
+    }
 
-  public static DamageSource causeThrownDamage(Entity p_76356_0_, Entity p_76356_1_) {
-    return (new EntityDamageSourceIndirect("thrown", p_76356_0_, p_76356_1_)).setProjectile();
-  }
+    public float getHungerDamage()
+    {
+        return this.hungerDamage;
+    }
 
-  public static DamageSource causeIndirectMagicDamage(Entity p_76354_0_, Entity p_76354_1_) {
-    return (new EntityDamageSourceIndirect("indirectMagic", p_76354_0_, p_76354_1_))
-        .setDamageBypassesArmor()
-        .setMagicDamage();
-  }
+    public boolean canHarmInCreative()
+    {
+        return this.isDamageAllowedInCreativeMode;
+    }
 
-  /** Returns the EntityDamageSource of the Thorns enchantment */
-  public static DamageSource causeThornsDamage(Entity p_92087_0_) {
-    return (new EntityDamageSource("thorns", p_92087_0_)).setIsThornsDamage().setMagicDamage();
-  }
+    public boolean isDamageAbsolute()
+    {
+        return this.damageIsAbsolute;
+    }
 
-  public static DamageSource setExplosionSource(Explosion explosionIn) {
-    return explosionIn != null && explosionIn.getExplosivePlacedBy() != null
-        ? (new EntityDamageSource("explosion.player", explosionIn.getExplosivePlacedBy()))
-            .setDifficultyScaled()
-            .setExplosion()
-        : (new DamageSource("explosion")).setDifficultyScaled().setExplosion();
-  }
+    protected DamageSource(String damageTypeIn)
+    {
+        this.damageType = damageTypeIn;
+    }
 
-  /** Returns true if the damage is projectile based. */
-  public boolean isProjectile() {
-    return this.projectile;
-  }
+    public Entity getSourceOfDamage()
+    {
+        return this.getEntity();
+    }
 
-  /** Define the damage type as projectile based. */
-  public DamageSource setProjectile() {
-    this.projectile = true;
-    return this;
-  }
+    public Entity getEntity()
+    {
+        return null;
+    }
 
-  public boolean isExplosion() {
-    return this.explosion;
-  }
+    protected DamageSource setDamageBypassesArmor()
+    {
+        this.isUnblockable = true;
+        this.hungerDamage = 0.0F;
+        return this;
+    }
 
-  public DamageSource setExplosion() {
-    this.explosion = true;
-    return this;
-  }
+    protected DamageSource setDamageAllowedInCreativeMode()
+    {
+        this.isDamageAllowedInCreativeMode = true;
+        return this;
+    }
 
-  public boolean isUnblockable() {
-    return this.isUnblockable;
-  }
+    protected DamageSource setDamageIsAbsolute()
+    {
+        this.damageIsAbsolute = true;
+        this.hungerDamage = 0.0F;
+        return this;
+    }
 
-  /** How much satiate(food) is consumed by this DamageSource */
-  public float getHungerDamage() {
-    return this.hungerDamage;
-  }
+    protected DamageSource setFireDamage()
+    {
+        this.fireDamage = true;
+        return this;
+    }
 
-  public boolean canHarmInCreative() {
-    return this.isDamageAllowedInCreativeMode;
-  }
+    public IChatComponent getDeathMessage(EntityLivingBase entityLivingBaseIn)
+    {
+        EntityLivingBase entitylivingbase = entityLivingBaseIn.getAttackingEntity();
+        String s = "death.attack." + this.damageType;
+        String s1 = s + ".player";
+        return entitylivingbase != null && StatCollector.canTranslate(s1) ? new ChatComponentTranslation(s1, new Object[] {entityLivingBaseIn.getDisplayName(), entitylivingbase.getDisplayName()}): new ChatComponentTranslation(s, new Object[] {entityLivingBaseIn.getDisplayName()});
+    }
 
-  /** Whether or not the damage ignores modification by potion effects or enchantments. */
-  public boolean isDamageAbsolute() {
-    return this.damageIsAbsolute;
-  }
+    public boolean isFireDamage()
+    {
+        return this.fireDamage;
+    }
 
-  protected DamageSource(String damageTypeIn) {
-    this.damageType = damageTypeIn;
-  }
+    public String getDamageType()
+    {
+        return this.damageType;
+    }
 
-  public Entity getSourceOfDamage() {
-    return this.getEntity();
-  }
+    public DamageSource setDifficultyScaled()
+    {
+        this.difficultyScaled = true;
+        return this;
+    }
 
-  public Entity getEntity() {
-    return null;
-  }
+    public boolean isDifficultyScaled()
+    {
+        return this.difficultyScaled;
+    }
 
-  protected DamageSource setDamageBypassesArmor() {
-    this.isUnblockable = true;
-    this.hungerDamage = 0.0F;
-    return this;
-  }
+    public boolean isMagicDamage()
+    {
+        return this.magicDamage;
+    }
 
-  protected DamageSource setDamageAllowedInCreativeMode() {
-    this.isDamageAllowedInCreativeMode = true;
-    return this;
-  }
+    public DamageSource setMagicDamage()
+    {
+        this.magicDamage = true;
+        return this;
+    }
 
-  /**
-   * Sets a value indicating whether the damage is absolute (ignores modification by potion effects
-   * or enchantments), and also clears out hunger damage.
-   */
-  protected DamageSource setDamageIsAbsolute() {
-    this.damageIsAbsolute = true;
-    this.hungerDamage = 0.0F;
-    return this;
-  }
-
-  /** Define the damage type as fire based. */
-  protected DamageSource setFireDamage() {
-    this.fireDamage = true;
-    return this;
-  }
-
-  /** Gets the death message that is displayed when the player dies */
-  public IChatComponent getDeathMessage(EntityLivingBase p_151519_1_) {
-    EntityLivingBase entitylivingbase = p_151519_1_.func_94060_bK();
-    String s = "death.attack." + this.damageType;
-    String s1 = s + ".player";
-    return entitylivingbase != null && StatCollector.canTranslate(s1)
-        ? new ChatComponentTranslation(
-            s1, new Object[] {p_151519_1_.getDisplayName(), entitylivingbase.getDisplayName()})
-        : new ChatComponentTranslation(s, new Object[] {p_151519_1_.getDisplayName()});
-  }
-
-  /** Returns true if the damage is fire based. */
-  public boolean isFireDamage() {
-    return this.fireDamage;
-  }
-
-  /** Return the name of damage type. */
-  public String getDamageType() {
-    return this.damageType;
-  }
-
-  /**
-   * Set whether this damage source will have its damage amount scaled based on the current
-   * difficulty.
-   */
-  public DamageSource setDifficultyScaled() {
-    this.difficultyScaled = true;
-    return this;
-  }
-
-  /**
-   * Return whether this damage source will have its damage amount scaled based on the current
-   * difficulty.
-   */
-  public boolean isDifficultyScaled() {
-    return this.difficultyScaled;
-  }
-
-  /** Returns true if the damage is magic based. */
-  public boolean isMagicDamage() {
-    return this.magicDamage;
-  }
-
-  /** Define the damage type as magic based. */
-  public DamageSource setMagicDamage() {
-    this.magicDamage = true;
-    return this;
-  }
-
-  public boolean isCreativePlayer() {
-    Entity entity = this.getEntity();
-    return entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isCreativeMode;
-  }
+    public boolean isCreativePlayer()
+    {
+        Entity entity = this.getEntity();
+        return entity instanceof EntityPlayer && ((EntityPlayer)entity).capabilities.isCreativeMode;
+    }
 }

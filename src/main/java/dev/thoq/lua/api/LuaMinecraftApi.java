@@ -349,7 +349,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf(minecraft.gameSettings.keyBindForward.pressed);
+                        return LuaValue.valueOf(minecraft.gameSettings.keyBindForward.isKeyDown());
                     }
                 });
         set(
@@ -357,7 +357,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf(minecraft.gameSettings.keyBindJump.pressed);
+                        return LuaValue.valueOf(minecraft.gameSettings.keyBindJump.isKeyDown());
                     }
                 });
         set(
@@ -619,7 +619,7 @@ public final class LuaMinecraftApi extends LuaTable {
                     public LuaValue call() {
                         if(minecraft.thePlayer != null) {
                             for(Packet<?> packet : packetQueue) {
-                                minecraft.thePlayer.sendQueue.addToSendQueueNoEvent(packet);
+                                minecraft.thePlayer.sendQueue.addToSendQueue(packet);
                             }
                         }
                         packetQueue.clear();
@@ -789,7 +789,7 @@ public final class LuaMinecraftApi extends LuaTable {
                         if(minecraft.thePlayer != null) {
                             minecraft
                                     .getNetHandler()
-                                    .addToSendQueueNoEvent(
+                                    .addToSendQueue(
                                             new net.minecraft.network.play.client.C09PacketHeldItemChange(
                                                     slotValue.toint()));
                         }

@@ -15,7 +15,7 @@ public class GuiLanguage extends GuiScreen {
   protected GuiScreen parentScreen;
 
   /** The List GuiSlot object reference. */
-  private GuiLanguage.List list;
+  private List list;
 
   /** Reference to the GameSettings object. */
   private final GameSettings game_settings_3;
@@ -55,7 +55,7 @@ public class GuiLanguage extends GuiScreen {
                 this.width / 2 - 155 + 160,
                 this.height - 38,
                 I18n.format("gui.done", new Object[0])));
-    this.list = new GuiLanguage.List(this.mc);
+    this.list = new List(this.mc);
     this.list.registerScrollButtons(7, 8);
   }
 
