@@ -240,11 +240,7 @@ public class PlayerControllerMP {
     }
 
     public float getBlockReachDistance() {
-        float defaultReach = this.currentGameType.isCreative() ? 5F : 4.5F;
-
-        ReachEvent reachEvent = new ReachEvent(defaultReach);
-        Alya.getInstance().getEventBus().dispatch(reachEvent);
-        return (float) reachEvent.getReachDistance();
+        return this.currentGameType.isCreative() ? 5F : 4.5F;
     }
 
     public void updateController() {

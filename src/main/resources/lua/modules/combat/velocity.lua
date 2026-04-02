@@ -1,6 +1,16 @@
 local moduleTable = alya.modules.register("Velocity", "nO KnoCkbaCK", "COMBAT")
-local mode  = moduleTable.addModeSetting("Mode", "Velocity Mode", "Motion", "Motion")
+local mode  = moduleTable.addModeSetting("Mode", "Velocity Mode", "Motion", "Motion", "Jump Reset")
 local hVel  = moduleTable.addNumberSetting("Horizontal", "Horizontal velocity %", 0, 0, 100, 1)
 local vVel  = moduleTable.addNumberSetting("Vertical", "Vertical velocity %", 0, 0, 100, 1)
+local jumpChance = moduleTable.addNumberSetting("Jump Chance", "Chance to jump reset on hit", 100, 0, 100, 1)
+local jumpMiss = moduleTable.addNumberSetting("Miss Chance", "Chance to jump without resetting motion", 0, 0, 100, 1)
+hVel.setVisibility(function() return mode.is("Motion") end)
+vVel.setVisibility(function() return mode.is("Motion") end)
+jumpChance.setVisibility(function() return mode.is("Jump Reset") end)
+jumpMiss.setVisibility(function() return mode.is("Jump Reset") end)
+
 local createMotionVelocityMode = loadScript("/lua/modules/combat/velocity/motion.lua")
 createMotionVelocityMode(moduleTable, mode, "Motion", hVel, vVel)
+
+local createJumpResetVelocityMode = loadScript("/lua/modules/combat/velocity/jumpreset.lua")
+createJumpResetVelocityMode(moduleTable, mode, "Jump Reset", jumpChance, jumpMiss)
