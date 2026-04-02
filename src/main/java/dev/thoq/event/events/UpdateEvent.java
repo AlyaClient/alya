@@ -1,8 +1,12 @@
 package dev.thoq.event.events;
 
+import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
-public final class UpdateEvent implements IEvent {
+public final class UpdateEvent implements IEvent, ICancelable {
+
+    private boolean canceled = false;
+
     public UpdateEvent() {
     }
 
@@ -19,5 +23,15 @@ public final class UpdateEvent implements IEvent {
     @Override
     public String toString() {
         return "UpdateEvent[]";
+    }
+
+    @Override
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    @Override
+    public void cancel() {
+        this.canceled = true;
     }
 }

@@ -546,7 +546,7 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            return LuaValue.valueOf((double) render3DEvent.getPartialTicks());
+                            return LuaValue.valueOf((double) render3DEvent.partialTicks());
                         }
                     });
         } else if(event instanceof SlowDownEvent) {

@@ -652,11 +652,9 @@ public class Minecraft implements IThreadListener {
 
         try {
             inputstream =
-                    getDefaultResourcePack()
-                            .getInputStreamAssets(new ResourceLocation("client/icons/icon_32x32.png"));
+                    Minecraft.class.getResourceAsStream("/assets/minecraft/client/icons/16x16.png");
             inputstream1 =
-                    getDefaultResourcePack()
-                            .getInputStreamAssets(new ResourceLocation("client/icons/icon_32x32.png"));
+                    Minecraft.class.getResourceAsStream("/assets/minecraft/client/icons/32x32.png");
 
             if(inputstream != null && inputstream1 != null) {
                 if(Util.getOSType() != Util.EnumOS.OSX) {

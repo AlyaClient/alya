@@ -96,6 +96,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.Project;
+import dev.thoq.Alya;
+import dev.thoq.event.events.Render3DEvent;
 
 public class EntityRenderer implements IResourceManagerReloadListener
 {
@@ -1642,10 +1644,15 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
             renderglobal.renderEntities(entity, icamera, partialTicks);
 
+
             if (Reflector.ForgeHooksClient_setRenderPass.exists())
             {
-                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(-1)});
+                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, -1);
             }
+
+            Alya.getInstance().getEventBus().dispatch(new Render3DEvent(partialTicks));
+
+            RenderHelper.disableStandardItemLighting();
 
             RenderHelper.disableStandardItemLighting();
             this.disableLightmap();

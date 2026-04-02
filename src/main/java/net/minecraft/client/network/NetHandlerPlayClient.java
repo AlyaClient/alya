@@ -5,6 +5,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.mojang.authlib.GameProfile;
+import dev.thoq.Alya;
+import dev.thoq.event.events.TimeUpdateEvent;
 import io.netty.buffer.Unpooled;
 import java.io.File;
 import java.io.IOException;
@@ -814,6 +816,9 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
     public void handleTimeUpdate(S03PacketTimeUpdate packetIn)
     {
+        TimeUpdateEvent event = new TimeUpdateEvent(packetIn);
+        Alya.getInstance().getEventBus().dispatch(event);
+        if (event.isCanceled()) return;
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         this.gameController.theWorld.setTotalWorldTime(packetIn.getTotalWorldTime());
         this.gameController.theWorld.setWorldTime(packetIn.getWorldTime());
@@ -1707,6 +1712,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
     public void handleTeams(S3EPacketTeams packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
+        if (this.clientWorldController == null || this.clientWorldController.getScoreboard() == null) return;
         Scoreboard scoreboard = this.clientWorldController.getScoreboard();
         ScorePlayerTeam scoreplayerteam;
 
