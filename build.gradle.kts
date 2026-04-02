@@ -31,48 +31,48 @@ val lwjglAllNatives = listOf(
     "natives-macos-arm64",
 )
 
-    val generatedSrcDir = layout.buildDirectory.dir("generated/src/main/java")
+val generatedSrcDir = layout.buildDirectory.dir("generated/src/main/java")
 
-    sourceSets {
-        main {
-            java.srcDir(generatedSrcDir)
-        }
+sourceSets {
+    main {
+        java.srcDir(generatedSrcDir)
+    }
+}
+
+val generateBuildConfig by tasks.registering {
+    val gitHash = try {
+        providers.exec {
+            commandLine("git", "rev-parse", "--short", "HEAD")
+        }.standardOutput.asText.get().trim()
+    } catch (_: Exception) {
+        "unknown"
     }
 
-    val generateBuildConfig by tasks.registering {
-        val gitHash = try {
-            providers.exec {
-                commandLine("git", "rev-parse", "--short", "HEAD")
-            }.standardOutput.asText.get().trim()
-        } catch (_: Exception) {
-            "unknown"
-        }
-        
-        val outputDir = generatedSrcDir.get().asFile
-        val packageDir = File(outputDir, "dev/thoq/alya")
-        
-        outputs.dir(outputDir)
-        
-        doLast {
-            packageDir.mkdirs()
-            File(packageDir, "BuildConfig.java").writeText(
-                """
+    val outputDir = generatedSrcDir.get().asFile
+    val packageDir = File(outputDir, "dev/thoq/alya")
+
+    outputs.dir(outputDir)
+
+    doLast {
+        packageDir.mkdirs()
+        File(packageDir, "BuildConfig.java").writeText(
+            """
                 package dev.thoq.alya;
                 
                 public class BuildConfig {
                     public static final String GIT_HASH = "$gitHash";
                 }
                 """.trimIndent()
-            )
-        }
+        )
     }
+}
 
-    tasks.compileJava {
-        dependsOn(generateBuildConfig)
-    }
+tasks.compileJava {
+    dependsOn(generateBuildConfig)
+}
 
-    dependencies {
-        implementation("com.paulscode:codecjorbis:20101023")
+dependencies {
+    implementation("com.paulscode:codecjorbis:20101023")
     implementation("com.paulscode:codecwav:20101023")
     implementation("com.paulscode:libraryjavasound:20101123")
     implementation("com.paulscode:librarylwjglopenal:20100824")
