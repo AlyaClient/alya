@@ -3,6 +3,10 @@ package net.minecraft.client.renderer.entity;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
 import java.util.List;
+import java.util.Optional;
+
+import dev.thoq.Alya;
+import dev.thoq.module.Module;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -662,6 +666,13 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
     protected boolean canRenderName(T entity)
     {
+        if (entity instanceof EntityPlayer) {
+            Optional<Module> nametagsModule = Alya.getInstance().getModuleManager().getModule("Nametags");
+            if (nametagsModule.isPresent() && nametagsModule.get().isEnabled()) {
+                return false;
+            }
+        }
+
         EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
 
         if (entity instanceof EntityPlayer && entity != entityplayersp)
