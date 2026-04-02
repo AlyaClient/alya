@@ -171,8 +171,6 @@ public final class AltManagerGui extends GuiScreen {
                         entryY + (ENTRY_HEIGHT - ICON_SIZE) / 2f,
                         ICON_SIZE, ICON_SIZE);
             }
-
-            RenderUtility.drawRect(panelX, entryY + ENTRY_HEIGHT - 1, PANEL_WIDTH, 1, 0xFF2A2A4A);
         }
 
         if(alts.size() > visibleCount) {

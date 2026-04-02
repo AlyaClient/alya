@@ -44,6 +44,34 @@ public final class Toast {
         return System.currentTimeMillis() - createdAt > durationMs;
     }
 
+    @SuppressWarnings("unused")
+    public boolean isSlidingOut() {
+        return (durationMs - (System.currentTimeMillis() - createdAt)) < SLIDE_OUT_MS;
+    }
+
+    public float getSlideIn() {
+        final long elapsed = System.currentTimeMillis() - createdAt;
+        if(elapsed >= SLIDE_IN_MS) {
+            return 1f;
+        }
+        float t = elapsed / (float) SLIDE_IN_MS;
+        return t * (2f - t);
+    }
+
+    public float getSlideOut() {
+        final long remaining = durationMs - (System.currentTimeMillis() - createdAt);
+        if(remaining >= SLIDE_OUT_MS) {
+            return 0f;
+        }
+        float t = remaining / (float) SLIDE_OUT_MS;
+        return 1f - t * (2f - t);
+    }
+
+    public float getProgress() {
+        long elapsed = System.currentTimeMillis() - createdAt;
+        return 1f - Math.clamp(elapsed / (float) durationMs, 0f, 1f);
+    }
+
     public float getSlide() {
         final long elapsed = System.currentTimeMillis() - createdAt;
         if(elapsed < SLIDE_IN_MS) {
@@ -56,11 +84,6 @@ public final class Toast {
             return t * (2f - t);
         }
         return 1.0f;
-    }
-
-    public float getProgress() {
-        long elapsed = System.currentTimeMillis() - createdAt;
-        return 1f - Math.clamp(elapsed / (float) durationMs, 0f, 1f);
     }
 
 
