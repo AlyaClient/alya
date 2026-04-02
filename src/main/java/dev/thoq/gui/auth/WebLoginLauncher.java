@@ -6,7 +6,6 @@ import dev.thoq.util.auth.SessionManager;
 import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -127,7 +126,15 @@ public class WebLoginLauncher extends GuiScreen {
                                                                 .getLogger()
                                                                 .info("[Auth] Setting session on main thread");
                                                         SessionManager.setSession(session);
-                                                        mc.displayGuiScreen(new GuiMainMenu());
+                                                        AltStorage.getInstance().addAlt(
+                                                                AltEntry.microsoft(
+                                                                        session.getUsername(),
+                                                                        session.getPlayerID(),
+                                                                        session.getToken()));
+                                                        statusMessage = "Login successful! Click Done.";
+                                                        for(GuiButton btn : buttonList) {
+                                                            btn.enabled = true;
+                                                        }
                                                     });
                                         })
                                 .exceptionally(
@@ -138,8 +145,8 @@ public class WebLoginLauncher extends GuiScreen {
                                             statusMessage = "Login failed: " + e.getCause().getMessage();
                                             mc.addScheduledTask(
                                                     () -> {
-                                                        for(Object btn : buttonList) {
-                                                            ((GuiButton) btn).enabled = true;
+                                                        for(GuiButton btn : buttonList) {
+                                                            btn.enabled = true;
                                                         }
                                                     });
                                             return null;
@@ -157,7 +164,7 @@ public class WebLoginLauncher extends GuiScreen {
         }
         if(button.id == 1) {
             cleanup();
-            SessionChanger.getInstance().setUserOffline("client");
+            SessionChanger.getInstance().setUserOffline("Alya");
             mc.displayGuiScreen(new AltManagerGui());
         }
     }

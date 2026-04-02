@@ -1,7 +1,5 @@
 package net.minecraft.client.multiplayer;
 
-import dev.thoq.Alya;
-import dev.thoq.event.events.ReachEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -317,10 +315,7 @@ public class PlayerControllerMP {
 
   /** player reach distance = 4F */
   public float getBlockReachDistance() {
-    float defaultReach = this.currentGameType.isCreative() ? 5.0F : 4.5F;
-    ReachEvent reachEvent = new ReachEvent(defaultReach);
-    Alya.getInstance().getEventBus().dispatch(reachEvent);
-    return (float) reachEvent.getReachDistance();
+      return this.currentGameType.isCreative() ? 5.0F : 4.5F;
   }
 
   public void updateController() {
@@ -385,10 +380,8 @@ public class PlayerControllerMP {
           flag = true;
         }
 
-        if (!flag && heldStack != null && heldStack.getItem() instanceof ItemBlock) {
-          ItemBlock itemblock = (ItemBlock) heldStack.getItem();
-
-          if (!itemblock.canPlaceBlockOnSide(worldIn, hitPos, side, player, heldStack)) {
+        if (!flag && heldStack != null && heldStack.getItem() instanceof ItemBlock itemblock) {
+            if (!itemblock.canPlaceBlockOnSide(worldIn, hitPos, side, player, heldStack)) {
             return false;
           }
         }

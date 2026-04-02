@@ -3,6 +3,7 @@ package dev.thoq.event.events;
 import dev.thoq.event.IEvent;
 
 public final class ReachEvent implements IEvent {
+
     private double reachDistance;
 
     public ReachEvent(double reachDistance) {
@@ -16,4 +17,6 @@ public final class ReachEvent implements IEvent {
     public void setReachDistance(double reachDistance) {
         this.reachDistance = reachDistance;
     }
+
+
 }

@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
+import dev.thoq.Alya;
+import dev.thoq.event.events.ReachEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -509,19 +512,21 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
       }
 
-      dev.thoq.event.events.ReachEvent reachEvent = new dev.thoq.event.events.ReachEvent(3.0D);
-      dev.thoq.Alya.getInstance().getEventBus().dispatch(reachEvent);
+      final ReachEvent reachEvent = new ReachEvent(3.0D);
+      Alya.getInstance().getEventBus().dispatch(reachEvent);
 
       if (this.pointedEntity != null
-          && flag
-          && vec3.distanceTo(vec33) > reachEvent.getReachDistance()) {
-        this.pointedEntity = null;
-        this.mc.objectMouseOver =
-            new MovingObjectPosition(
-                MovingObjectPosition.MovingObjectType.MISS,
-                vec33,
-                (EnumFacing) null,
-                new BlockPos(vec33));
+              && flag) {
+          assert vec33 != null;
+          if(vec3.distanceTo(vec33) > reachEvent.getReachDistance()) {
+              this.pointedEntity = null;
+              this.mc.objectMouseOver =
+                      new MovingObjectPosition(
+                              MovingObjectPosition.MovingObjectType.MISS,
+                              vec33,
+                              (EnumFacing) null,
+                              new BlockPos(vec33));
+          }
       }
 
       if (this.pointedEntity != null && (d2 < d1 || this.mc.objectMouseOver == null)) {
@@ -541,10 +546,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
   private void updateFovModifierHand() {
     float f = 1.0F;
 
-    if (this.mc.getRenderViewEntity() instanceof AbstractClientPlayer) {
-      AbstractClientPlayer abstractclientplayer =
-          (AbstractClientPlayer) this.mc.getRenderViewEntity();
-      f = abstractclientplayer.getFovModifier();
+    if (this.mc.getRenderViewEntity() instanceof AbstractClientPlayer abstractclientplayer) {
+        f = abstractclientplayer.getFovModifier();
     }
 
     this.fovModifierHandPrev = this.fovModifierHand;
