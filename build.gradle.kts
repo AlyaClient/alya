@@ -44,7 +44,7 @@ val lwjglAllNatives = listOf(
             providers.exec {
                 commandLine("git", "rev-parse", "--short", "HEAD")
             }.standardOutput.asText.get().trim()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             "unknown"
         }
         

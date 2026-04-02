@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import dev.thoq.Alya;
 import dev.thoq.event.events.Render2DEvent;
+import dev.thoq.gui.toast.ToastManager;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -167,6 +168,8 @@ public class GuiIngame extends Gui {
 
         final Render2DEvent render2DEvent = new Render2DEvent(scaledresolution);
         Alya.getInstance().getEventBus().dispatch(render2DEvent);
+
+        ToastManager.getInstance().render();
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(icons);
