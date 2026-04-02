@@ -12,7 +12,7 @@ public class ServerSelectionList extends GuiListExtended {
       Lists.<ServerListEntryNormal>newArrayList();
   private final List<ServerListEntryLanDetected> field_148199_m =
       Lists.<ServerListEntryLanDetected>newArrayList();
-  private final GuiListExtended.IGuiListEntry lanScanEntry = new ServerListEntryLanScan();
+  private final IGuiListEntry lanScanEntry = new ServerListEntryLanScan();
   private int selectedSlotIndex = -1;
 
   public ServerSelectionList(
@@ -28,9 +28,9 @@ public class ServerSelectionList extends GuiListExtended {
   }
 
   /** Gets the IGuiListEntry object for the given index */
-  public GuiListExtended.IGuiListEntry getListEntry(int index) {
+  public IGuiListEntry getListEntry(int index) {
     if (index < this.field_148198_l.size()) {
-      return (GuiListExtended.IGuiListEntry) this.field_148198_l.get(index);
+      return (IGuiListEntry) this.field_148198_l.get(index);
     } else {
       index = index - this.field_148198_l.size();
 
@@ -38,7 +38,7 @@ public class ServerSelectionList extends GuiListExtended {
         return this.lanScanEntry;
       } else {
         --index;
-        return (GuiListExtended.IGuiListEntry) this.field_148199_m.get(index);
+        return (IGuiListEntry) this.field_148199_m.get(index);
       }
     }
   }

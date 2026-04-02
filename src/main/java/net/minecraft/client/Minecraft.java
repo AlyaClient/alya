@@ -124,8 +124,9 @@ public class Minecraft implements IThreadListener {
     private static final ResourceLocation splashScreenBg =
             new ResourceLocation("client/assets/title/splash.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
-    private static final Vector4i PROGRESS_FILL_COLOR = new Vector4i(209, 143, 242, 100);
-    private static final Vector4i PROGRESS_BACKGROUND_COLOR = new Vector4i(75, 61, 101, 100);
+    private static final Vector4i PROGRESS_FILL_COLOR = new Vector4i(209, 143, 242, 255);
+    private static final Vector4i PROGRESS_BACKGROUND_COLOR = new Vector4i(75, 61, 101, 255);
+    public final FrameTimer frameTimer = new FrameTimer();
 
     /**
      * A 10MiB preallocation to ensure the heap is reasonably sized.
@@ -137,6 +138,7 @@ public class Minecraft implements IThreadListener {
     private final File fileResourcepacks;
     private final PropertyMap field_181038_N;
     private ServerData currentServerData;
+    private final PropertyMap profileProperties;
 
     /**
      * The RenderEngine instance used by Minecraft
@@ -272,7 +274,7 @@ public class Minecraft implements IThreadListener {
     private int joinPlayerCounter;
 
     public final FrameTimer field_181542_y = new FrameTimer();
-    long field_181543_z = System.nanoTime();
+    long startNanoTime = System.nanoTime();
     private final boolean jvm64bit;
     private NetworkManager myNetworkManager;
     private boolean integratedServerIsRunning;
@@ -358,12 +360,14 @@ public class Minecraft implements IThreadListener {
         this.fileAssets = gameConfig.folderInfo.assetsDir;
         this.fileResourcepacks = gameConfig.folderInfo.resourcePacksDir;
         this.launchedVersion = gameConfig.gameInfo.version;
-        this.field_181038_N = gameConfig.userInfo.field_181172_c;
+        this.field_181038_N = gameConfig.userInfo.profileProperties;
+        this.profileProperties = gameConfig.userInfo.profileProperties;
         this.mcDefaultResourcePack =
                 new DefaultResourcePack(
                         (new ResourceIndex(gameConfig.folderInfo.assetsDir, gameConfig.folderInfo.assetIndex))
                                 .getResourceMap());
         this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
+        assert gameConfig.userInfo.proxy != null;
         this.sessionService =
                 (new YggdrasilAuthenticationService(
                         gameConfig.userInfo.proxy, UUID.randomUUID().toString()))
@@ -648,11 +652,9 @@ public class Minecraft implements IThreadListener {
 
         try {
             inputstream =
-                    getDefaultResourcePack()
-                            .getInputStreamAssets(new ResourceLocation("client/icons/icon_32x32.png"));
+                    Minecraft.class.getResourceAsStream("/assets/minecraft/client/icons/16x16.png");
             inputstream1 =
-                    getDefaultResourcePack()
-                            .getInputStreamAssets(new ResourceLocation("client/icons/icon_32x32.png"));
+                    Minecraft.class.getResourceAsStream("/assets/minecraft/client/icons/32x32.png");
 
             if(inputstream != null && inputstream1 != null) {
                 if(Util.getOSType() != Util.EnumOS.OSX) {
@@ -779,7 +781,7 @@ public class Minecraft implements IThreadListener {
             this.mcResourcePackRepository.setRepositories(Collections.emptyList());
             this.mcResourceManager.reloadResources(list);
             this.gameSettings.resourcePacks.clear();
-            this.gameSettings.field_183018_l.clear();
+            this.gameSettings.incompatibleResourcePacks.clear();
             this.gameSettings.saveOptions();
         }
 
@@ -971,25 +973,25 @@ public class Minecraft implements IThreadListener {
 
         Tessellator bgTessellator = Tessellator.getInstance();
         WorldRenderer bgRenderer = bgTessellator.getWorldRenderer();
-        bgRenderer.begin(7, DefaultVertexFormats.field_181706_f);
+        bgRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
         bgRenderer
                 .pos(this.splashProgressBarX, this.splashProgressBarY + this.splashProgressBarHeight, 0.0D)
-                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
+                .color(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgRenderer
                 .pos(
                         this.splashProgressBarX + this.splashProgressBarWidth,
                         this.splashProgressBarY + this.splashProgressBarHeight,
                         0.0D)
-                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
+                .color(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgRenderer
                 .pos(this.splashProgressBarX + this.splashProgressBarWidth, this.splashProgressBarY, 0.0D)
-                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
+                .color(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgRenderer
                 .pos(this.splashProgressBarX, this.splashProgressBarY, 0.0D)
-                .setColor(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
+                .color(PROGRESS_BACKGROUND_COLOR.x, PROGRESS_BACKGROUND_COLOR.y, PROGRESS_BACKGROUND_COLOR.z, PROGRESS_BACKGROUND_COLOR.w)
                 .endVertex();
         bgTessellator.draw();
 
@@ -997,26 +999,26 @@ public class Minecraft implements IThreadListener {
         if(filledWidth > 0) {
             Tessellator fillTessellator = Tessellator.getInstance();
             WorldRenderer fillRenderer = fillTessellator.getWorldRenderer();
-            fillRenderer.begin(7, DefaultVertexFormats.field_181706_f);
+            fillRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
             fillRenderer
                     .pos(
                             this.splashProgressBarX, this.splashProgressBarY + this.splashProgressBarHeight, 0.0D)
-                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
+                    .color(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillRenderer
                     .pos(
                             this.splashProgressBarX + filledWidth,
                             this.splashProgressBarY + this.splashProgressBarHeight,
                             0.0D)
-                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
+                    .color(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillRenderer
                     .pos(this.splashProgressBarX + filledWidth, this.splashProgressBarY, 0.0D)
-                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
+                    .color(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillRenderer
                     .pos(this.splashProgressBarX, this.splashProgressBarY, 0.0D)
-                    .setColor(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
+                    .color(PROGRESS_FILL_COLOR.x, PROGRESS_FILL_COLOR.y, PROGRESS_FILL_COLOR.z, PROGRESS_FILL_COLOR.w)
                     .endVertex();
             fillTessellator.draw();
         }
@@ -1037,23 +1039,23 @@ public class Minecraft implements IThreadListener {
     public void drawScaledLogo(
             int x, int y, int displayWidth, int displayHeight, int textureWidth, int textureHeight) {
         WorldRenderer worldrenderer = Tessellator.getInstance().getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         worldrenderer
                 .pos(x, y + displayHeight, 0.0D)
                 .tex(0.0D, 1.0D)
-                .setColor(255, 255, 255, 255)
+                .color(255, 255, 255, 255)
                 .endVertex();
         worldrenderer
                 .pos(x + displayWidth, y + displayHeight, 0.0D)
                 .tex(1.0D, 1.0D)
-                .setColor(255, 255, 255, 255)
+                .color(255, 255, 255, 255)
                 .endVertex();
         worldrenderer
                 .pos(x + displayWidth, y, 0.0D)
                 .tex(1.0D, 0.0D)
-                .setColor(255, 255, 255, 255)
+                .color(255, 255, 255, 255)
                 .endVertex();
-        worldrenderer.pos(x, y, 0.0D).tex(0.0D, 0.0D).setColor(255, 255, 255, 255).endVertex();
+        worldrenderer.pos(x, y, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
         Tessellator.getInstance().draw();
     }
 
@@ -1163,7 +1165,7 @@ public class Minecraft implements IThreadListener {
 
         synchronized(this.scheduledTasks) {
             while(!this.scheduledTasks.isEmpty()) {
-                Util.func_181617_a((FutureTask<?>) this.scheduledTasks.poll(), logger);
+                Util.runTask((FutureTask) this.scheduledTasks.poll(), logger);
             }
         }
 
@@ -1196,7 +1198,7 @@ public class Minecraft implements IThreadListener {
 
         if(!this.skipRenderWorld) {
             this.mcProfiler.endStartSection("gameRenderer");
-            this.entityRenderer.func_181560_a(this.timer.renderPartialTicks, i);
+            this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
             this.mcProfiler.endSection();
         }
 
@@ -1240,8 +1242,8 @@ public class Minecraft implements IThreadListener {
                         && this.currentScreen.doesGuiPauseGame()
                         && !this.theIntegratedServer.getPublic();
         long k = System.nanoTime();
-        this.field_181542_y.func_181747_a(k - this.field_181543_z);
-        this.field_181543_z = k;
+        this.frameTimer.addFrame(k - this.startNanoTime);
+        this.startNanoTime = k;
 
         while(getSystemTime() >= this.debugUpdateTime + 1000L) {
             debugFPS = this.fpsCounter;
@@ -1384,22 +1386,22 @@ public class Minecraft implements IThreadListener {
             int j = this.displayWidth - i - 10;
             int k = this.displayHeight - i * 2;
             GlStateManager.enableBlend();
-            worldrenderer.begin(7, DefaultVertexFormats.field_181706_f);
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             worldrenderer
                     .pos((float) j - (float) i * 1.1F, (float) k - (float) i * 0.6F - 16.0F, 0.0D)
-                    .setColor(200, 0, 0, 0)
+                    .color(200, 0, 0, 0)
                     .endVertex();
             worldrenderer
                     .pos((float) j - (float) i * 1.1F, k + i * 2, 0.0D)
-                    .setColor(200, 0, 0, 0)
+                    .color(200, 0, 0, 0)
                     .endVertex();
             worldrenderer
                     .pos((float) j + (float) i * 1.1F, k + i * 2, 0.0D)
-                    .setColor(200, 0, 0, 0)
+                    .color(200, 0, 0, 0)
                     .endVertex();
             worldrenderer
                     .pos((float) j + (float) i * 1.1F, (float) k - (float) i * 0.6F - 16.0F, 0.0D)
-                    .setColor(200, 0, 0, 0)
+                    .color(200, 0, 0, 0)
                     .endVertex();
             tessellator.draw();
             GlStateManager.disableBlend();
@@ -1408,12 +1410,12 @@ public class Minecraft implements IThreadListener {
             for(int l = 0; l < list.size(); ++l) {
                 Profiler.Result profiler$result1 = list.get(l);
                 int i1 = MathHelper.floor_double(profiler$result1.field_76332_a / 4.0D) + 1;
-                worldrenderer.begin(6, DefaultVertexFormats.field_181706_f);
-                int j1 = profiler$result1.func_76329_a();
+                worldrenderer.begin(6, DefaultVertexFormats.POSITION_COLOR);
+                int j1 = profiler$result1.getColor();
                 int k1 = j1 >> 16 & 255;
                 int l1 = j1 >> 8 & 255;
                 int i2 = j1 & 255;
-                worldrenderer.pos(j, k, 0.0D).setColor(k1, l1, i2, 255).endVertex();
+                worldrenderer.pos(j, k, 0.0D).color(k1, l1, i2, 255).endVertex();
 
                 for(int j2 = i1; j2 >= 0; --j2) {
                     float f =
@@ -1426,12 +1428,12 @@ public class Minecraft implements IThreadListener {
                     float f2 = MathHelper.cos(f) * (float) i * 0.5F;
                     worldrenderer
                             .pos((float) j + f1, (float) k - f2, 0.0D)
-                            .setColor(k1, l1, i2, 255)
+                            .color(k1, l1, i2, 255)
                             .endVertex();
                 }
 
                 tessellator.draw();
-                worldrenderer.begin(5, DefaultVertexFormats.field_181706_f);
+                worldrenderer.begin(5, DefaultVertexFormats.POSITION_COLOR);
 
                 for(int i3 = i1; i3 >= 0; --i3) {
                     float f3 =
@@ -1444,11 +1446,11 @@ public class Minecraft implements IThreadListener {
                     float f5 = MathHelper.cos(f3) * (float) i * 0.5F;
                     worldrenderer
                             .pos((float) j + f4, (float) k - f5, 0.0D)
-                            .setColor(k1 >> 1, l1 >> 1, i2 >> 1, 255)
+                            .color(k1 >> 1, l1 >> 1, i2 >> 1, 255)
                             .endVertex();
                     worldrenderer
                             .pos((float) j + f4, (float) k - f5 + 10.0F, 0.0D)
-                            .setColor(k1 >> 1, l1 >> 1, i2 >> 1, 255)
+                            .color(k1 >> 1, l1 >> 1, i2 >> 1, 255)
                             .endVertex();
                 }
 
@@ -1464,7 +1466,7 @@ public class Minecraft implements IThreadListener {
                 s = s + "[0] ";
             }
 
-            if(profiler$result.field_76331_c.length() == 0) {
+            if(profiler$result.field_76331_c.isEmpty()) {
                 s = s + "ROOT ";
             } else {
                 s = s + profiler$result.field_76331_c + " ";
@@ -1493,17 +1495,17 @@ public class Minecraft implements IThreadListener {
                         s1,
                         (float) (j - i),
                         (float) (k + i / 2 + k2 * 8 + 20),
-                        profiler$result2.func_76329_a());
+                        profiler$result2.getColor());
                 this.fontRendererObj.drawStringWithShadow(
                         s1 = decimalformat.format(profiler$result2.field_76332_a) + "%",
                         (float) (j + i - 50 - this.fontRendererObj.getStringWidth(s1)),
                         (float) (k + i / 2 + k2 * 8 + 20),
-                        profiler$result2.func_76329_a());
+                        profiler$result2.getColor());
                 this.fontRendererObj.drawStringWithShadow(
                         s1 = decimalformat.format(profiler$result2.field_76330_b) + "%",
                         (float) (j + i - this.fontRendererObj.getStringWidth(s1)),
                         (float) (k + i / 2 + k2 * 8 + 20),
-                        profiler$result2.func_76329_a());
+                        profiler$result2.getColor());
             }
         }
     }
@@ -1615,7 +1617,7 @@ public class Minecraft implements IThreadListener {
 
     /** Called when user clicked he's mouse right button (place) */
     private void rightClickMouse() {
-        if(!this.playerController.func_181040_m()) {
+        if(!this.playerController.getIsHittingBlock()) {
             this.rightClickDelayTimer = 4;
             boolean flag = true;
             ItemStack itemstack = this.thePlayer.inventory.getCurrentItem();
@@ -1625,7 +1627,7 @@ public class Minecraft implements IThreadListener {
             } else {
                 switch(this.objectMouseOver.typeOfHit) {
                     case ENTITY:
-                        if(this.playerController.func_178894_a(
+                        if(this.playerController.isPlayerRightClickingOnEntity(
                                 this.thePlayer, this.objectMouseOver.entityHit, this.objectMouseOver)) {
                             flag = false;
                         } else if(this.playerController.interactWithEntitySendPacket(
@@ -1992,7 +1994,7 @@ public class Minecraft implements IThreadListener {
                         if(k == 61) {
                             this.gameSettings.showDebugInfo = !this.gameSettings.showDebugInfo;
                             this.gameSettings.showDebugProfilerChart = GuiScreen.isShiftKeyDown();
-                            this.gameSettings.field_181657_aC = GuiScreen.isAltKeyDown();
+                            this.gameSettings.showLagometer = GuiScreen.isAltKeyDown();
                         }
 
                         if(this.gameSettings.keyBindTogglePerspective.isPressed()) {
@@ -2140,7 +2142,7 @@ public class Minecraft implements IThreadListener {
                 this.theWorld.updateEntities();
             }
         } else if(this.entityRenderer.isShaderActive()) {
-            this.entityRenderer.func_181022_b();
+            this.entityRenderer.stopUseShader();
         }
 
         if(!this.isGamePaused) {
@@ -2290,7 +2292,7 @@ public class Minecraft implements IThreadListener {
         }
 
         if(worldClientIn == null && this.theWorld != null) {
-            this.mcResourcePackRepository.func_148529_f();
+            this.mcResourcePackRepository.clearResourcePack();
             this.ingameGUI.func_181029_i();
             this.setServerData(null);
             this.integratedServerIsRunning = false;
@@ -2616,7 +2618,7 @@ public class Minecraft implements IThreadListener {
 
                                     stringbuilder.append(s);
 
-                                    if(Minecraft.this.gameSettings.field_183018_l.contains(s)) {
+                                    if(Minecraft.this.gameSettings.incompatibleResourcePacks.contains(s)) {
                                         stringbuilder.append(" (incompatible)");
                                     }
                                 }
@@ -2650,7 +2652,7 @@ public class Minecraft implements IThreadListener {
                         "CPU",
                         new Callable<String>() {
                             public String call() {
-                                return OpenGlHelper.func_183029_j();
+                                return OpenGlHelper.getCpu();
                             }
                         });
 
@@ -2659,6 +2661,15 @@ public class Minecraft implements IThreadListener {
         }
 
         return theCrash;
+    }
+
+    public PropertyMap getProfileProperties() {
+        if(this.profileProperties.isEmpty()) {
+            GameProfile gameprofile = this.getSessionService().fillProfileProperties(this.session.getProfile(), false);
+            this.profileProperties.putAll(gameprofile.getProperties());
+        }
+
+        return this.profileProperties;
     }
 
     /**
@@ -2912,6 +2923,10 @@ public class Minecraft implements IThreadListener {
         return this.field_181542_y;
     }
 
+    public FrameTimer getFrameTimer() {
+        return this.frameTimer;
+    }
+
     public static Map<String, String> getSessionInfo() {
         Map<String, String> map = Maps.newHashMap();
         map.put("X-Minecraft-Username", getMinecraft().getSession().getUsername());
@@ -2932,3 +2947,4 @@ public class Minecraft implements IThreadListener {
         return null;
     }
 }
+

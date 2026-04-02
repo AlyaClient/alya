@@ -62,14 +62,14 @@ public class DynamicLight {
             World world = renderGlobal.getWorld();
 
             if(world != null) {
-                this.blockPosMutable.func_181079_c(
+                this.blockPosMutable.set(
                         MathHelper.floor_double(d6), MathHelper.floor_double(d0), MathHelper.floor_double(d1));
                 IBlockState iblockstate = world.getBlockState(this.blockPosMutable);
                 Block block = iblockstate.getBlock();
                 this.underwater = block == Blocks.water;
             }
 
-            Set<BlockPos> set = new HashSet();
+            Set<BlockPos> set = new HashSet<>();
 
             if(j > 0) {
                 EnumFacing enumfacing2 =
@@ -110,7 +110,7 @@ public class DynamicLight {
     }
 
     private BlockPos getChunkPos(RenderChunk renderChunk, BlockPos pos, EnumFacing facing) {
-        return renderChunk != null ? renderChunk.func_181701_a(facing) : pos.offset(facing, 16);
+        return renderChunk != null ? renderChunk.getBlockPosOffset16(facing) : pos.offset(facing, 16);
     }
 
     private void updateChunkLight(

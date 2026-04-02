@@ -5,7 +5,7 @@ local function createVanillaSpeedMode(moduleTable, modeSettings)
     speedAmount.setVisibility(function() return modeSettings.is("Vanilla") end)
     autoJump.setVisibility(function() return modeSettings.is("Vanilla") end)
     strafe.setVisibility(function() return modeSettings.is("Vanilla") end)
-    alya.events.on("motion", function(event)
+    alya.events.on("playermove", function(event)
         if not moduleTable.isEnabled() then return end
         if not modeSettings.is("Vanilla") then return end
         if not alya.movement.isMoving() then return end

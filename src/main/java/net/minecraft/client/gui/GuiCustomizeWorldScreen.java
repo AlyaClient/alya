@@ -1777,26 +1777,26 @@ public class GuiCustomizeWorldScreen extends GuiScreen
       this.mc.getTextureManager().bindTexture(optionsBackground);
       GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
       float f2 = 32.0F;
-      worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
+      worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
       worldrenderer
           .pos((double) (this.width / 2 - 90), 185.0D, 0.0D)
           .tex(0.0D, 2.65625D)
-          .setColor(64, 64, 64, 64)
+          .color(64, 64, 64, 64)
           .endVertex();
       worldrenderer
           .pos((double) (this.width / 2 + 90), 185.0D, 0.0D)
           .tex(5.625D, 2.65625D)
-          .setColor(64, 64, 64, 64)
+          .color(64, 64, 64, 64)
           .endVertex();
       worldrenderer
           .pos((double) (this.width / 2 + 90), 100.0D, 0.0D)
           .tex(5.625D, 0.0D)
-          .setColor(64, 64, 64, 64)
+          .color(64, 64, 64, 64)
           .endVertex();
       worldrenderer
           .pos((double) (this.width / 2 - 90), 100.0D, 0.0D)
           .tex(0.0D, 0.0D)
-          .setColor(64, 64, 64, 64)
+          .color(64, 64, 64, 64)
           .endVertex();
       tessellator.draw();
       this.drawCenteredString(

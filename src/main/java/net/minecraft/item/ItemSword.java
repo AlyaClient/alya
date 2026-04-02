@@ -12,122 +12,99 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class ItemSword extends Item {
-  private float attackDamage;
-  private final Item.ToolMaterial material;
+public class ItemSword extends Item
+{
+    private float attackDamage;
+    private final Item.ToolMaterial material;
 
-  public ItemSword(Item.ToolMaterial material) {
-    this.material = material;
-    this.maxStackSize = 1;
-    this.setMaxDamage(material.getMaxUses());
-    this.setCreativeTab(CreativeTabs.tabCombat);
-    this.attackDamage = 4.0F + material.getDamageVsEntity();
-  }
-
-  /**
-   * Returns the amount of damage this item will deal. One heart of damage is equal to 2 damage
-   * points.
-   */
-  public float getDamageVsEntity() {
-    return this.material.getDamageVsEntity();
-  }
-
-  public float getStrVsBlock(ItemStack stack, Block block) {
-    if (block == Blocks.web) {
-      return 15.0F;
-    } else {
-      Material material = block.getMaterial();
-      return material != Material.plants
-              && material != Material.vine
-              && material != Material.coral
-              && material != Material.leaves
-              && material != Material.gourd
-          ? 1.0F
-          : 1.5F;
-    }
-  }
-
-  /**
-   * Current implementations of this method in child classes do not use the entry argument beside
-   * ev. They just raise the damage on the stack.
-   *
-   * @param target The Entity being hit
-   * @param attacker the attacking entity
-   */
-  public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-    stack.damageItem(1, attacker);
-    return true;
-  }
-
-  /**
-   * Called when a Block is destroyed using this Item. Return true to trigger the "Use Item"
-   * statistic.
-   */
-  public boolean onBlockDestroyed(
-      ItemStack stack, World worldIn, Block blockIn, BlockPos pos, EntityLivingBase playerIn) {
-    if ((double) blockIn.getBlockHardness(worldIn, pos) != 0.0D) {
-      stack.damageItem(2, playerIn);
+    public ItemSword(Item.ToolMaterial material)
+    {
+        this.material = material;
+        this.maxStackSize = 1;
+        this.setMaxDamage(material.getMaxUses());
+        this.setCreativeTab(CreativeTabs.tabCombat);
+        this.attackDamage = 4.0F + material.getDamageVsEntity();
     }
 
-    return true;
-  }
+    public float getDamageVsEntity()
+    {
+        return this.material.getDamageVsEntity();
+    }
 
-  /** Returns True is the item is renderer in full 3D when hold. */
-  public boolean isFull3D() {
-    return true;
-  }
+    public float getStrVsBlock(ItemStack stack, Block state)
+    {
+        if (state == Blocks.web)
+        {
+            return 15.0F;
+        }
+        else
+        {
+            Material material = state.getMaterial();
+            return material != Material.plants && material != Material.vine && material != Material.coral && material != Material.leaves && material != Material.gourd ? 1.0F : 1.5F;
+        }
+    }
 
-  /** returns the action that specifies what animation to play when the items is being used */
-  public EnumAction getItemUseAction(ItemStack stack) {
-    return EnumAction.BLOCK;
-  }
+    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
+    {
+        stack.damageItem(1, attacker);
+        return true;
+    }
 
-  /** How long it takes to use or consume an item */
-  public int getMaxItemUseDuration(ItemStack stack) {
-    return 72000;
-  }
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, Block blockIn, BlockPos pos, EntityLivingBase playerIn)
+    {
+        if ((double)blockIn.getBlockHardness(worldIn, pos) != 0.0D)
+        {
+            stack.damageItem(2, playerIn);
+        }
 
-  /**
-   * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack,
-   * world, entityPlayer
-   */
-  public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-    playerIn.setItemInUse(itemStackIn, this.getMaxItemUseDuration(itemStackIn));
-    return itemStackIn;
-  }
+        return true;
+    }
 
-  /** Check whether this Item can harvest the given Block */
-  public boolean canHarvestBlock(Block blockIn) {
-    return blockIn == Blocks.web;
-  }
+    public boolean isFull3D()
+    {
+        return true;
+    }
 
-  /** Return the enchantability factor of the item, most of the time is based on material. */
-  public int getItemEnchantability() {
-    return this.material.getEnchantability();
-  }
+    public EnumAction getItemUseAction(ItemStack stack)
+    {
+        return EnumAction.BLOCK;
+    }
 
-  /** Return the name for this tool's material. */
-  public String getToolMaterialName() {
-    return this.material.toString();
-  }
+    public int getMaxItemUseDuration(ItemStack stack)
+    {
+        return 72000;
+    }
 
-  /**
-   * Return whether this item is repairable in an anvil.
-   *
-   * @param toRepair The ItemStack to be repaired
-   * @param repair The ItemStack that should repair this Item (leather for leather armor, etc.)
-   */
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-    return this.material.getRepairItem() == repair.getItem()
-        ? true
-        : super.getIsRepairable(toRepair, repair);
-  }
+    public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
+    {
+        playerIn.setItemInUse(itemStackIn, this.getMaxItemUseDuration(itemStackIn));
+        return itemStackIn;
+    }
 
-  public Multimap<String, AttributeModifier> getItemAttributeModifiers() {
-    Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers();
-    multimap.put(
-        SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),
-        new AttributeModifier(itemModifierUUID, "Weapon modifier", (double) this.attackDamage, 0));
-    return multimap;
-  }
+    public boolean canHarvestBlock(Block blockIn)
+    {
+        return blockIn == Blocks.web;
+    }
+
+    public int getItemEnchantability()
+    {
+        return this.material.getEnchantability();
+    }
+
+    public String getToolMaterialName()
+    {
+        return this.material.toString();
+    }
+
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+    {
+        return this.material.getRepairItem() == repair.getItem() ? true : super.getIsRepairable(toRepair, repair);
+    }
+
+    public Multimap<String, AttributeModifier> getItemAttributeModifiers()
+    {
+        Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers();
+        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)this.attackDamage, 0));
+        return multimap;
+    }
 }

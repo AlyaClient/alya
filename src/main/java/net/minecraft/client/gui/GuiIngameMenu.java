@@ -1,6 +1,9 @@
 package net.minecraft.client.gui;
 
 import java.io.IOException;
+
+import dev.thoq.Alya;
+import dev.thoq.event.events.Render2DEvent;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -22,7 +25,7 @@ public class GuiIngameMenu extends GuiScreen {
             I18n.format("menu.returnToMenu", new Object[0])));
 
     if (!this.mc.isIntegratedServerRunning()) {
-      ((GuiButton) this.buttonList.get(0)).displayString =
+      ((GuiButton) this.buttonList.getFirst()).displayString =
           I18n.format("menu.disconnect", new Object[0]);
     }
 

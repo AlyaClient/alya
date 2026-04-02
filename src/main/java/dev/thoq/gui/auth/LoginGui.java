@@ -9,7 +9,8 @@ import org.lwjgl.input.Keyboard;
 import java.io.IOException;
 
 @SuppressWarnings({"CallToPrintStackTrace", "RedundantArrayCreation"})
-public class LoginGui extends GuiScreen {
+public final class LoginGui extends GuiScreen {
+
     private GuiTextField username;
     private static final AlyaFontRenderer FONT_MD = Alya.getInstance().getFontRendererMedium();
 
@@ -20,13 +21,14 @@ public class LoginGui extends GuiScreen {
                 this.mc.displayGuiScreen(new LoginGui());
             } else {
                 SessionChanger.getInstance().setUserOffline(this.username.getText());
-                this.mc.displayGuiScreen(new GuiMainMenu());
+                AltStorage.getInstance().addAlt(AltEntry.cracked(this.username.getText()));
+                this.mc.displayGuiScreen(new AltManagerGui());
             }
         }
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         this.drawDefaultBackground();
         this.username.drawTextBox();
         FONT_MD.drawString(
@@ -72,7 +74,7 @@ public class LoginGui extends GuiScreen {
             this.username.setFocused(true);
         }
         if(character == '\r') {
-            this.actionPerformed(this.buttonList.get(0));
+            this.actionPerformed(this.buttonList.getFirst());
         }
         this.username.textboxKeyTyped(character, key);
     }
@@ -81,8 +83,8 @@ public class LoginGui extends GuiScreen {
     public void mouseClicked(final int x2, final int y2, final int button) {
         try {
             super.mouseClicked(x2, y2, button);
-        } catch(IOException e) {
-            e.printStackTrace();
+        } catch(final IOException ioException) {
+            ioException.printStackTrace();
         }
         this.username.mouseClicked(x2, y2, button);
     }
@@ -97,4 +99,6 @@ public class LoginGui extends GuiScreen {
     public void updateScreen() {
         this.username.updateCursorCounter();
     }
+
+
 }

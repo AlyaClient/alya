@@ -14,7 +14,7 @@ public class GuiKeyBindingList extends GuiListExtended {
   private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
   private final GuiControls field_148191_k;
   private final Minecraft mc;
-  private final GuiListExtended.IGuiListEntry[] listEntries;
+  private final IGuiListEntry[] listEntries;
   private int maxListLabelWidth = 0;
 
   public GuiKeyBindingList(GuiControls controls, Minecraft mcIn) {
@@ -23,7 +23,7 @@ public class GuiKeyBindingList extends GuiListExtended {
     this.mc = mcIn;
     KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(mcIn.gameSettings.keyBindings);
     this.listEntries =
-        new GuiListExtended.IGuiListEntry[akeybinding.length + KeyBinding.getKeybinds().size()];
+        new IGuiListEntry[akeybinding.length + KeyBinding.getKeybinds().size()];
     Arrays.sort((Object[]) akeybinding);
     int i = 0;
     String s = null;
@@ -33,7 +33,7 @@ public class GuiKeyBindingList extends GuiListExtended {
 
       if (!s1.equals(s)) {
         s = s1;
-        this.listEntries[i++] = new GuiKeyBindingList.CategoryEntry(s1);
+        this.listEntries[i++] = new CategoryEntry(s1);
       }
 
       int j = (int) font.getStringWidth(I18n.format(keybinding.getKeyDescription(), new Object[0]));
@@ -42,7 +42,7 @@ public class GuiKeyBindingList extends GuiListExtended {
         this.maxListLabelWidth = j;
       }
 
-      this.listEntries[i++] = new GuiKeyBindingList.KeyEntry(keybinding);
+      this.listEntries[i++] = new KeyEntry(keybinding);
     }
   }
 
@@ -51,7 +51,7 @@ public class GuiKeyBindingList extends GuiListExtended {
   }
 
   /** Gets the IGuiListEntry object for the given index */
-  public GuiListExtended.IGuiListEntry getListEntry(int index) {
+  public IGuiListEntry getListEntry(int index) {
     return this.listEntries[index];
   }
 
@@ -64,7 +64,7 @@ public class GuiKeyBindingList extends GuiListExtended {
     return super.getListWidth() + 32;
   }
 
-  public class CategoryEntry implements GuiListExtended.IGuiListEntry {
+  public class CategoryEntry implements IGuiListEntry {
     private final String labelText;
     private final int labelWidth;
 
@@ -105,7 +105,7 @@ public class GuiKeyBindingList extends GuiListExtended {
     public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_) {}
   }
 
-  public class KeyEntry implements GuiListExtended.IGuiListEntry {
+  public class KeyEntry implements IGuiListEntry {
     private final KeyBinding keybinding;
     private final String keyDesc;
     private final GuiButton btnChangeKeyBinding;

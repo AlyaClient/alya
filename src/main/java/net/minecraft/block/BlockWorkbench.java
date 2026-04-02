@@ -16,58 +16,62 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 
-public class BlockWorkbench extends Block {
-  protected BlockWorkbench() {
-    super(Material.wood);
-    this.setCreativeTab(CreativeTabs.tabDecorations);
-  }
-
-  public boolean onBlockActivated(
-      World worldIn,
-      BlockPos pos,
-      IBlockState state,
-      EntityPlayer playerIn,
-      EnumFacing side,
-      float hitX,
-      float hitY,
-      float hitZ) {
-    if (worldIn.isRemote) {
-      return true;
-    } else {
-      playerIn.displayGui(new BlockWorkbench.InterfaceCraftingTable(worldIn, pos));
-      playerIn.triggerAchievement(StatList.field_181742_Z);
-      return true;
-    }
-  }
-
-  public static class InterfaceCraftingTable implements IInteractionObject {
-    private final World world;
-    private final BlockPos position;
-
-    public InterfaceCraftingTable(World worldIn, BlockPos pos) {
-      this.world = worldIn;
-      this.position = pos;
+public class BlockWorkbench extends Block
+{
+    protected BlockWorkbench()
+    {
+        super(Material.wood);
+        this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
-    public String getCommandSenderName() {
-      return null;
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        if (worldIn.isRemote)
+        {
+            return true;
+        }
+        else
+        {
+            playerIn.displayGui(new BlockWorkbench.InterfaceCraftingTable(worldIn, pos));
+            playerIn.triggerAchievement(StatList.field_181742_Z);
+            return true;
+        }
     }
 
-    public boolean hasCustomName() {
-      return false;
-    }
+    public static class InterfaceCraftingTable implements IInteractionObject
+    {
+        private final World world;
+        private final BlockPos position;
 
-    public IChatComponent getDisplayName() {
-      return new ChatComponentTranslation(
-          Blocks.crafting_table.getUnlocalizedName() + ".name", new Object[0]);
-    }
+        public InterfaceCraftingTable(World worldIn, BlockPos pos)
+        {
+            this.world = worldIn;
+            this.position = pos;
+        }
 
-    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-      return new ContainerWorkbench(playerInventory, this.world, this.position);
-    }
+        public String getName()
+        {
+            return null;
+        }
 
-    public String getGuiID() {
-      return "minecraft:crafting_table";
+        public boolean hasCustomName()
+        {
+            return false;
+        }
+
+        public IChatComponent getDisplayName()
+        {
+            return new ChatComponentTranslation(Blocks.crafting_table.getUnlocalizedName() + ".name", new Object[0]);
+        }
+
+        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
+        {
+            return new ContainerWorkbench(playerInventory, this.world, this.position);
+        }
+
+        public String getGuiID()
+        {
+            return "minecraft:crafting_table";
+        }
     }
-  }
 }

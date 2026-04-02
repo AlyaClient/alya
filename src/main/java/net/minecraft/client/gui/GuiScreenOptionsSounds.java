@@ -34,7 +34,7 @@ public class GuiScreenOptionsSounds extends GuiScreen {
     this.field_146507_a = I18n.format("options.sounds.title", new Object[0]);
     this.field_146508_h = I18n.format("options.off", new Object[0]);
     this.buttonList.add(
-        new GuiScreenOptionsSounds.Button(
+        new Button(
             SoundCategory.MASTER.getCategoryId(),
             this.width / 2 - 155 + i % 2 * 160,
             this.height / 6 - 12 + 24 * (i >> 1),
@@ -45,7 +45,7 @@ public class GuiScreenOptionsSounds extends GuiScreen {
     for (SoundCategory soundcategory : SoundCategory.values()) {
       if (soundcategory != SoundCategory.MASTER) {
         this.buttonList.add(
-            new GuiScreenOptionsSounds.Button(
+            new Button(
                 soundcategory.getCategoryId(),
                 this.width / 2 - 155 + i % 2 * 160,
                 this.height / 6 - 12 + 24 * (i >> 1),

@@ -16,7 +16,7 @@ public class GuiSnooper extends GuiScreen {
   private final java.util.List<String> field_146609_h = Lists.newArrayList();
   private String field_146610_i;
   private String[] field_146607_r;
-  private GuiSnooper.List field_146606_s;
+  private List field_146606_s;
 
   public GuiSnooper(GuiScreen p_i1061_1_, GameSettings p_i1061_2_) {
     this.field_146608_a = p_i1061_1_;
@@ -36,7 +36,7 @@ public class GuiSnooper extends GuiScreen {
 
     this.field_146607_r = list.toArray(new String[0]);
 
-    this.field_146606_s = new GuiSnooper.List();
+    this.field_146606_s = new List();
     this.buttonList.add(
         new GuiButton(2, this.width / 2 - 100, this.height - 32, 200, 20, I18n.format("gui.done")));
   }

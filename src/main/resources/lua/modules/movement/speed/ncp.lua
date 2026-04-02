@@ -24,12 +24,12 @@ local function createNcpSpeedMode(moduleTable, modeSettings)
             hasBoosted = false
         end
 
-        local strafePercentage = strafe.isEnabled() and 0.2 or 0
+        local strafePercentage = strafe.isEnabled() and 1 or 0
         local currentSpeed = alya.movement.getSpeed()
 
         if alya.mc.isForwardDown() then
 			alya.mc.setSprinting(true)
-			alya.movement.setSpeedStrafe(currentSpeed * boostAmount, strafePercentage)
+			alya.movement.setSpeedStrafe(currentSpeed + 0.05 * boostAmount, strafePercentage)
         else
 			alya.mc.setSprinting(false)
         end
