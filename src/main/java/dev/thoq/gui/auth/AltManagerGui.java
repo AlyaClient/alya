@@ -2,6 +2,7 @@ package dev.thoq.gui.auth;
 
 import dev.thoq.Alya;
 import dev.thoq.gui.GUIPasswordField;
+import dev.thoq.gui.toast.ToastManager;
 import dev.thoq.util.auth.SessionManager;
 import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.util.render.RenderUtility;
@@ -16,6 +17,7 @@ import org.lwjgl.input.Mouse;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -134,15 +136,10 @@ public final class AltManagerGui extends GuiScreen {
             final int index = i + scrollOffset;
             final AltEntry alt = alts.get(index);
             final int entryY = panelY + i * ENTRY_HEIGHT;
-
             final boolean selected = index == selectedIndex;
-            final boolean hovered = mouseX >= panelX && mouseX <= panelX + PANEL_WIDTH
-                    && mouseY >= entryY && mouseY < entryY + ENTRY_HEIGHT;
 
             if(selected) {
-                RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, ENTRY_HEIGHT, 0xFF2A2A5E);
-            } else if(hovered) {
-                RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, ENTRY_HEIGHT, 0xFF1E1E4A);
+                RenderUtility.drawRectOutline(panelX, entryY, PANEL_WIDTH, ENTRY_HEIGHT, 0xFFFFFFFF, 1);
             }
 
             int cx = panelX + 4;
@@ -295,12 +292,14 @@ public final class AltManagerGui extends GuiScreen {
     }
 
     private void loginWithAlt(final AltEntry alt) {
+        ToastManager.getInstance().info("Alt Manager", "Logging in...");
         if(alt.getType() == AltEntry.Type.CRACKED) {
             SessionChanger.getInstance().setUserOffline(alt.getName());
         } else {
             final Session session = new Session(alt.getName(), alt.getUuid(), alt.getAccessToken(),
                     Session.Type.MOJANG.toString());
             SessionManager.setSession(session);
+            ToastManager.getInstance().success("Alt Manager", "Successfully logged in to " + alt.getName() + "!");
         }
     }
 
@@ -419,8 +418,8 @@ public final class AltManagerGui extends GuiScreen {
                         skinLoading.remove(key);
                         return;
                     }
-                    final java.net.HttpURLConnection conn =
-                            (java.net.HttpURLConnection) new URI(url).toURL().openConnection();
+                    final HttpURLConnection conn =
+                            (HttpURLConnection) new URI(url).toURL().openConnection();
                     conn.setRequestProperty("User-Agent", "Alya-Client/1.0");
                     conn.setConnectTimeout(5000);
                     conn.setReadTimeout(5000);

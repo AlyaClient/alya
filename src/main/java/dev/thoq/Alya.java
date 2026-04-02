@@ -101,8 +101,8 @@ public final class Alya {
                 "modules/combat/targetstrafe.lua",
                 "modules/world/scaffold.lua",
                 "modules/world/timer.lua",
-                "modules/other/disabler.lua",
-                "modules/other/disabler/omnisprint.lua",
+                "modules/exploit/disabler.lua",
+                "modules/exploit/disabler/omnisprint.lua",
                 "modules/other/hackerdetector.lua",
                 "modules/other/worldtime.lua"
         };

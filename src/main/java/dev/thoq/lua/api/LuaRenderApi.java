@@ -52,21 +52,6 @@ public final class LuaRenderApi extends LuaTable {
                     }
                 });
         set(
-                "drawRoundedRect",
-                new VarArgFunction() {
-                    @Override
-                    public Varargs invoke(Varargs arguments) {
-                        RenderUtility.drawRoundedRect(
-                                arguments.arg(1).tofloat(),
-                                arguments.arg(2).tofloat(),
-                                arguments.arg(3).tofloat(),
-                                arguments.arg(4).tofloat(),
-                                arguments.arg(5).tofloat(),
-                                arguments.arg(6).toint());
-                        return LuaValue.NIL;
-                    }
-                });
-        set(
                 "drawArc",
                 new VarArgFunction() {
                     @Override
@@ -149,10 +134,12 @@ public final class LuaRenderApi extends LuaTable {
                                         arguments.arg(1).todouble(),
                                         arguments.arg(2).todouble(),
                                         arguments.arg(3).todouble());
-                        if(result == null) return LuaValue.NIL;
+                        if(result == null) {
+                            return LuaValue.NIL;
+                        }
                         LuaTable t = new LuaTable();
-                        t.set("x", LuaValue.valueOf((double) result[0]));
-                        t.set("y", LuaValue.valueOf((double) result[1]));
+                        t.set("x", LuaValue.valueOf(result[0]));
+                        t.set("y", LuaValue.valueOf(result[1]));
                         return t;
                     }
                 });
