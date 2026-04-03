@@ -12,6 +12,7 @@ import dev.thoq.module.modules.clickgui.ClickGUI;
 import dev.thoq.module.modules.render.HUDModule;
 import dev.thoq.module.modules.render.KeystrokesModule;
 import dev.thoq.util.font.AlyaFontRenderer;
+import dev.thoq.viamcp.impl.ViaMCP;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -127,6 +128,8 @@ public final class Alya {
         LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
         LOGGER.info("Initialized {} commands", commandManager.getCommands().size());
         configManager.load();
+        ViaMCP.create();
+        ViaMCP.INSTANCE.initAsyncSlider();
     }
 
     public void terminate() {

@@ -6,21 +6,35 @@ public final class Toast {
         INFO, SUCCESS, WARNING, DANGER
     }
 
+    public enum Side {
+        LEFT, RIGHT
+    }
+
     private static final long SLIDE_IN_MS = 250;
     private static final long SLIDE_OUT_MS = 250;
 
     private final Type type;
+    private final Side side;
     private final String title;
     private final String message;
     private final long createdAt;
     private final long durationMs;
 
     public Toast(final Type type, final String title, final String message, final long durationMs) {
+        this(type, Side.RIGHT, title, message, durationMs);
+    }
+
+    public Toast(final Type type, final Side side, final String title, final String message, final long durationMs) {
         this.type = type;
+        this.side = side;
         this.title = title;
         this.message = message;
         this.durationMs = durationMs;
         this.createdAt = System.currentTimeMillis();
+    }
+
+    public Side getSide() {
+        return side;
     }
 
     public Type getType() {

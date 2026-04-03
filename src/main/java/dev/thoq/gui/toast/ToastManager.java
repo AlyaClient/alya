@@ -49,6 +49,24 @@ public final class ToastManager {
         }
     }
 
+    public void push(final Toast.Type type, final Toast.Side side, final String title, final String message) {
+        push(type, side, title, message, 4000);
+    }
+
+    public void push(final Toast.Type type, final Toast.Side side, final String title, final String message, final long durationMs) {
+        synchronized(toasts) {
+            toasts.add(new Toast(type, side, title, message, durationMs));
+        }
+    }
+
+    public void pushInfo(final String title, final String message) {
+        push(Toast.Type.INFO, title, message);
+    }
+
+    public void pushInfo(final Toast.Side side, final String title, final String message) {
+        push(Toast.Type.INFO, side, title, message);
+    }
+
     public void info(final String title, final String message) {
         push(Toast.Type.INFO, title, message);
     }
@@ -77,21 +95,30 @@ public final class ToastManager {
         synchronized(toasts) {
             toasts.removeIf(Toast::isExpired);
 
-            int stackIndex = 0;
+            int rightStackIndex = 0;
+            int leftStackIndex = 0;
             for(int i = toasts.size() - 1; i >= 0; i--) {
                 final Toast toast = toasts.get(i);
-                final float slide = toast.getSlide();
+                final boolean isLeft = toast.getSide() == Toast.Side.LEFT;
+                final int stackIndex = isLeft ? leftStackIndex : rightStackIndex;
 
-                final float targetX = sw - MARGIN_RIGHT - TOAST_WIDTH;
+                final float targetX = isLeft
+                        ? MARGIN_RIGHT
+                        : sw - MARGIN_RIGHT - TOAST_WIDTH;
                 final float targetY = sh - MARGIN_BOTTOM - TOAST_HEIGHT - stackIndex * (TOAST_HEIGHT + GAP);
 
                 final float slideIn  = toast.getSlideIn();
                 final float slideOut = toast.getSlideOut();
 
                 final float offScreenY = sh + 4;
-                final float offScreenX = sw + 4;
+                final float offScreenX = isLeft ? -(TOAST_WIDTH + 4) : sw + 4;
 
-                final float x = targetX + (offScreenX - targetX) * slideOut;
+                final float x;
+                if(isLeft) {
+                    x = offScreenX + slideIn * (targetX - offScreenX) + (offScreenX - targetX) * slideOut;
+                } else {
+                    x = targetX + (offScreenX - targetX) * slideOut;
+                }
                 final float y = offScreenY - slideIn * (offScreenY - targetY);
 
                 RenderUtility.drawRect(x, y, TOAST_WIDTH, TOAST_HEIGHT, 0x66000000);
@@ -112,7 +139,8 @@ public final class ToastManager {
                 final float progress = toast.getProgress();
                 RenderUtility.drawRect(x, barY, TOAST_WIDTH * progress, PROGRESS_BAR_H, getProgressColor(toast.getType()));
 
-                stackIndex++;
+                if(isLeft) leftStackIndex++;
+                else rightStackIndex++;
             }
         }
     }

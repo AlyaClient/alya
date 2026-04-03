@@ -14,7 +14,15 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
+import dev.thoq.gui.toast.Toast;
+import dev.thoq.gui.toast.ToastManager;
+import net.minecraft.client.Minecraft;
+
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +40,13 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int BACKGROUND_COLOR = 0xFF181A17;
     private static final int MODULE_BACKGROUND_COLOR = 0xFF232623;
     private static final int SETTING_BACKGROUND_COLOR = 0xFF111311;
-    private static final int HOVER_TINT = 0x20FFFFFF;
+    private static final float HOVER_DIM = 0.6F;
     private static final int TEXT_COLOR = 0xFFCCCCCC;
     private static final float BORDER_WIDTH = 0.7F;
     private static final int DEFAULT_CATEGORY_COLOR = 0x20444444;
     private static final int ICON_SIZE = 7;
+    private static final int BOTTOM_ICON_SIZE = 7;
 
-    //note: hides Gui.font
     private static final AlyaFontRenderer font = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 7.5F);
     private static final AlyaFontRenderer settingsFont = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 6.5F);
     private static final Map<Category, Integer> CATEGORY_COLORS = new HashMap<>();
@@ -50,6 +58,7 @@ public final class ClickGUIScreen extends GuiScreen {
         CATEGORY_COLORS.put(Category.VISUAL, 0xFF3700CE);
         CATEGORY_COLORS.put(Category.EXPLOIT, 0xFF4697DB);
         CATEGORY_COLORS.put(Category.OTHER, 0xFFF39C12);
+        CATEGORY_COLORS.put(Category.SCRIPTS, 0xFFFADB5F);
     }
 
     private final Map<Category, int[]> panelPositions = new HashMap<>();
@@ -63,6 +72,8 @@ public final class ClickGUIScreen extends GuiScreen {
     private NumberSetting currentDraggedNumberSetting = null;
     private int currentDraggedSettingX = 0;
     private boolean draggingSecondNub = false;
+    private boolean scriptsExpanded = false;
+    private boolean configsExpanded = false;
 
     private float getScale() {
         float userScale = Alya.getInstance()
@@ -76,7 +87,9 @@ public final class ClickGUIScreen extends GuiScreen {
         int maxHeight = 0;
         for(final Category category : Category.values()) {
             final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
-            if(modules == null) continue;
+            if(modules == null) {
+                continue;
+            }
             int totalHeight = PANEL_HEIGHT;
             if(expandedCategories.getOrDefault(category, false)) {
                 totalHeight += calculateExpandedHeight(modules) + 1;
@@ -111,6 +124,7 @@ public final class ClickGUIScreen extends GuiScreen {
             renderCategoryPanel(category, scaledMouseX, scaledMouseY);
         }
         GlStateManager.popMatrix();
+        renderBottomBar(mouseX, mouseY);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -236,17 +250,13 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseX,
             final int mouseY) {
         final boolean extended = expandedModules.getOrDefault(module, false);
+        final boolean hovered = isMouseOver(mouseX, mouseY, positionX, positionY, MODULE_HEIGHT);
         if(!extended) {
-            final int backgroundColor =
-                    module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
-            RenderUtility.drawRect(
-                    positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, backgroundColor);
+            int backgroundColor = module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
+            if(hovered) backgroundColor = dimColor(backgroundColor, HOVER_DIM);
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, backgroundColor);
         } else {
-            RenderUtility.drawRect(
-                    positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
-        }
-        if(isMouseOver(mouseX, mouseY, positionX, positionY, MODULE_HEIGHT) && !expandedModules.getOrDefault(module, false)) {
-            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, HOVER_TINT);
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
         }
         final String moduleName = module.getName().toLowerCase().replace(" ", "");
         final int textColor =
@@ -268,12 +278,13 @@ public final class ClickGUIScreen extends GuiScreen {
         final int textX = settingX + 3;
         final int settingRight = positionX + PANEL_WIDTH - SETTING_INDENT;
         if(setting instanceof BooleanSetting booleanSetting) {
+            final boolean boolHovered = isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT);
             if(booleanSetting.isEnabled()) {
-                RenderUtility.drawRect(
-                        settingX, positionY, settingWidth, SETTING_HEIGHT, getCategoryColor(category));
-            }
-            if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, HOVER_TINT);
+                int color = getCategoryColor(category);
+                if(boolHovered) color = dimColor(color, HOVER_DIM);
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, color);
+            } else if(boolHovered) {
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
             }
             settingsFont.drawString(setting.getName(), textX, positionY + 1, TEXT_COLOR);
         } else if(setting instanceof ModeSetting modeSetting) {
@@ -282,7 +293,7 @@ public final class ClickGUIScreen extends GuiScreen {
             final float modeWidth = settingsFont.getStringWidth(modeValue);
             settingsFont.drawString(modeValue, settingRight - modeWidth - 2, positionY + 1, TEXT_COLOR);
             if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, HOVER_TINT);
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
             }
         } else if(setting instanceof NumberSetting numberSetting) {
             renderNumberSetting(numberSetting, setting, positionX, positionY, settingX, settingWidth, settingRight, textX, category, mouseX, mouseY);
@@ -314,7 +325,7 @@ public final class ClickGUIScreen extends GuiScreen {
             renderSingleNumberSetting(setting, positionY, settingX, settingWidth, settingRight, textX, value, minimum, maximum, categoryColor, nubWidth, nubColor);
         }
         if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-            RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, HOVER_TINT);
+            RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
         }
     }
 
@@ -374,8 +385,225 @@ public final class ClickGUIScreen extends GuiScreen {
         settingsFont.drawString(displayValue, settingRight - valueWidth - 2, positionY + 1, TEXT_COLOR);
     }
 
+    private void renderBottomBar(final int mouseX, final int mouseY) {
+        final int configsPanelX = width - PANEL_WIDTH;
+        final int scriptsPanelX = configsPanelX - PANEL_WIDTH;
+        final int panelY = height - PANEL_HEIGHT;
+
+        renderBottomPanel("scripts", scriptsPanelX, panelY, scriptsExpanded, getScriptEntries(), new String[0],
+                "reload.png", "folder.png", "lua.png", mouseX, mouseY, true);
+        renderBottomPanel("configs", configsPanelX, panelY, configsExpanded, getConfigEntries(), getConfigDates(),
+                null, "folder.png", "options.png", mouseX, mouseY, false);
+    }
+
+    @SuppressWarnings("SuspiciousNameCombination")
+    private void renderBottomPanel(
+            final String title,
+            final int panelX,
+            final int panelY,
+            final boolean expanded,
+            final String[] entries,
+            final String[] entryDates,
+            final String actionIcon,
+            final String folderIcon,
+            final String typeIcon,
+            final int mouseX,
+            final int mouseY,
+            final boolean isScripts) {
+        RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
+        font.drawString(title, panelX + 4, panelY + 5, TEXT_COLOR);
+
+        int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3;
+        final int iconY = panelY + (PANEL_HEIGHT - BOTTOM_ICON_SIZE) / 2;
+
+        GlStateManager.color(0.6F, 0.6F, 0.6F, 1.0F);
+        RenderUtility.drawImage(new ResourceLocation("client/icons/" + typeIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
+        iconX -= BOTTOM_ICON_SIZE + 2;
+
+        final boolean folderHovered = mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE
+                && mouseY >= iconY && mouseY <= iconY + BOTTOM_ICON_SIZE;
+        GlStateManager.color(folderHovered ? 1.0F : 0.6F, folderHovered ? 1.0F : 0.6F, folderHovered ? 1.0F : 0.6F, 1.0F);
+        RenderUtility.drawImage(new ResourceLocation("client/icons/" + folderIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
+        iconX -= BOTTOM_ICON_SIZE + 2;
+
+        if(actionIcon != null) {
+            final boolean actionHovered = mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE
+                    && mouseY >= iconY && mouseY <= iconY + BOTTOM_ICON_SIZE;
+            GlStateManager.color(actionHovered ? 1.0F : 0.6F, actionHovered ? 1.0F : 0.6F, actionHovered ? 1.0F : 0.6F, 1.0F);
+            RenderUtility.drawImage(new ResourceLocation("client/icons/" + actionIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
+        }
+
+        int totalHeight = PANEL_HEIGHT;
+        if(expanded && entries.length > 0) {
+            final int entryTotalHeight = entries.length * MODULE_HEIGHT;
+            totalHeight += entryTotalHeight;
+            int entryY = panelY - entryTotalHeight;
+            for(int i = 0; i < entries.length; i++) {
+                final String entry = entries[i];
+                final boolean hovered = mouseX >= panelX && mouseX <= panelX + PANEL_WIDTH
+                        && mouseY >= entryY && mouseY <= entryY + MODULE_HEIGHT;
+
+                if(isScripts) {
+                    final boolean loaded = Alya.getInstance().getLuaEngine().isExternalScriptLoaded(entry);
+                    int bgColor = loaded ? 0xFF808080 : MODULE_BACKGROUND_COLOR;
+                    if(hovered) bgColor = dimColor(bgColor, HOVER_DIM);
+                    RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, MODULE_HEIGHT, bgColor);
+                } else {
+                    int bgColor = MODULE_BACKGROUND_COLOR;
+                    if(hovered) bgColor = dimColor(bgColor, HOVER_DIM);
+                    RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, MODULE_HEIGHT, bgColor);
+                }
+
+                font.drawString(entry, panelX + 4, entryY + 5, TEXT_COLOR);
+
+                if(!isScripts && i < entryDates.length && entryDates[i] != null) {
+                    final float dateWidth = settingsFont.getStringWidth(entryDates[i]);
+                    settingsFont.drawString(entryDates[i], panelX + PANEL_WIDTH - dateWidth - 4, entryY + 5, 0xFF888888);
+                }
+
+                entryY += MODULE_HEIGHT;
+            }
+        }
+        final int outlineY = expanded && entries.length > 0 ? panelY - (totalHeight - PANEL_HEIGHT) : panelY;
+        RenderUtility.drawRectOutline(panelX, outlineY, PANEL_WIDTH, totalHeight, 0xFF808080, BORDER_WIDTH);
+    }
+
+    private String[] getScriptEntries() {
+        final File scriptsDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/scripts");
+        if(!scriptsDir.exists()) return new String[0];
+        final File[] files = scriptsDir.listFiles((_, name) -> name.endsWith(".lua"));
+        if(files == null) return new String[0];
+        final String[] names = new String[files.length];
+        for(int i = 0; i < files.length; i++) {
+            names[i] = files[i].getName();
+        }
+        return names;
+    }
+
+    private String[] getConfigEntries() {
+        final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/configs");
+        if(!configDir.exists()) return new String[0];
+        final File[] files = configDir.listFiles((_, name) -> name.endsWith(".json"));
+        if(files == null) return new String[0];
+        final String[] names = new String[files.length];
+        for(int i = 0; i < files.length; i++) {
+            names[i] = files[i].getName().replace(".json", "");
+        }
+        return names;
+    }
+
+    private String[] getConfigDates() {
+        final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/configs");
+        if(!configDir.exists()) return new String[0];
+        final File[] files = configDir.listFiles((_, name) -> name.endsWith(".json"));
+        if(files == null) return new String[0];
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        final String[] dates = new String[files.length];
+        for(int i = 0; i < files.length; i++) {
+            dates[i] = dateFormat.format(new Date(files[i].lastModified()));
+        }
+        return dates;
+    }
+
+    private boolean handleBottomBarClick(final int mouseX, final int mouseY, final int mouseButton) {
+        final int configsPanelX = width - PANEL_WIDTH;
+        final int scriptsPanelX = configsPanelX - PANEL_WIDTH;
+        final int panelY = height - PANEL_HEIGHT;
+
+        if(mouseX >= scriptsPanelX && mouseX <= scriptsPanelX + PANEL_WIDTH
+                && mouseY >= panelY && mouseY <= panelY + PANEL_HEIGHT) {
+            if(mouseButton == 1) {
+                scriptsExpanded = !scriptsExpanded;
+                return true;
+            }
+            if(mouseButton == 0) {
+                return handleBottomPanelIconClick(mouseX, scriptsPanelX, true);
+            }
+        }
+
+        if(mouseX >= configsPanelX && mouseX <= configsPanelX + PANEL_WIDTH
+                && mouseY >= panelY && mouseY <= panelY + PANEL_HEIGHT) {
+            if(mouseButton == 1) {
+                configsExpanded = !configsExpanded;
+                return true;
+            }
+            if(mouseButton == 0) {
+                return handleBottomPanelIconClick(mouseX, configsPanelX, false);
+            }
+        }
+
+        if(scriptsExpanded) {
+            final String[] entries = getScriptEntries();
+            if(handleBottomEntryClick(entries, scriptsPanelX, panelY, mouseX, mouseY, mouseButton, true)) return true;
+        }
+
+        if(configsExpanded) {
+            final String[] entries = getConfigEntries();
+            return handleBottomEntryClick(entries, configsPanelX, panelY, mouseX, mouseY, mouseButton, false);
+        }
+
+        return false;
+    }
+
+    private boolean handleBottomPanelIconClick(final int mouseX, final int panelX, final boolean isScripts) {
+        int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3;
+
+        iconX -= BOTTOM_ICON_SIZE + 2;
+
+        if(mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE) {
+            try {
+                final String subDir = isScripts ? "scripts" : "configs";
+                final File dir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/" + subDir);
+                Desktop.getDesktop().open(dir);
+            } catch(final IOException ignored) {}
+            return true;
+        }
+        iconX -= BOTTOM_ICON_SIZE + 2;
+
+        if(isScripts && mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE) {
+            Alya.getInstance().getLuaEngine().reload();
+            ToastManager.getInstance().push(Toast.Type.INFO, Toast.Side.LEFT, "Scripts", "Reloaded scripts");
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleBottomEntryClick(
+            final String[] entries, final int panelX, final int panelY,
+            final int mouseX, final int mouseY, final int mouseButton, final boolean isScripts) {
+        final int entryTotalHeight = entries.length * MODULE_HEIGHT;
+        int entryY = panelY - entryTotalHeight;
+        for(final String entry : entries) {
+            if(mouseX >= panelX && mouseX <= panelX + PANEL_WIDTH
+                    && mouseY >= entryY && mouseY <= entryY + MODULE_HEIGHT) {
+                if(mouseButton == 0) {
+                    if(isScripts) {
+                        Alya.getInstance().getLuaEngine().toggleExternalScript(entry);
+                    } else {
+                        Alya.getInstance().getConfigManager().load(entry);
+                        Alya.getInstance().getModuleManager().getModule(ClickGUI.class)
+                                .ifPresent(m -> m.setEnabled(true));
+                        mc.displayGuiScreen(this);
+                        ToastManager.getInstance().push(Toast.Type.INFO, Toast.Side.LEFT, "Config", "Loaded config: " + entry);
+                    }
+                }
+                return true;
+            }
+            entryY += MODULE_HEIGHT;
+        }
+        return false;
+    }
+
     private int getCategoryColor(final Category category) {
         return CATEGORY_COLORS.getOrDefault(category, DEFAULT_CATEGORY_COLOR);
+    }
+
+    private int dimColor(final int color, final float factor) {
+        int r = (int) (((color >> 16) & 0xFF) * factor);
+        int g = (int) (((color >> 8) & 0xFF) * factor);
+        int b = (int) ((color & 0xFF) * factor);
+        return (color & 0xFF000000) | (r << 16) | (g << 8) | b;
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -393,6 +621,7 @@ public final class ClickGUIScreen extends GuiScreen {
         final int scaledMouseX = (int) (mouseX / scale);
         final int scaledMouseY = (int) (mouseY / scale);
 
+        if(handleBottomBarClick(mouseX, mouseY, mouseButton)) return;
         for(final Category category : Category.values()) {
             if(handleCategoryClick(category, scaledMouseX, scaledMouseY, mouseButton)) return;
         }
