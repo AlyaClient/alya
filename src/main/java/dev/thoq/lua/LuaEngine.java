@@ -1,6 +1,8 @@
 package dev.thoq.lua;
 
 import dev.thoq.Alya;
+import dev.thoq.gui.toast.Toast;
+import dev.thoq.gui.toast.ToastManager;
 import dev.thoq.lua.api.*;
 import dev.thoq.util.player.ChatUtil;
 import org.luaj.vm2.Globals;
@@ -12,15 +14,13 @@ import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public final class LuaEngine {
     private final Globals globals;
     private final List<String> loadedScripts = new ArrayList<>();
+    private final Set<String> loadedExternalScripts = new LinkedHashSet<>();
     private LuaEventApi eventApi;
 
     public LuaEngine() {
@@ -139,6 +139,41 @@ public final class LuaEngine {
         for(final String script : Alya.getInstance().getScripts()) {
             loadScript(String.format("/lua/%s", script));
         }
+        loadExternalScripts();
+    }
+
+    public void loadExternalScripts() {
+        final File scriptsDir = new File(
+                net.minecraft.client.Minecraft.getMinecraft().mcDataDir,
+                Alya.getName() + "/scripts");
+        if(!scriptsDir.exists()) {
+            if(!scriptsDir.mkdirs()) {
+                Alya.getInstance().getLogger().error("Failed to create scripts directory");
+            }
+            return;
+        }
+        final File[] luaFiles = scriptsDir.listFiles((dir, name) -> name.endsWith(".lua"));
+        if(luaFiles == null) return;
+        for(final File luaFile : luaFiles) {
+            if(loadedExternalScripts.contains(luaFile.getName())) {
+                loadExternalScript(luaFile);
+            }
+        }
+    }
+
+    public void loadExternalScript(final File file) {
+        try(final FileInputStream fis = new FileInputStream(file)) {
+            final LuaValue chunk = globals.load(new InputStreamReader(fis), file.getName());
+            chunk.call();
+            loadedScripts.add("external:" + file.getName());
+            loadedExternalScripts.add(file.getName());
+            Alya.getInstance().getLogger().info("Loaded external script: {}", file.getName());
+        } catch(final LuaError luaError) {
+            Alya.getInstance().getLogger().error("Lua error in {}: {}", file.getName(), luaError.getMessage());
+            ChatUtil.sendError("[Lua] " + file.getName() + ": " + luaError.getMessage());
+        } catch(final Exception exception) {
+            Alya.getInstance().getLogger().error("Error loading {}: {}", file.getName(), exception.getMessage());
+        }
     }
 
     public void reload() {
@@ -214,6 +249,26 @@ public final class LuaEngine {
             this.keyCode = keyCode;
             this.settingValues = settingValues;
         }
+    }
+
+    public boolean isExternalScriptLoaded(final String fileName) {
+        return loadedExternalScripts.contains(fileName);
+    }
+
+    public void toggleExternalScript(final String fileName) {
+        final boolean wasLoaded = loadedExternalScripts.contains(fileName);
+        if(wasLoaded) {
+            loadedExternalScripts.remove(fileName);
+        } else {
+            loadedExternalScripts.add(fileName);
+        }
+        reload();
+        final String action = wasLoaded ? "Disabled" : "Enabled";
+        ToastManager.getInstance().push(Toast.Type.INFO, Toast.Side.LEFT, "Scripts", action + " script: " + fileName);
+    }
+
+    public Set<String> getLoadedExternalScripts() {
+        return loadedExternalScripts;
     }
 
     public Globals getGlobals() {

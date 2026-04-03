@@ -19,6 +19,7 @@ repositories {
     maven("https://libraries.minecraft.net/")
     maven("https://litarvan.github.io/maven")
     maven("https://jitpack.io")
+    maven("https://repo.viaversion.com")
 }
 
 val lwjglVersion = "3.3.4"
@@ -114,6 +115,12 @@ dependencies {
     }
     implementation("fr.litarvan:openauth:1.1.3")
     implementation("org.luaj:luaj-jse:3.0.1")
+    implementation("org.yaml:snakeyaml:2.2")
+    compileOnly("com.viaversion:viaversion-api:4.9.0")
+    implementation("com.viaversion:viabackwards:4.9.2")
+    implementation("com.viaversion:viarewind-common:3.0.6")
+    implementation("com.viaversion:viaversion:4.9.3")
+    implementation("com.viaversion:viaversion-bungee:4.9.3")
 }
 
 configurations.all {
