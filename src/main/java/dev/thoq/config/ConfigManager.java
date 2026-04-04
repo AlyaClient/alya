@@ -50,7 +50,7 @@ public final class ConfigManager {
             modules.add(module.getName(), moduleData);
         }
         root.add("modules", modules);
-        root.addProperty("clientName", Alya.getName());
+        root.addProperty("clientName", Alya.getInstance().getClientName());
         try(final FileWriter writer = new FileWriter(configFile)) {
             GSON.toJson(root, writer);
             Alya.getInstance().getLogger().info("Saved config: {}", configName);

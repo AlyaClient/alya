@@ -818,9 +818,6 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
     public void handleTimeUpdate(S03PacketTimeUpdate packetIn)
     {
-        TimeUpdateEvent event = new TimeUpdateEvent(packetIn);
-        Alya.getInstance().getEventBus().dispatch(event);
-        if (event.isCanceled()) return;
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         this.gameController.theWorld.setTotalWorldTime(packetIn.getTotalWorldTime());
         this.gameController.theWorld.setWorldTime(packetIn.getWorldTime());
