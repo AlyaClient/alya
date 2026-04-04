@@ -942,6 +942,40 @@ public class Minecraft implements IThreadListener {
             return;
         }
 
+        ScaledResolution currentRes = new ScaledResolution(this);
+        if (currentRes.getScaledWidth() != this.splashScaledResolution.getScaledWidth() ||
+            currentRes.getScaledHeight() != this.splashScaledResolution.getScaledHeight() ||
+            currentRes.getScaleFactor() != this.splashScaleFactor) {
+            
+            this.splashScaledResolution = currentRes;
+            this.splashScaleFactor = currentRes.getScaleFactor();
+            this.splashFramebuffer.createBindFramebuffer(
+                    this.splashScaledResolution.getScaledWidth() * this.splashScaleFactor,
+                    this.splashScaledResolution.getScaledHeight() * this.splashScaleFactor);
+            
+            final int scaledW = this.splashScaledResolution.getScaledWidth();
+            final int scaledH = this.splashScaledResolution.getScaledHeight();
+            final float imgAspect = (float) this.splashImageWidth / this.splashImageHeight;
+            final float screenAspect = (float) scaledW / scaledH;
+            final int logoDisplayWidth, logoDisplayHeight;
+            if(imgAspect > screenAspect) {
+                logoDisplayHeight = scaledH;
+                logoDisplayWidth = (int) (scaledH * imgAspect);
+            } else {
+                logoDisplayWidth = scaledW;
+                logoDisplayHeight = (int) (scaledW / imgAspect);
+            }
+            this.splashLogoX = (scaledW - logoDisplayWidth) / 2;
+            this.splashLogoY = (scaledH - logoDisplayHeight) / 2;
+            this.splashLogoDisplayWidth = logoDisplayWidth;
+            this.splashLogoDisplayHeight = logoDisplayHeight;
+
+            this.splashProgressBarWidth = 100;
+            this.splashProgressBarHeight = 12;
+            this.splashProgressBarX = (scaledW - this.splashProgressBarWidth) / 2;
+            this.splashProgressBarY = (scaledH - this.splashProgressBarHeight) / 2;
+        }
+
         this.splashFramebuffer.bindFramebuffer(false);
         GlStateManager.clearColor(0.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
