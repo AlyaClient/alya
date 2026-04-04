@@ -5,8 +5,11 @@ import dev.thoq.command.commands.*;
 import dev.thoq.config.ConfigManager;
 import dev.thoq.event.EventBus;
 import dev.thoq.lua.LuaEngine;
+import dev.thoq.lua.Script;
+import dev.thoq.lua.ScriptsUtil;
 import dev.thoq.lua.api.LuaFontApi;
 import dev.thoq.lua.api.LuaMinecraftApi;
+import dev.thoq.module.Category;
 import dev.thoq.module.ModuleManager;
 import dev.thoq.module.modules.clickgui.ClickGUI;
 import dev.thoq.module.modules.render.HUDModule;
@@ -27,6 +30,7 @@ public final class Alya {
     private final CommandManager commandManager = new CommandManager();
     private final ConfigManager configManager = new ConfigManager();
     private final LuaEngine luaEngine = new LuaEngine();
+    private final ScriptsUtil scriptUtil = new ScriptsUtil();
     private AlyaFontRenderer fontRenderer;
     private AlyaFontRenderer fontRendererSmall;
     private AlyaFontRenderer fontRendererMedium;
@@ -36,79 +40,52 @@ public final class Alya {
     private Alya() {
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public String[] getScripts() {
-        return new String[]{
-                "util/movement.lua",
-                "util/chat.lua",
-                "util/visual.lua",
-                "util/timer.lua",
-                "util/mathutil.lua",
-
-                "core/module.lua",
-                "core/submodule.lua",
-                "core/command.lua",
-
-                "modules/visual/fullbright.lua",
-                "modules/visual/arraylist.lua",
-                "modules/visual/esp.lua",
-                "modules/visual/chams.lua",
-                "modules/visual/outline.lua",
-                "modules/visual/scoreboard.lua",
-                "modules/visual/nametags.lua",
-                "modules/movement/flight.lua",
-                "modules/movement/flight/static.lua",
-                "modules/movement/flight/motion.lua",
-                "modules/movement/terrain.lua",
-                "modules/movement/safewalk.lua",
-                "modules/movement/doublejump.lua",
-                "modules/movement/speed.lua",
-                "modules/movement/speed/vanilla.lua",
-                "modules/movement/speed/verus.lua",
-                "modules/movement/speed/bhop.lua",
-                "modules/movement/step.lua",
-                "modules/movement/jesus.lua",
-                "modules/movement/keepsprint.lua",
-                "modules/movement/longjump.lua",
-                "modules/movement/longjump/verus.lua",
-                "modules/movement/longjump/mineland.lua",
-                "modules/movement/longjump/grim.lua",
-                "modules/movement/longjump/ncp.lua",
-                "modules/movement/longjump/fireball.lua",
-                "modules/movement/longjump/vulcan.lua",
-                "modules/movement/highjump.lua",
-                "modules/movement/wee.lua",
-                "modules/player/sprint.lua",
-                "modules/player/noslowdown.lua",
-                "modules/player/inventory.lua",
-                "modules/player/blink.lua",
-                "modules/player/nojumpdelay.lua",
-                "modules/player/norightclickdelay.lua",
-                "modules/player/nofall.lua",
-                "modules/player/nofall/vanilla.lua",
-                "modules/player/nofall/verus.lua",
-                "modules/player/legitscaffold.lua",
-                "modules/combat/killaura.lua",
-                "modules/combat/velocity.lua",
-                "modules/combat/knockback.lua",
-                "modules/combat/velocity/motion.lua",
-                "modules/combat/criticals.lua",
-                "modules/combat/criticals/watchdog.lua",
-                "modules/combat/criticals/packet.lua",
-                "modules/combat/autoclicker.lua",
-                "modules/combat/autoclicker/drag.lua",
-                "modules/combat/autoclicker/normal.lua",
-                "modules/combat/clickassist.lua",
-                "modules/combat/hitboxes.lua",
-                "modules/combat/reach.lua",
-                "modules/combat/targetstrafe.lua",
-                "modules/world/scaffold.lua",
-                "modules/world/timer.lua",
-                "modules/exploit/disabler.lua",
-                "modules/exploit/disabler/omnisprint.lua",
-                "modules/other/hackerdetector.lua",
-                "modules/other/worldtime.lua"
-        };
-    }
+        return scriptUtil.putAll(
+                new Script(Category.VISUAL, "fullbright"),
+                new Script(Category.VISUAL, "arraylist"),
+                new Script(Category.VISUAL, "esp"),
+                new Script(Category.VISUAL, "chams"),
+                new Script(Category.VISUAL, "outline"),
+                new Script(Category.VISUAL, "scoreboard"),
+                new Script(Category.VISUAL, "nametags"),
+                new Script(Category.MOVEMENT, "flight"),
+                new Script(Category.MOVEMENT, "terrain"),
+                new Script(Category.MOVEMENT, "safewalk"),
+                new Script(Category.MOVEMENT, "doublejump"),
+                new Script(Category.MOVEMENT, "speed"),
+                new Script(Category.MOVEMENT, "step"),
+                new Script(Category.MOVEMENT, "jesus"),
+                new Script(Category.MOVEMENT, "keepsprint"),
+                new Script(Category.MOVEMENT, "longjump"),
+                new Script(Category.MOVEMENT, "highjump"),
+                new Script(Category.MOVEMENT, "wee"),
+                new Script(Category.PLAYER, "sprint"),
+                new Script(Category.PLAYER, "noslowdown"),
+                new Script(Category.PLAYER, "inventory"),
+                //todo: fix blink
+                //new Script(Category.PLAYER, "blink"),
+                new Script(Category.PLAYER, "nojumpdelay"),
+                new Script(Category.PLAYER, "norightclickdelay"),
+                new Script(Category.PLAYER, "nofall"),
+                new Script(Category.PLAYER, "legitscaffold"),
+                new Script(Category.COMBAT, "killaura"),
+                new Script(Category.COMBAT, "velocity"),
+                new Script(Category.COMBAT, "knockback"),
+                new Script(Category.COMBAT, "criticals"),
+                new Script(Category.COMBAT, "autoclicker"),
+                new Script(Category.COMBAT, "clickassist"),
+                new Script(Category.COMBAT, "hitboxes"),
+                new Script(Category.COMBAT, "reach"),
+                new Script(Category.COMBAT, "targetstrafe"),
+                new Script(Category.PLAYER, "scaffold"),
+                new Script(Category.PLAYER, "timer"),
+                new Script(Category.EXPLOIT, "disabler"),
+                new Script(Category.OTHER, "hackerdetector"),
+                new Script(Category.OTHER, "worldtime")
+        );
+      }
 
     public void initCommands() {
         commandManager.putAll(
