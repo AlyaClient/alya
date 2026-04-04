@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JDK_PATH="$HOME/.sdkman/candidates/java/21.0.10-zulu/bin/java"
+JDK_PATH="$HOME/.sdkman/candidates/java/25.0.2-zulu/bin/java"
 echo "JDK PATH: $JDK_PATH"
 
 SCRIPT_DIR=$(pwd)
