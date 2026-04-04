@@ -1262,6 +1262,7 @@ public class Minecraft implements IThreadListener {
         GlStateManager.pushMatrix();
         GlStateManager.popMatrix();
         this.mcProfiler.startSection("root");
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.updateDisplay();
         Thread.yield();
         this.mcProfiler.startSection("stream");
