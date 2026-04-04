@@ -226,6 +226,9 @@ local MathUtil = {}
 ---@param val number @param min number @param max number
 function MathUtil.isBetween(val, min, max) end
 
+---securely generate a random number
+function MathUtil.makeRandom() end
+
 ---@class AlyaVisual
 local AlyaVisual = {}
 
@@ -482,6 +485,10 @@ function AlyaCombat.sendReleaseUseItem() end
 ---@return boolean
 function AlyaCombat.isHoldingSword() end
 
+---makes player block
+---@param blocking boolean
+function AlyaCombat.setForcedBlocking(blocking) end
+
 ---returns true if player swing animation is in progress
 ---@return boolean
 function AlyaCombat.isSwingInProgress() end
@@ -536,8 +543,14 @@ function AlyaCombat.getPlayerYaw() end
 ---@return number
 function AlyaCombat.getPlayerPitch() end
 
+---sets the players rotation client side
+---@param yaw number
+---@param pitch number
+function AlyaCombat.setClientRotation(yaw, pitch) end
+
 ---@class client
 ---@field modules AlyaModules
+---@field combat AlyaCombat
 ---@field events AlyaEvents
 ---@field commands AlyaCommands
 ---@field config AlyaConfig
@@ -546,7 +559,6 @@ function AlyaCombat.getPlayerPitch() end
 ---@field visual AlyaVisual
 ---@field timer AlyaTimer
 ---@field mc AlyaMC
----@field combat AlyaCombat
 ---@field mathutil fun(): MathUtil
 ---@field getFontRenderer fun(): AlyaFontRenderer
 ---@field getFontRendererSmall fun(): AlyaFontRenderer

@@ -231,7 +231,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
     public void cleanup()
     {
-        this.clientWorldController = null;
+        // ??????????????
+        //this.clientWorldController = null;
     }
 
     public void handleJoinGame(S01PacketJoinGame packetIn)

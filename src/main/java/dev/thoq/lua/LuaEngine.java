@@ -136,8 +136,25 @@ public final class LuaEngine {
         }
     }
 
+    private String[] getAlyaScriptCore() {
+        return new String[] {
+                "util/movement.lua",
+                "util/chat.lua",
+                "util/visual.lua",
+                "util/timer.lua",
+                "util/mathutil.lua",
+
+                "core/module.lua",
+                "core/submodule.lua",
+                "core/command.lua",
+        };
+    }
+
     public void loadAll() {
-        for(final String script : Alya.getInstance().getScripts()) {
+        final List<String> scripts = new ArrayList<>(List.of(Alya.getInstance().getScripts()));
+        scripts.addAll(Arrays.asList(getAlyaScriptCore()));
+
+        for(final String script : scripts) {
             loadScript(String.format("/lua/%s", script));
         }
         loadExternalScripts();
