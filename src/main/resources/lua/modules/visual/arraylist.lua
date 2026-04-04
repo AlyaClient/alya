@@ -33,8 +33,8 @@ alya.events.on("render2d", function(event)
             local width = fontRenderer.getStringWidth(name) + padding * 2
             local positionX = screenWidth - width - 2
             local color = getCategoryColor(category)
-            alya.render.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
-            alya.render.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, color)
+            alya.visual.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
+            alya.visual.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, color)
             fontRenderer.drawString(name, positionX + padding - 2, positionY, 0xFFFFFFFF)
             positionY = positionY + height + 2
         end

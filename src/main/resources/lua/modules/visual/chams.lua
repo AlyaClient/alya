@@ -17,7 +17,7 @@ alya.events.on("render3d", function(event)
     for _, player in ipairs(players) do
         if player.isInvisible then goto continue_loop end
         if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue_loop end
-        alya.render.renderEntityChams(player.id, colorRed, colorGreen, colorBlue, colorAlpha)
+        alya.visual.renderEntityChams(player.id, colorRed, colorGreen, colorBlue, colorAlpha)
         ::continue_loop::
     end
 end)

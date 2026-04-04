@@ -9,12 +9,12 @@ alya.events.on("render3d", function(event)
     local pt = alya.mc.getPartialTicks()
     local players = alya.combat.getAllPlayers()
     for _, player in ipairs(players) do
-        if player.isInvisible then goto continue end
-        if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue end
+        if player.isInvisible then goto continue_loop end
+        if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue_loop end
         local ix = player.lastX + (player.x - player.lastX) * pt
         local iy = player.lastY + (player.y - player.lastY) * pt
         local iz = player.lastZ + (player.z - player.lastZ) * pt
-        local screen = alya.render.worldToScreen(ix, iy + player.height + 0.2, iz)
+        local screen = alya.visual.worldToScreen(ix, iy + player.height + 0.2, iz)
         if screen ~= nil then
             namePositions[#namePositions + 1] = {
                 name = player.name,
@@ -22,7 +22,7 @@ alya.events.on("render3d", function(event)
                 screenY = screen.y,
             }
         end
-        ::continue::
+        ::continue_loop::
     end
 end)
 

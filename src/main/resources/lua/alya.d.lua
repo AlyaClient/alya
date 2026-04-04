@@ -220,33 +220,39 @@ AlyaMovement.SPRINT_SPEED = 0.1533
 ---@type number
 AlyaMovement.WALK_SPEED = 0.0888
 
----@class AlyaRender
-local AlyaRender = {}
+---@class MathUtil
+local MathUtil = {}
+
+---@param val number @param min number @param max number
+function MathUtil.isBetween(val, min, max) end
+
+---@class AlyaVisual
+local AlyaVisual = {}
 
 ---@param x number @param y number @param width number @param height number @param color integer
-function AlyaRender.drawRect(x, y, width, height, color) end
+function AlyaVisual.drawRect(x, y, width, height, color) end
 ---@param left number @param top number @param right number @param bottom number @param color integer
-function AlyaRender.drawRectAbsolute(left, top, right, bottom, color) end
+function AlyaVisual.drawRectAbsolute(left, top, right, bottom, color) end
 ---@param x number @param y number @param width number @param height number @param color integer @param thickness number
-function AlyaRender.drawRectOutline(x, y, width, height, color, thickness) end
+function AlyaVisual.drawRectOutline(x, y, width, height, color, thickness) end
 ---@param x number @param y number @param width number @param height number @param radius number @param color integer
-function AlyaRender.drawRoundedRect(x, y, width, height, radius, color) end
+function AlyaVisual.drawRoundedRect(x, y, width, height, radius, color) end
 ---@param centerX number @param centerY number @param radius number @param startAngle integer @param endAngle integer @param color integer
-function AlyaRender.drawArc(centerX, centerY, radius, startAngle, endAngle, color) end
+function AlyaVisual.drawArc(centerX, centerY, radius, startAngle, endAngle, color) end
 ---@param centerX number @param centerY number @param radius number @param color integer
-function AlyaRender.drawCircle(centerX, centerY, radius, color) end
+function AlyaVisual.drawCircle(centerX, centerY, radius, color) end
 ---@param x number @param y number @param width number @param height number @param leftColor integer @param rightColor integer
-function AlyaRender.drawHorizontalGradient(x, y, width, height, leftColor, rightColor) end
+function AlyaVisual.drawHorizontalGradient(x, y, width, height, leftColor, rightColor) end
 ---@param x number @param y number @param width number @param height number @param topColor integer @param bottomColor integer
-function AlyaRender.drawVerticalGradient(x, y, width, height, topColor, bottomColor) end
+function AlyaVisual.drawVerticalGradient(x, y, width, height, topColor, bottomColor) end
 ---@param x1 number @param y1 number @param x2 number @param y2 number @param thickness number @param color integer
-function AlyaRender.drawLine(x1, y1, x2, y2, thickness, color) end
+function AlyaVisual.drawLine(x1, y1, x2, y2, thickness, color) end
 ---@param alpha integer @param red integer @param green integer @param blue integer @return integer
-function AlyaRender.toARGB(alpha, red, green, blue) end
+function AlyaVisual.toARGB(alpha, red, green, blue) end
 ---@param red integer @param green integer @param blue integer @return integer
-function AlyaRender.toRGB(red, green, blue) end
+function AlyaVisual.toRGB(red, green, blue) end
 ---@param color integer @param alpha integer @return integer
-function AlyaRender.withAlpha(color, alpha) end
+function AlyaVisual.withAlpha(color, alpha) end
 
 ---@class AlyaTimerInstance
 ---@field reset fun()
@@ -347,6 +353,8 @@ function AlyaMC.setFallDistance(distance) end
 function AlyaMC.getHurtTime() end
 ---@return integer
 function AlyaMC.getEntityId() end
+---@param boolean
+function AlyaMC.setSneakPressed(pressed) end
 
 ---sets the player's step height (vanilla default is 0.5)
 ---@param height number
@@ -482,7 +490,7 @@ function AlyaCombat.isSwingInProgress() end
 ---@return integer
 function AlyaCombat.getHurtTime() end
 
----returns true if the local player can see the entity (raycast)
+---returns true if the local player can see the entity
 ---@param entityId integer
 ---@return boolean
 function AlyaCombat.canSee(entityId) end
@@ -535,18 +543,19 @@ function AlyaCombat.getPlayerPitch() end
 ---@field config AlyaConfig
 ---@field chat AlyaChat
 ---@field movement AlyaMovement
----@field visual AlyaRender
+---@field visual AlyaVisual
 ---@field timer AlyaTimer
 ---@field mc AlyaMC
 ---@field combat AlyaCombat
----@field getName fun(): string
----@field getVersion fun(): string
----@field reload fun()
+---@field mathutil fun(): MathUtil
 ---@field getFontRenderer fun(): AlyaFontRenderer
 ---@field getFontRendererSmall fun(): AlyaFontRenderer
 ---@field getFontRendererMedium fun(): AlyaFontRenderer
 ---@field getFontRendererBold fun(): AlyaFontRenderer
 ---@field getFontRendererTitle fun(): AlyaFontRenderer
+---@field getName fun(): string
+---@field getVersion fun(): string
+---@field reload fun()
 
 ---global client API table
 ---@type client
