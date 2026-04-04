@@ -129,7 +129,7 @@ public final class AlyaFontRenderer {
             }
             buffer.flip();
             fontData.textureId = GL11.glGenTextures();
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontData.textureId);
+            GlStateManager.bindTexture(fontData.textureId);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
@@ -144,7 +144,7 @@ public final class AlyaFontRenderer {
                     GL11.GL_RGBA,
                     GL11.GL_UNSIGNED_BYTE,
                     buffer);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+            GlStateManager.bindTexture(0);
         } else {
             while(index < fontData.chars.length) {
                 final char character = (char) index;
