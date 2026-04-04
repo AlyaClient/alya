@@ -16,6 +16,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
   EXTRA_FLAGS="-XstartOnFirstThread"
 fi
 
+cd "$SCRIPT_DIR/.minecraft"
+
 $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.heapdump" \
   "-Dminecraft.launcher.brand=minecraft-launcher" \
   "-Dminecraft.launcher.version=3.2.13" \
