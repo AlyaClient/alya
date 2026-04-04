@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -29,6 +31,7 @@ import net.optifine.SmartAnimations;
 import net.optifine.TextureAnimations;
 import net.optifine.reflect.Reflector;
 import net.optifine.util.NativeMemory;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -64,12 +67,11 @@ public class GuiOverlayDebug extends Gui {
     List<String> list = this.call();
 
     for (int i = 0; i < list.size(); ++i) {
-      String s = (String) list.get(i);
+      String s = list.get(i);
 
       if (!Strings.isNullOrEmpty(s)) {
         int j = this.fontRenderer.FONT_HEIGHT;
         int k = this.fontRenderer.getStringWidth(s);
-        int l = 2;
         int i1 = 2 + j * i;
         drawRect(1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752);
         this.fontRenderer.drawString(s, 2, i1, 14737632);
@@ -81,7 +83,7 @@ public class GuiOverlayDebug extends Gui {
     List<String> list = this.getDebugInfoRight();
 
     for (int i = 0; i < list.size(); ++i) {
-      String s = (String) list.get(i);
+      String s = list.get(i);
 
       if (!Strings.isNullOrEmpty(s)) {
         int j = this.fontRenderer.FONT_HEIGHT;
@@ -102,38 +104,8 @@ public class GuiOverlayDebug extends Gui {
             this.mc.getRenderViewEntity().getEntityBoundingBox().minY,
             this.mc.getRenderViewEntity().posZ);
 
-    if (this.mc.debug != this.debugOF) {
-      StringBuffer stringbuffer = new StringBuffer(this.mc.debug);
-      int i = Config.getFpsMin();
-      int j = this.mc.debug.indexOf(" fps ");
-
-      if (j >= 0) {
-        stringbuffer.insert(j, "/" + i);
-      }
-
-      if (Config.isSmoothFps()) {
-        stringbuffer.append(" sf");
-      }
-
-      if (Config.isFastRender()) {
-        stringbuffer.append(" fr");
-      }
-
-      if (Config.isAnisotropicFiltering()) {
-        stringbuffer.append(" af");
-      }
-
-      if (Config.isAntialiasing()) {
-        stringbuffer.append(" aa");
-      }
-
-      if (Config.isRenderRegions()) {
-        stringbuffer.append(" reg");
-      }
-
-      if (Config.isShaders()) {
-        stringbuffer.append(" sh");
-      }
+    if (!Objects.equals(this.mc.debug, this.debugOF)) {
+      StringBuffer stringbuffer = getStringBuffer();
 
       this.mc.debug = stringbuffer.toString();
       this.debugOF = this.mc.debug;
@@ -171,35 +143,21 @@ public class GuiOverlayDebug extends Gui {
           "",
           String.format(
               "Chunk-relative: %d %d %d",
-              new Object[] {
-                Integer.valueOf(blockpos.getX() & 15),
-                Integer.valueOf(blockpos.getY() & 15),
-                Integer.valueOf(blockpos.getZ() & 15)
-              }));
+                  blockpos.getX() & 15,
+                  blockpos.getY() & 15,
+                  blockpos.getZ() & 15));
     } else {
       Entity entity = this.mc.getRenderViewEntity();
       EnumFacing enumfacing = entity.getHorizontalFacing();
-      String s;
-      switch (enumfacing) {
-        case NORTH:
-          s = "Towards negative Z";
-          break;
-        case SOUTH:
-          s = "Towards positive Z";
-          break;
-        case WEST:
-          s = "Towards negative X";
-          break;
-        case EAST:
-          s = "Towards positive X";
-          break;
-        default:
-          s = "Invalid";
-          break;
-      }
-      ;
+      String s = switch(enumfacing) {
+          case NORTH -> "Towards negative Z";
+          case SOUTH -> "Towards positive Z";
+          case WEST -> "Towards negative X";
+          case EAST -> "Towards positive X";
+          default -> "Invalid";
+      };
 
-      List<String> list =
+        List<String> list =
           Lists.newArrayList(
               "Minecraft 1.8.9 ("
                   + ClientBrandRetriever.getClientModName()
@@ -217,37 +175,31 @@ public class GuiOverlayDebug extends Gui {
               this.mc.theWorld.getProviderName(),
               "",
               String.format(
-                  "XYZ: %.3f / %.5f / %.3f",
-                  new Object[] {
-                    Double.valueOf(this.mc.getRenderViewEntity().posX),
-                    Double.valueOf(this.mc.getRenderViewEntity().getEntityBoundingBox().minY),
-                    Double.valueOf(this.mc.getRenderViewEntity().posZ)
-                  }),
+                  "XYZ: %.3f / %.5f / %.3f | Pitch: %.3f / Yaw: %.3f",
+                      this.mc.getRenderViewEntity().posX,
+                      this.mc.getRenderViewEntity().getEntityBoundingBox().minY,
+                      this.mc.getRenderViewEntity().posZ,
+                      this.mc.getRenderViewEntity().rotationPitch,
+                      this.mc.getRenderViewEntity().rotationYaw),
               String.format(
                   "Block: %d %d %d",
-                  new Object[] {
-                    Integer.valueOf(blockpos.getX()),
-                    Integer.valueOf(blockpos.getY()),
-                    Integer.valueOf(blockpos.getZ())
-                  }),
+                      blockpos.getX(),
+                      Integer.valueOf(blockpos.getY()),
+                      Integer.valueOf(blockpos.getZ())),
               String.format(
                   "Chunk: %d %d %d in %d %d %d",
-                  new Object[] {
-                    Integer.valueOf(blockpos.getX() & 15),
-                    Integer.valueOf(blockpos.getY() & 15),
-                    Integer.valueOf(blockpos.getZ() & 15),
-                    Integer.valueOf(blockpos.getX() >> 4),
-                    Integer.valueOf(blockpos.getY() >> 4),
-                    Integer.valueOf(blockpos.getZ() >> 4)
-                  }),
+                      blockpos.getX() & 15,
+                      blockpos.getY() & 15,
+                      blockpos.getZ() & 15,
+                      blockpos.getX() >> 4,
+                      blockpos.getY() >> 4,
+                      blockpos.getZ() >> 4),
               String.format(
                   "Facing: %s (%s) (%.1f / %.1f)",
-                  new Object[] {
-                    enumfacing,
-                    s,
-                    Float.valueOf(MathHelper.wrapAngleTo180_float(entity.rotationYaw)),
-                    Float.valueOf(MathHelper.wrapAngleTo180_float(entity.rotationPitch))
-                  }));
+                      enumfacing,
+                      s,
+                      MathHelper.wrapAngleTo180_float(entity.rotationYaw),
+                      MathHelper.wrapAngleTo180_float(entity.rotationPitch)));
 
       if (this.mc.theWorld != null && this.mc.theWorld.isBlockLoaded(blockpos)) {
         Chunk chunk = this.mc.theWorld.getChunkFromBlockCoords(blockpos);
@@ -286,10 +238,8 @@ public class GuiOverlayDebug extends Gui {
         list.add(
             String.format(
                 "Local Difficulty: %.2f (Day %d)",
-                new Object[] {
-                  Float.valueOf(difficultyinstance.getAdditionalDifficulty()),
-                  Long.valueOf(this.mc.theWorld.getWorldTime() / 24000L)
-                }));
+                    difficultyinstance.getAdditionalDifficulty(),
+                    this.mc.theWorld.getWorldTime() / 24000L));
       }
 
       if (this.mc.entityRenderer != null && this.mc.entityRenderer.isShaderActive()) {
@@ -303,15 +253,48 @@ public class GuiOverlayDebug extends Gui {
         list.add(
             String.format(
                 "Looking at: %d %d %d",
-                new Object[] {
-                  Integer.valueOf(blockpos1.getX()),
-                  Integer.valueOf(blockpos1.getY()),
-                  Integer.valueOf(blockpos1.getZ())
-                }));
+                    blockpos1.getX(),
+                    blockpos1.getY(),
+                    blockpos1.getZ()));
       }
 
       return list;
     }
+  }
+
+  private @NonNull StringBuffer getStringBuffer() {
+    StringBuffer stringbuffer = new StringBuffer(this.mc.debug);
+    int i = Config.getFpsMin();
+    int j = this.mc.debug.indexOf(" fps ");
+
+    if (j >= 0) {
+      stringbuffer.insert(j, "/" + i);
+    }
+
+    if (Config.isSmoothFps()) {
+      stringbuffer.append(" sf");
+    }
+
+    if (Config.isFastRender()) {
+      stringbuffer.append(" fr");
+    }
+
+    if (Config.isAnisotropicFiltering()) {
+      stringbuffer.append(" af");
+    }
+
+    if (Config.isAntialiasing()) {
+      stringbuffer.append(" aa");
+    }
+
+    if (Config.isRenderRegions()) {
+      stringbuffer.append(" reg");
+    }
+
+    if (Config.isShaders()) {
+      stringbuffer.append(" sh");
+    }
+    return stringbuffer;
   }
 
   protected List<String> getDebugInfoRight() {
@@ -321,84 +304,74 @@ public class GuiOverlayDebug extends Gui {
     long l = j - k;
     List<String> list =
         Lists.newArrayList(
-            new String[] {
-              String.format(
-                  "Java: %s %dbit",
-                  new Object[] {
-                    System.getProperty("java.version"),
-                    Integer.valueOf(this.mc.isJava64bit() ? 64 : 32)
-                  }),
-              String.format(
-                  "Mem: % 2d%% %03d/%03dMB",
-                  new Object[] {
-                    Long.valueOf(l * 100L / i),
-                    Long.valueOf(bytesToMb(l)),
-                    Long.valueOf(bytesToMb(i))
-                  }),
-              String.format(
-                  "Allocated: % 2d%% %03dMB",
-                  new Object[] {Long.valueOf(j * 100L / i), Long.valueOf(bytesToMb(j))}),
-              "",
-              String.format("CPU: %s", new Object[] {OpenGlHelper.getCpu()}),
-              "",
-              String.format(
-                  "Display: %dx%d (%s)",
-                  new Object[] {
-                    Integer.valueOf(Display.getWidth()),
-                    Integer.valueOf(Display.getHeight()),
-                    GL11.glGetString(GL11.GL_VENDOR)
-                  }),
-              GL11.glGetString(GL11.GL_RENDERER),
-              GL11.glGetString(GL11.GL_VERSION)
-            });
+                String.format(
+                    "Java: %s %dbit",
+                        System.getProperty("java.version"),
+                        this.mc.isJava64bit() ? 64 : 32),
+                String.format(
+                    "Mem: % 2d%% %03d/%03dMB",
+                        l * 100L / i,
+                        bytesToMb(l),
+                        bytesToMb(i)),
+                String.format(
+                    "Allocated: % 2d%% %03dMB",
+                        j * 100L / i, bytesToMb(j)),
+                "",
+                String.format("CPU: %s", OpenGlHelper.getCpu()),
+                "",
+                String.format(
+                    "Display: %dx%d (%s)",
+                        Display.getWidth(),
+                        Display.getHeight(),
+                        GL11.glGetString(GL11.GL_VENDOR)),
+                GL11.glGetString(GL11.GL_RENDERER),
+                GL11.glGetString(GL11.GL_VERSION));
     long i1 = NativeMemory.getBufferAllocated();
     long j1 = NativeMemory.getBufferMaximum();
     String s = "Native: " + bytesToMb(i1) + "/" + bytesToMb(j1) + "MB";
     list.add(4, s);
 
     if (Reflector.FMLCommonHandler_getBrandings.exists()) {
-      Object object = Reflector.call(Reflector.FMLCommonHandler_instance, new Object[0]);
+      Object object = Reflector.call(Reflector.FMLCommonHandler_instance);
       list.add("");
       list.addAll(
           (Collection)
-              Reflector.call(
-                  object,
-                  Reflector.FMLCommonHandler_getBrandings,
-                  new Object[] {Boolean.valueOf(false)}));
+                  Objects.requireNonNull(Reflector.call(
+                          object,
+                          Reflector.FMLCommonHandler_getBrandings,
+                          Boolean.FALSE)));
     }
 
-    if (this.isReducedDebug()) {
-      return list;
-    } else {
-      if (this.mc.objectMouseOver != null
-          && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
-          && this.mc.objectMouseOver.getBlockPos() != null) {
-        BlockPos blockpos = this.mc.objectMouseOver.getBlockPos();
-        IBlockState iblockstate = this.mc.theWorld.getBlockState(blockpos);
+      if(!this.isReducedDebug()) {
+          if(this.mc.objectMouseOver != null
+                  && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
+                  && this.mc.objectMouseOver.getBlockPos() != null) {
+              BlockPos blockpos = this.mc.objectMouseOver.getBlockPos();
+              IBlockState iblockstate = this.mc.theWorld.getBlockState(blockpos);
 
-        if (this.mc.theWorld.getWorldType() != WorldType.DEBUG_WORLD) {
-          iblockstate =
-              iblockstate.getBlock().getActualState(iblockstate, this.mc.theWorld, blockpos);
-        }
+              if(this.mc.theWorld.getWorldType() != WorldType.DEBUG_WORLD) {
+                  iblockstate =
+                          iblockstate.getBlock().getActualState(iblockstate, this.mc.theWorld, blockpos);
+              }
 
-        list.add("");
-        list.add(String.valueOf(Block.blockRegistry.getNameForObject(iblockstate.getBlock())));
+              list.add("");
+              list.add(String.valueOf(Block.blockRegistry.getNameForObject(iblockstate.getBlock())));
 
-        for (Entry<IProperty, Comparable> entry : iblockstate.getProperties().entrySet()) {
-          String s1 = ((Comparable) entry.getValue()).toString();
+              for(Entry<IProperty, Comparable> entry : iblockstate.getProperties().entrySet()) {
+                  String s1 = entry.getValue().toString();
 
-          if (entry.getValue() == Boolean.TRUE) {
-            s1 = EnumChatFormatting.GREEN + s1;
-          } else if (entry.getValue() == Boolean.FALSE) {
-            s1 = EnumChatFormatting.RED + s1;
+                  if(entry.getValue() == Boolean.TRUE) {
+                      s1 = EnumChatFormatting.GREEN + s1;
+                  } else if(entry.getValue() == Boolean.FALSE) {
+                      s1 = EnumChatFormatting.RED + s1;
+                  }
+
+                  list.add(entry.getKey().getName() + ": " + s1);
+              }
           }
 
-          list.add(((IProperty) entry.getKey()).getName() + ": " + s1);
-        }
       }
-
       return list;
-    }
   }
 
   private void func_181554_e() {}

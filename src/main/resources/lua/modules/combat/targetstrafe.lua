@@ -90,9 +90,9 @@ alya.events.on("render3d", function(event)
         return
     end
     local alpha = math.floor(circleAlpha.getValue())
-    local color = alya.render.toARGB(alpha, 255, 80, 80)
+    local color = alya.visual.toARGB(alpha, 255, 80, 80)
     local r = radius.getValue()
-    alya.render.drawCircle3D(target.x, target.y, target.z, r, math.floor(segments.getValue()), color,
+    alya.visual.drawCircle3D(target.x, target.y, target.z, r, math.floor(segments.getValue()), color,
         lineWidth.getValue())
 end)
 moduleTable.onDisable(function()

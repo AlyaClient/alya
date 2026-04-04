@@ -16,9 +16,9 @@ alya.events.on("render3d", function(event)
     local colorAlpha = alpha.getValue() / 255.0
 
     for _, player in ipairs(players) do
-        if player.isInvisible then goto continue end
-        if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue end
-        alya.render.renderEntityOutline(player.id, colorRed, colorGreen, colorBlue, colorAlpha, lineWidth.getValue())
-        ::continue::
+        if player.isInvisible then goto continue_loop end
+        if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue_loop end
+        alya.visual.renderEntityOutline(player.id, colorRed, colorGreen, colorBlue, colorAlpha, lineWidth.getValue())
+        ::continue_loop::
     end
 end)

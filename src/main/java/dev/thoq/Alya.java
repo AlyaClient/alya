@@ -42,6 +42,7 @@ public final class Alya {
                 "util/chat.lua",
                 "util/visual.lua",
                 "util/timer.lua",
+                "util/mathutil.lua",
 
                 "core/module.lua",
                 "core/submodule.lua",
