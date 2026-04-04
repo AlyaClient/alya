@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "SameParameterValue"})
 public final class ClickGUIScreen extends GuiScreen {
@@ -420,17 +421,11 @@ public final class ClickGUIScreen extends GuiScreen {
         RenderUtility.drawImage(new ResourceLocation("client/icons/" + typeIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
         iconX -= BOTTOM_ICON_SIZE + 2;
 
-        final boolean folderHovered = mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE
-                && mouseY >= iconY && mouseY <= iconY + BOTTOM_ICON_SIZE;
-        GlStateManager.color(folderHovered ? 1.0F : 0.6F, folderHovered ? 1.0F : 0.6F, folderHovered ? 1.0F : 0.6F, 1.0F);
-        RenderUtility.drawImage(new ResourceLocation("client/icons/" + folderIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
+        getIcon(folderIcon, mouseX, mouseY, iconX, iconY);
         iconX -= BOTTOM_ICON_SIZE + 2;
 
         if(actionIcon != null) {
-            final boolean actionHovered = mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE
-                    && mouseY >= iconY && mouseY <= iconY + BOTTOM_ICON_SIZE;
-            GlStateManager.color(actionHovered ? 1.0F : 0.6F, actionHovered ? 1.0F : 0.6F, actionHovered ? 1.0F : 0.6F, 1.0F);
-            RenderUtility.drawImage(new ResourceLocation("client/icons/" + actionIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
+            getIcon(actionIcon, mouseX, mouseY, iconX, iconY);
         }
 
         int totalHeight = PANEL_HEIGHT;
@@ -468,6 +463,14 @@ public final class ClickGUIScreen extends GuiScreen {
         RenderUtility.drawRectOutline(panelX, outlineY, PANEL_WIDTH, totalHeight, 0xFF808080, BORDER_WIDTH);
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
+    private void getIcon(String folderIcon, int mouseX, int mouseY, int iconX, int iconY) {
+        final boolean folderHovered = mouseX >= iconX && mouseX <= iconX + BOTTOM_ICON_SIZE
+                && mouseY >= iconY && mouseY <= iconY + BOTTOM_ICON_SIZE;
+        GlStateManager.color(folderHovered ? 1.0F : 0.6F, folderHovered ? 1.0F : 0.6F, folderHovered ? 1.0F : 0.6F, 1.0F);
+        RenderUtility.drawImage(new ResourceLocation("client/icons/" + folderIcon), iconX, iconY, BOTTOM_ICON_SIZE, BOTTOM_ICON_SIZE);
+    }
+
     private String[] getScriptEntries() {
         final File scriptsDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/scripts");
         if(!scriptsDir.exists()) return new String[0];
@@ -480,29 +483,28 @@ public final class ClickGUIScreen extends GuiScreen {
         return names;
     }
 
-    private String[] getConfigEntries() {
+    private String[] getConfigsMapped(final Function<File, String> mapper) {
         final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/configs");
-        if(!configDir.exists()) return new String[0];
+
+        if (!configDir.exists()) return new String[0];
+
         final File[] files = configDir.listFiles((_, name) -> name.endsWith(".json"));
-        if(files == null) return new String[0];
-        final String[] names = new String[files.length];
-        for(int i = 0; i < files.length; i++) {
-            names[i] = files[i].getName().replace(".json", "");
+        if (files == null) return new String[0];
+
+        final String[] result = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            result[i] = mapper.apply(files[i]);
         }
-        return names;
+        return result;
+    }
+
+    private String[] getConfigEntries() {
+        return getConfigsMapped(file -> file.getName().replace(".json", ""));
     }
 
     private String[] getConfigDates() {
-        final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/configs");
-        if(!configDir.exists()) return new String[0];
-        final File[] files = configDir.listFiles((_, name) -> name.endsWith(".json"));
-        if(files == null) return new String[0];
         final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        final String[] dates = new String[files.length];
-        for(int i = 0; i < files.length; i++) {
-            dates[i] = dateFormat.format(new Date(files[i].lastModified()));
-        }
-        return dates;
+        return getConfigsMapped(file -> dateFormat.format(new Date(file.lastModified())));
     }
 
     private boolean handleBottomBarClick(final int mouseX, final int mouseY, final int mouseButton) {
