@@ -4,24 +4,29 @@ Alya client is a free, open-source Minecraft cheat client.
 
 ## Setting up
 
-1. Init the Maven wrapper, libraries and run a first-time build
+### IntelliJ (Recommended)
+
+Open the project in IntelliJ, import it and run the `Start` or `Start (macOS)` run configuration.
+
+### I am the IDE (manual)
+
+#### Prerequisites
+- Java 25
+
+1. Init the Gradle wrapper and package libraries
 
 ```sh
 ./scripts/init.sh
 ```
 
-That's it!
-
-## Building release
+2. Build the project
 
 ```sh
-./mvnw package
+./gradlew jar shadowJar
 ```
 
-## Development
+3. Run the project
 
-To launch in development mode
-
-```sh
-./scripts/dev.sh
+```shell
+./scripts/run.sh
 ```

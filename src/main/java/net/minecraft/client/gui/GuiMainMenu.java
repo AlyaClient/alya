@@ -347,5 +347,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
+    public static ResourceLocation getRandomImage() {
+        return randomImage;
+    }
+
 
 }

@@ -7,7 +7,12 @@ import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.BooleanSetting;
 import dev.thoq.util.font.AlyaFontRenderer;
+import dev.thoq.util.render.RenderUtility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 public final class HUDModule extends Module {
+
     private final BooleanSetting showFPS =
             new BooleanSetting("Show FPS", "Display FPS counter", true);
     private final BooleanSetting showBPS =
@@ -23,6 +29,8 @@ public final class HUDModule extends Module {
             new BooleanSetting("Show Time", "Display current time", false);
     private final BooleanSetting smoothChat =
             new BooleanSetting("Smooth Chat", "Animate messages in chat to smoothly enter", true);
+    private final BooleanSetting showMenuImage =
+            new BooleanSetting("Femboy", "Display the main menu image in the bottom right", false);
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private double lastX, lastY, lastZ;
     private double blocksPerSecond = 0;
@@ -30,7 +38,7 @@ public final class HUDModule extends Module {
 
     public HUDModule() {
         super("HUD", "Displays client information on screen", Category.VISUAL);
-        initializeSettings(showFPS, showBPS, showTime, smoothChat);
+        initializeSettings(showFPS, showBPS, showTime, smoothChat, showMenuImage);
     }
 
     @Override
@@ -76,10 +84,28 @@ public final class HUDModule extends Module {
                 infoY -= lineHeight;
             }
         }
+        if(showMenuImage.isEnabled()) {
+            final ResourceLocation image = GuiMainMenu.getRandomImage();
+            if(image != null) {
+                final int screenWidth = event.scaledResolution().getScaledWidth();
+                final int screenHeight = event.scaledResolution().getScaledHeight();
+                final int maxSize = 100;
+                MC.getTextureManager().bindTexture(image);
+                final int texW = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+                final int texH = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+                if(texW > 0 && texH > 0) {
+                    final float scale = Math.min((float) maxSize / texW, (float) maxSize / texH);
+                    final int drawW = (int) (texW * scale);
+                    final int drawH = (int) (texH * scale);
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    RenderUtility.drawImage(image, screenWidth - drawW, screenHeight - drawH, drawW, drawH);
+                }
+            }
+        }
     }
 
     private void updateBPS() {
-        if(MC.thePlayer == null) {
+        if (MC.thePlayer == null) {
             blocksPerSecond = 0;
             return;
         }
@@ -98,7 +124,10 @@ public final class HUDModule extends Module {
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean getSmoothChatEnabled() {
         return smoothChat.isEnabled();
     }
+
+
 }
