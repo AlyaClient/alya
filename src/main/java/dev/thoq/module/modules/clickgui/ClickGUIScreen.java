@@ -288,13 +288,13 @@ public final class ClickGUIScreen extends GuiScreen {
             }
             settingsFont.drawString(setting.getName(), textX, positionY + 1, TEXT_COLOR);
         } else if(setting instanceof ModeSetting modeSetting) {
+            if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
+                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
+            }
             settingsFont.drawString(setting.getName(), textX, positionY + 1, TEXT_COLOR);
             final String modeValue = modeSetting.getValue();
             final float modeWidth = settingsFont.getStringWidth(modeValue);
             settingsFont.drawString(modeValue, settingRight - modeWidth - 2, positionY + 1, TEXT_COLOR);
-            if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-                RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
-            }
         } else if(setting instanceof NumberSetting numberSetting) {
             renderNumberSetting(numberSetting, setting, positionX, positionY, settingX, settingWidth, settingRight, textX, category, mouseX, mouseY);
         }
@@ -319,13 +319,13 @@ public final class ClickGUIScreen extends GuiScreen {
         final int categoryColor = getCategoryColor(category);
         final int nubWidth = 4;
         final int nubColor = lightenColor(categoryColor, 0.4f);
+        if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
+            RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
+        }
         if(numberSetting.isRangeEnabled()) {
             renderRangeNumberSetting(numberSetting, setting, positionY, settingX, settingWidth, settingRight, textX, value, minimum, maximum, categoryColor, nubWidth, nubColor);
         } else {
             renderSingleNumberSetting(setting, positionY, settingX, settingWidth, settingRight, textX, value, minimum, maximum, categoryColor, nubWidth, nubColor);
-        }
-        if(isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT)) {
-            RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
         }
     }
 
