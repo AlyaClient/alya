@@ -8,10 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.*;
+import org.jspecify.annotations.NonNull;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
+import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.lwjgl.input.Keyboard;
 
@@ -82,7 +84,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf((double) minecraft.gameSettings.gammaSetting);
+                        return LuaValue.valueOf(minecraft.gameSettings.gammaSetting);
                     }
                 });
         set(
@@ -116,7 +118,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf((double) net.minecraft.util.Timer.timerSpeed);
+                        return LuaValue.valueOf(Timer.timerSpeed);
                     }
                 });
         set(
@@ -124,7 +126,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue speedValue) {
-                        net.minecraft.util.Timer.timerSpeed = (float) speedValue.todouble();
+                        Timer.timerSpeed = (float) speedValue.todouble();
                         return LuaValue.NIL;
                     }
                 });
@@ -365,8 +367,8 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return minecraft.thePlayer != null
-                                ? LuaValue.valueOf((double) minecraft.thePlayer.cameraYaw)
+                        return minecraft.getRenderViewEntity() != null
+                                ? LuaValue.valueOf(minecraft.getRenderViewEntity().rotationYaw)
                                 : LuaValue.valueOf(0d);
                     }
                 });
@@ -375,8 +377,8 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue yawValue) {
-                        if(minecraft.thePlayer != null)
-                            minecraft.thePlayer.cameraYaw = (float) yawValue.todouble();
+                        if(minecraft.getRenderViewEntity() != null)
+                            minecraft.getRenderViewEntity().rotationYaw = (float) yawValue.todouble();
                         return LuaValue.NIL;
                     }
                 });
@@ -385,7 +387,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf((double) minecraft.timer.renderPartialTicks);
+                        return LuaValue.valueOf(minecraft.timer.renderPartialTicks);
                     }
                 });
         set(
@@ -571,7 +573,7 @@ public final class LuaMinecraftApi extends LuaTable {
                     @Override
                     public LuaValue call() {
                         return minecraft.thePlayer != null
-                                ? LuaValue.valueOf((double) minecraft.thePlayer.rotationPitch)
+                                ? LuaValue.valueOf(minecraft.thePlayer.rotationPitch)
                                 : LuaValue.valueOf(0d);
                     }
                 });
@@ -680,24 +682,16 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue name) {
-                        switch(name.tojstring()) {
-                            case "forward":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindForward.getKeyCode());
-                            case "back":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindBack.getKeyCode());
-                            case "left":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindLeft.getKeyCode());
-                            case "right":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindRight.getKeyCode());
-                            case "sprint":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindSprint.getKeyCode());
-                            case "sneak":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindSneak.getKeyCode());
-                            case "jump":
-                                return LuaValue.valueOf(minecraft.gameSettings.keyBindJump.getKeyCode());
-                            default:
-                                return LuaValue.valueOf(-1);
-                        }
+                        return switch(name.tojstring()) {
+                            case "forward" -> LuaValue.valueOf(minecraft.gameSettings.keyBindForward.getKeyCode());
+                            case "back" -> LuaValue.valueOf(minecraft.gameSettings.keyBindBack.getKeyCode());
+                            case "left" -> LuaValue.valueOf(minecraft.gameSettings.keyBindLeft.getKeyCode());
+                            case "right" -> LuaValue.valueOf(minecraft.gameSettings.keyBindRight.getKeyCode());
+                            case "sprint" -> LuaValue.valueOf(minecraft.gameSettings.keyBindSprint.getKeyCode());
+                            case "sneak" -> LuaValue.valueOf(minecraft.gameSettings.keyBindSneak.getKeyCode());
+                            case "jump" -> LuaValue.valueOf(minecraft.gameSettings.keyBindJump.getKeyCode());
+                            default -> LuaValue.valueOf(-1);
+                        };
                     }
                 });
         set(
@@ -856,25 +850,25 @@ public final class LuaMinecraftApi extends LuaTable {
                     @Override
                     public org.luaj.vm2.Varargs invoke(org.luaj.vm2.Varargs arguments) {
                         if(minecraft.thePlayer != null && minecraft.theWorld != null) {
-                            int slotIndex = arguments.checkint(1);
-                            int blockX = arguments.checkint(2);
-                            int blockY = arguments.checkint(3);
-                            int blockZ = arguments.checkint(4);
-                            int facingX = arguments.checkint(5);
-                            int facingY = arguments.checkint(6);
-                            int facingZ = arguments.checkint(7);
-                            double hitX = arguments.checkdouble(8);
-                            double hitY = arguments.checkdouble(9);
-                            double hitZ = arguments.checkdouble(10);
-                            ItemStack itemStack = minecraft.thePlayer.inventory.getStackInSlot(slotIndex);
-                            BlockPos blockPos = new BlockPos(blockX, blockY, blockZ);
-                            net.minecraft.util.EnumFacing enumFacing =
-                                    net.minecraft.util.EnumFacing.getFacingFromVector(
+                            final int slotIndex = arguments.checkint(1);
+                            final int blockX = arguments.checkint(2);
+                            final int blockY = arguments.checkint(3);
+                            final int blockZ = arguments.checkint(4);
+                            final int facingX = arguments.checkint(5);
+                            final int facingY = arguments.checkint(6);
+                            final int facingZ = arguments.checkint(7);
+                            final double hitX = arguments.checkdouble(8);
+                            final double hitY = arguments.checkdouble(9);
+                            final double hitZ = arguments.checkdouble(10);
+                            final ItemStack itemStack = minecraft.thePlayer.inventory.getStackInSlot(slotIndex);
+                            final BlockPos blockPos = new BlockPos(blockX, blockY, blockZ);
+                            EnumFacing enumFacing =
+                                    EnumFacing.getFacingFromVector(
                                             (float) facingX, (float) facingY, (float) facingZ);
                             if(enumFacing == null) {
-                                enumFacing = net.minecraft.util.EnumFacing.UP;
+                                enumFacing = EnumFacing.UP;
                             }
-                            net.minecraft.util.Vec3 hitVec = new net.minecraft.util.Vec3(hitX, hitY, hitZ);
+                            final Vec3 hitVec = new Vec3(hitX, hitY, hitZ);
                             boolean success =
                                     minecraft.playerController.onPlayerRightClick(
                                             minecraft.thePlayer,
@@ -923,32 +917,25 @@ public final class LuaMinecraftApi extends LuaTable {
                 });
         set(
                 "raycastBlock",
-                new org.luaj.vm2.lib.ThreeArgFunction() {
+                new ThreeArgFunction() {
                     @Override
                     public LuaValue call(LuaValue yawValue, LuaValue pitchValue, LuaValue rangeValue) {
                         if(minecraft.theWorld != null && minecraft.thePlayer != null) {
-                            float yawFloat = (float) yawValue.todouble();
-                            float pitchFloat = (float) pitchValue.todouble();
-                            double rangeDouble = rangeValue.todouble();
-                            net.minecraft.util.Vec3 eyePosition = minecraft.thePlayer.getPositionEyes(1.0f);
-                            float f1 =
-                                    net.minecraft.util.MathHelper.cos(-yawFloat * 0.017453292F - (float) Math.PI);
-                            float f2 =
-                                    net.minecraft.util.MathHelper.sin(-yawFloat * 0.017453292F - (float) Math.PI);
-                            float f3 = -net.minecraft.util.MathHelper.cos(-pitchFloat * 0.017453292F);
-                            float f4 = net.minecraft.util.MathHelper.sin(-pitchFloat * 0.017453292F);
-                            net.minecraft.util.Vec3 lookPosition =
-                                    new net.minecraft.util.Vec3(f2 * f3, f4, f1 * f3);
-                            net.minecraft.util.Vec3 endPosition =
+                            final float yawFloat = (float) yawValue.todouble();
+                            final float pitchFloat = (float) pitchValue.todouble();
+                            final double rangeDouble = rangeValue.todouble();
+                            final Vec3 eyePosition = minecraft.thePlayer.getPositionEyes(1.0f);
+                            final Vec3 lookPosition = getLookPosition(yawFloat, pitchFloat);
+                            final Vec3 endPosition =
                                     eyePosition.addVector(
                                             lookPosition.xCoord * rangeDouble,
                                             lookPosition.yCoord * rangeDouble,
                                             lookPosition.zCoord * rangeDouble);
-                            net.minecraft.util.MovingObjectPosition movingObjectPosition =
+                            final MovingObjectPosition movingObjectPosition =
                                     minecraft.theWorld.rayTraceBlocks(eyePosition, endPosition, false, false, true);
                             if(movingObjectPosition != null
                                     && movingObjectPosition.typeOfHit
-                                    == net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK) {
+                                    == MovingObjectPosition.MovingObjectType.BLOCK) {
                                 LuaTable resultTable = new LuaTable();
                                 resultTable.set("x", LuaValue.valueOf(movingObjectPosition.getBlockPos().getX()));
                                 resultTable.set("y", LuaValue.valueOf(movingObjectPosition.getBlockPos().getY()));
@@ -957,6 +944,16 @@ public final class LuaMinecraftApi extends LuaTable {
                             }
                         }
                         return LuaValue.NIL;
+                    }
+
+                    private static @NonNull Vec3 getLookPosition(float yawFloat, float pitchFloat) {
+                        float f1 =
+                                MathHelper.cos(-yawFloat * 0.017453292F - (float) Math.PI);
+                        float f2 =
+                                MathHelper.sin(-yawFloat * 0.017453292F - (float) Math.PI);
+                        float f3 = -MathHelper.cos(-pitchFloat * 0.017453292F);
+                        float f4 = MathHelper.sin(-pitchFloat * 0.017453292F);
+                        return new Vec3(f2 * f3, f4, f1 * f3);
                     }
                 });
     }

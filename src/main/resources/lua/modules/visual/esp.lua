@@ -13,8 +13,8 @@ alya.events.on("render3d", function(event)
     local pt = alya.mc.getPartialTicks()
     local players = alya.combat.getAllPlayers()
     for _, player in ipairs(players) do
-        if player.isInvisible then goto continue end
-        if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue end
+        if player.isInvisible then goto continue_loop end
+        if ignoreFriends.isEnabled() and alya.combat.isFriend(player.name) then goto continue_loop end
         local ix = player.lastX + (player.x - player.lastX) * pt
         local iy = player.lastY + (player.y - player.lastY) * pt
         local iz = player.lastZ + (player.z - player.lastZ) * pt
@@ -28,7 +28,7 @@ alya.events.on("render3d", function(event)
             green = math.floor(healthFraction * 255)
             blue = 0
         end
-        local color = alya.render.toARGB(alpha, red, green, blue)
+        local color = alya.visual.toARGB(alpha, red, green, blue)
         local espWidth = player.width
         if showHitbox.isEnabled() then
             local hitboxesModule = alya.modules.get("HitBoxes")
@@ -39,7 +39,7 @@ alya.events.on("render3d", function(event)
                 end
             end
         end
-        alya.render.drawBox3D(ix, iy, iz, espWidth, player.height, color, lineWidth.getValue())
-        ::continue::
+        alya.visual.drawBox3D(ix, iy, iz, espWidth, player.height, color, lineWidth.getValue())
+        ::continue_loop::
     end
 end)

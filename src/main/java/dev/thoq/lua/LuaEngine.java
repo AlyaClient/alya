@@ -16,8 +16,9 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import java.io.*;
 import java.util.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "LoggingSimilarMessage"})
 public final class LuaEngine {
+
     private final Globals globals;
     private final List<String> loadedScripts = new ArrayList<>();
     private final Set<String> loadedExternalScripts = new LinkedHashSet<>();
@@ -29,20 +30,20 @@ public final class LuaEngine {
     }
 
     private void bindApi() {
-        LuaTable alyaTable = new LuaTable();
-        alyaTable.set("modules", new LuaModuleApi());
         eventApi = new LuaEventApi();
+
+        final LuaTable alyaTable = new LuaTable();
+        alyaTable.set("modules", new LuaModuleApi());
         alyaTable.set("events", eventApi);
         alyaTable.set("commands", new LuaCommandApi());
         alyaTable.set("config", new LuaConfigApi());
         alyaTable.set("chat", new LuaChatApi());
         alyaTable.set("movement", new LuaMovementApi());
-        LuaRenderApi renderApi = new LuaRenderApi();
-        alyaTable.set("visual", renderApi);
-        alyaTable.set("render", renderApi);
+        alyaTable.set("visual", new LuaRenderApi());
         alyaTable.set("timer", new LuaTimerApi());
         alyaTable.set("mc", new LuaMinecraftApi());
         alyaTable.set("combat", new LuaCombatApi());
+        alyaTable.set("mathutil", new LuaMathUtilApi());
         alyaTable.set(
                 "reload",
                 new ZeroArgFunction() {
@@ -105,7 +106,7 @@ public final class LuaEngine {
 
     public void loadScript(final String resourcePath) {
         try {
-            final String devDir = System.getProperty("client.dev.resources");
+            final String devDir = System.getProperty("alya.dev.resources");
             InputStream inputStream = null;
             if(devDir != null) {
                 final File devFile = new File(devDir + resourcePath);
@@ -135,8 +136,25 @@ public final class LuaEngine {
         }
     }
 
+    private String[] getAlyaScriptCore() {
+        return new String[] {
+                "util/movement.lua",
+                "util/chat.lua",
+                "util/visual.lua",
+                "util/timer.lua",
+                "util/mathutil.lua",
+
+                "core/module.lua",
+                "core/submodule.lua",
+                "core/command.lua",
+        };
+    }
+
     public void loadAll() {
-        for(final String script : Alya.getInstance().getScripts()) {
+        final List<String> scripts = new ArrayList<>(List.of(Alya.getInstance().getScripts()));
+        scripts.addAll(Arrays.asList(getAlyaScriptCore()));
+
+        for(final String script : scripts) {
             loadScript(String.format("/lua/%s", script));
         }
         loadExternalScripts();
@@ -187,7 +205,7 @@ public final class LuaEngine {
                             final Map<String, String> settingValues = new HashMap<>();
                             module
                                     .getSettings()
-                                    .forEach(s -> settingValues.put(s.getName(), s.getValueAsString()));
+                                    .forEach(setting -> settingValues.put(setting.getName(), setting.getValueAsString()));
                             snapshots.put(
                                     module.getName(),
                                     new ModuleSnapshot(module.isEnabled(), module.getKeyCode(), settingValues));
@@ -218,13 +236,15 @@ public final class LuaEngine {
                 .forEach(
                         module -> {
                             final ModuleSnapshot snapshot = snapshots.get(module.getName());
-                            if(snapshot == null) return;
-                            module.setKeyCode(snapshot.keyCode);
+                            if(snapshot == null) {
+                                return;
+                            }
+                            module.setKeyCode(snapshot.keyCode());
                             module
                                     .getSettings()
                                     .forEach(
                                             setting -> {
-                                                final String savedValue = snapshot.settingValues.get(setting.getName());
+                                                final String savedValue = snapshot.settingValues().get(setting.getName());
                                                 if(savedValue != null) {
                                                     try {
                                                         setting.setValueFromString(savedValue);
@@ -232,23 +252,10 @@ public final class LuaEngine {
                                                     }
                                                 }
                                             });
-                            if(snapshot.enabled) {
+                            if(snapshot.enabled()) {
                                 module.setEnabled(true);
                             }
                         });
-    }
-
-    private static final class ModuleSnapshot {
-        final boolean enabled;
-        final int keyCode;
-        final Map<String, String> settingValues;
-
-        ModuleSnapshot(
-                final boolean enabled, final int keyCode, final Map<String, String> settingValues) {
-            this.enabled = enabled;
-            this.keyCode = keyCode;
-            this.settingValues = settingValues;
-        }
     }
 
     public boolean isExternalScriptLoaded(final String fileName) {

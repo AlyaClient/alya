@@ -4,6 +4,7 @@ import dev.thoq.Alya;
 import dev.thoq.event.IEvent;
 import dev.thoq.event.IEventListener;
 import dev.thoq.event.events.*;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
@@ -47,8 +48,7 @@ public final class LuaEventApi extends LuaTable {
                     @Override
                     @SuppressWarnings("unchecked")
                     public LuaValue call(LuaValue eventNameValue, LuaValue callbackFunction) {
-                        if(!(callbackFunction instanceof LuaFunction)) return LuaValue.NIL;
-                        final LuaFunction luaFunction = (LuaFunction) callbackFunction;
+                        if(!(callbackFunction instanceof LuaFunction luaFunction)) return LuaValue.NIL;
                         final String eventKey = eventNameValue.tojstring().toLowerCase();
                         final Class<? extends IEvent> eventClass = EVENT_CLASS_MAP.get(eventKey);
                         if(eventClass == null) {
@@ -104,8 +104,7 @@ public final class LuaEventApi extends LuaTable {
                         return LuaValue.valueOf(event.getClass().getSimpleName());
                     }
                 });
-        if(event instanceof MotionEvent) {
-            final MotionEvent motionEvent = (MotionEvent) event;
+        if(event instanceof final MotionEvent motionEvent) {
             eventTable.set(
                     "getX",
                     new ZeroArgFunction() {
@@ -135,7 +134,7 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            return LuaValue.valueOf((double) motionEvent.getYaw());
+                            return LuaValue.valueOf(motionEvent.getYaw());
                         }
                     });
             eventTable.set(
@@ -143,7 +142,7 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            return LuaValue.valueOf((double) motionEvent.getPitch());
+                            return LuaValue.valueOf(motionEvent.getPitch());
                         }
                     });
             eventTable.set(
@@ -241,14 +240,13 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(motionEvent.isCanceled());
                         }
                     });
-        } else if(event instanceof Render2DEvent) {
-            final Render2DEvent render2DEvent = (Render2DEvent) event;
+        } else if(event instanceof Render2DEvent(final ScaledResolution scaledResolution)) {
             eventTable.set(
                     "getWidth",
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            return LuaValue.valueOf(render2DEvent.scaledResolution().getScaledWidth());
+                            return LuaValue.valueOf(scaledResolution.getScaledWidth());
                         }
                     });
             eventTable.set(
@@ -256,30 +254,28 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            return LuaValue.valueOf(render2DEvent.scaledResolution().getScaledHeight());
+                            return LuaValue.valueOf(scaledResolution.getScaledHeight());
                         }
                     });
-        } else if(event instanceof TimeUpdateEvent) {
-            final TimeUpdateEvent timeUpdateEvent = (TimeUpdateEvent) event;
+        } else if(event instanceof final TimeUpdateEvent timeUpdateEvent) {
             eventTable.set(
-                    "cancel",
+                    "getTime",
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            timeUpdateEvent.cancel();
+                            return LuaValue.valueOf(timeUpdateEvent.getTime());
+                        }
+                    });
+            eventTable.set(
+                    "setTime",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(final LuaValue time) {
+                            timeUpdateEvent.setTime(time.checklong());
                             return LuaValue.NIL;
                         }
                     });
-            eventTable.set(
-                    "isCanceled",
-                    new ZeroArgFunction() {
-                        @Override
-                        public LuaValue call() {
-                            return LuaValue.valueOf(timeUpdateEvent.isCanceled());
-                        }
-                    });
-        } else if(event instanceof PlayerMoveEvent) {
-            final PlayerMoveEvent playerMoveEvent = (PlayerMoveEvent) event;
+        } else if(event instanceof final PlayerMoveEvent playerMoveEvent) {
             eventTable.set(
                     "cancel",
                     new ZeroArgFunction() {
@@ -297,8 +293,7 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(playerMoveEvent.isCanceled());
                         }
                     });
-        } else if(event instanceof PlayerInputEvent) {
-            final PlayerInputEvent playerInputEvent = (PlayerInputEvent) event;
+        } else if(event instanceof final PlayerInputEvent playerInputEvent) {
             eventTable.set(
                     "cancel",
                     new ZeroArgFunction() {
@@ -336,8 +331,7 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.NIL;
                         }
                     });
-        } else if(event instanceof PacketSendEvent) {
-            final PacketSendEvent packetSendEvent = (PacketSendEvent) event;
+        } else if(event instanceof final PacketSendEvent packetSendEvent) {
             eventTable.set(
                     "cancel",
                     new ZeroArgFunction() {
@@ -390,9 +384,7 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity) {
-                                net.minecraft.network.play.client.C02PacketUseEntity usePacket =
-                                        (net.minecraft.network.play.client.C02PacketUseEntity) packetSendEvent.getPacket();
+                            if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity usePacket) {
                                 if(mc.theWorld != null) {
                                     net.minecraft.entity.Entity attackedEntity = usePacket.getEntityFromWorld(mc.theWorld);
                                     if(attackedEntity != null) return LuaValue.valueOf(attackedEntity.getEntityId());
@@ -401,8 +393,7 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(-1);
                         }
                     });
-        } else if(event instanceof PacketReceiveEvent) {
-            final PacketReceiveEvent packetReceiveEvent = (PacketReceiveEvent) event;
+        } else if(event instanceof final PacketReceiveEvent packetReceiveEvent) {
             eventTable.set(
                     "cancel",
                     new ZeroArgFunction() {
@@ -452,7 +443,7 @@ public final class LuaEventApi extends LuaTable {
                                         ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionY());
                             if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
                                 return LuaValue.valueOf(
-                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).getY());
+                                        ((S27PacketExplosion) packetReceiveEvent.getPacket()).getY());
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -466,7 +457,7 @@ public final class LuaEventApi extends LuaTable {
                                         ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionZ());
                             if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
                                 return LuaValue.valueOf(
-                                        (double) ((S27PacketExplosion) packetReceiveEvent.getPacket()).getZ());
+                                        ((S27PacketExplosion) packetReceiveEvent.getPacket()).getZ());
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -520,8 +511,7 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(-1);
                         }
                     });
-        } else if(event instanceof TickEvent) {
-            final TickEvent tickEvent = (TickEvent) event;
+        } else if(event instanceof final TickEvent tickEvent) {
             eventTable.set(
                     "cancel",
                     new ZeroArgFunction() {
@@ -539,18 +529,16 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(tickEvent.isCanceled());
                         }
                     });
-        } else if(event instanceof Render3DEvent) {
-            final Render3DEvent render3DEvent = (Render3DEvent) event;
+        } else if(event instanceof Render3DEvent(final float partialTicks)) {
             eventTable.set(
                     "getPartialTicks",
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            return LuaValue.valueOf((double) render3DEvent.partialTicks());
+                            return LuaValue.valueOf(partialTicks);
                         }
                     });
-        } else if(event instanceof SlowDownEvent) {
-            final SlowDownEvent slowDownEvent = (SlowDownEvent) event;
+        } else if(event instanceof final SlowDownEvent slowDownEvent) {
             eventTable.set(
                     "getReason",
                     new ZeroArgFunction() {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Command {
+
     protected static final Minecraft MC = Minecraft.getMinecraft();
     private final String name;
     private final String description;
@@ -34,4 +35,6 @@ public abstract class Command {
     public String[] getAliases() {
         return aliases;
     }
+
+
 }

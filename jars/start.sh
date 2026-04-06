@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Hey you!
 # This script is intended for end-users who do not want to
 # use a gui launcher. Do not run if developing.
@@ -15,6 +17,9 @@ EXTRA_FLAGS=""
 if [[ "$(uname)" == "Darwin" ]]; then
   EXTRA_FLAGS="-XstartOnFirstThread"
 fi
+
+mkdir -p "$SCRIPT_DIR/.minecraft"
+cd "$SCRIPT_DIR/.minecraft"
 
 $JDK_PATH "-XX:HeapDumpPath=$SCRIPT_DIR/Alya.heapdump" \
   "-Dminecraft.launcher.brand=minecraft-launcher" \

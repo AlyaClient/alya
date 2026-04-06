@@ -5,29 +5,21 @@ import dev.thoq.event.IEvent;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 
 @SuppressWarnings("unused")
-public class TimeUpdateEvent implements IEvent, ICancelable {
-    private final S03PacketTimeUpdate s03PacketTimeUpdate;
-    private boolean canceled = false;
+public class TimeUpdateEvent implements IEvent {
 
-    public TimeUpdateEvent(S03PacketTimeUpdate s03PacketTimeUpdate) {
-        this.s03PacketTimeUpdate = s03PacketTimeUpdate;
+    private long time;
+
+    public TimeUpdateEvent(final long time) {
+        this.time = time;
     }
 
-    @Override
-    public boolean isCanceled() {
-        return canceled;
+    public long getTime() {
+        return time;
     }
 
-    @Override
-    public void cancel() {
-        canceled = true;
+    public void setTime(final long time) {
+        this.time = time;
     }
 
-    public S03PacketTimeUpdate s03PacketTimeUpdate() {
-        return s03PacketTimeUpdate;
-    }
 
-    public S03PacketTimeUpdate getS03PacketTimeUpdate() {
-        return s03PacketTimeUpdate;
-    }
 }

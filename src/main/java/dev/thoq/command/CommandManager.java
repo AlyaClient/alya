@@ -1,28 +1,15 @@
 package dev.thoq.command;
 
+import dev.thoq.util.player.ChatUtil;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public final class CommandManager {
-    private final CommandRepository repository;
-    private final String prefix;
+public record CommandManager(CommandRepository repository, String prefix) {
 
     public CommandManager() {
         this(new InMemoryCommandRepository(), ".");
-    }
-
-    public CommandManager(CommandRepository repository, String prefix) {
-        this.repository = repository;
-        this.prefix = prefix;
-    }
-
-    public CommandRepository repository() {
-        return repository;
-    }
-
-    public String prefix() {
-        return prefix;
     }
 
     public void putAll(final Command... commands) {
@@ -64,14 +51,15 @@ public final class CommandManager {
         final String[] args =
                 parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
         Optional<Command> command = repository.findByName(commandName);
-        if(!command.isPresent()) {
+        if(command.isEmpty()) {
             command = repository.findByAlias(commandName);
         }
         if(command.isPresent()) {
             command.get().execute(args);
             return true;
         }
-        return false;
+        ChatUtil.sendError("Command not found: " + commandName);
+        return true;
     }
 
     public List<String> getCompletions(final String input) {
@@ -85,7 +73,7 @@ public final class CommandManager {
         final String[] parts = commandLine.split("\\s+", -1);
         final String commandName = parts[0];
         Optional<Command> command = repository.findByName(commandName);
-        if(!command.isPresent()) {
+        if(command.isEmpty()) {
             command = repository.findByAlias(commandName);
         }
         if(command.isPresent()) {
@@ -113,20 +101,21 @@ public final class CommandManager {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof CommandManager)) return false;
-        CommandManager that = (CommandManager) o;
-        return Objects.equals(repository, that.repository) && Objects.equals(prefix, that.prefix);
+    public boolean equals(final Object object) {
+        if(this == object) {
+            return true;
+        }
+        if(!(object instanceof CommandManager(final CommandRepository repository1, final String prefix1))) {
+            return false;
+        }
+        return Objects.equals(repository, repository1) && Objects.equals(prefix, prefix1);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(repository, prefix);
-    }
-
+    @SuppressWarnings("NullableProblems")
     @Override
     public String toString() {
         return "CommandManager[repository=" + repository + ", prefix=" + prefix + "]";
     }
+
+
 }

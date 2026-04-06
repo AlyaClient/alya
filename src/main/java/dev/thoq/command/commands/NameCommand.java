@@ -5,6 +5,7 @@ import dev.thoq.command.Command;
 import dev.thoq.util.player.ChatUtil;
 
 public final class NameCommand extends Command {
+
     public NameCommand() {
         super("name", "Set client name");
     }
@@ -17,4 +18,6 @@ public final class NameCommand extends Command {
         Alya.getInstance().getConfigManager().save();
         ChatUtil.sendInfo("Client name set to: " + name);
     }
+
+
 }

@@ -90,7 +90,6 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.25.3")
     implementation("org.apache.logging.log4j:log4j-core:2.25.3")
     implementation("com.mojang:authlib:1.5.25")
-    implementation("com.github.dblock:oshi-core:1.2")
     implementation("io.netty:netty-all:4.0.23.Final")
     val useLocalLwjglBridge = gradle.extra["useLocalLwjglBridge"] as Boolean
     if (useLocalLwjglBridge) {
@@ -103,17 +102,12 @@ dependencies {
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-openal:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-tinyfd:$lwjglVersion")
     for (natives in lwjglAllNatives) {
         runtimeOnly("org.lwjgl:lwjgl::$natives")
         runtimeOnly("org.lwjgl:lwjgl-glfw::$natives")
         runtimeOnly("org.lwjgl:lwjgl-openal::$natives")
         runtimeOnly("org.lwjgl:lwjgl-opengl::$natives")
-        runtimeOnly("org.lwjgl:lwjgl-stb::$natives")
-        runtimeOnly("org.lwjgl:lwjgl-tinyfd::$natives")
     }
-    implementation("fr.litarvan:openauth:1.1.3")
     implementation("org.luaj:luaj-jse:3.0.1")
     implementation("org.yaml:snakeyaml:2.2")
     compileOnly("com.viaversion:viaversion-api:4.9.0")
@@ -139,12 +133,15 @@ tasks.shadowJar {
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
     exclude("log4j2*.xml")
     transform(Log4j2PluginsCacheFileTransformer::class.java)
-    // exclude the project's own classes, only bundle dependencies
+
     dependencies {
         exclude(dependency("${project.group}:${project.name}"))
     }
-    // include project resources
-    from(sourceSets.main.get().output.resourcesDir)
+
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    exclude { it.file.startsWith(project.layout.buildDirectory.dir("classes").get().asFile.path) }
+    exclude { it.file.startsWith(project.layout.buildDirectory.dir("resources").get().asFile.path) }
 }
 
 tasks.build {
