@@ -169,7 +169,7 @@ tasks.register<JavaExec>("runClient") {
         "-XX:G1HeapRegionSize=32M"
     )
 
-    if(System.getProperty("os.name").contains("Mac", ignoreCase = true)) {
+    if (System.getProperty("os.name").contains("Mac", ignoreCase = true)) {
         jvmArgs("-XstartOnFirstThread")
     }
 
