@@ -10,7 +10,7 @@ version = "1.0"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(26)
     }
 }
 
@@ -22,7 +22,7 @@ repositories {
     maven("https://repo.viaversion.com")
 }
 
-val lwjglVersion = "3.3.4"
+val lwjglVersion = "3.3.3"
 val lwjglAllNatives = listOf(
     "natives-windows",
     "natives-windows-arm64",
@@ -166,7 +166,9 @@ tasks.register<JavaExec>("runClient") {
         "-XX:G1NewSizePercent=20",
         "-XX:G1ReservePercent=20",
         "-XX:MaxGCPauseMillis=50",
-        "-XX:G1HeapRegionSize=32M"
+        "-XX:G1HeapRegionSize=32M",
+        "--sun-misc-unsafe-memory-access=allow",
+        "--enable-native-access=ALL-UNNAMED"
     )
 
     if (System.getProperty("os.name").contains("Mac", ignoreCase = true)) {
