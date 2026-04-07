@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import dev.thoq.Alya;
 import dev.thoq.event.events.Render2DEvent;
 import dev.thoq.gui.toast.ToastManager;
+import dev.thoq.lua.api.LuaMinecraftApi;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -505,72 +506,74 @@ public class GuiIngame extends Gui {
         }
     }
 
-    private void renderScoreboard(ScoreObjective p_180475_1_, ScaledResolution p_180475_2_) {
-        Scoreboard scoreboard = p_180475_1_.getScoreboard();
-        Collection<Score> collection = scoreboard.getSortedScores(p_180475_1_);
-        List<Score> list =
-                Lists.newArrayList(
-                        Iterables.filter(
-                                collection,
-                                p_apply_1_ -> p_apply_1_.getPlayerName() != null
-                                        && !p_apply_1_.getPlayerName().startsWith("#")));
+    private void renderScoreboard(ScoreObjective scoreObjective, ScaledResolution scaledResolution) {
+        Scoreboard scoreboard = scoreObjective.getScoreboard();
+        Collection<Score> collection = scoreboard.getSortedScores(scoreObjective);
+        List<Score> list = Lists.newArrayList(
+                Iterables.filter(
+                        collection,
+                        score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")
+                )
+        );
 
-        if(list.size() > 15) {
+        if (list.size() > 15) {
             collection = Lists.newArrayList(Iterables.skip(list, collection.size() - 15));
         } else {
             collection = list;
         }
 
-        int i = this.getFontRenderer().getStringWidth(p_180475_1_.getDisplayName());
+        int maxWidth = this.getFontRenderer().getStringWidth(scoreObjective.getDisplayName());
 
-        for(Score score : collection) {
-            ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(score.getPlayerName());
-            String s =
-                    ScorePlayerTeam.formatPlayerName(scoreplayerteam, score.getPlayerName())
-                            + ": "
-                            + EnumChatFormatting.RED
-                            + score.getScorePoints();
-            i = Math.max(i, this.getFontRenderer().getStringWidth(s));
+        for (Score score : collection) {
+            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(score.getPlayerName());
+            String formattedName = ScorePlayerTeam.formatPlayerName(scorePlayerTeam, score.getPlayerName())
+                    + ": "
+                    + EnumChatFormatting.RED
+                    + score.getScorePoints();
+            maxWidth = Math.max(maxWidth, this.getFontRenderer().getStringWidth(formattedName));
         }
 
         int fontHeight = this.getFontRenderer().FONT_HEIGHT;
         int lineCount = collection.size();
-        int bottomPadding = 3;
-        int screenHeight = p_180475_2_.getScaledHeight();
+        int screenHeight = scaledResolution.getScaledHeight();
 
-        int j1 = screenHeight - bottomPadding + dev.thoq.lua.api.LuaMinecraftApi.scoreboardYOffset;
+        int baseBottomY = (screenHeight / 2) + (lineCount * fontHeight / 2) + LuaMinecraftApi.scoreboardYOffset;
 
-        int topY = j1 - lineCount * fontHeight - fontHeight - 1;
-        if(topY < 2) {
-            j1 += (2 - topY);
+        int topY = baseBottomY - (lineCount * fontHeight) - fontHeight;
+        if (topY < 2) {
+            baseBottomY += (2 - topY);
         }
 
-        int k1 = 3;
-        int l1 = p_180475_2_.getScaledWidth() - i - k1;
-        int j = 0;
+        int sideMargin = 3;
+        int leftX = scaledResolution.getScaledWidth() - maxWidth - sideMargin;
+        int iterationCount = 0;
 
-        for(Score score1 : collection) {
-            ++j;
-            ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score1.getPlayerName());
-            String s1 = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
-            String s2 = EnumChatFormatting.RED + "" + score1.getScorePoints();
-            int k = j1 - j * fontHeight;
-            int l = p_180475_2_.getScaledWidth() - k1 + 2;
-            drawRect(l1 - 2, k, l, k + fontHeight, 1342177280);
-            this.getFontRenderer().drawString(s1, l1, k, 553648127);
-            this.getFontRenderer()
-                    .drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, 553648127);
+        for (Score score : collection) {
+            iterationCount++;
+            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(score.getPlayerName());
+            String nameString = ScorePlayerTeam.formatPlayerName(scorePlayerTeam, score.getPlayerName());
+            String scoreString = EnumChatFormatting.RED + "" + score.getScorePoints();
 
-            if(j == collection.size()) {
-                String s3 = p_180475_1_.getDisplayName();
-                drawRect(l1 - 2, k - fontHeight - 1, l, k - 1, 1610612736);
-                drawRect(l1 - 2, k - 1, l, k, 1342177280);
-                this.getFontRenderer()
-                        .drawString(
-                                s3,
-                                l1 + i / 2 - this.getFontRenderer().getStringWidth(s3) / 2,
-                                k - fontHeight,
-                                553648127);
+            int currentLineY = baseBottomY - (iterationCount * fontHeight);
+            int rightX = scaledResolution.getScaledWidth() - sideMargin + 2;
+
+            drawRect(leftX - 2, currentLineY, rightX, currentLineY + fontHeight, 1342177280);
+            this.getFontRenderer().drawString(nameString, leftX, currentLineY, 553648127);
+            this.getFontRenderer().drawString(scoreString, rightX - this.getFontRenderer().getStringWidth(scoreString), currentLineY, 553648127);
+
+            if (iterationCount == collection.size()) {
+                String objectiveName = scoreObjective.getDisplayName();
+                int headerTopY = currentLineY - fontHeight - 1;
+
+                drawRect(leftX - 2, headerTopY, rightX, currentLineY - 1, 1610612736);
+                drawRect(leftX - 2, currentLineY - 1, rightX, currentLineY, 1342177280);
+
+                this.getFontRenderer().drawString(
+                        objectiveName,
+                        leftX + maxWidth / 2 - this.getFontRenderer().getStringWidth(objectiveName) / 2,
+                        headerTopY + 1,
+                        553648127
+                );
             }
         }
     }

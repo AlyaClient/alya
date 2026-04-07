@@ -147,3 +147,36 @@ tasks.shadowJar {
 tasks.build {
     dependsOn(tasks.shadowJar)
 }
+
+tasks.register<JavaExec>("runClient") {
+    group = "application"
+    description = "Runs the client"
+    mainClass.set("start.Main")
+    classpath = sourceSets.main.get().runtimeClasspath
+    workingDir = file("jars")
+
+    jvmArgs(
+        "-XX:HeapDumpPath=Alya.heapdump",
+        "-Dminecraft.launcher.brand=minecraft-launcher",
+        "-Dminecraft.launcher.version=3.2.13",
+        "-Dio.netty.transport.noNative=true",
+        "-Xmx4G",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseG1GC",
+        "-XX:G1NewSizePercent=20",
+        "-XX:G1ReservePercent=20",
+        "-XX:MaxGCPauseMillis=50",
+        "-XX:G1HeapRegionSize=32M"
+    )
+
+    if(System.getProperty("os.name").contains("Mac", ignoreCase = true)) {
+        jvmArgs("-XstartOnFirstThread")
+    }
+
+    args(
+        "--gameDir", ".minecraft",
+        "--assetIndex", "1.8",
+        "--uuid", "0",
+        "--userType", "msa"
+    )
+}

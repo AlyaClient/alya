@@ -1,53 +1,62 @@
 local moduleTable = alya.modules.register("Knockback", "Buffers attacks during hurt invincibility then releases them for burst knockback", "COMBAT")
 local hurtTimeThreshold = moduleTable.addNumberSetting("HurtTime", "Release buffered attacks when target hurtTime reaches this value", 0, 0, 10, 1)
+local packetWTap = moduleTable.addBooleanSetting("Packet WTap", "Resets sprint packets for every hit to maximize knockback", true)
 
 local bufferedAttacksByTarget = {}
-local currentTargetId = nil
+local shouldRestartSprint = false
 
 alya.events.on("packetsend", function(event)
     if not moduleTable.isEnabled() then return end
     if event.getPacketClass() ~= "C02PacketUseEntity" then return end
     if event.getUseAction() ~= "ATTACK" then return end
 
-    local entityId = event.getAttackedEntityId()
-    if entityId < 0 then return end
+    local entityIdentifier = event.getAttackedEntityId()
+    local targetEntity = alya.combat.getEntityById(entityIdentifier)
 
-    local target = alya.combat.getEntityById(entityId)
-    if target == nil then return end
+    if targetEntity == nil then return end
 
-    currentTargetId = entityId
-
-    if target.hurtTime > hurtTimeThreshold.getValue() then
+    if targetEntity.hurtTime > hurtTimeThreshold.getValue() then
         event.cancel()
-        local existing = bufferedAttacksByTarget[entityId] or 0
-        bufferedAttacksByTarget[entityId] = existing + 1
+        bufferedAttacksByTarget[entityIdentifier] = (bufferedAttacksByTarget[entityIdentifier] or 0) + 1
     end
 end)
 
 alya.events.on("motion", function(event)
     if not moduleTable.isEnabled() then return end
-    if not event.isPre() then return end
-    if currentTargetId == nil then return end
 
-    local bufferedCount = bufferedAttacksByTarget[currentTargetId] or 0
-    if bufferedCount == 0 then return end
+    if event.isPre() then
+        for entityIdentifier, bufferedCount in pairs(bufferedAttacksByTarget) do
+            if bufferedCount > 0 then
+                local targetEntity = alya.combat.getEntityById(entityIdentifier)
 
-    local target = alya.combat.getEntityById(currentTargetId)
-    if target == nil then
-        bufferedAttacksByTarget[currentTargetId] = nil
-        currentTargetId = nil
-        return
-    end
+                if targetEntity == nil or targetEntity.isDead then
+                    bufferedAttacksByTarget[entityIdentifier] = nil
+                elseif targetEntity.hurtTime <= hurtTimeThreshold.getValue() then
 
-    if target.hurtTime <= hurtTimeThreshold.getValue() then
-        for i = 1, bufferedCount do
-            alya.combat.attackEntity(currentTargetId)
+                    if packetWTap.getValue() then
+                        alya.packets.sendAction("STOP_SPRINTING")
+                    end
+
+                    alya.combat.attackEntity(entityIdentifier)
+
+                    if packetWTap.getValue() then
+                        shouldRestartSprint = true
+                    end
+
+                    bufferedAttacksByTarget[entityIdentifier] = bufferedCount - 1
+                    break
+                end
+            end
         end
-        bufferedAttacksByTarget[currentTargetId] = 0
+    else
+        if shouldRestartSprint then
+            alya.packets.sendAction("START_SPRINTING")
+            shouldRestartSprint = false
+        end
     end
 end)
 
 moduleTable.onDisable(function()
     bufferedAttacksByTarget = {}
-    currentTargetId = nil
+    shouldRestartSprint = false
 end)
