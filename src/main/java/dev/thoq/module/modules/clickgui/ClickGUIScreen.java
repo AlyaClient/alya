@@ -82,9 +82,9 @@ public final class ClickGUIScreen extends GuiScreen {
                 .getModule(ClickGUI.class)
                 .map(module -> module.scale.getValue().floatValue())
                 .orElse(1.0f);
-        
+
         float maxScaleX = (float) width / (Category.values().length * PANEL_SPACING + 4);
-        
+
         int maxHeight = 0;
         for(final Category category : Category.values()) {
             final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
@@ -100,7 +100,7 @@ public final class ClickGUIScreen extends GuiScreen {
             }
         }
         float maxScaleY = maxHeight == 0 ? userScale : (float) height / (maxHeight + 8);
-        
+
         return Math.min(userScale, Math.min(maxScaleX, maxScaleY));
     }
 
@@ -131,7 +131,9 @@ public final class ClickGUIScreen extends GuiScreen {
 
     private void renderCategoryPanel(final Category category, final int mouseX, final int mouseY) {
         final int[] position = panelPositions.get(category);
-        if(position == null) return;
+        if(position == null) {
+            return;
+        }
         int panelX = position[0];
         int panelY = position[1];
         if(dragging && draggingCategory == category) {
@@ -141,7 +143,9 @@ public final class ClickGUIScreen extends GuiScreen {
             position[1] = panelY;
         }
         final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
-        if(modules == null) return;
+        if(modules == null) {
+            return;
+        }
         int totalHeight = PANEL_HEIGHT;
         if(expandedCategories.get(category)) {
             totalHeight += calculateExpandedHeight(modules) + 1;
@@ -192,16 +196,22 @@ public final class ClickGUIScreen extends GuiScreen {
     private int calculateModuleSettingsHeight(final Module module) {
         int visibleCount = 0;
         for(final Setting<?> setting : module.getSettings()) {
-            if(setting.isVisible()) visibleCount++;
+            if(setting.isVisible()) {
+                visibleCount++;
+            }
         }
-        if(visibleCount == 0) return 0;
+        if(visibleCount == 0) {
+            return 0;
+        }
         return visibleCount * SETTING_HEIGHT + SETTING_GROUP_PADDING * 2;
     }
 
     private int countVisibleSettings(final Module module) {
         int count = 0;
         for(final Setting<?> setting : module.getSettings()) {
-            if(setting.isVisible()) count++;
+            if(setting.isVisible()) {
+                count++;
+            }
         }
         return count;
     }
@@ -234,7 +244,9 @@ public final class ClickGUIScreen extends GuiScreen {
         RenderUtility.drawRect(panelX + 1, currentY, PANEL_WIDTH - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
         currentY += SETTING_GROUP_PADDING;
         for(final Setting<?> setting : module.getSettings()) {
-            if(!setting.isVisible()) continue;
+            if(!setting.isVisible()) {
+                continue;
+            }
             renderSettingButton(setting, panelX, currentY, category, mouseX, mouseY);
             currentY += SETTING_HEIGHT;
         }
@@ -254,7 +266,9 @@ public final class ClickGUIScreen extends GuiScreen {
         final boolean hovered = isMouseOver(mouseX, mouseY, positionX, positionY, MODULE_HEIGHT);
         if(!extended) {
             int backgroundColor = module.isEnabled() ? getCategoryColor(category) : MODULE_BACKGROUND_COLOR;
-            if(hovered) backgroundColor = dimColor(backgroundColor, HOVER_DIM);
+            if(hovered) {
+                backgroundColor = dimColor(backgroundColor, HOVER_DIM);
+            }
             RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, backgroundColor);
         } else {
             RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
@@ -282,7 +296,9 @@ public final class ClickGUIScreen extends GuiScreen {
             final boolean boolHovered = isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT);
             if(booleanSetting.isEnabled()) {
                 int color = getCategoryColor(category);
-                if(boolHovered) color = dimColor(color, HOVER_DIM);
+                if(boolHovered) {
+                    color = dimColor(color, HOVER_DIM);
+                }
                 RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, color);
             } else if(boolHovered) {
                 RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
@@ -433,7 +449,9 @@ public final class ClickGUIScreen extends GuiScreen {
             final int entryTotalHeight = entries.length * MODULE_HEIGHT;
             totalHeight += entryTotalHeight;
             int entryY = panelY - entryTotalHeight;
-            for(int i = 0; i < entries.length; i++) {
+            for(int i = 0;
+                i < entries.length;
+                i++) {
                 final String entry = entries[i];
                 final boolean hovered = mouseX >= panelX && mouseX <= panelX + PANEL_WIDTH
                         && mouseY >= entryY && mouseY <= entryY + MODULE_HEIGHT;
@@ -441,11 +459,15 @@ public final class ClickGUIScreen extends GuiScreen {
                 if(isScripts) {
                     final boolean loaded = Alya.getInstance().getLuaEngine().isExternalScriptLoaded(entry);
                     int bgColor = loaded ? 0xFF808080 : MODULE_BACKGROUND_COLOR;
-                    if(hovered) bgColor = dimColor(bgColor, HOVER_DIM);
+                    if(hovered) {
+                        bgColor = dimColor(bgColor, HOVER_DIM);
+                    }
                     RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, MODULE_HEIGHT, bgColor);
                 } else {
                     int bgColor = MODULE_BACKGROUND_COLOR;
-                    if(hovered) bgColor = dimColor(bgColor, HOVER_DIM);
+                    if(hovered) {
+                        bgColor = dimColor(bgColor, HOVER_DIM);
+                    }
                     RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, MODULE_HEIGHT, bgColor);
                 }
 
@@ -473,11 +495,17 @@ public final class ClickGUIScreen extends GuiScreen {
 
     private String[] getScriptEntries() {
         final File scriptsDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/scripts");
-        if(!scriptsDir.exists()) return new String[0];
+        if(!scriptsDir.exists()) {
+            return new String[0];
+        }
         final File[] files = scriptsDir.listFiles((_, name) -> name.endsWith(".lua"));
-        if(files == null) return new String[0];
+        if(files == null) {
+            return new String[0];
+        }
         final String[] names = new String[files.length];
-        for(int i = 0; i < files.length; i++) {
+        for(int i = 0;
+            i < files.length;
+            i++) {
             names[i] = files[i].getName();
         }
         return names;
@@ -486,13 +514,19 @@ public final class ClickGUIScreen extends GuiScreen {
     private String[] getConfigsMapped(final Function<File, String> mapper) {
         final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/configs");
 
-        if (!configDir.exists()) return new String[0];
+        if(!configDir.exists()) {
+            return new String[0];
+        }
 
         final File[] files = configDir.listFiles((_, name) -> name.endsWith(".json"));
-        if (files == null) return new String[0];
+        if(files == null) {
+            return new String[0];
+        }
 
         final String[] result = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
+        for(int i = 0;
+            i < files.length;
+            i++) {
             result[i] = mapper.apply(files[i]);
         }
         return result;
@@ -536,7 +570,9 @@ public final class ClickGUIScreen extends GuiScreen {
 
         if(scriptsExpanded) {
             final String[] entries = getScriptEntries();
-            if(handleBottomEntryClick(entries, scriptsPanelX, panelY, mouseX, mouseY, mouseButton, true)) return true;
+            if(handleBottomEntryClick(entries, scriptsPanelX, panelY, mouseX, mouseY, mouseButton, true)) {
+                return true;
+            }
         }
 
         if(configsExpanded) {
@@ -557,7 +593,8 @@ public final class ClickGUIScreen extends GuiScreen {
                 final String subDir = isScripts ? "scripts" : "configs";
                 final File dir = new File(Minecraft.getMinecraft().mcDataDir, Alya.getName() + "/" + subDir);
                 Desktop.getDesktop().open(dir);
-            } catch(final IOException ignored) {}
+            } catch(final IOException ignored) {
+            }
             return true;
         }
         iconX -= BOTTOM_ICON_SIZE + 2;
@@ -623,9 +660,13 @@ public final class ClickGUIScreen extends GuiScreen {
         final int scaledMouseX = (int) (mouseX / scale);
         final int scaledMouseY = (int) (mouseY / scale);
 
-        if(handleBottomBarClick(mouseX, mouseY, mouseButton)) return;
+        if(handleBottomBarClick(mouseX, mouseY, mouseButton)) {
+            return;
+        }
         for(final Category category : Category.values()) {
-            if(handleCategoryClick(category, scaledMouseX, scaledMouseY, mouseButton)) return;
+            if(handleCategoryClick(category, scaledMouseX, scaledMouseY, mouseButton)) {
+                return;
+            }
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
@@ -633,14 +674,18 @@ public final class ClickGUIScreen extends GuiScreen {
     private boolean handleCategoryClick(
             final Category category, final int mouseX, final int mouseY, final int mouseButton) {
         final int[] position = panelPositions.get(category);
-        if(position == null) return false;
+        if(position == null) {
+            return false;
+        }
         final int panelX = position[0];
         final int panelY = position[1];
         if(isMouseOver(mouseX, mouseY, panelX, panelY, PANEL_HEIGHT)) {
             handlePanelHeaderClick(category, panelX, panelY, mouseX, mouseY, mouseButton);
             return true;
         }
-        if(!expandedCategories.get(category)) return false;
+        if(!expandedCategories.get(category)) {
+            return false;
+        }
         return handleExpandedModulesClick(category, panelX, panelY, mouseX, mouseY, mouseButton);
     }
 
@@ -669,7 +714,9 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseY,
             final int mouseButton) {
         final List<Module> modules = Alya.getInstance().getModuleManager().getModulesByCategory(category);
-        if(modules == null) return false;
+        if(modules == null) {
+            return false;
+        }
         int currentY = panelY + PANEL_HEIGHT;
         for(final Module module : modules) {
             if(isMouseOver(mouseX, mouseY, panelX, currentY, MODULE_HEIGHT)) {
@@ -679,7 +726,9 @@ public final class ClickGUIScreen extends GuiScreen {
             currentY += MODULE_HEIGHT;
             if(expandedModules.getOrDefault(module, false)) {
                 currentY += SETTING_GROUP_PADDING;
-                if(tryHandleSettingClick(module, panelX, currentY, mouseX, mouseY, mouseButton)) return true;
+                if(tryHandleSettingClick(module, panelX, currentY, mouseX, mouseY, mouseButton)) {
+                    return true;
+                }
                 currentY += countVisibleSettings(module) * SETTING_HEIGHT + SETTING_GROUP_PADDING;
             }
         }
@@ -688,7 +737,9 @@ public final class ClickGUIScreen extends GuiScreen {
 
     private void handleModuleClick(final Module module, final int mouseButton) {
         if(mouseButton == 0) {
-            if(!(module instanceof ClickGUI)) module.toggle();
+            if(!(module instanceof ClickGUI)) {
+                module.toggle();
+            }
         } else if(mouseButton == 1 && countVisibleSettings(module) > 0) {
             expandedModules.put(module, !expandedModules.getOrDefault(module, false));
         }
@@ -703,7 +754,9 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseButton) {
         int currentY = startY;
         for(final Setting<?> setting : module.getSettings()) {
-            if(!setting.isVisible()) continue;
+            if(!setting.isVisible()) {
+                continue;
+            }
             if(isMouseOver(mouseX, mouseY, panelX, currentY, SETTING_HEIGHT)) {
                 handleSettingInteraction(setting, panelX, mouseX, mouseButton);
                 return true;
@@ -768,7 +821,7 @@ public final class ClickGUIScreen extends GuiScreen {
             final long timeSinceLastClick) {
         final float scale = getScale();
         final int scaledMouseX = (int) (mouseX / scale);
-        
+
         if(dragging && draggingCategory != null) {
             return;
         }
