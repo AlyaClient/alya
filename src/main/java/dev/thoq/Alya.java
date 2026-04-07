@@ -1,5 +1,6 @@
 package dev.thoq;
 
+import dev.thoq.backend.BackendConnector;
 import dev.thoq.command.CommandManager;
 import dev.thoq.command.commands.*;
 import dev.thoq.config.ConfigManager;
@@ -19,6 +20,11 @@ import dev.thoq.viamcp.impl.ViaMCP;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+@SuppressWarnings("SpellCheckingInspection")
 public final class Alya {
 
     private static final Alya INSTANCE = new Alya();
@@ -31,6 +37,8 @@ public final class Alya {
     private final ConfigManager configManager = new ConfigManager();
     private final LuaEngine luaEngine = new LuaEngine();
     private final ScriptsUtil scriptUtil = new ScriptsUtil();
+    private final BackendConnector backendConnector = new BackendConnector();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private AlyaFontRenderer fontRenderer;
     private AlyaFontRenderer fontRendererSmall;
     private AlyaFontRenderer fontRendererMedium;
@@ -40,8 +48,21 @@ public final class Alya {
     private Alya() {
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public String[] getScripts() {
+    public void initialize() {
+        LuaMinecraftApi.registerEvents(eventBus);
+        moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
+        initCommands();
+        LuaFontApi.bind(luaEngine.getGlobals());
+        luaEngine.loadAll();
+        LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
+        LOGGER.info("Initialized {} commands", commandManager.getCommands().size());
+        configManager.load();
+        scheduler.schedule(backendConnector::poll, 10, TimeUnit.SECONDS);
+        ViaMCP.create();
+        ViaMCP.INSTANCE.initAsyncSlider();
+    }
+
+    public String[] initializeModules() {
         return scriptUtil.putAll(
                 new Script(Category.VISUAL, "fullbright"),
                 new Script(Category.VISUAL, "arraylist"),
@@ -85,7 +106,7 @@ public final class Alya {
                 new Script(Category.OTHER, "hackerdetector"),
                 new Script(Category.OTHER, "worldtime")
         );
-      }
+    }
 
     public void initCommands() {
         commandManager.putAll(
@@ -95,19 +116,6 @@ public final class Alya {
                 new ReloadCommand(),
                 new NameCommand()
         );
-    }
-
-    public void initialize() {
-        LuaMinecraftApi.registerEvents(eventBus);
-        moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
-        initCommands();
-        LuaFontApi.bind(luaEngine.getGlobals());
-        luaEngine.loadAll();
-        LOGGER.info("Initialized {} modules", moduleManager.getModules().size());
-        LOGGER.info("Initialized {} commands", commandManager.getCommands().size());
-        configManager.load();
-        ViaMCP.create();
-        ViaMCP.INSTANCE.initAsyncSlider();
     }
 
     public void terminate() {

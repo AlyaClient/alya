@@ -151,7 +151,7 @@ public final class LuaEngine {
     }
 
     public void loadAll() {
-        final List<String> scripts = new ArrayList<>(List.of(Alya.getInstance().getScripts()));
+        final List<String> scripts = new ArrayList<>(List.of(Alya.getInstance().initializeModules()));
         scripts.addAll(Arrays.asList(getAlyaScriptCore()));
 
         for(final String script : scripts) {
