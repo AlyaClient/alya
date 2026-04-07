@@ -3,25 +3,56 @@
 [C]§f===============
 
 §7Created by:
-§f			Thowoq
+§f			Markus Persson
+
+§7Game design, programming and graphics:
+§f			Markus Persson
+§f			Jens Bergensten
+§f			Nathan Adams
+§f			Ryan Holtz
+§f			Michael Stoyke
 
 §7Programming:
-§f			Thowoq
-§f			Truppy boo bear
+§f			Erik Broes
 
-§Extra Credits:
-§f Emotional Support: Guffy
-§f Some parts of some flies: Rare my pookie bear
-§f Gayness: Thowoq
+§7Music and sound:
+§f			Daniel Rosenfeld
+
+§7Ingame artwork and paintings:
+§f			Kristoffer Zetterstrand
+
+§7End game narrative:
+§f			Julian Gough
 
 §7Website development:
-§f			Papi Thoq
+§f			Tobias Möllstam
+§f			Daniel Frisk
+§f			Leonard Axelsson
+§f			Jens Bergensten
+§f			Markus Persson
 
 §7Logo and promotional artwork:
-§f			Cedowo
+§f			Markus Toivonen
 
 §7Business and administration:
-§f			Guffy The Administrator
+§f			Carl Manneh
+§f			Daniel Kaplan
+
+§7Director of fun:
+§f			Lydia Winters
+
+§7Number crunching and statistics:
+§f			Patrick Geuder
+
+§7Additional programming:
+§f			Paul Spooner
+§f			Ryan 'Scaevolus' Hitchman
+§f			Elliot 'Hippoplatimus' Segal
+
+§7Developers of Mo' Creatures (horses etc):
+§f			John Olarte (DrZhark)
+§f			Kent Christian Jensen
+§f			Dan Roque
 
 §7Technologies used:
 §f			Java by Oracle

@@ -8,30 +8,16 @@ import net.minecraft.world.WorldServer;
 
 public class CommandSaveOn extends CommandBase
 {
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "save-on";
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.save-on.usage";
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         MinecraftServer minecraftserver = MinecraftServer.getServer();

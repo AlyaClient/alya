@@ -46,22 +46,16 @@ public class GameRules
         }
     }
 
-    /**
-     * Gets the string Game Rule value.
-     */
-    public String getGameRuleStringValue(String name)
+    public String getString(String name)
     {
         GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(name);
-        return gamerules$value != null ? gamerules$value.getGameRuleStringValue() : "";
+        return gamerules$value != null ? gamerules$value.getString() : "";
     }
 
-    /**
-     * Gets the boolean Game Rule value.
-     */
-    public boolean getGameRuleBooleanValue(String name)
+    public boolean getBoolean(String name)
     {
         GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(name);
-        return gamerules$value != null ? gamerules$value.getGameRuleBooleanValue() : false;
+        return gamerules$value != null ? gamerules$value.getBoolean() : false;
     }
 
     public int getInt(String name)
@@ -70,9 +64,6 @@ public class GameRules
         return gamerules$value != null ? gamerules$value.getInt() : 0;
     }
 
-    /**
-     * Return the defined game rules as NBT.
-     */
     public NBTTagCompound writeToNBT()
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -80,15 +71,12 @@ public class GameRules
         for (String s : this.theGameRules.keySet())
         {
             GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(s);
-            nbttagcompound.setString(s, gamerules$value.getGameRuleStringValue());
+            nbttagcompound.setString(s, gamerules$value.getString());
         }
 
         return nbttagcompound;
     }
 
-    /**
-     * Set defined game rules from NBT.
-     */
     public void readFromNBT(NBTTagCompound nbt)
     {
         for (String s : nbt.getKeySet())
@@ -98,18 +86,12 @@ public class GameRules
         }
     }
 
-    /**
-     * Return the defined game rules.
-     */
     public String[] getRules()
     {
         Set<String> set = this.theGameRules.keySet();
         return (String[])((String[])set.toArray(new String[set.size()]));
     }
 
-    /**
-     * Return whether the specified game rule is defined.
-     */
     public boolean hasRule(String name)
     {
         return this.theGameRules.containsKey(name);
@@ -176,12 +158,12 @@ public class GameRules
             }
         }
 
-        public String getGameRuleStringValue()
+        public String getString()
         {
             return this.valueString;
         }
 
-        public boolean getGameRuleBooleanValue()
+        public boolean getBoolean()
         {
             return this.valueBoolean;
         }

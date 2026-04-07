@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 public class RegistrySimple<K, V> implements IRegistry<K, V>
 {
-    private static final Logger logger = LogManager.getLogger(RegistrySimple.class);
+    private static final Logger logger = LogManager.getLogger();
     protected final Map<K, V> registryObjects = this.createUnderlyingMap();
 
     protected Map<K, V> createUnderlyingMap()
@@ -24,20 +24,17 @@ public class RegistrySimple<K, V> implements IRegistry<K, V>
         return this.registryObjects.get(name);
     }
 
-    /**
-     * Register an object on this registry.
-     */
-    public void putObject(K p_82595_1_, V p_82595_2_)
+    public void putObject(K key, V value)
     {
-        Validate.notNull(p_82595_1_);
-        Validate.notNull(p_82595_2_);
+        Validate.notNull(key);
+        Validate.notNull(value);
 
-        if (this.registryObjects.containsKey(p_82595_1_))
+        if (this.registryObjects.containsKey(key))
         {
-            logger.debug("Adding duplicate key \'" + p_82595_1_ + "\' to registry");
+            logger.debug("Adding duplicate key \'" + key + "\' to registry");
         }
 
-        this.registryObjects.put(p_82595_1_, p_82595_2_);
+        this.registryObjects.put(key, value);
     }
 
     public Set<K> getKeys()
@@ -45,12 +42,9 @@ public class RegistrySimple<K, V> implements IRegistry<K, V>
         return Collections.<K>unmodifiableSet(this.registryObjects.keySet());
     }
 
-    /**
-     * Does this registry contain an entry for the given key?
-     */
-    public boolean containsKey(K p_148741_1_)
+    public boolean containsKey(K key)
     {
-        return this.registryObjects.containsKey(p_148741_1_);
+        return this.registryObjects.containsKey(key);
     }
 
     public Iterator<V> iterator()

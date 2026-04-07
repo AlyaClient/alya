@@ -1,6 +1,5 @@
 local Submodule = {}
 Submodule.__index = Submodule
-
 function Submodule.new(name, parentModule)
     local instance = setmetatable({}, Submodule)
     instance._name = name
@@ -11,19 +10,15 @@ function Submodule.new(name, parentModule)
     instance._eventHandlers = {}
     return instance
 end
-
 function Submodule:getName()
     return self._name
 end
-
 function Submodule:getParent()
     return self._parent
 end
-
 function Submodule:isEnabled()
     return self._enabled
 end
-
 function Submodule:setEnabled(enabled)
     if self._enabled == enabled then return end
     self._enabled = enabled
@@ -33,15 +28,12 @@ function Submodule:setEnabled(enabled)
         self._onDisableCallback()
     end
 end
-
 function Submodule:onEnable(callback)
     self._onEnableCallback = callback
 end
-
 function Submodule:onDisable(callback)
     self._onDisableCallback = callback
 end
-
 function Submodule:onEvent(eventName, callback)
     alya.events.on(eventName, function(event)
         if self._enabled then
@@ -49,5 +41,4 @@ function Submodule:onEvent(eventName, callback)
         end
     end)
 end
-
 return Submodule

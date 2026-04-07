@@ -13,38 +13,21 @@ import net.minecraft.util.BlockPos;
 
 public class CommandTrigger extends CommandBase
 {
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "trigger";
     }
 
-    /**
-     * Return the required permission level for this command.
-     */
     public int getRequiredPermissionLevel()
     {
         return 0;
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.trigger.usage";
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length < 3)
@@ -78,13 +61,13 @@ public class CommandTrigger extends CommandBase
             {
                 int i = parseInt(args[2]);
 
-                if (!scoreboard.entityHasObjective(entityplayermp.getCommandSenderName(), scoreobjective))
+                if (!scoreboard.entityHasObjective(entityplayermp.getName(), scoreobjective))
                 {
                     throw new CommandException("commands.trigger.invalidObjective", new Object[] {args[0]});
                 }
                 else
                 {
-                    Score score = scoreboard.getValueFromObjective(entityplayermp.getCommandSenderName(), scoreobjective);
+                    Score score = scoreboard.getValueFromObjective(entityplayermp.getName(), scoreobjective);
 
                     if (score.isLocked())
                     {

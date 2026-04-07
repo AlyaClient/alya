@@ -6,7 +6,6 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public final class ModuleManager {
-
     private final ModuleRepository repository;
 
     public ModuleManager() {
@@ -21,7 +20,7 @@ public final class ModuleManager {
         return repository;
     }
 
-    public void putAll(final Module ...modules) {
+    public void putAll(final Module... modules) {
         for(final Module module : modules) {
             register(module);
         }
@@ -61,8 +60,8 @@ public final class ModuleManager {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ModuleManager)) return false;
+        if(this == o) return true;
+        if(!(o instanceof ModuleManager)) return false;
         ModuleManager that = (ModuleManager) o;
         return Objects.equals(repository, that.repository);
     }

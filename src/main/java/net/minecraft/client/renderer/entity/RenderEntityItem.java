@@ -39,7 +39,7 @@ public class RenderEntityItem extends Render<EntityItem>
             int i = this.func_177078_a(itemstack);
             float f = 0.25F;
             float f1 = MathHelper.sin(((float)itemIn.getAge() + p_177077_8_) / 10.0F + itemIn.hoverStart) * 0.1F + 0.1F;
-            float f2 = p_177077_9_.getItemCameraTransforms().func_181688_b(ItemCameraTransforms.TransformType.GROUND).scale.y;
+            float f2 = p_177077_9_.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GROUND).scale.y;
             GlStateManager.translate((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
 
             if (flag || this.renderManager.options != null)
@@ -85,14 +85,6 @@ public class RenderEntityItem extends Render<EntityItem>
         return i;
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     *  
-     * @param entityYaw The yaw rotation of the passed entity
-     */
     public void doRender(EntityItem entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         ItemStack itemstack = entity.getEntityItem();
@@ -128,19 +120,19 @@ public class RenderEntityItem extends Render<EntityItem>
                 }
 
                 GlStateManager.scale(0.5F, 0.5F, 0.5F);
-                ibakedmodel.getItemCameraTransforms().func_181689_a(ItemCameraTransforms.TransformType.GROUND);
+                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
                 this.itemRenderer.renderItem(itemstack, ibakedmodel);
                 GlStateManager.popMatrix();
             }
             else
             {
                 GlStateManager.pushMatrix();
-                ibakedmodel.getItemCameraTransforms().func_181689_a(ItemCameraTransforms.TransformType.GROUND);
+                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
                 this.itemRenderer.renderItem(itemstack, ibakedmodel);
                 GlStateManager.popMatrix();
-                float f3 = ibakedmodel.getItemCameraTransforms().field_181699_o.scale.x;
-                float f4 = ibakedmodel.getItemCameraTransforms().field_181699_o.scale.y;
-                float f5 = ibakedmodel.getItemCameraTransforms().field_181699_o.scale.z;
+                float f3 = ibakedmodel.getItemCameraTransforms().ground.scale.x;
+                float f4 = ibakedmodel.getItemCameraTransforms().ground.scale.y;
+                float f5 = ibakedmodel.getItemCameraTransforms().ground.scale.z;
                 GlStateManager.translate(0.0F * f3, 0.0F * f4, 0.046875F * f5);
             }
         }
@@ -158,9 +150,6 @@ public class RenderEntityItem extends Render<EntityItem>
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(EntityItem entity)
     {
         return TextureMap.locationBlocksTexture;

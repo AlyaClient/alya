@@ -5,23 +5,18 @@ import net.minecraft.util.BlockPos;
 
 public class NextTickListEntry implements Comparable<NextTickListEntry>
 {
-    /** The id number for the next tick entry */
     private static long nextTickEntryID;
     private final Block block;
     public final BlockPos position;
-
-    /** Time this tick is scheduled to occur at */
     public long scheduledTime;
     public int priority;
-
-    /** The id of the tick entry */
     private long tickEntryID;
 
-    public NextTickListEntry(BlockPos p_i45745_1_, Block p_i45745_2_)
+    public NextTickListEntry(BlockPos positionIn, Block blockIn)
     {
         this.tickEntryID = (long)(nextTickEntryID++);
-        this.position = p_i45745_1_;
-        this.block = p_i45745_2_;
+        this.position = positionIn;
+        this.block = blockIn;
     }
 
     public boolean equals(Object p_equals_1_)
@@ -42,18 +37,15 @@ public class NextTickListEntry implements Comparable<NextTickListEntry>
         return this.position.hashCode();
     }
 
-    /**
-     * Sets the scheduled time for this tick entry
-     */
-    public NextTickListEntry setScheduledTime(long p_77176_1_)
+    public NextTickListEntry setScheduledTime(long scheduledTimeIn)
     {
-        this.scheduledTime = p_77176_1_;
+        this.scheduledTime = scheduledTimeIn;
         return this;
     }
 
-    public void setPriority(int p_82753_1_)
+    public void setPriority(int priorityIn)
     {
-        this.priority = p_82753_1_;
+        this.priority = priorityIn;
     }
 
     public int compareTo(NextTickListEntry p_compareTo_1_)

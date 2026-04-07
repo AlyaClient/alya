@@ -2,7 +2,6 @@
  * Copyright 2015-2021 Adrien 'Litarvan' Navratil
  *
  * This file is part of OpenAuth.
-
  * OpenAuth is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -25,7 +24,8 @@ public class MinecraftLoginResponse {
     private final String token_type;
     private final long expires_in;
 
-    public MinecraftLoginResponse(String username, String access_token, String token_type, long expires_in) {
+    public MinecraftLoginResponse(
+            String username, String access_token, String token_type, long expires_in) {
         this.username = username;
         this.access_token = access_token;
         this.token_type = token_type;

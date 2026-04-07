@@ -42,7 +42,7 @@ public abstract class TileEntitySpecialRenderer<T extends TileEntity> implements
         return this.rendererDispatcher.getFontRenderer();
     }
 
-    public boolean func_181055_a()
+    public boolean forceTileEntityRender()
     {
         return false;
     }

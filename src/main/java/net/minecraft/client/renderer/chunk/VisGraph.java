@@ -69,7 +69,7 @@ public class VisGraph
     {
         Set<EnumFacing> set = EnumSet.<EnumFacing>noneOf(EnumFacing.class);
         Queue<Integer> queue = new ArrayDeque(384);
-        queue.add(IntegerCache.func_181756_a(p_178604_1_));
+        queue.add(IntegerCache.getInteger(p_178604_1_));
         this.field_178612_d.set(p_178604_1_, true);
 
         while (!((Queue)queue).isEmpty())
@@ -84,7 +84,7 @@ public class VisGraph
                 if (j >= 0 && !this.field_178612_d.get(j))
                 {
                     this.field_178612_d.set(j, true);
-                    queue.add(IntegerCache.func_181756_a(j));
+                    queue.add(IntegerCache.getInteger(j));
                 }
             }
         }

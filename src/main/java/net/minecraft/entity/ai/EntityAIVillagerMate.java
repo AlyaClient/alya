@@ -21,9 +21,6 @@ public class EntityAIVillagerMate extends EntityAIBase
         this.setMutexBits(3);
     }
 
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
     public boolean shouldExecute()
     {
         if (this.villagerObj.getGrowingAge() != 0)
@@ -42,7 +39,7 @@ public class EntityAIVillagerMate extends EntityAIBase
             {
                 return false;
             }
-            else if (this.checkSufficientDoorsPresentForNewVillager() && this.villagerObj.getIsWillingToTrade(true))
+            else if (this.checkSufficientDoorsPresentForNewVillager() && this.villagerObj.getIsWillingToMate(true))
             {
                 Entity entity = this.worldObj.findNearestEntityWithinAABB(EntityVillager.class, this.villagerObj.getEntityBoundingBox().expand(8.0D, 3.0D, 8.0D), this.villagerObj);
 
@@ -53,7 +50,7 @@ public class EntityAIVillagerMate extends EntityAIBase
                 else
                 {
                     this.mate = (EntityVillager)entity;
-                    return this.mate.getGrowingAge() == 0 && this.mate.getIsWillingToTrade(true);
+                    return this.mate.getGrowingAge() == 0 && this.mate.getIsWillingToMate(true);
                 }
             }
             else
@@ -63,18 +60,12 @@ public class EntityAIVillagerMate extends EntityAIBase
         }
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void startExecuting()
     {
         this.matingTimeout = 300;
         this.villagerObj.setMating(true);
     }
 
-    /**
-     * Resets the task
-     */
     public void resetTask()
     {
         this.villageObj = null;
@@ -82,17 +73,11 @@ public class EntityAIVillagerMate extends EntityAIBase
         this.villagerObj.setMating(false);
     }
 
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
     public boolean continueExecuting()
     {
-        return this.matingTimeout >= 0 && this.checkSufficientDoorsPresentForNewVillager() && this.villagerObj.getGrowingAge() == 0 && this.villagerObj.getIsWillingToTrade(false);
+        return this.matingTimeout >= 0 && this.checkSufficientDoorsPresentForNewVillager() && this.villagerObj.getGrowingAge() == 0 && this.villagerObj.getIsWillingToMate(false);
     }
 
-    /**
-     * Updates the task
-     */
     public void updateTask()
     {
         --this.matingTimeout;
@@ -131,8 +116,8 @@ public class EntityAIVillagerMate extends EntityAIBase
         EntityVillager entityvillager = this.villagerObj.createChild(this.mate);
         this.mate.setGrowingAge(6000);
         this.villagerObj.setGrowingAge(6000);
-        this.mate.setIsWillingToTrade(false);
-        this.villagerObj.setIsWillingToTrade(false);
+        this.mate.setIsWillingToMate(false);
+        this.villagerObj.setIsWillingToMate(false);
         entityvillager.setGrowingAge(-24000);
         entityvillager.setLocationAndAngles(this.villagerObj.posX, this.villagerObj.posY, this.villagerObj.posZ, 0.0F, 0.0F);
         this.worldObj.spawnEntityInWorld(entityvillager);

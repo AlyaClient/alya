@@ -16,20 +16,14 @@ public class FlatGeneratorInfo
     private final Map<String, Map<String, String>> worldFeatures = Maps.<String, Map<String, String>>newHashMap();
     private int biomeToUse;
 
-    /**
-     * Return the biome used on this preset.
-     */
     public int getBiome()
     {
         return this.biomeToUse;
     }
 
-    /**
-     * Set the biome used on this preset.
-     */
-    public void setBiome(int p_82647_1_)
+    public void setBiome(int biome)
     {
-        this.biomeToUse = p_82647_1_;
+        this.biomeToUse = biome;
     }
 
     public Map<String, Map<String, String>> getWorldFeatures()
@@ -235,15 +229,15 @@ public class FlatGeneratorInfo
         }
     }
 
-    public static FlatGeneratorInfo createFlatGeneratorFromString(String p_82651_0_)
+    public static FlatGeneratorInfo createFlatGeneratorFromString(String flatGeneratorSettings)
     {
-        if (p_82651_0_ == null)
+        if (flatGeneratorSettings == null)
         {
             return getDefaultFlatGenerator();
         }
         else
         {
-            String[] astring = p_82651_0_.split(";", -1);
+            String[] astring = flatGeneratorSettings.split(";", -1);
             int i = astring.length == 1 ? 0 : MathHelper.parseIntWithDefault(astring[0], 0);
 
             if (i >= 0 && i <= 3)

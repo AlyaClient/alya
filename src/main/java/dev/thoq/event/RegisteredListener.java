@@ -3,12 +3,11 @@ package dev.thoq.event;
 import java.util.Objects;
 
 public final class RegisteredListener {
-
     private final Class<? extends IEvent> eventClass;
     private final IEventListener<? extends IEvent> listener;
 
-    public RegisteredListener(Class<? extends IEvent> eventClass,
-                              IEventListener<? extends IEvent> listener) {
+    public RegisteredListener(
+            Class<? extends IEvent> eventClass, IEventListener<? extends IEvent> listener) {
         this.eventClass = eventClass;
         this.listener = listener;
     }
@@ -23,11 +22,10 @@ public final class RegisteredListener {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RegisteredListener)) return false;
+        if(this == o) return true;
+        if(!(o instanceof RegisteredListener)) return false;
         RegisteredListener that = (RegisteredListener) o;
-        return Objects.equals(eventClass, that.eventClass) &&
-                Objects.equals(listener, that.listener);
+        return Objects.equals(eventClass, that.eventClass) && Objects.equals(listener, that.listener);
     }
 
     @Override

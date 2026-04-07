@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -62,7 +61,7 @@ public class ShaderLoader
             byte[] abyte = toByteArray(bufferedinputstream);
             ByteBuffer bytebuffer = BufferUtils.createByteBuffer(abyte.length);
             bytebuffer.put(abyte);
-            ((Buffer) bytebuffer).position(0);
+            bytebuffer.position(0);
             int i = OpenGlHelper.glCreateShader(type.getShaderMode());
             OpenGlHelper.glShaderSource(i, bytebuffer);
             OpenGlHelper.glCompileShader(i);

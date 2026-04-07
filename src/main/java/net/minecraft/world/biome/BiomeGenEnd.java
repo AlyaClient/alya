@@ -5,9 +5,9 @@ import net.minecraft.init.Blocks;
 
 public class BiomeGenEnd extends BiomeGenBase
 {
-    public BiomeGenEnd(int p_i1990_1_)
+    public BiomeGenEnd(int id)
     {
-        super(p_i1990_1_);
+        super(id);
         this.spawnableMonsterList.clear();
         this.spawnableCreatureList.clear();
         this.spawnableWaterCreatureList.clear();
@@ -18,9 +18,6 @@ public class BiomeGenEnd extends BiomeGenBase
         this.theBiomeDecorator = new BiomeEndDecorator();
     }
 
-    /**
-     * takes temperature, returns color
-     */
     public int getSkyColorByTemp(float p_76731_1_)
     {
         return 0;

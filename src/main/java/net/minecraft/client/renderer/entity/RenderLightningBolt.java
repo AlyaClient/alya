@@ -15,14 +15,6 @@ public class RenderLightningBolt extends Render<EntityLightningBolt>
         super(renderManagerIn);
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     *  
-     * @param entityYaw The yaw rotation of the passed entity
-     */
     public void doRender(EntityLightningBolt entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         Tessellator tessellator = Tessellator.getInstance();
@@ -83,7 +75,7 @@ public class RenderLightningBolt extends Render<EntityLightningBolt>
                         d3 += (double)(random1.nextInt(31) - 15);
                     }
 
-                    worldrenderer.begin(5, DefaultVertexFormats.field_181706_f);
+                    worldrenderer.begin(5, DefaultVertexFormats.POSITION_COLOR);
                     float f = 0.5F;
                     float f1 = 0.45F;
                     float f2 = 0.45F;
@@ -130,8 +122,8 @@ public class RenderLightningBolt extends Render<EntityLightningBolt>
                             d11 += d7 * 2.0D;
                         }
 
-                        worldrenderer.pos(d10 + d2, y + (double)(i1 * 16), d11 + d3).func_181666_a(0.45F, 0.45F, 0.5F, 0.3F).endVertex();
-                        worldrenderer.pos(d8 + d4, y + (double)((i1 + 1) * 16), d9 + d5).func_181666_a(0.45F, 0.45F, 0.5F, 0.3F).endVertex();
+                        worldrenderer.pos(d10 + d2, y + (double)(i1 * 16), d11 + d3).color(0.45F, 0.45F, 0.5F, 0.3F).endVertex();
+                        worldrenderer.pos(d8 + d4, y + (double)((i1 + 1) * 16), d9 + d5).color(0.45F, 0.45F, 0.5F, 0.3F).endVertex();
                     }
 
                     tessellator.draw();
@@ -144,9 +136,6 @@ public class RenderLightningBolt extends Render<EntityLightningBolt>
         GlStateManager.enableTexture2D();
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(EntityLightningBolt entity)
     {
         return null;

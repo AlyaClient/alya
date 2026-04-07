@@ -9,9 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Submodule {
-
     protected static final Minecraft MC = Minecraft.getMinecraft();
-
     private final String name;
     protected final Module parent;
     private final List<Setting<?>> settings = new ArrayList<>();
@@ -58,6 +56,4 @@ public abstract class Submodule {
         Collections.addAll(settings, theSettings);
         parent.initializeSettings(theSettings);
     }
-
-
 }

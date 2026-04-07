@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 public class UserList<K, V extends UserListEntry<K>>
 {
-    protected static final Logger logger = LogManager.getLogger(UserList.class);
+    protected static final Logger logger = LogManager.getLogger();
     protected final Gson gson;
     private final File saveFile;
     private final Map<String, V> values = Maps.<String, V>newHashMap();
@@ -67,9 +67,6 @@ public class UserList<K, V extends UserListEntry<K>>
         this.lanServer = state;
     }
 
-    /**
-     * Adds an entry to the list
-     */
     public void addEntry(V entry)
     {
         this.values.put(this.getObjectKey(entry.getValue()), entry);
@@ -90,9 +87,9 @@ public class UserList<K, V extends UserListEntry<K>>
         return (V)((UserListEntry)this.values.get(this.getObjectKey(obj)));
     }
 
-    public void removeEntry(K p_152684_1_)
+    public void removeEntry(K entry)
     {
-        this.values.remove(this.getObjectKey(p_152684_1_));
+        this.values.remove(this.getObjectKey(entry));
 
         try
         {
@@ -109,9 +106,6 @@ public class UserList<K, V extends UserListEntry<K>>
         return (String[])this.values.keySet().toArray(new String[this.values.size()]);
     }
 
-    /**
-     * Gets the key value for the given object
-     */
     protected String getObjectKey(K obj)
     {
         return obj.toString();
@@ -122,9 +116,6 @@ public class UserList<K, V extends UserListEntry<K>>
         return this.values.containsKey(this.getObjectKey(entry));
     }
 
-    /**
-     * Removes expired bans from the list. See {@link BanEntry#hasBanExpired}
-     */
     private void removeExpired()
     {
         List<K> list = Lists.<K>newArrayList();

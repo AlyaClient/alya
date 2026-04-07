@@ -3,6 +3,7 @@ package net.minecraft.client.entity;
 import dev.thoq.Alya;
 import dev.thoq.event.events.MotionEvent;
 import dev.thoq.event.events.MoveEntityEvent;
+import dev.thoq.event.events.PlayerMoveEvent;
 import dev.thoq.event.events.SlowDownEvent;
 import dev.thoq.event.events.UpdateEvent;
 import net.minecraft.client.Minecraft;
@@ -48,7 +49,6 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -57,76 +57,24 @@ import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
+import org.jspecify.annotations.NonNull;
 
-@SuppressWarnings({"RedundantCast", "UnusedAssignment"})
 public class EntityPlayerSP extends AbstractClientPlayer {
     public final NetHandlerPlayClient sendQueue;
     private final StatFileWriter statWriter;
-
-    /**
-     * The last X position which was transmitted to the server, used to determine when the X position changes and needs
-     * to be re-trasmitted
-     */
     private double lastReportedPosX;
-
-    /**
-     * The last Y position which was transmitted to the server, used to determine when the Y position changes and needs
-     * to be re-transmitted
-     */
     private double lastReportedPosY;
-
-    /**
-     * The last Z position which was transmitted to the server, used to determine when the Z position changes and needs
-     * to be re-transmitted
-     */
     private double lastReportedPosZ;
-
-    /**
-     * The last yaw value which was transmitted to the server, used to determine when the yaw changes and needs to be
-     * re-transmitted
-     */
     private float lastReportedYaw;
-
-    /**
-     * The last pitch value which was transmitted to the server, used to determine when the pitch changes and needs to
-     * be re-transmitted
-     */
     private float lastReportedPitch;
-
-    /**
-     * the last sneaking state sent to the server
-     */
     private boolean serverSneakState;
-
-    /**
-     * the last sprinting state sent to the server
-     */
-    public boolean serverSprintState;
-
-    public static MotionEvent motionEvent;
-
-    /**
-     * Reset to 0 every time position is sent to the server, used to send periodic updates every 20 ticks even when the
-     * player is not moving.
-     */
+    private boolean serverSprintState;
     private int positionUpdateTicks;
     private boolean hasValidHealth;
     private String clientBrand;
     public MovementInput movementInput;
     protected Minecraft mc;
-
-    /**
-     * Used to tell if the player pressed forward twice. If this is at 0 and it's pressed (And they are allowed to
-     * sprint, aka enough food on the ground etc) it sets this to 7. If it's pressed and it's greater than 0 enable
-     * sprinting.
-     */
     protected int sprintToggleTimer;
-
-    public int airTicks;
-
-    /**
-     * Ticks left before sprinting is disabled.
-     */
     public int sprintingTicksLeft;
     public float renderArmYaw;
     public float renderArmPitch;
@@ -134,25 +82,9 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     public float prevRenderArmPitch;
     private int horseJumpPowerCounter;
     private float horseJumpPower;
-
-    /**
-     * The amount of time an entity has been in a Portal
-     */
     public float timeInPortal;
-
-    /**
-     * The amount of time an entity has been in a Portal the previous tick
-     */
     public float prevTimeInPortal;
-
-    public void setLastReportedPosition(double x, double y, double z, float yaw, float pitch) {
-        this.lastReportedPosX = x;
-        this.lastReportedPosY = y;
-        this.lastReportedPosZ = z;
-        this.lastReportedYaw = yaw;
-        this.lastReportedPitch = pitch;
-        this.positionUpdateTicks = 0;
-    }
+    public static MotionEvent motionEvent;
 
     public EntityPlayerSP(Minecraft mcIn, World worldIn, NetHandlerPlayClient netHandler, StatFileWriter statFile) {
         super(worldIn, netHandler.getGameProfile());
@@ -162,22 +94,13 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.dimension = 0;
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
     public boolean attackEntityFrom(DamageSource source, float amount) {
         return false;
     }
 
-    /**
-     * Heal living entity (param: amount of half-hearts)
-     */
     public void heal(float healAmount) {
     }
 
-    /**
-     * Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
-     */
     public void mountEntity(Entity entityIn) {
         super.mountEntity(entityIn);
 
@@ -186,24 +109,12 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
-    @Override
-    public void moveEntity(double x, double y, double z) {
-        final MoveEntityEvent event = new MoveEntityEvent(x, y, z);
-        Alya.getInstance().getEventBus().dispatch(event);
-        if(!event.isCanceled()) {
-            x = event.getX();
-            y = event.getY();
-            z = event.getZ();
-            super.moveEntity(x, y, z);
-        }
-    }
-
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate() {
         if(this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0D, this.posZ))) {
-            Alya.getInstance().getEventBus().dispatch(new UpdateEvent());
+            final UpdateEvent updateEvent = new UpdateEvent();
+            Alya.getInstance().getEventBus().dispatch(updateEvent);
+
+            if(updateEvent.isCanceled()) return;
 
             super.onUpdate();
 
@@ -216,20 +127,17 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
-    /**
-     * called every tick when the player is on foot. Performs all the things that normally happen during movement.
-     */
     public void onUpdateWalkingPlayer() {
         boolean flag = this.isSprinting();
 
-        if(flag != serverSprintState) {
+        if(flag != this.serverSprintState) {
             if(flag) {
                 this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SPRINTING));
             } else {
                 this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SPRINTING));
             }
 
-            serverSprintState = flag;
+            this.serverSprintState = flag;
         }
 
         boolean flag1 = this.isSneaking();
@@ -247,90 +155,61 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         if(this.isCurrentViewEntity()) {
             motionEvent = new MotionEvent(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround);
             Alya.getInstance().getEventBus().dispatch(motionEvent);
+            double d0 = this.posX - this.lastReportedPosX;
+            double d1 = this.getEntityBoundingBox().minY - this.lastReportedPosY;
+            double d2 = this.posZ - this.lastReportedPosZ;
+            double d3 = (double) (this.rotationYaw - this.lastReportedYaw);
+            double d4 = (double) (this.rotationPitch - this.lastReportedPitch);
+            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
+            boolean flag3 = d3 != 0.0D || d4 != 0.0D;
 
-            if(!motionEvent.isCanceled()) {
-                double posX = motionEvent.getX(), posY = motionEvent.getY(), posZ = motionEvent.getZ();
-                float rotationYaw = motionEvent.getYaw(), rotationPitch = motionEvent.getPitch();
-                boolean onGround = motionEvent.isOnGround();
-
-                if(onGround)
-                    airTicks = 0;
-                else
-                    airTicks++;
-
-                double d0 = posX - this.lastReportedPosX;
-                double d1 = posY - this.lastReportedPosY;
-                double d2 = posZ - this.lastReportedPosZ;
-                double d3 = rotationYaw - this.lastReportedYaw;
-                double d4 = rotationPitch - this.lastReportedPitch;
-                boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
-                boolean flag3 = d3 != 0.0D || d4 != 0.0D;
-
-                if(this.ridingEntity == null) {
-                    if(flag2 && flag3) {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(posX, posY, posZ, rotationYaw, rotationPitch, onGround));
-                    } else if(flag2) {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(posX, posY, posZ, onGround));
-                    } else if(flag3) {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(rotationYaw, rotationPitch, onGround));
-                    } else {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer(onGround));
-                    }
+            if(this.ridingEntity == null) {
+                if(flag2 && flag3) {
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround));
+                } else if(flag2) {
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.onGround));
+                } else if(flag3) {
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
                 } else {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, rotationYaw, rotationPitch, onGround));
-                    flag2 = false;
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer(this.onGround));
                 }
-
-                ++this.positionUpdateTicks;
-
-                if(flag2) {
-                    this.lastReportedPosX = posX;
-                    this.lastReportedPosY = posY;
-                    this.lastReportedPosZ = posZ;
-                    this.positionUpdateTicks = 0;
-                }
-
-                if(flag3) {
-                    this.lastReportedYaw = rotationYaw;
-                    this.lastReportedPitch = rotationPitch;
-                }
+            } else {
+                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, this.rotationYaw, this.rotationPitch, this.onGround));
+                flag2 = false;
             }
+
+            ++this.positionUpdateTicks;
+
+            if(flag2) {
+                this.lastReportedPosX = this.posX;
+                this.lastReportedPosY = this.getEntityBoundingBox().minY;
+                this.lastReportedPosZ = this.posZ;
+                this.positionUpdateTicks = 0;
+            }
+
+            if(flag3) {
+                this.lastReportedYaw = this.rotationYaw;
+                this.lastReportedPitch = this.rotationPitch;
+            }
+            motionEvent.setPost();
+            Alya.getInstance().getEventBus().dispatch(motionEvent);
         }
     }
 
-    /**
-     * Called when player presses the drop item key
-     */
     public EntityItem dropOneItem(boolean dropAll) {
         C07PacketPlayerDigging.Action c07packetplayerdigging$action = dropAll ? C07PacketPlayerDigging.Action.DROP_ALL_ITEMS : C07PacketPlayerDigging.Action.DROP_ITEM;
         this.sendQueue.addToSendQueue(new C07PacketPlayerDigging(c07packetplayerdigging$action, BlockPos.ORIGIN, EnumFacing.DOWN));
         return null;
     }
 
-    /**
-     * Joins the passed in entity item with the world. Args: entityItem
-     */
     protected void joinEntityItemWithWorld(EntityItem itemIn) {
     }
 
-    /**
-     * Sends a chat message from the player. Args: chatMessage
-     *
-     * @param message used on EntityPlayerSP.sendChatMessage - as inbound message
-     */
     public void sendChatMessage(String message) {
-        if(message.startsWith(".")) {
-            if(!Alya.getInstance().getCommandManager().executeCommand(message)) {
-                this.addChatMessage(new ChatComponentText("§cUnknown command. Type .help for a list of commands."));
-            }
-        } else {
-            this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
-        }
+        if (Alya.getInstance().getCommandManager().executeCommand(message)) return;
+        this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
     }
 
-    /**
-     * Swings the item the player is holding.
-     */
     public void swingItem() {
         super.swingItem();
         this.sendQueue.addToSendQueue(new C0APacketAnimation());
@@ -340,19 +219,12 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.sendQueue.addToSendQueue(new C16PacketClientStatus(C16PacketClientStatus.EnumState.PERFORM_RESPAWN));
     }
 
-    /**
-     * Deals damage to the entity. If its a EntityPlayer then will take damage from the armor first and then health
-     * second with the reduced value. Args: damageAmount
-     */
     protected void damageEntity(DamageSource damageSrc, float damageAmount) {
         if(!this.isEntityInvulnerable(damageSrc)) {
             this.setHealth(this.getHealth() - damageAmount);
         }
     }
 
-    /**
-     * set current crafting inventory back to the 2x2 square
-     */
     public void closeScreen() {
         this.sendQueue.addToSendQueue(new C0DPacketCloseWindow(this.openContainer.windowId));
         this.closeScreenAndDropStack();
@@ -364,9 +236,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.mc.displayGuiScreen((GuiScreen) null);
     }
 
-    /**
-     * Updates health locally.
-     */
     public void setPlayerSPHealth(float health) {
         if(this.hasValidHealth) {
             float f = this.getHealth() - health;
@@ -390,9 +259,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
-    /**
-     * Adds a value to a statistic field.
-     */
     public void addStat(StatBase stat, int amount) {
         if(stat != null) {
             if(stat.isIndependent) {
@@ -401,16 +267,10 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
-    /**
-     * Sends the player's abilities to the server (if there is one).
-     */
     public void sendPlayerAbilities() {
         this.sendQueue.addToSendQueue(new C13PacketPlayerAbilities(this.capabilities));
     }
 
-    /**
-     * returns true if this is an EntityPlayerSP, or the logged in player.
-     */
     public boolean isUser() {
         return true;
     }
@@ -494,53 +354,29 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
-    /**
-     * Returns true if the block at the given BlockPos and the block above it are NOT full cubes.
-     */
     private boolean isOpenBlockSpace(BlockPos pos) {
         return !this.worldObj.getBlockState(pos).getBlock().isNormalCube() && !this.worldObj.getBlockState(pos.up()).getBlock().isNormalCube();
     }
 
-    /**
-     * Set sprinting switch for Entity.
-     */
     public void setSprinting(boolean sprinting) {
         super.setSprinting(sprinting);
         this.sprintingTicksLeft = sprinting ? 600 : 0;
     }
 
-    /**
-     * Sets the current XP, total XP, and level number.
-     */
     public void setXPStats(float currentXP, int maxXP, int level) {
         this.experience = currentXP;
         this.experienceTotal = maxXP;
         this.experienceLevel = level;
     }
 
-    /**
-     * Send a chat message to the CommandSender
-     *
-     * @param component The ChatComponent to send
-     */
     public void addChatMessage(IChatComponent component) {
         this.mc.ingameGUI.getChatGUI().printChatMessage(component);
     }
 
-    /**
-     * Returns {@code true} if the CommandSender is allowed to execute the command, {@code false} if not
-     *
-     * @param permLevel   The permission level required to execute the command
-     * @param commandName The name of the command
-     */
     public boolean canCommandSenderUseCommand(int permLevel, String commandName) {
         return permLevel <= 0;
     }
 
-    /**
-     * Get the position in the world. <b>{@code null} is not allowed!</b> If you are not an entity in the world, return
-     * the coordinates 0, 0, 0
-     */
     public BlockPos getPosition() {
         return new BlockPos(this.posX + 0.5D, this.posY + 0.5D, this.posZ + 0.5D);
     }
@@ -549,9 +385,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.worldObj.playSound(this.posX, this.posY, this.posZ, name, volume, pitch, false);
     }
 
-    /**
-     * Returns whether the entity is in a server world
-     */
     public boolean isServerWorld() {
         return true;
     }
@@ -572,9 +405,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.mc.displayGuiScreen(new GuiCommandBlock(cmdBlockLogic));
     }
 
-    /**
-     * Displays the GUI for interacting with a book.
-     */
     public void displayGUIBook(ItemStack bookStack) {
         Item item = bookStack.getItem();
 
@@ -583,9 +413,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
-    /**
-     * Displays the GUI for interacting with a chest inventory. Args: chestInventory
-     */
     public void displayGUIChest(IInventory chestInventory) {
         String s = chestInventory instanceof IInteractionObject ? ((IInteractionObject) chestInventory).getGuiID() : "minecraft:container";
 
@@ -626,9 +453,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.mc.displayGuiScreen(new GuiMerchant(this.inventory, villager, this.worldObj));
     }
 
-    /**
-     * Called when the player performs a critical hit on the Entity. Args: entity that was hit critically
-     */
     public void onCriticalHit(Entity entityHit) {
         this.mc.effectRenderer.emitParticleAtEntity(entityHit, EnumParticleTypes.CRIT);
     }
@@ -637,11 +461,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.mc.effectRenderer.emitParticleAtEntity(entityHit, EnumParticleTypes.CRIT_MAGIC);
     }
 
-    /**
-     * Returns if this entity is sneaking.
-     */
     public boolean isSneaking() {
-        boolean flag = this.movementInput != null && this.movementInput.sneak;
+        boolean flag = this.movementInput != null ? this.movementInput.sneak : false;
         return flag && !this.sleeping;
     }
 
@@ -659,18 +480,26 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
+    @Override
+    public void moveEntity(double x, double y, double z) {
+        final PlayerMoveEvent playerMoveEvent = new PlayerMoveEvent();
+        Alya.getInstance().getEventBus().dispatch(playerMoveEvent);
+        if(playerMoveEvent.isCanceled()) return;
+        final MoveEntityEvent event = new MoveEntityEvent(x, y, z);
+        Alya.getInstance().getEventBus().dispatch(event);
+        if(!event.isCanceled()) {
+            x = event.getX();
+            y = event.getY();
+            z = event.getZ();
+            super.moveEntity(x, y, z);
+        }
+    }
+
     protected boolean isCurrentViewEntity() {
         return this.mc.getRenderViewEntity() == this;
     }
 
-    /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
-     */
     public void onLivingUpdate() {
-        final SlowDownEvent slowDownEvent = new SlowDownEvent();
-        Alya.getInstance().getEventBus().dispatch(slowDownEvent);
-
         if(this.sprintingTicksLeft > 0) {
             --this.sprintingTicksLeft;
 
@@ -728,6 +557,9 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.movementInput.updatePlayerMoveState();
 
         if(this.isUsingItem() && !this.isRiding()) {
+            final SlowDownEvent slowDownEvent = getSlowDownEvent();
+            Alya.getInstance().getEventBus().dispatch(slowDownEvent);
+
             if(!slowDownEvent.isCanceled()) {
                 this.movementInput.moveStrafe *= 0.2F;
                 this.movementInput.moveForward *= 0.2F;
@@ -749,8 +581,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
             }
         }
 
-        //todo: check noslow
-        if(!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && (!this.isUsingItem() /* todo: || here */) && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
+        if(!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
             this.setSprinting(true);
         }
 
@@ -819,5 +650,23 @@ public class EntityPlayerSP extends AbstractClientPlayer {
             this.capabilities.isFlying = false;
             this.sendPlayerAbilities();
         }
+    }
+
+    private @NonNull SlowDownEvent getSlowDownEvent() {
+        final ItemStack activeStack = this.getItemInUse();
+        final String slowReason;
+        if(activeStack != null) {
+            switch(activeStack.getItemUseAction()) {
+                case EAT:   slowReason = "eat";   break;
+                case DRINK: slowReason = "drink"; break;
+                case BLOCK: slowReason = "block"; break;
+                case BOW:   slowReason = "bow";   break;
+                default:    slowReason = "unknown"; break;
+            }
+        } else {
+            slowReason = "unknown";
+        }
+        final SlowDownEvent slowDownEvent = new SlowDownEvent(slowReason);
+        return slowDownEvent;
     }
 }

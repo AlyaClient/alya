@@ -15,16 +15,10 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 public class TileEntityBanner extends TileEntity
 {
     private int baseColor;
-
-    /** A list of all the banner patterns. */
     private NBTTagList patterns;
     private boolean field_175119_g;
     private List<TileEntityBanner.EnumBannerPattern> patternList;
     private List<EnumDyeColor> colorList;
-
-    /**
-     * This is a String representation of this banners pattern and color lists, used for texture caching.
-     */
     private String patternResourceLocation;
 
     public void setItemValues(ItemStack stack)
@@ -63,16 +57,16 @@ public class TileEntityBanner extends TileEntity
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        func_181020_a(compound, this.baseColor, this.patterns);
+        setBaseColorAndPatterns(compound, this.baseColor, this.patterns);
     }
 
-    public static void func_181020_a(NBTTagCompound p_181020_0_, int p_181020_1_, NBTTagList p_181020_2_)
+    public static void setBaseColorAndPatterns(NBTTagCompound compound, int baseColorIn, NBTTagList patternsIn)
     {
-        p_181020_0_.setInteger("Base", p_181020_1_);
+        compound.setInteger("Base", baseColorIn);
 
-        if (p_181020_2_ != null)
+        if (patternsIn != null)
         {
-            p_181020_0_.setTag("Patterns", p_181020_2_);
+            compound.setTag("Patterns", patternsIn);
         }
     }
 
@@ -87,10 +81,6 @@ public class TileEntityBanner extends TileEntity
         this.field_175119_g = true;
     }
 
-    /**
-     * Allows for a specialized description packet to be created. This is often used to sync tile entity data from the
-     * server to the client easily. For example this is used by signs to synchronise the text to be displayed.
-     */
     public Packet getDescriptionPacket()
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -109,11 +99,6 @@ public class TileEntityBanner extends TileEntity
         return nbttagcompound != null && nbttagcompound.hasKey("Base") ? nbttagcompound.getInteger("Base") : stack.getMetadata();
     }
 
-    /**
-     * Retrieves the amount of patterns stored on an ItemStack. If the tag does not exist this value will be 0.
-     *  
-     * @param stack The ItemStack which contains the NBTTagCompound data for banner patterns.
-     */
     public static int getPatterns(ItemStack stack)
     {
         NBTTagCompound nbttagcompound = stack.getSubCompound("BlockEntityTag", false);
@@ -126,7 +111,7 @@ public class TileEntityBanner extends TileEntity
         return this.patternList;
     }
 
-    public NBTTagList func_181021_d()
+    public NBTTagList getPatterns()
     {
         return this.patterns;
     }
@@ -137,16 +122,12 @@ public class TileEntityBanner extends TileEntity
         return this.colorList;
     }
 
-    public String func_175116_e()
+    public String getPatternResourceLocation()
     {
         this.initializeBannerData();
         return this.patternResourceLocation;
     }
 
-    /**
-     * Establishes all of the basic properties for the banner. This will also apply the data from the tile entities nbt
-     * tag compounds.
-     */
     private void initializeBannerData()
     {
         if (this.patternList == null || this.colorList == null || this.patternResourceLocation == null)
@@ -183,11 +164,6 @@ public class TileEntityBanner extends TileEntity
         }
     }
 
-    /**
-     * Removes all the banner related data from a provided instance of ItemStack.
-     *  
-     * @param stack The instance of an ItemStack which will have the relevant nbt tags removed.
-     */
     public static void removeBannerData(ItemStack stack)
     {
         NBTTagCompound nbttagcompound = stack.getSubCompound("BlockEntityTag", false);

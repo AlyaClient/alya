@@ -1,13 +1,13 @@
 package dev.thoq.module;
 
 public enum Category {
-
     COMBAT("Combat"),
     MOVEMENT("Movement"),
-    VISUAL("Visual"),
     PLAYER("Player"),
-    OTHER("Other");
-
+    EXPLOIT("Exploit"),
+    OTHER("Other"),
+    VISUAL("Visual"),
+    SCRIPTS("Scripts");
     private final String displayName;
 
     Category(final String displayName) {
@@ -17,5 +17,4 @@ public enum Category {
     public final String getDisplayName() {
         return displayName;
     }
-
 }

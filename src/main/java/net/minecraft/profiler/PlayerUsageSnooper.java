@@ -15,28 +15,22 @@ import net.minecraft.util.HttpUtil;
 
 public class PlayerUsageSnooper
 {
-    private final Map<String, Object> field_152773_a = Maps.<String, Object>newHashMap();
-    private final Map<String, Object> field_152774_b = Maps.<String, Object>newHashMap();
+    private final Map<String, Object> snooperStats = Maps.<String, Object>newHashMap();
+    private final Map<String, Object> clientStats = Maps.<String, Object>newHashMap();
     private final String uniqueID = UUID.randomUUID().toString();
-
-    /** URL of the server to send the report to */
     private final URL serverUrl;
     private final IPlayerUsage playerStatsCollector;
-
-    /** set to fire the snooperThread every 15 mins */
     private final Timer threadTrigger = new Timer("Snooper Timer", true);
     private final Object syncLock = new Object();
     private final long minecraftStartTimeMilis;
     private boolean isRunning;
-
-    /** incremented on every getSelfCounterFor */
     private int selfCounter;
 
-    public PlayerUsageSnooper(String p_i1563_1_, IPlayerUsage playerStatCollector, long startTime)
+    public PlayerUsageSnooper(String side, IPlayerUsage playerStatCollector, long startTime)
     {
         try
         {
-            this.serverUrl = new URL("http://snoop.minecraft.net/" + p_i1563_1_ + "?version=" + 2);
+            this.serverUrl = new URL("http://snoop.minecraft.net/" + side + "?version=" + 2);
         }
         catch (MalformedURLException var6)
         {
@@ -47,25 +41,41 @@ public class PlayerUsageSnooper
         this.minecraftStartTimeMilis = startTime;
     }
 
-    /**
-     * Note issuing start multiple times is not an error.
-     */
     public void startSnooper()
     {
         if (!this.isRunning)
         {
             this.isRunning = true;
-            this.func_152766_h();
+            this.addOSData();
             this.threadTrigger.schedule(new TimerTask()
             {
                 public void run()
                 {
+                    if (PlayerUsageSnooper.this.playerStatsCollector.isSnooperEnabled())
+                    {
+                        Map<String, Object> map;
+
+                        synchronized (PlayerUsageSnooper.this.syncLock)
+                        {
+                            map = Maps.<String, Object>newHashMap(PlayerUsageSnooper.this.clientStats);
+
+                            if (PlayerUsageSnooper.this.selfCounter == 0)
+                            {
+                                map.putAll(PlayerUsageSnooper.this.snooperStats);
+                            }
+
+                            map.put("snooper_count", Integer.valueOf(PlayerUsageSnooper.this.selfCounter++));
+                            map.put("snooper_token", PlayerUsageSnooper.this.uniqueID);
+                        }
+
+                        HttpUtil.postMap(PlayerUsageSnooper.this.serverUrl, map, true);
+                    }
                 }
             }, 0L, 900000L);
         }
     }
 
-    private void func_152766_h()
+    private void addOSData()
     {
         this.addJvmArgsToSnooper();
         this.addClientStat("snooper_token", this.uniqueID);
@@ -104,19 +114,19 @@ public class PlayerUsageSnooper
         this.playerStatsCollector.addServerStatsToSnooper(this);
     }
 
-    public void addClientStat(String p_152768_1_, Object p_152768_2_)
+    public void addClientStat(String statName, Object statValue)
     {
         synchronized (this.syncLock)
         {
-            this.field_152774_b.put(p_152768_1_, p_152768_2_);
+            this.clientStats.put(statName, statValue);
         }
     }
 
-    public void addStatToSnooper(String p_152767_1_, Object p_152767_2_)
+    public void addStatToSnooper(String statName, Object statValue)
     {
         synchronized (this.syncLock)
         {
-            this.field_152773_a.put(p_152767_1_, p_152767_2_);
+            this.snooperStats.put(statName, statValue);
         }
     }
 
@@ -128,12 +138,12 @@ public class PlayerUsageSnooper
         {
             this.addMemoryStatsToSnooper();
 
-            for (Entry<String, Object> entry : this.field_152773_a.entrySet())
+            for (Entry<String, Object> entry : this.snooperStats.entrySet())
             {
                 map.put(entry.getKey(), entry.getValue().toString());
             }
 
-            for (Entry<String, Object> entry1 : this.field_152774_b.entrySet())
+            for (Entry<String, Object> entry1 : this.clientStats.entrySet())
             {
                 map.put(entry1.getKey(), entry1.getValue().toString());
             }
@@ -157,9 +167,6 @@ public class PlayerUsageSnooper
         return this.uniqueID;
     }
 
-    /**
-     * Returns the saved value of System#currentTimeMillis when the game started
-     */
     public long getMinecraftStartTimeMillis()
     {
         return this.minecraftStartTimeMilis;

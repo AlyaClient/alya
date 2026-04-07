@@ -16,19 +16,11 @@ public class BlockObsidian extends Block
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
-    /**
-     * Get the Item that this Block should drop when harvested.
-     *  
-     * @param fortune the level of the Fortune enchantment on the player's tool
-     */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Item.getItemFromBlock(Blocks.obsidian);
     }
 
-    /**
-     * Get the MapColor for this Block and the given BlockState
-     */
     public MapColor getMapColor(IBlockState state)
     {
         return MapColor.blackColor;

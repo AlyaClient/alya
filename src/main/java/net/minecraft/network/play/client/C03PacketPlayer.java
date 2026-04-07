@@ -25,25 +25,16 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
         this.onGround = isOnGround;
     }
 
-    /**
-     * Passes this Packet on to the NetHandler for processing.
-     */
     public void processPacket(INetHandlerPlayServer handler)
     {
         handler.processPlayer(this);
     }
 
-    /**
-     * Reads the raw packet data from the data stream.
-     */
     public void readPacketData(PacketBuffer buf) throws IOException
     {
         this.onGround = buf.readUnsignedByte() != 0;
     }
 
-    /**
-     * Writes the raw packet data to the data stream.
-     */
     public void writePacketData(PacketBuffer buf) throws IOException
     {
         buf.writeByte(this.onGround ? 1 : 0);
@@ -94,22 +85,6 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
         this.moving = isMoving;
     }
 
-    public void setOnGround(boolean onGround) {
-        this.onGround = onGround;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public void setZ(double z) {
-        this.z = z;
-    }
-
     public static class C04PacketPlayerPosition extends C03PacketPlayer
     {
         public C04PacketPlayerPosition()
@@ -125,7 +100,6 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
             this.onGround = isOnGround;
             this.moving = true;
         }
-        
 
         public void readPacketData(PacketBuffer buf) throws IOException
         {

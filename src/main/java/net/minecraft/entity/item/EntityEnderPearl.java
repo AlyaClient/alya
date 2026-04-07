@@ -15,9 +15,9 @@ public class EntityEnderPearl extends EntityThrowable
 {
     private EntityLivingBase field_181555_c;
 
-    public EntityEnderPearl(World p_i46455_1_)
+    public EntityEnderPearl(World worldIn)
     {
-        super(p_i46455_1_);
+        super(worldIn);
     }
 
     public EntityEnderPearl(World worldIn, EntityLivingBase p_i1783_2_)
@@ -26,14 +26,11 @@ public class EntityEnderPearl extends EntityThrowable
         this.field_181555_c = p_i1783_2_;
     }
 
-    public EntityEnderPearl(World worldIn, double p_i1784_2_, double p_i1784_4_, double p_i1784_6_)
+    public EntityEnderPearl(World worldIn, double x, double y, double z)
     {
-        super(worldIn, p_i1784_2_, p_i1784_4_, p_i1784_6_);
+        super(worldIn, x, y, z);
     }
 
-    /**
-     * Called when this EntityThrowable hits a block or entity.
-     */
     protected void onImpact(MovingObjectPosition p_70184_1_)
     {
         EntityLivingBase entitylivingbase = this.getThrower();
@@ -61,7 +58,7 @@ public class EntityEnderPearl extends EntityThrowable
 
                 if (entityplayermp.playerNetServerHandler.getNetworkManager().isChannelOpen() && entityplayermp.worldObj == this.worldObj && !entityplayermp.isPlayerSleeping())
                 {
-                    if (this.rand.nextFloat() < 0.05F && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobSpawning"))
+                    if (this.rand.nextFloat() < 0.05F && this.worldObj.getGameRules().getBoolean("doMobSpawning"))
                     {
                         EntityEndermite entityendermite = new EntityEndermite(this.worldObj);
                         entityendermite.setSpawnedByPlayer(true);
@@ -89,9 +86,6 @@ public class EntityEnderPearl extends EntityThrowable
         }
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate()
     {
         EntityLivingBase entitylivingbase = this.getThrower();

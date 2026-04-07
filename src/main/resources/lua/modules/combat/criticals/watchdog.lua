@@ -4,11 +4,9 @@ local function createWatchdogMode(moduleTable, mode)
         if not mode.is("Watchdog") then return end
         if not event.isPre() then return end
         if not alya.mc.isOnGround() then return end
-
         for _, offset in ipairs({ 0.06, 0.01 }) do
             alya.combat.sendPositionPacket(offset + math.random() * 0.001, false)
         end
     end)
 end
-
 return createWatchdogMode

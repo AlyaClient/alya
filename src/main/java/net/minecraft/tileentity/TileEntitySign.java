@@ -22,11 +22,6 @@ import net.minecraft.world.World;
 public class TileEntitySign extends TileEntity
 {
     public final IChatComponent[] signText = new IChatComponent[] {new ChatComponentText(""), new ChatComponentText(""), new ChatComponentText(""), new ChatComponentText("")};
-
-    /**
-     * The index of the line currently being edited. Only used on client side, but defined on both. Note this is only
-     * really used when the > < are going to be visible.
-     */
     public int lineBeingEdited = -1;
     private boolean isEditable = true;
     private EntityPlayer player;
@@ -51,13 +46,13 @@ public class TileEntitySign extends TileEntity
         super.readFromNBT(compound);
         ICommandSender icommandsender = new ICommandSender()
         {
-            public String getCommandSenderName()
+            public String getName()
             {
                 return "Sign";
             }
             public IChatComponent getDisplayName()
             {
-                return new ChatComponentText(this.getCommandSenderName());
+                return new ChatComponentText(this.getName());
             }
             public void addChatMessage(IChatComponent component)
             {
@@ -117,10 +112,6 @@ public class TileEntitySign extends TileEntity
         this.stats.readStatsFromNBT(compound);
     }
 
-    /**
-     * Allows for a specialized description packet to be created. This is often used to sync tile entity data from the
-     * server to the client easily. For example this is used by signs to synchronise the text to be displayed.
-     */
     public Packet getDescriptionPacket()
     {
         IChatComponent[] aichatcomponent = new IChatComponent[4];
@@ -138,9 +129,6 @@ public class TileEntitySign extends TileEntity
         return this.isEditable;
     }
 
-    /**
-     * Sets the sign's isEditable flag to the specified parameter.
-     */
     public void setEditable(boolean isEditableIn)
     {
         this.isEditable = isEditableIn;
@@ -165,9 +153,9 @@ public class TileEntitySign extends TileEntity
     {
         ICommandSender icommandsender = new ICommandSender()
         {
-            public String getCommandSenderName()
+            public String getName()
             {
-                return playerIn.getCommandSenderName();
+                return playerIn.getName();
             }
             public IChatComponent getDisplayName()
             {
@@ -202,7 +190,7 @@ public class TileEntitySign extends TileEntity
             }
             public void setCommandStat(CommandResultStats.Type type, int amount)
             {
-                TileEntitySign.this.stats.func_179672_a(this, type, amount);
+                TileEntitySign.this.stats.setCommandStatScore(this, type, amount);
             }
         };
 

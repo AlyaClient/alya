@@ -34,30 +34,25 @@ import org.apache.logging.log4j.Logger;
 public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
 {
     private static final AtomicInteger AUTHENTICATOR_THREAD_ID = new AtomicInteger(0);
-    private static final Logger logger = LogManager.getLogger(NetHandlerLoginServer.class);
+    private static final Logger logger = LogManager.getLogger();
     private static final Random RANDOM = new Random();
     private final byte[] verifyToken = new byte[4];
     private final MinecraftServer server;
     public final NetworkManager networkManager;
     private NetHandlerLoginServer.LoginState currentLoginState = NetHandlerLoginServer.LoginState.HELLO;
-
-    /** How long has player been trying to login into the server. */
     private int connectionTimer;
     private GameProfile loginGameProfile;
     private String serverId = "";
     private SecretKey secretKey;
-    private EntityPlayerMP field_181025_l;
+    private EntityPlayerMP player;
 
-    public NetHandlerLoginServer(MinecraftServer p_i45298_1_, NetworkManager p_i45298_2_)
+    public NetHandlerLoginServer(MinecraftServer serverIn, NetworkManager networkManagerIn)
     {
-        this.server = p_i45298_1_;
-        this.networkManager = p_i45298_2_;
+        this.server = serverIn;
+        this.networkManager = networkManagerIn;
         RANDOM.nextBytes(this.verifyToken);
     }
 
-    /**
-     * Like the old updateEntity(), except more generic.
-     */
     public void update()
     {
         if (this.currentLoginState == NetHandlerLoginServer.LoginState.READY_TO_ACCEPT)
@@ -71,8 +66,8 @@ public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
             if (entityplayermp == null)
             {
                 this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
-                this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.field_181025_l);
-                this.field_181025_l = null;
+                this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.player);
+                this.player = null;
             }
         }
 
@@ -131,7 +126,7 @@ public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
             if (entityplayermp != null)
             {
                 this.currentLoginState = NetHandlerLoginServer.LoginState.DELAY_ACCEPT;
-                this.field_181025_l = this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile);
+                this.player = this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile);
             }
             else
             {
@@ -140,9 +135,6 @@ public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
         }
     }
 
-    /**
-     * Invoked when disconnecting, the parameter is a ChatComponent describing the reason for termination
-     */
     public void onDisconnect(IChatComponent reason)
     {
         logger.info(this.getConnectionInfo() + " lost connection: " + reason.getUnformattedText());

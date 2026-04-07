@@ -7,7 +7,12 @@ import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.BooleanSetting;
 import dev.thoq.util.font.AlyaFontRenderer;
+import dev.thoq.util.render.RenderUtility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,10 +21,16 @@ import java.util.List;
 
 public final class HUDModule extends Module {
 
-    private final BooleanSetting showFPS = new BooleanSetting("Show FPS", "Display FPS counter", true);
-    private final BooleanSetting showBPS = new BooleanSetting("Show BPS", "Display blocks per second", false);
-    private final BooleanSetting showTime = new BooleanSetting("Show Time", "Display current time", false);
-    private final BooleanSetting smoothChat = new BooleanSetting("Smooth Chat", "Animate messages in chat to smoothly enter", true);
+    private final BooleanSetting showFPS =
+            new BooleanSetting("Show FPS", "Display FPS counter", true);
+    private final BooleanSetting showBPS =
+            new BooleanSetting("Show BPS", "Display blocks per second", false);
+    private final BooleanSetting showTime =
+            new BooleanSetting("Show Time", "Display current time", false);
+    private final BooleanSetting smoothChat =
+            new BooleanSetting("Smooth Chat", "Animate messages in chat to smoothly enter", true);
+    private final BooleanSetting showMenuImage =
+            new BooleanSetting("Femboy", "Display the main menu image in the bottom right", false);
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private double lastX, lastY, lastZ;
     private double blocksPerSecond = 0;
@@ -27,7 +38,7 @@ public final class HUDModule extends Module {
 
     public HUDModule() {
         super("HUD", "Displays client information on screen", Category.VISUAL);
-        initializeSettings(showFPS, showBPS, showTime, smoothChat);
+        initializeSettings(showFPS, showBPS, showTime, smoothChat, showMenuImage);
     }
 
     @Override
@@ -45,42 +56,59 @@ public final class HUDModule extends Module {
         final AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         final int purpleColor = 0xFF8B5CF6;
         final int whiteColor = 0xFFFFFFFF;
-
         float x = 4;
         final float y = 4;
-        fontRenderer.drawStringWithShadow("A", x, y, purpleColor);
-        x += fontRenderer.getStringWidth("A");
-        fontRenderer.drawStringWithShadow("lya", x, y, whiteColor);
-
+        final String name = Alya.getInstance().getClientName();
+        final String firstChar = name.substring(0, 1);
+        final String rest = name.substring(1);
+        fontRenderer.drawStringWithShadow(firstChar, x, y, purpleColor);
+        x += fontRenderer.getStringWidth(firstChar);
+        fontRenderer.drawStringWithShadow(rest, x, y, whiteColor);
         final List<String> infoLines = new ArrayList<>();
-
-        if(showFPS.isEnabled()) {
-            infoLines.add("FPS: " + Minecraft.getDebugFPS());
+        if(showTime.isEnabled()) {
+            infoLines.add(timeFormat.format(new Date()));
         }
         if(showBPS.isEnabled()) {
             updateBPS();
             infoLines.add("BPS: " + String.format("%.1f", blocksPerSecond));
         }
-        if(showTime.isEnabled()) {
-            infoLines.add(timeFormat.format(new Date()));
+        if(showFPS.isEnabled()) {
+            infoLines.add("FPS: " + Minecraft.getDebugFPS());
         }
-
         if(!infoLines.isEmpty()) {
-            infoLines.sort((a, b) -> Float.compare(fontRenderer.getStringWidth(a), fontRenderer.getStringWidth(b)));
-
             final int screenHeight = event.scaledResolution().getScaledHeight();
             final float lineHeight = fontRenderer.getFontHeight() + 2;
             float infoY = screenHeight - 4 - lineHeight;
-
             for(int i = infoLines.size() - 1; i >= 0; i--) {
                 fontRenderer.drawStringWithShadow(infoLines.get(i), 4, infoY, whiteColor);
                 infoY -= lineHeight;
             }
         }
+        if(showMenuImage.isEnabled()) {
+            final ResourceLocation image = GuiMainMenu.getRandomImage();
+            if(image != null) {
+                final int screenWidth = event.scaledResolution().getScaledWidth();
+                final int screenHeight = event.scaledResolution().getScaledHeight();
+                final int maxSize = 100;
+                MC.getTextureManager().bindTexture(image);
+                final int texW = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+                final int texH = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+                if(texW > 0 && texH > 0) {
+                    final float scale = Math.min((float) maxSize / texW, (float) maxSize / texH);
+                    final int drawW = (int) (texW * scale);
+                    final int drawH = (int) (texH * scale);
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    RenderUtility.drawImage(image, screenWidth - drawW, screenHeight - drawH, drawW, drawH);
+                }
+            }
+        }
     }
 
     private void updateBPS() {
-        if(MC.thePlayer == null) { blocksPerSecond = 0; return; }
+        if (MC.thePlayer == null) {
+            blocksPerSecond = 0;
+            return;
+        }
         final long currentTime = System.currentTimeMillis();
         if(currentTime - lastBPSUpdate >= 50) {
             final double deltaX = MC.thePlayer.posX - lastX;
@@ -96,7 +124,10 @@ public final class HUDModule extends Module {
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean getSmoothChatEnabled() {
         return smoothChat.isEnabled();
     }
+
+
 }

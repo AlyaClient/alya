@@ -31,17 +31,16 @@ public final class InMemoryCommandRepository implements CommandRepository {
     @Override
     public Optional<Command> findByAlias(final String alias) {
         return commands.stream()
-                .filter(command -> Arrays.stream(command.getAliases())
-                        .anyMatch(aliasToFind -> aliasToFind.equalsIgnoreCase(alias)))
+                .filter(
+                        command ->
+                                Arrays.stream(command.getAliases())
+                                        .anyMatch(aliasToFind -> aliasToFind.equalsIgnoreCase(alias)))
                 .findFirst();
     }
 
     @Override
     public <T extends Command> Optional<T> findByClass(final Class<T> clazz) {
-        return commands.stream()
-                .filter(clazz::isInstance)
-                .map(clazz::cast)
-                .findFirst();
+        return commands.stream().filter(clazz::isInstance).map(clazz::cast).findFirst();
     }
 
     @Override
@@ -51,8 +50,7 @@ public final class InMemoryCommandRepository implements CommandRepository {
 
     @Override
     public boolean exists(final String name) {
-        return commands.stream()
-                .anyMatch(command -> command.getName().equalsIgnoreCase(name));
+        return commands.stream().anyMatch(command -> command.getName().equalsIgnoreCase(name));
     }
 
     @Override

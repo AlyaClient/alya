@@ -2,7 +2,6 @@
  * Copyright 2015-2021 Adrien 'Litarvan' Navratil
  *
  * This file is part of OpenAuth.
-
  * OpenAuth is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,17 +19,6 @@ package dev.thoq.util.openauth;
 
 import dev.thoq.util.openauth.model.response.MinecraftProfile;
 
-/**
- * Microsoft authentication result
- *
- * <p>
- * This class contains the result of a successful Microsoft authentication: a player profile and its tokens (both
- * access and refresh token).
- * </p>
- *
- * @author Litarvan
- * @version 1.1.0
- */
 @SuppressWarnings("unused")
 public class MicrosoftAuthResult {
     private final MinecraftProfile profile;
@@ -58,8 +46,8 @@ public class MicrosoftAuthResult {
     }
 
     /**
-     * @return The Microsoft refresh token that can be used to log the user back silently using
-     * {@link MicrosoftAuthenticator#loginWithRefreshToken(String)}
+     * @return The Microsoft refresh token that can be used to log the user back silently using {@link
+     * MicrosoftAuthenticator#loginWithRefreshToken(String)}
      */
     public String getRefreshToken() {
         return refreshToken;

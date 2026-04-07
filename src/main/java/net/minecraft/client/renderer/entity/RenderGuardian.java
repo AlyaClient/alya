@@ -63,14 +63,6 @@ public class RenderGuardian extends RenderLiving<EntityGuardian>
         return new Vec3(d0, d1, d2);
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     *  
-     * @param entityYaw The yaw rotation of the passed entity
-     */
     public void doRender(EntityGuardian entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         if (this.field_177115_a != ((ModelGuardian)this.mainModel).func_178706_a())
@@ -113,7 +105,7 @@ public class RenderGuardian extends RenderLiving<EntityGuardian>
             GlStateManager.rotate(f5 * (180F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
             int i = 1;
             double d1 = (double)f2 * 0.05D * (1.0D - (double)(i & 1) * 2.5D);
-            worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             float f7 = f * f;
             int j = 64 + (int)(f7 * 240.0F);
             int k = 32 + (int)(f7 * 192.0F);
@@ -140,14 +132,14 @@ public class RenderGuardian extends RenderLiving<EntityGuardian>
             double d21 = 0.4999D;
             double d22 = (double)(-1.0F + f3);
             double d23 = d0 * (0.5D / d2) + d22;
-            worldrenderer.pos(d12, d0, d13).tex(0.4999D, d23).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d12, 0.0D, d13).tex(0.4999D, d22).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d14, 0.0D, d15).tex(0.0D, d22).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d14, d0, d15).tex(0.0D, d23).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d16, d0, d17).tex(0.4999D, d23).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d16, 0.0D, d17).tex(0.4999D, d22).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d18, 0.0D, d19).tex(0.0D, d22).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d18, d0, d19).tex(0.0D, d23).func_181669_b(j, k, l, 255).endVertex();
+            worldrenderer.pos(d12, d0, d13).tex(0.4999D, d23).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d12, 0.0D, d13).tex(0.4999D, d22).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d14, 0.0D, d15).tex(0.0D, d22).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d14, d0, d15).tex(0.0D, d23).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d16, d0, d17).tex(0.4999D, d23).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d16, 0.0D, d17).tex(0.4999D, d22).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d18, 0.0D, d19).tex(0.0D, d22).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d18, d0, d19).tex(0.0D, d23).color(j, k, l, 255).endVertex();
             double d24 = 0.0D;
 
             if (entity.ticksExisted % 2 == 0)
@@ -155,19 +147,15 @@ public class RenderGuardian extends RenderLiving<EntityGuardian>
                 d24 = 0.5D;
             }
 
-            worldrenderer.pos(d4, d0, d5).tex(0.5D, d24 + 0.5D).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d6, d0, d7).tex(1.0D, d24 + 0.5D).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d10, d0, d11).tex(1.0D, d24).func_181669_b(j, k, l, 255).endVertex();
-            worldrenderer.pos(d8, d0, d9).tex(0.5D, d24).func_181669_b(j, k, l, 255).endVertex();
+            worldrenderer.pos(d4, d0, d5).tex(0.5D, d24 + 0.5D).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d6, d0, d7).tex(1.0D, d24 + 0.5D).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d10, d0, d11).tex(1.0D, d24).color(j, k, l, 255).endVertex();
+            worldrenderer.pos(d8, d0, d9).tex(0.5D, d24).color(j, k, l, 255).endVertex();
             tessellator.draw();
             GlStateManager.popMatrix();
         }
     }
 
-    /**
-     * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
-     * entityLiving, partialTickTime
-     */
     protected void preRenderCallback(EntityGuardian entitylivingbaseIn, float partialTickTime)
     {
         if (entitylivingbaseIn.isElder())
@@ -176,9 +164,6 @@ public class RenderGuardian extends RenderLiving<EntityGuardian>
         }
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(EntityGuardian entity)
     {
         return entity.isElder() ? GUARDIAN_ELDER_TEXTURE : GUARDIAN_TEXTURE;

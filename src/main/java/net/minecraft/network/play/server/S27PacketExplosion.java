@@ -11,14 +11,14 @@ import net.minecraft.util.Vec3;
 
 public class S27PacketExplosion implements Packet<INetHandlerPlayClient>
 {
-    private double posX;
-    private double posY;
-    private double posZ;
+    public double posX;
+    public double posY;
+    public double posZ;
     private float strength;
     private List<BlockPos> affectedBlockPositions;
-    public float motionX;
-    public float motionY;
-    public float motionZ;
+    private float field_149152_f;
+    private float field_149153_g;
+    private float field_149159_h;
 
     public S27PacketExplosion()
     {
@@ -34,15 +34,12 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>
 
         if (p_i45193_9_ != null)
         {
-            this.motionX = (float)p_i45193_9_.xCoord;
-            this.motionY = (float)p_i45193_9_.yCoord;
-            this.motionZ = (float)p_i45193_9_.zCoord;
+            this.field_149152_f = (float)p_i45193_9_.xCoord;
+            this.field_149153_g = (float)p_i45193_9_.yCoord;
+            this.field_149159_h = (float)p_i45193_9_.zCoord;
         }
     }
 
-    /**
-     * Reads the raw packet data from the data stream.
-     */
     public void readPacketData(PacketBuffer buf) throws IOException
     {
         this.posX = (double)buf.readFloat();
@@ -63,14 +60,11 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>
             this.affectedBlockPositions.add(new BlockPos(j1, k1, l1));
         }
 
-        this.motionX = buf.readFloat();
-        this.motionY = buf.readFloat();
-        this.motionZ = buf.readFloat();
+        this.field_149152_f = buf.readFloat();
+        this.field_149153_g = buf.readFloat();
+        this.field_149159_h = buf.readFloat();
     }
 
-    /**
-     * Writes the raw packet data to the data stream.
-     */
     public void writePacketData(PacketBuffer buf) throws IOException
     {
         buf.writeFloat((float)this.posX);
@@ -92,14 +86,11 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>
             buf.writeByte(j1);
         }
 
-        buf.writeFloat(this.motionX);
-        buf.writeFloat(this.motionY);
-        buf.writeFloat(this.motionZ);
+        buf.writeFloat(this.field_149152_f);
+        buf.writeFloat(this.field_149153_g);
+        buf.writeFloat(this.field_149159_h);
     }
 
-    /**
-     * Passes this Packet on to the NetHandler for processing.
-     */
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleExplosion(this);
@@ -107,17 +98,17 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>
 
     public float func_149149_c()
     {
-        return this.motionX;
+        return this.field_149152_f;
     }
 
     public float func_149144_d()
     {
-        return this.motionY;
+        return this.field_149153_g;
     }
 
     public float func_149147_e()
     {
-        return this.motionZ;
+        return this.field_149159_h;
     }
 
     public double getX()

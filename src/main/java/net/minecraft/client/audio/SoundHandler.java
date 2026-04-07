@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 public class SoundHandler implements IResourceManagerReloadListener, ITickable
 {
-    private static final Logger logger = LogManager.getLogger(SoundHandler.class);
+    private static final Logger logger = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(SoundList.class, new SoundListSerializer()).create();
     private static final ParameterizedType TYPE = new ParameterizedType()
     {
@@ -190,17 +190,11 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable
         return (SoundEventAccessorComposite)this.sndRegistry.getObject(location);
     }
 
-    /**
-     * Play a sound
-     */
     public void playSound(ISound sound)
     {
         this.sndManager.playSound(sound);
     }
 
-    /**
-     * Plays the sound in n ticks
-     */
     public void playDelayedSound(ISound sound, int delay)
     {
         this.sndManager.playDelayedSound(sound, delay);
@@ -226,9 +220,6 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable
         this.sndManager.unloadSoundSystem();
     }
 
-    /**
-     * Like the old updateEntity(), except more generic.
-     */
     public void update()
     {
         this.sndManager.updateAllSounds();
@@ -254,9 +245,6 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable
         this.sndManager.stopSound(p_147683_1_);
     }
 
-    /**
-     * Returns a random sound from one or more categories
-     */
     public SoundEventAccessorComposite getRandomSoundFromCategories(SoundCategory... categories)
     {
         List<SoundEventAccessorComposite> list = Lists.<SoundEventAccessorComposite>newArrayList();

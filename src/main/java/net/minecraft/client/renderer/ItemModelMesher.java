@@ -34,7 +34,7 @@ public class ItemModelMesher
 
     public TextureAtlasSprite getParticleIcon(Item item, int meta)
     {
-        return this.getItemModel(new ItemStack(item, 1, meta)).getTexture();
+        return this.getItemModel(new ItemStack(item, 1, meta)).getParticleTexture();
     }
 
     public IBakedModel getItemModel(ItemStack stack)

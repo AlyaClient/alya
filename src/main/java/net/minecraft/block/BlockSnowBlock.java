@@ -19,19 +19,11 @@ public class BlockSnowBlock extends Block
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
-    /**
-     * Get the Item that this Block should drop when harvested.
-     *  
-     * @param fortune the level of the Fortune enchantment on the player's tool
-     */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Items.snowball;
     }
 
-    /**
-     * Returns the quantity of items to drop on block destruction.
-     */
     public int quantityDropped(Random random)
     {
         return 4;

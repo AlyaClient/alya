@@ -4,7 +4,6 @@ import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
 public final class TickEvent implements IEvent, ICancelable {
-
     private boolean canceled = false;
 
     public TickEvent() {
@@ -34,6 +33,4 @@ public final class TickEvent implements IEvent, ICancelable {
     public void cancel() {
         this.canceled = true;
     }
-
-
 }

@@ -29,15 +29,15 @@ import org.apache.logging.log4j.Logger;
 
 public class NetHandlerLoginClient implements INetHandlerLoginClient
 {
-    private static final Logger logger = LogManager.getLogger(NetHandlerLoginClient.class);
+    private static final Logger logger = LogManager.getLogger();
     private final Minecraft mc;
     private final GuiScreen previousGuiScreen;
     private final NetworkManager networkManager;
     private GameProfile gameProfile;
 
-    public NetHandlerLoginClient(NetworkManager p_i45059_1_, Minecraft mcIn, GuiScreen p_i45059_3_)
+    public NetHandlerLoginClient(NetworkManager networkManagerIn, Minecraft mcIn, GuiScreen p_i45059_3_)
     {
-        this.networkManager = p_i45059_1_;
+        this.networkManager = networkManagerIn;
         this.mc = mcIn;
         this.previousGuiScreen = p_i45059_3_;
     }
@@ -49,7 +49,7 @@ public class NetHandlerLoginClient implements INetHandlerLoginClient
         PublicKey publickey = packetIn.getPublicKey();
         String s1 = (new BigInteger(CryptManager.getServerIdHash(s, publickey, secretkey))).toString(16);
 
-        if (this.mc.getCurrentServerData() != null && this.mc.getCurrentServerData().func_181041_d())
+        if (this.mc.getCurrentServerData() != null && this.mc.getCurrentServerData().isOnLAN())
         {
             try
             {
@@ -104,9 +104,6 @@ public class NetHandlerLoginClient implements INetHandlerLoginClient
         this.networkManager.setNetHandler(new NetHandlerPlayClient(this.mc, this.previousGuiScreen, this.networkManager, this.gameProfile));
     }
 
-    /**
-     * Invoked when disconnecting, the parameter is a ChatComponent describing the reason for termination
-     */
     public void onDisconnect(IChatComponent reason)
     {
         this.mc.displayGuiScreen(new GuiDisconnected(this.previousGuiScreen, "connect.failed", reason));

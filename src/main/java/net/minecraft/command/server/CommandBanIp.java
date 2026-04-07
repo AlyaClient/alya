@@ -19,48 +19,26 @@ public class CommandBanIp extends CommandBase
 {
     public static final Pattern field_147211_a = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "ban-ip";
     }
 
-    /**
-     * Return the required permission level for this command.
-     */
     public int getRequiredPermissionLevel()
     {
         return 3;
     }
 
-    /**
-     * Returns true if the given command sender is allowed to use this command.
-     *  
-     * @param sender The CommandSender
-     */
     public boolean canCommandSenderUseCommand(ICommandSender sender)
     {
         return MinecraftServer.getServer().getConfigurationManager().getBannedIPs().isLanServer() && super.canCommandSenderUseCommand(sender);
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.banip.usage";
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length >= 1 && args[0].length() > 1)
@@ -95,27 +73,27 @@ public class CommandBanIp extends CommandBase
         return args.length == 1 ? getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames()) : null;
     }
 
-    protected void func_147210_a(ICommandSender p_147210_1_, String p_147210_2_, String p_147210_3_)
+    protected void func_147210_a(ICommandSender sender, String address, String reason)
     {
-        IPBanEntry ipbanentry = new IPBanEntry(p_147210_2_, (Date)null, p_147210_1_.getCommandSenderName(), (Date)null, p_147210_3_);
+        IPBanEntry ipbanentry = new IPBanEntry(address, (Date)null, sender.getName(), (Date)null, reason);
         MinecraftServer.getServer().getConfigurationManager().getBannedIPs().addEntry(ipbanentry);
-        List<EntityPlayerMP> list = MinecraftServer.getServer().getConfigurationManager().getPlayersMatchingAddress(p_147210_2_);
+        List<EntityPlayerMP> list = MinecraftServer.getServer().getConfigurationManager().getPlayersMatchingAddress(address);
         String[] astring = new String[list.size()];
         int i = 0;
 
         for (EntityPlayerMP entityplayermp : list)
         {
             entityplayermp.playerNetServerHandler.kickPlayerFromServer("You have been IP banned.");
-            astring[i++] = entityplayermp.getCommandSenderName();
+            astring[i++] = entityplayermp.getName();
         }
 
         if (list.isEmpty())
         {
-            notifyOperators(p_147210_1_, this, "commands.banip.success", new Object[] {p_147210_2_});
+            notifyOperators(sender, this, "commands.banip.success", new Object[] {address});
         }
         else
         {
-            notifyOperators(p_147210_1_, this, "commands.banip.success.players", new Object[] {p_147210_2_, joinNiceString(astring)});
+            notifyOperators(sender, this, "commands.banip.success.players", new Object[] {address, joinNiceString(astring)});
         }
     }
 }

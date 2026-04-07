@@ -12,7 +12,9 @@ public final class ReloadCommand extends Command {
 
     @Override
     public void execute(final String[] args) {
-        ChatUtil.sendRaw("\u00a7eReloading Lua scripts...");
+        ChatUtil.sendRaw("§eReloading Lua scripts...");
         Alya.getInstance().getLuaEngine().reload();
     }
+
+
 }

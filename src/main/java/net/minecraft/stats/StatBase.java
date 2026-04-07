@@ -12,29 +12,26 @@ import net.minecraft.util.IJsonSerializable;
 
 public class StatBase
 {
-    /** The Stat ID */
     public final String statId;
-
-    /** The Stat name */
     private final IChatComponent statName;
     public boolean isIndependent;
     private final IStatType type;
-    private final IScoreObjectiveCriteria field_150957_c;
+    private final IScoreObjectiveCriteria objectiveCriteria;
     private Class <? extends IJsonSerializable > field_150956_d;
     private static NumberFormat numberFormat = NumberFormat.getIntegerInstance(Locale.US);
     public static IStatType simpleStatType = new IStatType()
     {
-        public String format(int p_75843_1_)
+        public String format(int number)
         {
-            return StatBase.numberFormat.format((long)p_75843_1_);
+            return StatBase.numberFormat.format((long)number);
         }
     };
     private static DecimalFormat decimalFormat = new DecimalFormat("########0.00");
     public static IStatType timeStatType = new IStatType()
     {
-        public String format(int p_75843_1_)
+        public String format(int number)
         {
-            double d0 = (double)p_75843_1_ / 20.0D;
+            double d0 = (double)number / 20.0D;
             double d1 = d0 / 60.0D;
             double d2 = d1 / 60.0D;
             double d3 = d2 / 24.0D;
@@ -44,18 +41,18 @@ public class StatBase
     };
     public static IStatType distanceStatType = new IStatType()
     {
-        public String format(int p_75843_1_)
+        public String format(int number)
         {
-            double d0 = (double)p_75843_1_ / 100.0D;
+            double d0 = (double)number / 100.0D;
             double d1 = d0 / 1000.0D;
-            return d1 > 0.5D ? StatBase.decimalFormat.format(d1) + " km" : (d0 > 0.5D ? StatBase.decimalFormat.format(d0) + " m" : p_75843_1_ + " cm");
+            return d1 > 0.5D ? StatBase.decimalFormat.format(d1) + " km" : (d0 > 0.5D ? StatBase.decimalFormat.format(d0) + " m" : number + " cm");
         }
     };
     public static IStatType field_111202_k = new IStatType()
     {
-        public String format(int p_75843_1_)
+        public String format(int number)
         {
-            return StatBase.decimalFormat.format((double)p_75843_1_ * 0.1D);
+            return StatBase.decimalFormat.format((double)number * 0.1D);
         }
     };
 
@@ -64,8 +61,8 @@ public class StatBase
         this.statId = statIdIn;
         this.statName = statNameIn;
         this.type = typeIn;
-        this.field_150957_c = new ObjectiveStat(this);
-        IScoreObjectiveCriteria.INSTANCES.put(this.field_150957_c.getName(), this.field_150957_c);
+        this.objectiveCriteria = new ObjectiveStat(this);
+        IScoreObjectiveCriteria.INSTANCES.put(this.objectiveCriteria.getName(), this.objectiveCriteria);
     }
 
     public StatBase(String statIdIn, IChatComponent statNameIn)
@@ -73,19 +70,12 @@ public class StatBase
         this(statIdIn, statNameIn, simpleStatType);
     }
 
-    /**
-     * Initializes the current stat as independent (i.e., lacking prerequisites for being updated) and returns the
-     * current instance.
-     */
     public StatBase initIndependentStat()
     {
         this.isIndependent = true;
         return this;
     }
 
-    /**
-     * Register the stat into StatList.
-     */
     public StatBase registerStat()
     {
         if (StatList.oneShotStats.containsKey(this.statId))
@@ -100,9 +90,6 @@ public class StatBase
         }
     }
 
-    /**
-     * Returns whether or not the StatBase-derived class is a statistic (running counter) or an achievement (one-shot).
-     */
     public boolean isAchievement()
     {
         return false;
@@ -121,7 +108,7 @@ public class StatBase
         return ichatcomponent;
     }
 
-    public IChatComponent func_150955_j()
+    public IChatComponent createChatComponent()
     {
         IChatComponent ichatcomponent = this.getStatName();
         IChatComponent ichatcomponent1 = (new ChatComponentText("[")).appendSibling(ichatcomponent).appendText("]");
@@ -153,12 +140,12 @@ public class StatBase
 
     public String toString()
     {
-        return "Stat{id=" + this.statId + ", nameId=" + this.statName + ", awardLocallyOnly=" + this.isIndependent + ", formatter=" + this.type + ", objectiveCriteria=" + this.field_150957_c + '}';
+        return "Stat{id=" + this.statId + ", nameId=" + this.statName + ", awardLocallyOnly=" + this.isIndependent + ", formatter=" + this.type + ", objectiveCriteria=" + this.objectiveCriteria + '}';
     }
 
-    public IScoreObjectiveCriteria func_150952_k()
+    public IScoreObjectiveCriteria getCriteria()
     {
-        return this.field_150957_c;
+        return this.objectiveCriteria;
     }
 
     public Class <? extends IJsonSerializable > func_150954_l()

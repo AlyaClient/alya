@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 public class CommandHandler implements ICommandManager
 {
-    private static final Logger logger = LogManager.getLogger(CommandHandler.class);
+    private static final Logger logger = LogManager.getLogger();
     private final Map<String, ICommand> commandMap = Maps.<String, ICommand>newHashMap();
     private final Set<ICommand> commandSet = Sets.<ICommand>newHashSet();
 
@@ -113,9 +113,6 @@ public class CommandHandler implements ICommandManager
         return false;
     }
 
-    /**
-     * adds the command and any aliases it has to the internal map of available commands
-     */
     public ICommand registerCommand(ICommand command)
     {
         this.commandMap.put(command.getCommandName(), command);
@@ -134,9 +131,6 @@ public class CommandHandler implements ICommandManager
         return command;
     }
 
-    /**
-     * creates a new array and sets elements 0..n-2 to be 0..n-1 of the input (n elements)
-     */
     private static String[] dropFirstString(String[] input)
     {
         String[] astring = new String[input.length - 1];
@@ -199,9 +193,6 @@ public class CommandHandler implements ICommandManager
         return this.commandMap;
     }
 
-    /**
-     * Return a command's first parameter index containing a valid username.
-     */
     private int getUsernameIndex(ICommand command, String[] args)
     {
         if (command == null)

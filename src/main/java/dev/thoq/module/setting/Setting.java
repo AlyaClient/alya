@@ -3,7 +3,6 @@ package dev.thoq.module.setting;
 import java.util.function.Supplier;
 
 public abstract class Setting<T> {
-
     private final String name;
     private final String description;
     protected T value;
@@ -61,6 +60,4 @@ public abstract class Setting<T> {
     public abstract String getValueAsString();
 
     public abstract void setValueFromString(final String value);
-
-
 }

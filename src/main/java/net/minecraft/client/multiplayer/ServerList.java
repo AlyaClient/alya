@@ -12,9 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ServerList
 {
-    private static final Logger logger = LogManager.getLogger(ServerList.class);
-
-    /** The Minecraft instance. */
+    private static final Logger logger = LogManager.getLogger();
     private final Minecraft mc;
     private final List<ServerData> servers = Lists.<ServerData>newArrayList();
 
@@ -24,10 +22,6 @@ public class ServerList
         this.loadServerList();
     }
 
-    /**
-     * Loads a list of servers from servers.dat, by running ServerData.getServerDataFromNBTCompound on each NBT compound
-     * found in the "servers" tag list.
-     */
     public void loadServerList()
     {
         try
@@ -53,10 +47,6 @@ public class ServerList
         }
     }
 
-    /**
-     * Runs getNBTCompound on each ServerData instance, puts everything into a "servers" NBT list and writes it to
-     * servers.dat.
-     */
     public void saveServerList()
     {
         try
@@ -78,41 +68,26 @@ public class ServerList
         }
     }
 
-    /**
-     * Gets the ServerData instance stored for the given index in the list.
-     */
-    public ServerData getServerData(int p_78850_1_)
+    public ServerData getServerData(int index)
     {
-        return (ServerData)this.servers.get(p_78850_1_);
+        return (ServerData)this.servers.get(index);
     }
 
-    /**
-     * Removes the ServerData instance stored for the given index in the list.
-     */
-    public void removeServerData(int p_78851_1_)
+    public void removeServerData(int index)
     {
-        this.servers.remove(p_78851_1_);
+        this.servers.remove(index);
     }
 
-    /**
-     * Adds the given ServerData instance to the list.
-     */
-    public void addServerData(ServerData p_78849_1_)
+    public void addServerData(ServerData server)
     {
-        this.servers.add(p_78849_1_);
+        this.servers.add(server);
     }
 
-    /**
-     * Counts the number of ServerData instances in the list.
-     */
     public int countServers()
     {
         return this.servers.size();
     }
 
-    /**
-     * Takes two list indexes, and swaps their order around.
-     */
     public void swapServers(int p_78857_1_, int p_78857_2_)
     {
         ServerData serverdata = this.getServerData(p_78857_1_);
@@ -121,9 +96,9 @@ public class ServerList
         this.saveServerList();
     }
 
-    public void func_147413_a(int p_147413_1_, ServerData p_147413_2_)
+    public void func_147413_a(int index, ServerData server)
     {
-        this.servers.set(p_147413_1_, p_147413_2_);
+        this.servers.set(index, server);
     }
 
     public static void func_147414_b(ServerData p_147414_0_)

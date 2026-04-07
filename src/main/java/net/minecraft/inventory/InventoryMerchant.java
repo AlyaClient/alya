@@ -23,30 +23,16 @@ public class InventoryMerchant implements IInventory
         this.theMerchant = theMerchantIn;
     }
 
-    /**
-     * Returns the number of slots in the inventory.
-     */
     public int getSizeInventory()
     {
         return this.theInventory.length;
     }
 
-    /**
-     * Returns the stack in the given slot.
-     *  
-     * @param index The slot to retrieve from.
-     */
     public ItemStack getStackInSlot(int index)
     {
         return this.theInventory[index];
     }
 
-    /**
-     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
-     *  
-     * @param index The slot to remove from.
-     * @param count The maximum amount of items to remove.
-     */
     public ItemStack decrStackSize(int index, int count)
     {
         if (this.theInventory[index] != null)
@@ -92,20 +78,12 @@ public class InventoryMerchant implements IInventory
         }
     }
 
-    /**
-     * if par1 slot has changed, does resetRecipeAndSlots need to be called?
-     */
     private boolean inventoryResetNeededOnSlotChange(int p_70469_1_)
     {
         return p_70469_1_ == 0 || p_70469_1_ == 1;
     }
 
-    /**
-     * Removes a stack from the given slot and returns it.
-     *  
-     * @param index The slot to remove a stack from.
-     */
-    public ItemStack getStackInSlotOnClosing(int index)
+    public ItemStack removeStackFromSlot(int index)
     {
         if (this.theInventory[index] != null)
         {
@@ -119,9 +97,6 @@ public class InventoryMerchant implements IInventory
         }
     }
 
-    /**
-     * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
-     */
     public void setInventorySlotContents(int index, ItemStack stack)
     {
         this.theInventory[index] = stack;
@@ -137,41 +112,26 @@ public class InventoryMerchant implements IInventory
         }
     }
 
-    /**
-     * Gets the name of this command sender (usually username, but possibly "Rcon")
-     */
-    public String getCommandSenderName()
+    public String getName()
     {
         return "mob.villager";
     }
 
-    /**
-     * Returns true if this thing is named
-     */
     public boolean hasCustomName()
     {
         return false;
     }
 
-    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
-     */
     public IChatComponent getDisplayName()
     {
-        return (IChatComponent)(this.hasCustomName() ? new ChatComponentText(this.getCommandSenderName()) : new ChatComponentTranslation(this.getCommandSenderName(), new Object[0]));
+        return (IChatComponent)(this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName(), new Object[0]));
     }
 
-    /**
-     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended.
-     */
     public int getInventoryStackLimit()
     {
         return 64;
     }
 
-    /**
-     * Do not make give this method the name canInteractWith because it clashes with Container
-     */
     public boolean isUseableByPlayer(EntityPlayer player)
     {
         return this.theMerchant.getCustomer() == player;
@@ -185,18 +145,11 @@ public class InventoryMerchant implements IInventory
     {
     }
 
-    /**
-     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
-     */
     public boolean isItemValidForSlot(int index, ItemStack stack)
     {
         return true;
     }
 
-    /**
-     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it
-     * hasn't changed and skip it.
-     */
     public void markDirty()
     {
         this.resetRecipeAndSlots();

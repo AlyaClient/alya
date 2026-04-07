@@ -50,7 +50,7 @@ public class SimpleShaderTexture extends AbstractTexture
             try
             {
                 BufferedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);
-                TextureMetadataSection texturemetadatasection = this.loadTextureMetadataSection();
+                TextureMetadataSection texturemetadatasection = loadTextureMetadataSection(this.texturePath, new TextureMetadataSection(false, false, new ArrayList()));
                 TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), bufferedimage, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
             }
             finally
@@ -60,9 +60,9 @@ public class SimpleShaderTexture extends AbstractTexture
         }
     }
 
-    private TextureMetadataSection loadTextureMetadataSection()
+    public static TextureMetadataSection loadTextureMetadataSection(String texturePath, TextureMetadataSection def)
     {
-        String s = this.texturePath + ".mcmeta";
+        String s = texturePath + ".mcmeta";
         String s1 = "texture";
         InputStream inputstream = Shaders.getShaderPackResourceStream(s);
 
@@ -79,7 +79,7 @@ public class SimpleShaderTexture extends AbstractTexture
 
                 if (texturemetadatasection == null)
                 {
-                    return new TextureMetadataSection(false, false, new ArrayList());
+                    return def;
                 }
 
                 texturemetadatasection1 = texturemetadatasection;
@@ -88,7 +88,7 @@ public class SimpleShaderTexture extends AbstractTexture
             {
                 SMCLog.warning("Error reading metadata: " + s);
                 SMCLog.warning("" + runtimeexception.getClass().getName() + ": " + runtimeexception.getMessage());
-                return new TextureMetadataSection(false, false, new ArrayList());
+                return def;
             }
             finally
             {
@@ -100,7 +100,7 @@ public class SimpleShaderTexture extends AbstractTexture
         }
         else
         {
-            return new TextureMetadataSection(false, false, new ArrayList());
+            return def;
         }
     }
 

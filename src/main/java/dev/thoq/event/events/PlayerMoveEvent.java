@@ -4,7 +4,6 @@ import dev.thoq.event.ICancelable;
 import dev.thoq.event.IEvent;
 
 public final class PlayerMoveEvent implements IEvent, ICancelable {
-
     private boolean canceled = false;
 
     public PlayerMoveEvent() {

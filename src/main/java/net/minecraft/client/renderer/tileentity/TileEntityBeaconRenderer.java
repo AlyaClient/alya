@@ -68,23 +68,23 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
                     double d13 = 1.0D;
                     double d14 = -1.0D + d1;
                     double d15 = (double)((float)tileentitybeacon$beamsegment.getHeight() * f) * 2.5D + d14;
-                    worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-                    worldrenderer.pos(x + d4, y + (double)k, z + d5).tex(1.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d4, y + (double)i, z + d5).tex(1.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d6, y + (double)i, z + d7).tex(0.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d6, y + (double)k, z + d7).tex(0.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d10, y + (double)k, z + d11).tex(1.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d10, y + (double)i, z + d11).tex(1.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d8, y + (double)i, z + d9).tex(0.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d8, y + (double)k, z + d9).tex(0.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d6, y + (double)k, z + d7).tex(1.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d6, y + (double)i, z + d7).tex(1.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d10, y + (double)i, z + d11).tex(0.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d10, y + (double)k, z + d11).tex(0.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d8, y + (double)k, z + d9).tex(1.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d8, y + (double)i, z + d9).tex(1.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d4, y + (double)i, z + d5).tex(0.0D, d14).func_181666_a(f1, f2, f3, 1.0F).endVertex();
-                    worldrenderer.pos(x + d4, y + (double)k, z + d5).tex(0.0D, d15).func_181666_a(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+                    worldrenderer.pos(x + d4, y + (double)k, z + d5).tex(1.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d4, y + (double)i, z + d5).tex(1.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d6, y + (double)i, z + d7).tex(0.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d6, y + (double)k, z + d7).tex(0.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d10, y + (double)k, z + d11).tex(1.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d10, y + (double)i, z + d11).tex(1.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d8, y + (double)i, z + d9).tex(0.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d8, y + (double)k, z + d9).tex(0.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d6, y + (double)k, z + d7).tex(1.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d6, y + (double)i, z + d7).tex(1.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d10, y + (double)i, z + d11).tex(0.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d10, y + (double)k, z + d11).tex(0.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d8, y + (double)k, z + d9).tex(1.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d8, y + (double)i, z + d9).tex(1.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d4, y + (double)i, z + d5).tex(0.0D, d14).color(f1, f2, f3, 1.0F).endVertex();
+                    worldrenderer.pos(x + d4, y + (double)k, z + d5).tex(0.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
                     tessellator.draw();
                     GlStateManager.enableBlend();
                     GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -101,23 +101,23 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
                     d11 = 1.0D;
                     d12 = -1.0D + d1;
                     d13 = (double)((float)tileentitybeacon$beamsegment.getHeight() * f) + d12;
-                    worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.2D).tex(1.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.2D).tex(1.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.2D).tex(0.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.2D).tex(0.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.8D).tex(1.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.8D).tex(1.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.8D).tex(0.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.8D).tex(0.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.2D).tex(1.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.2D).tex(1.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.8D).tex(0.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.8D).tex(0.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.8D).tex(1.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.8D).tex(1.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.2D).tex(0.0D, d12).func_181666_a(f1, f2, f3, 0.125F).endVertex();
-                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.2D).tex(0.0D, d13).func_181666_a(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.2D).tex(1.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.2D).tex(1.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.2D).tex(0.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.2D).tex(0.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.8D).tex(1.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.8D).tex(1.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.8D).tex(0.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.8D).tex(0.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.2D).tex(1.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.2D).tex(1.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)i, z + 0.8D).tex(0.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.8D, y + (double)k, z + 0.8D).tex(0.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.8D).tex(1.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.8D).tex(1.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)i, z + 0.2D).tex(0.0D, d12).color(f1, f2, f3, 0.125F).endVertex();
+                    worldrenderer.pos(x + 0.2D, y + (double)k, z + 0.2D).tex(0.0D, d13).color(f1, f2, f3, 0.125F).endVertex();
                     tessellator.draw();
                     GlStateManager.enableLighting();
                     GlStateManager.enableTexture2D();
@@ -135,7 +135,7 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
         }
     }
 
-    public boolean func_181055_a()
+    public boolean forceTileEntityRender()
     {
         return true;
     }

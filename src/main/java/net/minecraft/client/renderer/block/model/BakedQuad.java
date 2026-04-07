@@ -11,10 +11,6 @@ import net.optifine.reflect.Reflector;
 
 public class BakedQuad implements IVertexProducer
 {
-    /**
-     * Joined 4 vertex records, each has 7 fields (x, y, z, shadeColor, u, v, <unused>), see
-     * FaceBakery.storeVertexData()
-     */
     protected int[] vertexData;
     protected final int tintIndex;
     protected EnumFacing face;
@@ -90,19 +86,17 @@ public class BakedQuad implements IVertexProducer
     private static int[] makeVertexDataSingle(int[] p_makeVertexDataSingle_0_, TextureAtlasSprite p_makeVertexDataSingle_1_)
     {
         int[] aint = (int[])p_makeVertexDataSingle_0_.clone();
-        int i = p_makeVertexDataSingle_1_.sheetWidth / p_makeVertexDataSingle_1_.getIconWidth();
-        int j = p_makeVertexDataSingle_1_.sheetHeight / p_makeVertexDataSingle_1_.getIconHeight();
-        int k = aint.length / 4;
+        int i = aint.length / 4;
 
-        for (int l = 0; l < 4; ++l)
+        for (int j = 0; j < 4; ++j)
         {
-            int i1 = l * k;
-            float f = Float.intBitsToFloat(aint[i1 + 4]);
-            float f1 = Float.intBitsToFloat(aint[i1 + 4 + 1]);
+            int k = j * i;
+            float f = Float.intBitsToFloat(aint[k + 4]);
+            float f1 = Float.intBitsToFloat(aint[k + 4 + 1]);
             float f2 = p_makeVertexDataSingle_1_.toSingleU(f);
             float f3 = p_makeVertexDataSingle_1_.toSingleV(f1);
-            aint[i1 + 4] = Float.floatToRawIntBits(f2);
-            aint[i1 + 4 + 1] = Float.floatToRawIntBits(f3);
+            aint[k + 4] = Float.floatToRawIntBits(f2);
+            aint[k + 4 + 1] = Float.floatToRawIntBits(f3);
         }
 
         return aint;

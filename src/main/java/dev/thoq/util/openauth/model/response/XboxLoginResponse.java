@@ -2,7 +2,6 @@
  * Copyright 2015-2021 Adrien 'Litarvan' Navratil
  *
  * This file is part of OpenAuth.
-
  * OpenAuth is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -25,7 +24,11 @@ public class XboxLoginResponse {
     private final String Token;
     private final XboxLiveLoginResponseClaims DisplayClaims;
 
-    public XboxLoginResponse(String IssueInstant, String NotAfter, String Token, XboxLiveLoginResponseClaims DisplayClaims) {
+    public XboxLoginResponse(
+            String IssueInstant,
+            String NotAfter,
+            String Token,
+            XboxLiveLoginResponseClaims DisplayClaims) {
         this.IssueInstant = IssueInstant;
         this.NotAfter = NotAfter;
         this.Token = Token;

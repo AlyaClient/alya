@@ -2,9 +2,7 @@ local function createMotionVelocityMode(moduleTable, modeSettings, mode, hVel, v
     alya.events.on("packetreceive", function(event)
         if not moduleTable.isEnabled() then return end
         if not modeSettings.is(mode) then return end
-
         local cls = event.getPacketClass()
-
         if cls == "S12PacketEntityVelocity" then
             if event.getEntityId() ~= alya.mc.getEntityId() then return end
             local h = hVel.getValue()
@@ -29,5 +27,4 @@ local function createMotionVelocityMode(moduleTable, modeSettings, mode, hVel, v
         end
     end)
 end
-
 return createMotionVelocityMode

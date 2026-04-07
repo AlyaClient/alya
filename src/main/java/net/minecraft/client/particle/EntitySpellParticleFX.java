@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 public class EntitySpellParticleFX extends EntityFX
 {
     private static final Random RANDOM = new Random();
-
-    /** Base spell texture index */
     private int baseSpellTextureIndex = 128;
 
     protected EntitySpellParticleFX(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double p_i1229_8_, double p_i1229_10_, double p_i1229_12_)
@@ -29,21 +27,13 @@ public class EntitySpellParticleFX extends EntityFX
         this.noClip = false;
     }
 
-    /**
-     * Renders the particle
-     *  
-     * @param worldRendererIn The WorldRenderer instance
-     */
-    public void renderParticle(WorldRenderer worldRendererIn, Entity entityIn, float partialTicks, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
+    public void renderParticle(WorldRenderer worldRendererIn, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
         float f = ((float)this.particleAge + partialTicks) / (float)this.particleMaxAge * 32.0F;
         f = MathHelper.clamp_float(f, 0.0F, 1.0F);
-        super.renderParticle(worldRendererIn, entityIn, partialTicks, p_180434_4_, p_180434_5_, p_180434_6_, p_180434_7_, p_180434_8_);
+        super.renderParticle(worldRendererIn, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate()
     {
         this.prevPosX = this.posX;
@@ -76,9 +66,6 @@ public class EntitySpellParticleFX extends EntityFX
         }
     }
 
-    /**
-     * Sets the base spell texture index
-     */
     public void setBaseSpellTextureIndex(int baseSpellTextureIndexIn)
     {
         this.baseSpellTextureIndex = baseSpellTextureIndexIn;

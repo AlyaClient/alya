@@ -14,18 +14,11 @@ public class ClickEvent
         this.value = theValue;
     }
 
-    /**
-     * Gets the action to perform when this event is raised.
-     */
     public ClickEvent.Action getAction()
     {
         return this.action;
     }
 
-    /**
-     * Gets the value to perform the action on when this event is raised.  For example, if the action is "open URL",
-     * this would be the URL to open.
-     */
     public String getValue()
     {
         return this.value;
@@ -85,6 +78,7 @@ public class ClickEvent
         OPEN_URL("open_url", true),
         OPEN_FILE("open_file", false),
         RUN_COMMAND("run_command", true),
+        TWITCH_USER_INFO("twitch_user_info", false),
         SUGGEST_COMMAND("suggest_command", true),
         CHANGE_PAGE("change_page", true);
 

@@ -17,22 +17,22 @@ import org.apache.logging.log4j.Logger;
 
 public class EntityAIFindEntityNearestPlayer extends EntityAIBase
 {
-    private static final Logger field_179436_a = LogManager.getLogger(EntityAIFindEntityNearestPlayer.class);
-    private EntityLiving field_179434_b;
-    private final Predicate<Entity> field_179435_c;
-    private final EntityAINearestAttackableTarget.Sorter field_179432_d;
-    private EntityLivingBase field_179433_e;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private EntityLiving entityLiving;
+    private final Predicate<Entity> predicate;
+    private final EntityAINearestAttackableTarget.Sorter sorter;
+    private EntityLivingBase entityTarget;
 
-    public EntityAIFindEntityNearestPlayer(EntityLiving p_i45882_1_)
+    public EntityAIFindEntityNearestPlayer(EntityLiving entityLivingIn)
     {
-        this.field_179434_b = p_i45882_1_;
+        this.entityLiving = entityLivingIn;
 
-        if (p_i45882_1_ instanceof EntityCreature)
+        if (entityLivingIn instanceof EntityCreature)
         {
-            field_179436_a.warn("Use NearestAttackableTargetGoal.class for PathfinerMob mobs!");
+            LOGGER.warn("Use NearestAttackableTargetGoal.class for PathfinerMob mobs!");
         }
 
-        this.field_179435_c = new Predicate<Entity>()
+        this.predicate = new Predicate<Entity>()
         {
             public boolean apply(Entity p_apply_1_)
             {
@@ -46,7 +46,7 @@ public class EntityAIFindEntityNearestPlayer extends EntityAIBase
                 }
                 else
                 {
-                    double d0 = EntityAIFindEntityNearestPlayer.this.func_179431_f();
+                    double d0 = EntityAIFindEntityNearestPlayer.this.maxTargetRange();
 
                     if (p_apply_1_.isSneaking())
                     {
@@ -65,21 +65,18 @@ public class EntityAIFindEntityNearestPlayer extends EntityAIBase
                         d0 *= (double)(0.7F * f);
                     }
 
-                    return (double)p_apply_1_.getDistanceToEntity(EntityAIFindEntityNearestPlayer.this.field_179434_b) > d0 ? false : EntityAITarget.isSuitableTarget(EntityAIFindEntityNearestPlayer.this.field_179434_b, (EntityLivingBase)p_apply_1_, false, true);
+                    return (double)p_apply_1_.getDistanceToEntity(EntityAIFindEntityNearestPlayer.this.entityLiving) > d0 ? false : EntityAITarget.isSuitableTarget(EntityAIFindEntityNearestPlayer.this.entityLiving, (EntityLivingBase)p_apply_1_, false, true);
                 }
             }
         };
-        this.field_179432_d = new EntityAINearestAttackableTarget.Sorter(p_i45882_1_);
+        this.sorter = new EntityAINearestAttackableTarget.Sorter(entityLivingIn);
     }
 
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
     public boolean shouldExecute()
     {
-        double d0 = this.func_179431_f();
-        List<EntityPlayer> list = this.field_179434_b.worldObj.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.field_179434_b.getEntityBoundingBox().expand(d0, 4.0D, d0), this.field_179435_c);
-        Collections.sort(list, this.field_179432_d);
+        double d0 = this.maxTargetRange();
+        List<EntityPlayer> list = this.entityLiving.worldObj.<EntityPlayer>getEntitiesWithinAABB(EntityPlayer.class, this.entityLiving.getEntityBoundingBox().expand(d0, 4.0D, d0), this.predicate);
+        Collections.sort(list, this.sorter);
 
         if (list.isEmpty())
         {
@@ -87,17 +84,14 @@ public class EntityAIFindEntityNearestPlayer extends EntityAIBase
         }
         else
         {
-            this.field_179433_e = (EntityLivingBase)list.get(0);
+            this.entityTarget = (EntityLivingBase)list.get(0);
             return true;
         }
     }
 
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
     public boolean continueExecuting()
     {
-        EntityLivingBase entitylivingbase = this.field_179434_b.getAttackTarget();
+        EntityLivingBase entitylivingbase = this.entityLiving.getAttackTarget();
 
         if (entitylivingbase == null)
         {
@@ -113,7 +107,7 @@ public class EntityAIFindEntityNearestPlayer extends EntityAIBase
         }
         else
         {
-            Team team = this.field_179434_b.getTeam();
+            Team team = this.entityLiving.getTeam();
             Team team1 = entitylivingbase.getTeam();
 
             if (team != null && team1 == team)
@@ -122,33 +116,27 @@ public class EntityAIFindEntityNearestPlayer extends EntityAIBase
             }
             else
             {
-                double d0 = this.func_179431_f();
-                return this.field_179434_b.getDistanceSqToEntity(entitylivingbase) > d0 * d0 ? false : !(entitylivingbase instanceof EntityPlayerMP) || !((EntityPlayerMP)entitylivingbase).theItemInWorldManager.isCreative();
+                double d0 = this.maxTargetRange();
+                return this.entityLiving.getDistanceSqToEntity(entitylivingbase) > d0 * d0 ? false : !(entitylivingbase instanceof EntityPlayerMP) || !((EntityPlayerMP)entitylivingbase).theItemInWorldManager.isCreative();
             }
         }
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void startExecuting()
     {
-        this.field_179434_b.setAttackTarget(this.field_179433_e);
+        this.entityLiving.setAttackTarget(this.entityTarget);
         super.startExecuting();
     }
 
-    /**
-     * Resets the task
-     */
     public void resetTask()
     {
-        this.field_179434_b.setAttackTarget((EntityLivingBase)null);
+        this.entityLiving.setAttackTarget((EntityLivingBase)null);
         super.startExecuting();
     }
 
-    protected double func_179431_f()
+    protected double maxTargetRange()
     {
-        IAttributeInstance iattributeinstance = this.field_179434_b.getEntityAttribute(SharedMonsterAttributes.followRange);
+        IAttributeInstance iattributeinstance = this.entityLiving.getEntityAttribute(SharedMonsterAttributes.followRange);
         return iattributeinstance == null ? 16.0D : iattributeinstance.getAttributeValue();
     }
 }

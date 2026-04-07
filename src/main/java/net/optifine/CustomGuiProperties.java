@@ -196,9 +196,9 @@ public class CustomGuiProperties
 
         String s5 = property + ".";
 
-        for (Object e : props.keySet())
+        for (Object o : props.keySet())
         {
-            String s1 = (String) e;
+            String s1 = (String) o;
             if (s1.startsWith(s5))
             {
                 String s2 = s1.substring(s5.length());
@@ -217,52 +217,59 @@ public class CustomGuiProperties
 
     private static ResourceLocation getGuiTextureLocation(CustomGuiProperties.EnumContainer container)
     {
-        switch (container)
+        if (container == null)
         {
-            case ANVIL:
-                return ANVIL_GUI_TEXTURE;
+            return null;
+        }
+        else
+        {
+            switch (container)
+            {
+                case ANVIL:
+                    return ANVIL_GUI_TEXTURE;
 
-            case BEACON:
-                return BEACON_GUI_TEXTURE;
+                case BEACON:
+                    return BEACON_GUI_TEXTURE;
 
-            case BREWING_STAND:
-                return BREWING_STAND_GUI_TEXTURE;
+                case BREWING_STAND:
+                    return BREWING_STAND_GUI_TEXTURE;
 
-            case CHEST:
-                return CHEST_GUI_TEXTURE;
+                case CHEST:
+                    return CHEST_GUI_TEXTURE;
 
-            case CRAFTING:
-                return CRAFTING_TABLE_GUI_TEXTURE;
+                case CRAFTING:
+                    return CRAFTING_TABLE_GUI_TEXTURE;
 
-            case CREATIVE:
-                return null;
+                case CREATIVE:
+                    return null;
 
-            case DISPENSER:
-                return DISPENSER_GUI_TEXTURE;
+                case DISPENSER:
+                    return DISPENSER_GUI_TEXTURE;
 
-            case ENCHANTMENT:
-                return ENCHANTMENT_TABLE_GUI_TEXTURE;
+                case ENCHANTMENT:
+                    return ENCHANTMENT_TABLE_GUI_TEXTURE;
 
-            case FURNACE:
-                return FURNACE_GUI_TEXTURE;
+                case FURNACE:
+                    return FURNACE_GUI_TEXTURE;
 
-            case HOPPER:
-                return HOPPER_GUI_TEXTURE;
+                case HOPPER:
+                    return HOPPER_GUI_TEXTURE;
 
-            case HORSE:
-                return HORSE_GUI_TEXTURE;
+                case HORSE:
+                    return HORSE_GUI_TEXTURE;
 
-            case INVENTORY:
-                return INVENTORY_GUI_TEXTURE;
+                case INVENTORY:
+                    return INVENTORY_GUI_TEXTURE;
 
-            case SHULKER_BOX:
-                return SHULKER_BOX_GUI_TEXTURE;
+                case SHULKER_BOX:
+                    return SHULKER_BOX_GUI_TEXTURE;
 
-            case VILLAGER:
-                return VILLAGER_GUI_TEXTURE;
+                case VILLAGER:
+                    return VILLAGER_GUI_TEXTURE;
 
-            default:
-                return null;
+                default:
+                    return null;
+            }
         }
     }
 
@@ -499,7 +506,7 @@ public class CustomGuiProperties
         {
             if (this.nbtName != null)
             {
-                String s = entity.getCommandSenderName();
+                String s = entity.getName();
 
                 if (!this.nbtName.matchesValue(s))
                 {
@@ -654,3 +661,4 @@ public class CustomGuiProperties
         DROPPER;
     }
 }
+

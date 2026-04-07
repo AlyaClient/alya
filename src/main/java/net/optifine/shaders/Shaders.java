@@ -45,6 +45,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.data.TextureMetadataSection;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -120,7 +121,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 public class Shaders
 {
-    static Minecraft mc;
+    static Minecraft mc = Minecraft.getMinecraft();
     static EntityRenderer entityRenderer;
     public static boolean isInitializedOnce = false;
     public static boolean isShaderPackInitialized = false;
@@ -378,7 +379,7 @@ public class Shaders
     public static final Program[] ProgramsAll = programs.getPrograms();
     public static Program activeProgram = ProgramNone;
     public static int activeProgramID = 0;
-    private static ProgramStack programStackLeash = new ProgramStack();
+    private static ProgramStack programStack = new ProgramStack();
     private static boolean hasDeferredPrograms = false;
     static IntBuffer activeDrawBuffers = null;
     private static int activeCompositeMipmapSetting = 0;
@@ -1071,9 +1072,9 @@ public class Shaders
         Set set = props.keySet();
         List<ICustomTexture> list = new ArrayList();
 
-        for (Object e: set)
+        for (Object o : set)
         {
-            String s1 = (String) e;
+            String s1 = (String) o;
             if (s1.startsWith(s))
             {
                 String s2 = StrUtils.removePrefix(s1, s);
@@ -1260,7 +1261,8 @@ public class Shaders
                 ByteBuffer bytebuffer = GLAllocation.createDirectByteBuffer(abyte.length);
                 bytebuffer.put(abyte);
                 bytebuffer.flip();
-                CustomTextureRaw customtextureraw = new CustomTextureRaw(type, internalFormat, width, height, depth, pixelFormat, pixelType, bytebuffer, textureUnit);
+                TextureMetadataSection texturemetadatasection = SimpleShaderTexture.loadTextureMetadataSection(s, new TextureMetadataSection(true, true, new ArrayList()));
+                CustomTextureRaw customtextureraw = new CustomTextureRaw(type, internalFormat, width, height, depth, pixelFormat, pixelType, bytebuffer, textureUnit, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
                 return customtextureraw;
             }
         }
@@ -2018,10 +2020,11 @@ public class Shaders
         SMCLog.info(stringbuilder.toString());
     }
 
-    public static void startup(Minecraft mcs)
+    public static void startup(Minecraft mc)
     {
         checkShadersModInstalled();
-        mc = mcs;
+        mc = mc;
+        mc = Minecraft.getMinecraft();
         capabilities = GLContext.getCapabilities();
         glVersionString = GL11.glGetString(GL11.GL_VERSION);
         glVendorString = GL11.glGetString(GL11.GL_VENDOR);
@@ -4928,7 +4931,7 @@ public class Shaders
         double d3 = -d0;
         double d4 = 16.0D;
         double d5 = -cameraPositionY;
-        worldrenderer.begin(7, DefaultVertexFormats.field_181705_e);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION);
         worldrenderer.pos(d2, d5, d3).endVertex();
         worldrenderer.pos(d2, d4, d3).endVertex();
         worldrenderer.pos(d3, d4, d2).endVertex();
@@ -4961,6 +4964,10 @@ public class Shaders
         worldrenderer.pos(d1, d4, d3).endVertex();
         worldrenderer.pos(d2, d4, d3).endVertex();
         worldrenderer.pos(d2, d5, d3).endVertex();
+        worldrenderer.pos(d3, d5, d3).endVertex();
+        worldrenderer.pos(d3, d5, d0).endVertex();
+        worldrenderer.pos(d0, d5, d0).endVertex();
+        worldrenderer.pos(d0, d5, d3).endVertex();
         Tessellator.getInstance().draw();
     }
 
@@ -5436,15 +5443,26 @@ public class Shaders
         }
     }
 
+    public static void pushProgram()
+    {
+        programStack.push(activeProgram);
+    }
+
+    public static void popProgram()
+    {
+        Program program = programStack.pop();
+        useProgram(program);
+    }
+
     public static void beginLeash()
     {
-        programStackLeash.push(activeProgram);
+        pushProgram();
         useProgram(ProgramBasic);
     }
 
     public static void endLeash()
     {
-        useProgram(programStackLeash.pop());
+        popProgram();
     }
 
     public static void enableFog()
@@ -5571,16 +5589,28 @@ public class Shaders
         return shaderPack == null ? null : shaderPack.getResourceAsStream(path);
     }
 
-    public static void nextAntialiasingLevel()
+    public static void nextAntialiasingLevel(boolean forward)
     {
-        configAntialiasingLevel += 2;
-        configAntialiasingLevel = configAntialiasingLevel / 2 * 2;
-
-        if (configAntialiasingLevel > 4)
+        if (forward)
         {
-            configAntialiasingLevel = 0;
+            configAntialiasingLevel += 2;
+
+            if (configAntialiasingLevel > 4)
+            {
+                configAntialiasingLevel = 0;
+            }
+        }
+        else
+        {
+            configAntialiasingLevel -= 2;
+
+            if (configAntialiasingLevel < 0)
+            {
+                configAntialiasingLevel = 4;
+            }
         }
 
+        configAntialiasingLevel = configAntialiasingLevel / 2 * 2;
         configAntialiasingLevel = Config.limit(configAntialiasingLevel, 0, 4);
     }
 
@@ -5639,9 +5669,9 @@ public class Shaders
                         Lang.loadLocaleData(inputstream, properties);
                         inputstream.close();
 
-                        for (Object o  : properties.keySet())
+                        for (Object o: properties.keySet())
                         {
-                        	String s4 = (String)o;
+                            String s4 = (String) o;
                             String s5 = properties.getProperty(s4);
                             shaderPackResources.put(s4, s5);
                         }

@@ -26,12 +26,7 @@ public class EntityFootStepFX extends EntityFX
         this.footstepMaxAge = 200;
     }
 
-    /**
-     * Renders the particle
-     *  
-     * @param worldRendererIn The WorldRenderer instance
-     */
-    public void renderParticle(WorldRenderer worldRendererIn, Entity entityIn, float partialTicks, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
+    public void renderParticle(WorldRenderer worldRendererIn, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
         float f = ((float)this.footstepAge + partialTicks) / (float)this.footstepMaxAge;
         f = f * f;
@@ -52,19 +47,16 @@ public class EntityFootStepFX extends EntityFX
         this.currentFootSteps.bindTexture(FOOTPRINT_TEXTURE);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(770, 771);
-        worldRendererIn.begin(7, DefaultVertexFormats.field_181709_i);
-        worldRendererIn.pos((double)(f3 - 0.125F), (double)f4, (double)(f5 + 0.125F)).tex(0.0D, 1.0D).func_181666_a(f6, f6, f6, f1).endVertex();
-        worldRendererIn.pos((double)(f3 + 0.125F), (double)f4, (double)(f5 + 0.125F)).tex(1.0D, 1.0D).func_181666_a(f6, f6, f6, f1).endVertex();
-        worldRendererIn.pos((double)(f3 + 0.125F), (double)f4, (double)(f5 - 0.125F)).tex(1.0D, 0.0D).func_181666_a(f6, f6, f6, f1).endVertex();
-        worldRendererIn.pos((double)(f3 - 0.125F), (double)f4, (double)(f5 - 0.125F)).tex(0.0D, 0.0D).func_181666_a(f6, f6, f6, f1).endVertex();
+        worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        worldRendererIn.pos((double)(f3 - 0.125F), (double)f4, (double)(f5 + 0.125F)).tex(0.0D, 1.0D).color(f6, f6, f6, f1).endVertex();
+        worldRendererIn.pos((double)(f3 + 0.125F), (double)f4, (double)(f5 + 0.125F)).tex(1.0D, 1.0D).color(f6, f6, f6, f1).endVertex();
+        worldRendererIn.pos((double)(f3 + 0.125F), (double)f4, (double)(f5 - 0.125F)).tex(1.0D, 0.0D).color(f6, f6, f6, f1).endVertex();
+        worldRendererIn.pos((double)(f3 - 0.125F), (double)f4, (double)(f5 - 0.125F)).tex(0.0D, 0.0D).color(f6, f6, f6, f1).endVertex();
         Tessellator.getInstance().draw();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate()
     {
         ++this.footstepAge;

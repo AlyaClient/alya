@@ -25,66 +25,28 @@ public class StatList
     public static List<StatBase> generalStats = Lists.<StatBase>newArrayList();
     public static List<StatCrafting> itemStats = Lists.<StatCrafting>newArrayList();
     public static List<StatCrafting> objectMineStats = Lists.<StatCrafting>newArrayList();
-
-    /** number of times you've left a game */
     public static StatBase leaveGameStat = (new StatBasic("stat.leaveGame", new ChatComponentTranslation("stat.leaveGame", new Object[0]))).initIndependentStat().registerStat();
-
-    /** number of minutes you have played */
     public static StatBase minutesPlayedStat = (new StatBasic("stat.playOneMinute", new ChatComponentTranslation("stat.playOneMinute", new Object[0]), StatBase.timeStatType)).initIndependentStat().registerStat();
     public static StatBase timeSinceDeathStat = (new StatBasic("stat.timeSinceDeath", new ChatComponentTranslation("stat.timeSinceDeath", new Object[0]), StatBase.timeStatType)).initIndependentStat().registerStat();
-
-    /** distance you've walked */
     public static StatBase distanceWalkedStat = (new StatBasic("stat.walkOneCm", new ChatComponentTranslation("stat.walkOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
     public static StatBase distanceCrouchedStat = (new StatBasic("stat.crouchOneCm", new ChatComponentTranslation("stat.crouchOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
     public static StatBase distanceSprintedStat = (new StatBasic("stat.sprintOneCm", new ChatComponentTranslation("stat.sprintOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** distance you have swam */
     public static StatBase distanceSwumStat = (new StatBasic("stat.swimOneCm", new ChatComponentTranslation("stat.swimOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you have fallen */
     public static StatBase distanceFallenStat = (new StatBasic("stat.fallOneCm", new ChatComponentTranslation("stat.fallOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you've climbed */
     public static StatBase distanceClimbedStat = (new StatBasic("stat.climbOneCm", new ChatComponentTranslation("stat.climbOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you've flown */
     public static StatBase distanceFlownStat = (new StatBasic("stat.flyOneCm", new ChatComponentTranslation("stat.flyOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you've dived */
     public static StatBase distanceDoveStat = (new StatBasic("stat.diveOneCm", new ChatComponentTranslation("stat.diveOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you've traveled by minecart */
     public static StatBase distanceByMinecartStat = (new StatBasic("stat.minecartOneCm", new ChatComponentTranslation("stat.minecartOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you've traveled by boat */
     public static StatBase distanceByBoatStat = (new StatBasic("stat.boatOneCm", new ChatComponentTranslation("stat.boatOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the distance you've traveled by pig */
     public static StatBase distanceByPigStat = (new StatBasic("stat.pigOneCm", new ChatComponentTranslation("stat.pigOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
     public static StatBase distanceByHorseStat = (new StatBasic("stat.horseOneCm", new ChatComponentTranslation("stat.horseOneCm", new Object[0]), StatBase.distanceStatType)).initIndependentStat().registerStat();
-
-    /** the times you've jumped */
     public static StatBase jumpStat = (new StatBasic("stat.jump", new ChatComponentTranslation("stat.jump", new Object[0]))).initIndependentStat().registerStat();
-
-    /** the distance you've dropped (or times you've fallen?) */
     public static StatBase dropStat = (new StatBasic("stat.drop", new ChatComponentTranslation("stat.drop", new Object[0]))).initIndependentStat().registerStat();
-
-    /** the amount of damage you've dealt */
     public static StatBase damageDealtStat = (new StatBasic("stat.damageDealt", new ChatComponentTranslation("stat.damageDealt", new Object[0]), StatBase.field_111202_k)).registerStat();
-
-    /** the amount of damage you have taken */
     public static StatBase damageTakenStat = (new StatBasic("stat.damageTaken", new ChatComponentTranslation("stat.damageTaken", new Object[0]), StatBase.field_111202_k)).registerStat();
-
-    /** the number of times you have died */
     public static StatBase deathsStat = (new StatBasic("stat.deaths", new ChatComponentTranslation("stat.deaths", new Object[0]))).registerStat();
-
-    /** the number of mobs you have killed */
     public static StatBase mobKillsStat = (new StatBasic("stat.mobKills", new ChatComponentTranslation("stat.mobKills", new Object[0]))).registerStat();
-
-    /** the number of animals you have bred */
     public static StatBase animalsBredStat = (new StatBasic("stat.animalsBred", new ChatComponentTranslation("stat.animalsBred", new Object[0]))).registerStat();
-
-    /** counts the number of times you've killed a player */
     public static StatBase playerKillsStat = (new StatBasic("stat.playerKills", new ChatComponentTranslation("stat.playerKills", new Object[0]))).registerStat();
     public static StatBase fishCaughtStat = (new StatBasic("stat.fishCaught", new ChatComponentTranslation("stat.fishCaught", new Object[0]))).registerStat();
     public static StatBase junkFishedStat = (new StatBasic("stat.junkFished", new ChatComponentTranslation("stat.junkFished", new Object[0]))).registerStat();
@@ -112,14 +74,8 @@ public class StatList
     public static StatBase field_181742_Z = (new StatBasic("stat.craftingTableInteraction", new ChatComponentTranslation("stat.workbenchInteraction", new Object[0]))).registerStat();
     public static StatBase field_181723_aa = (new StatBasic("stat.chestOpened", new ChatComponentTranslation("stat.chestOpened", new Object[0]))).registerStat();
     public static final StatBase[] mineBlockStatArray = new StatBase[4096];
-
-    /** Tracks the number of items a given block or item has been crafted. */
     public static final StatBase[] objectCraftStats = new StatBase[32000];
-
-    /** Tracks the number of times a given block or item has been used. */
     public static final StatBase[] objectUseStats = new StatBase[32000];
-
-    /** Tracks the number of times a given block or item has been broken. */
     public static final StatBase[] objectBreakStats = new StatBase[32000];
 
     public static void init()
@@ -132,10 +88,6 @@ public class StatList
         EntityList.func_151514_a();
     }
 
-    /**
-     * Initializes statistics related to craftable items. Is only called after both block and item stats have been
-     * initialized.
-     */
     private static void initCraftableStats()
     {
         Set<Item> set = Sets.<Item>newHashSet();
@@ -241,28 +193,25 @@ public class StatList
         return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
     }
 
-    /**
-     * Forces all dual blocks to count for each other on the stats list
-     */
     private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_)
     {
-        func_151180_a(p_75924_0_, Blocks.water, Blocks.flowing_water);
-        func_151180_a(p_75924_0_, Blocks.lava, Blocks.flowing_lava);
-        func_151180_a(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin);
-        func_151180_a(p_75924_0_, Blocks.lit_furnace, Blocks.furnace);
-        func_151180_a(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore);
-        func_151180_a(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater);
-        func_151180_a(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator);
-        func_151180_a(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch);
-        func_151180_a(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp);
-        func_151180_a(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab);
-        func_151180_a(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab);
-        func_151180_a(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2);
-        func_151180_a(p_75924_0_, Blocks.grass, Blocks.dirt);
-        func_151180_a(p_75924_0_, Blocks.farmland, Blocks.dirt);
+        mergeStatBases(p_75924_0_, Blocks.water, Blocks.flowing_water);
+        mergeStatBases(p_75924_0_, Blocks.lava, Blocks.flowing_lava);
+        mergeStatBases(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin);
+        mergeStatBases(p_75924_0_, Blocks.lit_furnace, Blocks.furnace);
+        mergeStatBases(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore);
+        mergeStatBases(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater);
+        mergeStatBases(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator);
+        mergeStatBases(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch);
+        mergeStatBases(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp);
+        mergeStatBases(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab);
+        mergeStatBases(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab);
+        mergeStatBases(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2);
+        mergeStatBases(p_75924_0_, Blocks.grass, Blocks.dirt);
+        mergeStatBases(p_75924_0_, Blocks.farmland, Blocks.dirt);
     }
 
-    private static void func_151180_a(StatBase[] statBaseIn, Block p_151180_1_, Block p_151180_2_)
+    private static void mergeStatBases(StatBase[] statBaseIn, Block p_151180_1_, Block p_151180_2_)
     {
         int i = Block.getIdFromBlock(p_151180_1_);
         int j = Block.getIdFromBlock(p_151180_2_);

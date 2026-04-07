@@ -13,9 +13,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public abstract class Module {
-
     protected static final Minecraft MC = Minecraft.getMinecraft();
-
     private final String name;
     private final String description;
     private final Category category;
@@ -28,7 +26,8 @@ public abstract class Module {
         this(name, description, category, Keyboard.KEY_NONE);
     }
 
-    public Module(final String name, final String description, final Category category, final int keyCode) {
+    public Module(
+            final String name, final String description, final Category category, final int keyCode) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -66,17 +65,19 @@ public abstract class Module {
     }
 
     protected void updateSubmodules() {
-        getSetting("Mode").ifPresent(setting -> {
-            if(setting instanceof ModeSetting) {
-                String mode = ((ModeSetting) setting).getValue();
-                for(Submodule submodule : submodules) {
-                    submodule.setEnabled(isEnabled() && submodule.getName().equalsIgnoreCase(mode));
-                }
-            }
-        });
+        getSetting("Mode")
+                .ifPresent(
+                        setting -> {
+                            if(setting instanceof ModeSetting) {
+                                String mode = ((ModeSetting) setting).getValue();
+                                for(Submodule submodule : submodules) {
+                                    submodule.setEnabled(isEnabled() && submodule.getName().equalsIgnoreCase(mode));
+                                }
+                            }
+                        });
     }
 
-    protected void initializeSubmodules(final Submodule ...submodules) {
+    protected void initializeSubmodules(final Submodule... submodules) {
         for(final Submodule submodule : submodules) {
             addSubmodule(submodule);
         }
@@ -128,14 +129,10 @@ public abstract class Module {
     }
 
     public Optional<Setting<?>> getSetting(final String name) {
-        return settings.stream()
-                .filter(string -> string.getName().equalsIgnoreCase(name))
-                .findFirst();
+        return settings.stream().filter(string -> string.getName().equalsIgnoreCase(name)).findFirst();
     }
 
     public boolean hasSettings() {
         return !settings.isEmpty();
     }
-
-
 }

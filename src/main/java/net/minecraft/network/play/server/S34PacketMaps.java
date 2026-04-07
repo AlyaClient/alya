@@ -43,9 +43,6 @@ public class S34PacketMaps implements Packet<INetHandlerPlayClient>
         }
     }
 
-    /**
-     * Reads the raw packet data from the data stream.
-     */
     public void readPacketData(PacketBuffer buf) throws IOException
     {
         this.mapId = buf.readVarIntFromBuffer();
@@ -69,9 +66,6 @@ public class S34PacketMaps implements Packet<INetHandlerPlayClient>
         }
     }
 
-    /**
-     * Writes the raw packet data to the data stream.
-     */
     public void writePacketData(PacketBuffer buf) throws IOException
     {
         buf.writeVarIntToBuffer(this.mapId);
@@ -96,9 +90,6 @@ public class S34PacketMaps implements Packet<INetHandlerPlayClient>
         }
     }
 
-    /**
-     * Passes this Packet on to the NetHandler for processing.
-     */
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleMaps(this);
@@ -109,18 +100,15 @@ public class S34PacketMaps implements Packet<INetHandlerPlayClient>
         return this.mapId;
     }
 
-    /**
-     * Sets new MapData from the packet to given MapData param
-     */
     public void setMapdataTo(MapData mapdataIn)
     {
         mapdataIn.scale = this.mapScale;
-        mapdataIn.playersVisibleOnMap.clear();
+        mapdataIn.mapDecorations.clear();
 
         for (int i = 0; i < this.mapVisiblePlayersVec4b.length; ++i)
         {
             Vec4b vec4b = this.mapVisiblePlayersVec4b[i];
-            mapdataIn.playersVisibleOnMap.put("icon-" + i, vec4b);
+            mapdataIn.mapDecorations.put("icon-" + i, vec4b);
         }
 
         for (int j = 0; j < this.mapMaxX; ++j)

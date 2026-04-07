@@ -1,5 +1,7 @@
 package net.minecraft.client.multiplayer;
 
+import dev.thoq.Alya;
+import dev.thoq.event.events.ReachEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -29,86 +31,42 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 
-@SuppressWarnings({"UnusedReturnValue", "unused", "ConstantValue"})
 public class PlayerControllerMP {
-    /**
-     * The Minecraft instance.
-     */
     private final Minecraft mc;
     private final NetHandlerPlayClient netClientHandler;
     private BlockPos currentBlock = new BlockPos(-1, -1, -1);
-
-    /**
-     * The Item currently being used to destroy a block
-     */
     private ItemStack currentItemHittingBlock;
-
-    /**
-     * Current block damage (MP)
-     */
     private float curBlockDamageMP;
-
-    /**
-     * Tick counter, when it hits 4 it resets back to 0 and plays the step sound
-     */
     private float stepSoundTickCounter;
-
-    /**
-     * Delays the first damage on the block after the first click on the block
-     */
     private int blockHitDelay;
-
-    /**
-     * Tells if the player is hitting a block
-     */
     private boolean isHittingBlock;
-
-    /**
-     * Current game type for the player
-     */
     private WorldSettings.GameType currentGameType = WorldSettings.GameType.SURVIVAL;
-
-    /**
-     * Index of the current item held by the player in the inventory hotbar
-     */
     private int currentPlayerItem;
 
-    public PlayerControllerMP(Minecraft mcIn, NetHandlerPlayClient p_i45062_2_) {
+    public PlayerControllerMP(Minecraft mcIn, NetHandlerPlayClient netHandler) {
         this.mc = mcIn;
-        this.netClientHandler = p_i45062_2_;
+        this.netClientHandler = netHandler;
     }
 
-    public static void clickBlockCreative(Minecraft mcIn, PlayerControllerMP p_178891_1_, BlockPos p_178891_2_, EnumFacing p_178891_3_) {
-        if(!mcIn.theWorld.extinguishFire(mcIn.thePlayer, p_178891_2_, p_178891_3_)) {
-            p_178891_1_.onPlayerDestroyBlock(p_178891_2_, p_178891_3_);
+    public static void clickBlockCreative(Minecraft mcIn, PlayerControllerMP playerController, BlockPos pos, EnumFacing facing) {
+        if(!mcIn.theWorld.extinguishFire(mcIn.thePlayer, pos, facing)) {
+            playerController.onPlayerDestroyBlock(pos, facing);
         }
     }
 
-    /**
-     * Sets player capabilities depending on current gametype. params: player
-     */
-    public void setPlayerCapabilities(EntityPlayer p_78748_1_) {
-        this.currentGameType.configurePlayerCapabilities(p_78748_1_.capabilities);
+    public void setPlayerCapabilities(EntityPlayer player) {
+        this.currentGameType.configurePlayerCapabilities(player.capabilities);
     }
 
-    /**
-     * None
-     */
     public boolean isSpectator() {
         return this.currentGameType == WorldSettings.GameType.SPECTATOR;
     }
 
-    /**
-     * Sets the game type for the player.
-     */
-    public void setGameType(WorldSettings.GameType p_78746_1_) {
-        this.currentGameType = p_78746_1_;
+    public void setGameType(WorldSettings.GameType type) {
+        this.currentGameType = type;
         this.currentGameType.configurePlayerCapabilities(this.mc.thePlayer.capabilities);
     }
 
-    /**
-     * Flips the player around.
-     */
     public void flipPlayer(EntityPlayer playerIn) {
         playerIn.rotationYaw = -180.0F;
     }
@@ -117,12 +75,6 @@ public class PlayerControllerMP {
         return this.currentGameType.isSurvivalOrAdventure();
     }
 
-    /**
-     * Called when a player completes the destruction of a block
-     *
-     * @param pos  The block's coordinates
-     * @param side The side it was destroyed from
-     */
     public boolean onPlayerDestroyBlock(BlockPos pos, EnumFacing side) {
         if(this.currentGameType.isAdventure()) {
             if(this.currentGameType == WorldSettings.GameType.SPECTATOR) {
@@ -179,12 +131,6 @@ public class PlayerControllerMP {
         }
     }
 
-    /**
-     * Called when the player is hitting a block with an item.
-     *
-     * @param loc  location of the block being clicked
-     * @param face Blockface being clicked
-     */
     public boolean clickBlock(BlockPos loc, EnumFacing face) {
         if(this.currentGameType.isAdventure()) {
             if(this.currentGameType == WorldSettings.GameType.SPECTATOR) {
@@ -241,9 +187,6 @@ public class PlayerControllerMP {
         }
     }
 
-    /**
-     * Resets current block damage and isHittingBlock
-     */
     public void resetBlockRemoving() {
         if(this.isHittingBlock) {
             this.netClientHandler.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, this.currentBlock, EnumFacing.DOWN));
@@ -296,11 +239,8 @@ public class PlayerControllerMP {
         }
     }
 
-    /**
-     * player reach distance = 4F
-     */
     public float getBlockReachDistance() {
-        return this.currentGameType.isCreative() ? 5.0F : 4.5F;
+        return this.currentGameType.isCreative() ? 5F : 4.5F;
     }
 
     public void updateController() {
@@ -324,9 +264,6 @@ public class PlayerControllerMP {
         return pos.equals(this.currentBlock) && flag;
     }
 
-    /**
-     * Syncs the current player item with the server
-     */
     private void syncCurrentPlayItem() {
         int i = this.mc.thePlayer.inventory.currentItem;
 
@@ -336,7 +273,6 @@ public class PlayerControllerMP {
         }
     }
 
-    @SuppressWarnings("ConstantValue")
     public boolean onPlayerRightClick(EntityPlayerSP player, WorldClient worldIn, ItemStack heldStack, BlockPos hitPos, EnumFacing side, Vec3 hitVec) {
         this.syncCurrentPlayItem();
         float f = (float) (hitVec.xCoord - (double) hitPos.getX());
@@ -376,24 +312,7 @@ public class PlayerControllerMP {
                     heldStack.stackSize = j;
                     return flag1;
                 } else {
-                    if(!heldStack.onItemUse(player, worldIn, hitPos, side, f, f1, f2)) {
-                        final int i = heldStack.stackSize;
-                        final ItemStack itemstack = heldStack.useItemRightClick(worldIn, player);
-
-                        if(itemstack != heldStack || itemstack != null && itemstack.stackSize != i) {
-                            player.inventory.mainInventory[player.inventory.currentItem] = itemstack;
-
-                            if(itemstack.stackSize == 0) {
-                                player.inventory.mainInventory[player.inventory.currentItem] = null;
-                            }
-
-                            return true;
-                        }
-
-                        return true;
-                    }
-
-                    return true;
+                    return heldStack.onItemUse(player, worldIn, hitPos, side, f, f1, f2);
                 }
             } else {
                 return true;
@@ -401,9 +320,6 @@ public class PlayerControllerMP {
         }
     }
 
-    /**
-     * Notifies the server of things like consuming food, etc...
-     */
     public boolean sendUseItem(EntityPlayer playerIn, World worldIn, ItemStack itemStackIn) {
         if(this.currentGameType == WorldSettings.GameType.SPECTATOR) {
             return false;
@@ -427,13 +343,10 @@ public class PlayerControllerMP {
         }
     }
 
-    public EntityPlayerSP func_178892_a(World worldIn, StatFileWriter p_178892_2_) {
-        return new EntityPlayerSP(this.mc, worldIn, this.netClientHandler, p_178892_2_);
+    public EntityPlayerSP func_178892_a(World worldIn, StatFileWriter statWriter) {
+        return new EntityPlayerSP(this.mc, worldIn, this.netClientHandler, statWriter);
     }
 
-    /**
-     * Attacks an entity
-     */
     public void attackEntity(EntityPlayer playerIn, Entity targetEntity) {
         this.syncCurrentPlayItem();
         this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
@@ -443,25 +356,19 @@ public class PlayerControllerMP {
         }
     }
 
-    /**
-     * Send packet to server - player is interacting with another entity (left click)
-     */
     public boolean interactWithEntitySendPacket(EntityPlayer playerIn, Entity targetEntity) {
         this.syncCurrentPlayItem();
         this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.INTERACT));
         return this.currentGameType != WorldSettings.GameType.SPECTATOR && playerIn.interactWith(targetEntity);
     }
 
-    public boolean func_178894_a(EntityPlayer p_178894_1_, Entity p_178894_2_, MovingObjectPosition p_178894_3_) {
+    public boolean isPlayerRightClickingOnEntity(EntityPlayer player, Entity entityIn, MovingObjectPosition movingObject) {
         this.syncCurrentPlayItem();
-        Vec3 vec3 = new Vec3(p_178894_3_.hitVec.xCoord - p_178894_2_.posX, p_178894_3_.hitVec.yCoord - p_178894_2_.posY, p_178894_3_.hitVec.zCoord - p_178894_2_.posZ);
-        this.netClientHandler.addToSendQueue(new C02PacketUseEntity(p_178894_2_, vec3));
-        return this.currentGameType != WorldSettings.GameType.SPECTATOR && p_178894_2_.interactAt(p_178894_1_, vec3);
+        Vec3 vec3 = new Vec3(movingObject.hitVec.xCoord - entityIn.posX, movingObject.hitVec.yCoord - entityIn.posY, movingObject.hitVec.zCoord - entityIn.posZ);
+        this.netClientHandler.addToSendQueue(new C02PacketUseEntity(entityIn, vec3));
+        return this.currentGameType != WorldSettings.GameType.SPECTATOR && entityIn.interactAt(player, vec3);
     }
 
-    /**
-     * Handles slot clicks sends a packet to the server.
-     */
     public ItemStack windowClick(int windowId, int slotId, int mouseButtonClicked, int mode, EntityPlayer playerIn) {
         short short1 = playerIn.openContainer.getNextTransactionID(playerIn.inventory);
         ItemStack itemstack = playerIn.openContainer.slotClick(slotId, mouseButtonClicked, mode, playerIn);
@@ -469,26 +376,16 @@ public class PlayerControllerMP {
         return itemstack;
     }
 
-    /**
-     * GuiEnchantment uses this during multiplayer to tell PlayerControllerMP to send a packet indicating the
-     * enchantment action the player has taken.
-     */
-    public void sendEnchantPacket(int p_78756_1_, int p_78756_2_) {
-        this.netClientHandler.addToSendQueue(new C11PacketEnchantItem(p_78756_1_, p_78756_2_));
+    public void sendEnchantPacket(int windowID, int button) {
+        this.netClientHandler.addToSendQueue(new C11PacketEnchantItem(windowID, button));
     }
 
-    /**
-     * Used in PlayerControllerMP to update the server with an ItemStack in a slot.
-     */
     public void sendSlotPacket(ItemStack itemStackIn, int slotId) {
         if(this.currentGameType.isCreative()) {
             this.netClientHandler.addToSendQueue(new C10PacketCreativeInventoryAction(slotId, itemStackIn));
         }
     }
 
-    /**
-     * Sends a Packet107 to the server to drop the item on the ground
-     */
     public void sendPacketDropItem(ItemStack itemStackIn) {
         if(this.currentGameType.isCreative() && itemStackIn != null) {
             this.netClientHandler.addToSendQueue(new C10PacketCreativeInventoryAction(-1, itemStackIn));
@@ -505,30 +402,18 @@ public class PlayerControllerMP {
         return this.currentGameType.isSurvivalOrAdventure();
     }
 
-    /**
-     * Checks if the player is not creative, used for checking if it should break a block instantly
-     */
     public boolean isNotCreative() {
         return !this.currentGameType.isCreative();
     }
 
-    /**
-     * returns true if player is in creative mode
-     */
     public boolean isInCreativeMode() {
         return this.currentGameType.isCreative();
     }
 
-    /**
-     * true for hitting entities far away.
-     */
     public boolean extendedReach() {
         return this.currentGameType.isCreative();
     }
 
-    /**
-     * Checks if the player is riding a horse, used to chose the GUI to open
-     */
     public boolean isRidingHorse() {
         return this.mc.thePlayer.isRiding() && this.mc.thePlayer.ridingEntity instanceof EntityHorse;
     }
@@ -541,7 +426,7 @@ public class PlayerControllerMP {
         return this.currentGameType;
     }
 
-    public boolean func_181040_m() {
+    public boolean getIsHittingBlock() {
         return this.isHittingBlock;
     }
 }

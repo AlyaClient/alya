@@ -5,10 +5,13 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public final class ModeSetting extends Setting<String> {
-
     private final List<String> modes;
 
-    public ModeSetting(final String name, final String description, final String defaultValue, final String... modes) {
+    public ModeSetting(
+            final String name,
+            final String description,
+            final String defaultValue,
+            final String... modes) {
         super(name, description, defaultValue);
         this.modes = Arrays.asList(modes);
     }
@@ -45,6 +48,4 @@ public final class ModeSetting extends Setting<String> {
             setValue(value);
         }
     }
-
-
 }

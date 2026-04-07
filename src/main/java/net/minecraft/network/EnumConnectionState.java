@@ -271,7 +271,7 @@ public enum EnumConnectionState
         if (bimap.containsValue(packetClass))
         {
             String s = direction + " packet " + packetClass + " is already known to ID " + bimap.inverse().get(packetClass);
-            LogManager.getLogger(EnumConnectionState.class).fatal(s);
+            LogManager.getLogger().fatal(s);
             throw new IllegalArgumentException(s);
         }
         else

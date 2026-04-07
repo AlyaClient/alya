@@ -1,56 +1,68 @@
 package net.minecraft.client.gui;
 
-import dev.thoq.Alya;
-import dev.thoq.util.font.AlyaFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
-public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry
-{
-    private static final AlyaFontRenderer font = Alya.getInstance().getFontRendererMedium();
-    private final Minecraft mc = Minecraft.getMinecraft();
+public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry {
+  private final Minecraft mc = Minecraft.getMinecraft();
 
-    public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
-    {
-        int i = y + slotHeight / 2 - (int) font.getFontHeight() / 2;
-        font.drawString(I18n.format("lanServer.scanning", new Object[0]), this.mc.currentScreen.width / 2 - (int) font.getStringWidth(I18n.format("lanServer.scanning", new Object[0])) / 2, i, 16777215);
-        String s;
+  public void drawEntry(
+      int slotIndex,
+      int x,
+      int y,
+      int listWidth,
+      int slotHeight,
+      int mouseX,
+      int mouseY,
+      boolean isSelected) {
+    int i = y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2;
+    this.mc.fontRendererObj.drawString(
+        I18n.format("lanServer.scanning", new Object[0]),
+        this.mc.currentScreen.width / 2
+            - this.mc.fontRendererObj.getStringWidth(I18n.format("lanServer.scanning", new Object[0])) / 2,
+        i,
+        16777215);
+    String s;
 
-        switch ((int)(Minecraft.getSystemTime() / 300L % 4L))
-        {
-            case 0:
-            default:
-                s = "O o o";
-                break;
+    switch ((int) (Minecraft.getSystemTime() / 300L % 4L)) {
+      case 0:
+      default:
+        s = "O o o";
+        break;
 
-            case 1:
-            case 3:
-                s = "o O o";
-                break;
+      case 1:
+      case 3:
+        s = "o O o";
+        break;
 
-            case 2:
-                s = "o o O";
-        }
-
-        font.drawString(s, this.mc.currentScreen.width / 2 - (int) font.getStringWidth(s) / 2, i + (int) font.getFontHeight(), 8421504);
+      case 2:
+        s = "o o O";
     }
 
-    public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_)
-    {
-    }
+    this.mc.fontRendererObj.drawString(
+        s,
+        this.mc.currentScreen.width / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2,
+        i + this.mc.fontRendererObj.FONT_HEIGHT,
+        8421504);
+  }
 
-    /**
-     * Returns true if the mouse has been pressed on this control.
-     */
-    public boolean mousePressed(int slotIndex, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
-    {
-        return false;
-    }
+  public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_) {}
 
-    /**
-     * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
-     */
-    public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY)
-    {
-    }
+  /** Returns true if the mouse has been pressed on this control. */
+  public boolean mousePressed(
+      int slotIndex,
+      int p_148278_2_,
+      int p_148278_3_,
+      int p_148278_4_,
+      int p_148278_5_,
+      int p_148278_6_) {
+    return false;
+  }
+
+  /**
+   * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX,
+   * relativeY
+   */
+  public void mouseReleased(
+      int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {}
 }

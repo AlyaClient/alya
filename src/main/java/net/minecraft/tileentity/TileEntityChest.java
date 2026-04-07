@@ -19,32 +19,14 @@ import net.minecraft.util.ITickable;
 public class TileEntityChest extends TileEntityLockable implements ITickable, IInventory
 {
     private ItemStack[] chestContents = new ItemStack[27];
-
-    /** Determines if the check for adjacent chests has taken place. */
     public boolean adjacentChestChecked;
-
-    /** Contains the chest tile located adjacent to this one (if any) */
     public TileEntityChest adjacentChestZNeg;
-
-    /** Contains the chest tile located adjacent to this one (if any) */
     public TileEntityChest adjacentChestXPos;
-
-    /** Contains the chest tile located adjacent to this one (if any) */
     public TileEntityChest adjacentChestXNeg;
-
-    /** Contains the chest tile located adjacent to this one (if any) */
     public TileEntityChest adjacentChestZPos;
-
-    /** The current angle of the lid (between 0 and 1) */
     public float lidAngle;
-
-    /** The angle of the lid last tick */
     public float prevLidAngle;
-
-    /** The number of players currently using this chest */
     public int numPlayersUsing;
-
-    /** Server sync counter (once per 20 ticks) */
     private int ticksSinceSync;
     private int cachedChestType;
     private String customName;
@@ -59,30 +41,16 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         this.cachedChestType = chestType;
     }
 
-    /**
-     * Returns the number of slots in the inventory.
-     */
     public int getSizeInventory()
     {
         return 27;
     }
 
-    /**
-     * Returns the stack in the given slot.
-     *  
-     * @param index The slot to retrieve from.
-     */
     public ItemStack getStackInSlot(int index)
     {
         return this.chestContents[index];
     }
 
-    /**
-     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
-     *  
-     * @param index The slot to remove from.
-     * @param count The maximum amount of items to remove.
-     */
     public ItemStack decrStackSize(int index, int count)
     {
         if (this.chestContents[index] != null)
@@ -113,12 +81,7 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         }
     }
 
-    /**
-     * Removes a stack from the given slot and returns it.
-     *  
-     * @param index The slot to remove a stack from.
-     */
-    public ItemStack getStackInSlotOnClosing(int index)
+    public ItemStack removeStackFromSlot(int index)
     {
         if (this.chestContents[index] != null)
         {
@@ -132,9 +95,6 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         }
     }
 
-    /**
-     * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
-     */
     public void setInventorySlotContents(int index, ItemStack stack)
     {
         this.chestContents[index] = stack;
@@ -147,17 +107,11 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         this.markDirty();
     }
 
-    /**
-     * Gets the name of this command sender (usually username, but possibly "Rcon")
-     */
-    public String getCommandSenderName()
+    public String getName()
     {
         return this.hasCustomName() ? this.customName : "container.chest";
     }
 
-    /**
-     * Returns true if this thing is named
-     */
     public boolean hasCustomName()
     {
         return this.customName != null && this.customName.length() > 0;
@@ -215,17 +169,11 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         }
     }
 
-    /**
-     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended.
-     */
     public int getInventoryStackLimit()
     {
         return 64;
     }
 
-    /**
-     * Do not make give this method the name canInteractWith because it clashes with Container
-     */
     public boolean isUseableByPlayer(EntityPlayer player)
     {
         return this.worldObj.getTileEntity(this.pos) != this ? false : player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
@@ -281,9 +229,6 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         }
     }
 
-    /**
-     * Performs the check for adjacent chests to determine if this chest is double or not.
-     */
     public void checkForAdjacentChests()
     {
         if (!this.adjacentChestChecked)
@@ -328,9 +273,6 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         }
     }
 
-    /**
-     * Like the old updateEntity(), except more generic.
-     */
     public void update()
     {
         this.checkForAdjacentChests();
@@ -464,17 +406,11 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         }
     }
 
-    /**
-     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
-     */
     public boolean isItemValidForSlot(int index, ItemStack stack)
     {
         return true;
     }
 
-    /**
-     * invalidates a tile entity
-     */
     public void invalidate()
     {
         super.invalidate();

@@ -13,9 +13,6 @@ public class ItemSaddle extends Item
         this.setCreativeTab(CreativeTabs.tabTransport);
     }
 
-    /**
-     * Returns true if the item can be used on the given entity, e.g. shears on sheep.
-     */
     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target)
     {
         if (target instanceof EntityPig)
@@ -37,13 +34,6 @@ public class ItemSaddle extends Item
         }
     }
 
-    /**
-     * Current implementations of this method in child classes do not use the entry argument beside ev. They just raise
-     * the damage on the stack.
-     *  
-     * @param target The Entity being hit
-     * @param attacker the attacking entity
-     */
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
     {
         this.itemInteractionForEntity(stack, (EntityPlayer)null, target);

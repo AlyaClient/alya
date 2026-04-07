@@ -2,7 +2,6 @@ package dev.thoq.util.misc;
 
 @SuppressWarnings("unused")
 public final class TimerUtil {
-
     private long lastMS = System.currentTimeMillis();
 
     public void reset() {
@@ -32,6 +31,4 @@ public final class TimerUtil {
     public void setTime(final long time) {
         lastMS = time;
     }
-
-
 }

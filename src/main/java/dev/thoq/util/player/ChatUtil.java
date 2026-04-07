@@ -7,19 +7,27 @@ import net.minecraft.util.EnumChatFormatting;
 
 @SuppressWarnings("unused")
 public final class ChatUtil {
-
     private static final Minecraft MC = Minecraft.getMinecraft();
-    private static final String PREFIX = EnumChatFormatting.DARK_PURPLE + "[" + EnumChatFormatting.LIGHT_PURPLE + Alya.getName() + EnumChatFormatting.DARK_PURPLE + "] " + EnumChatFormatting.RESET;
+    private static final String PREFIX =
+            EnumChatFormatting.DARK_PURPLE
+                    + "["
+                    + EnumChatFormatting.LIGHT_PURPLE
+                    + Alya.getName()
+                    + EnumChatFormatting.DARK_PURPLE
+                    + "] "
+                    + EnumChatFormatting.RESET;
 
     public static void sendInfo(final String message) {
         if(MC.thePlayer != null) {
-            MC.thePlayer.addChatMessage(new ChatComponentText(PREFIX + EnumChatFormatting.GRAY + message));
+            MC.thePlayer.addChatMessage(
+                    new ChatComponentText(PREFIX + EnumChatFormatting.GRAY + message));
         }
     }
 
     public static void sendSuccess(final String message) {
         if(MC.thePlayer != null) {
-            MC.thePlayer.addChatMessage(new ChatComponentText(PREFIX + EnumChatFormatting.GREEN + message));
+            MC.thePlayer.addChatMessage(
+                    new ChatComponentText(PREFIX + EnumChatFormatting.GREEN + message));
         }
     }
 
@@ -31,7 +39,8 @@ public final class ChatUtil {
 
     public static void sendWarning(final String message) {
         if(MC.thePlayer != null) {
-            MC.thePlayer.addChatMessage(new ChatComponentText(PREFIX + EnumChatFormatting.YELLOW + message));
+            MC.thePlayer.addChatMessage(
+                    new ChatComponentText(PREFIX + EnumChatFormatting.YELLOW + message));
         }
     }
 
@@ -40,6 +49,4 @@ public final class ChatUtil {
             MC.thePlayer.addChatMessage(new ChatComponentText(message));
         }
     }
-
-
 }

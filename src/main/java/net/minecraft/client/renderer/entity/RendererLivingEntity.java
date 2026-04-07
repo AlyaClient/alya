@@ -1,9 +1,12 @@
 package net.minecraft.client.renderer.entity;
 
 import com.google.common.collect.Lists;
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.util.List;
+import java.util.Optional;
+
+import dev.thoq.Alya;
+import dev.thoq.module.Module;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -35,8 +38,8 @@ import org.lwjgl.opengl.GL11;
 
 public abstract class RendererLivingEntity<T extends EntityLivingBase> extends Render<T>
 {
-    private static final Logger logger = LogManager.getLogger(RendererLivingEntity.class);
-    private static final DynamicTexture field_177096_e = new DynamicTexture(16, 16);
+    private static final Logger logger = LogManager.getLogger();
+    private static final DynamicTexture textureBrightness = new DynamicTexture(16, 16);
     public ModelBase mainModel;
     protected FloatBuffer brightnessBuffer = GLAllocation.createDirectFloatBuffer(4);
     protected List<LayerRenderer<T>> layerRenderers = Lists.<LayerRenderer<T>>newArrayList();
@@ -78,11 +81,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         return this.mainModel;
     }
 
-    /**
-     * Returns a rotation angle that is inbetween two other rotation angles. par1 and par2 are the angles between which
-     * to interpolate, par3 is probably a float between 0.0 and 1.0 that tells us where "between" the two angles we are.
-     * Example: par1 = 30, par2 = 50, par3 = 0.5, then return = 40
-     */
     protected float interpolateRotation(float par1, float par2, float par3)
     {
         float f;
@@ -104,14 +102,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
     {
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     *  
-     * @param entityYaw The yaw rotation of the passed entity
-     */
     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
@@ -166,9 +156,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                     f2 = f1 - f;
                 }
 
-                float f7 = entity == this.renderManager.livingPlayer
-                        ? entity.prevRotationPitchHead + (entity.rotationPitchHead - entity.prevRotationPitchHead) * partialTicks
-                        : entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
                 this.renderLivingAt(entity, x, y, z);
                 float f8 = this.handleRotationFloat(entity, partialTicks);
                 this.rotateCorpse(entity, f8, f, partialTicks);
@@ -337,10 +325,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
-    /**
-     * Renders the model in RenderLiving
-     */
-    protected void renderModel(T entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_, float p_77036_7_)
+    protected void renderModel(T entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_, float scaleFactor)
     {
         boolean flag = !entitylivingbaseIn.isInvisible();
         boolean flag1 = !flag && !entitylivingbaseIn.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer);
@@ -362,7 +347,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 GlStateManager.alphaFunc(516, 0.003921569F);
             }
 
-            this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, p_77036_7_);
+            this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
 
             if (flag1)
             {
@@ -420,7 +405,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, OpenGlHelper.GL_COMBINE_ALPHA, GL11.GL_REPLACE);
             GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, OpenGlHelper.GL_SOURCE0_ALPHA, OpenGlHelper.GL_PREVIOUS);
             GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, OpenGlHelper.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
-            ((Buffer) this.brightnessBuffer).position(0);
+            this.brightnessBuffer.position(0);
 
             if (flag1)
             {
@@ -451,11 +436,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 }
             }
 
-            ((Buffer) this.brightnessBuffer).flip();
-            GL11.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, this.brightnessBuffer);
+            this.brightnessBuffer.flip();
+            GL11.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, (FloatBuffer)this.brightnessBuffer);
             GlStateManager.setActiveTexture(OpenGlHelper.GL_TEXTURE2);
             GlStateManager.enableTexture2D();
-            GlStateManager.bindTexture(field_177096_e.getGlTextureId());
+            GlStateManager.bindTexture(textureBrightness.getGlTextureId());
             GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, OpenGlHelper.GL_COMBINE);
             GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, OpenGlHelper.GL_COMBINE_RGB, GL11.GL_MODULATE);
             GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, OpenGlHelper.GL_SOURCE0_RGB, OpenGlHelper.GL_PREVIOUS);
@@ -516,9 +501,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         }
     }
 
-    /**
-     * Sets a simple glTranslate on a LivingEntity.
-     */
     protected void renderLivingAt(T entityLivingBaseIn, double x, double y, double z)
     {
         GlStateManager.translate((float)x, (float)y, (float)z);
@@ -542,7 +524,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         }
         else
         {
-            String s = EnumChatFormatting.getTextWithoutFormattingCodes(bat.getCommandSenderName());
+            String s = EnumChatFormatting.getTextWithoutFormattingCodes(bat.getName());
 
             if (s != null && (s.equals("Dinnerbone") || s.equals("Grumm")) && (!(bat instanceof EntityPlayer) || ((EntityPlayer)bat).isWearing(EnumPlayerModelParts.CAPE)))
             {
@@ -552,17 +534,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         }
     }
 
-    /**
-     * Returns where in the swing animation the living entity is (from 0 to 1).  Args : entity, partialTickTime
-     */
     protected float getSwingProgress(T livingBase, float partialTickTime)
     {
         return livingBase.getSwingProgress(partialTickTime);
     }
 
-    /**
-     * Defines what float the third param in setRotationAngles of ModelBase is
-     */
     protected float handleRotationFloat(T livingBase, float partialTicks)
     {
         return (float)livingBase.ticksExisted + partialTicks;
@@ -618,18 +594,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         return 90.0F;
     }
 
-    /**
-     * Returns an ARGB int color back. Args: entityLiving, lightBrightness, partialTickTime
-     */
     protected int getColorMultiplier(T entitylivingbaseIn, float lightBrightness, float partialTickTime)
     {
         return 0;
     }
 
-    /**
-     * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
-     * entityLiving, partialTickTime
-     */
     protected void preRenderCallback(T entitylivingbaseIn, float partialTickTime)
     {
     }
@@ -667,11 +636,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                         int i = fontrenderer.getStringWidth(s) / 2;
                         Tessellator tessellator = Tessellator.getInstance();
                         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-                        worldrenderer.begin(7, DefaultVertexFormats.field_181706_f);
-                        worldrenderer.pos((double)(-i - 1), -1.0D, 0.0D).func_181666_a(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos((double)(-i - 1), 8.0D, 0.0D).func_181666_a(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos((double)(i + 1), 8.0D, 0.0D).func_181666_a(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos((double)(i + 1), -1.0D, 0.0D).func_181666_a(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+                        worldrenderer.pos((double)(-i - 1), -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos((double)(-i - 1), 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos((double)(i + 1), 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos((double)(i + 1), -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
                         tessellator.draw();
                         GlStateManager.enableTexture2D();
                         GlStateManager.depthMask(true);
@@ -697,6 +666,13 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
     protected boolean canRenderName(T entity)
     {
+        if (entity instanceof EntityPlayer) {
+            Optional<Module> nametagsModule = Alya.getInstance().getModuleManager().getModule("Nametags");
+            if (nametagsModule.isPresent() && nametagsModule.get().isEnabled()) {
+                return false;
+            }
+        }
+
         EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
 
         if (entity instanceof EntityPlayer && entity != entityplayersp)
@@ -743,13 +719,13 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
     static
     {
-        int[] aint = field_177096_e.getTextureData();
+        int[] aint = textureBrightness.getTextureData();
 
         for (int i = 0; i < 256; ++i)
         {
             aint[i] = -1;
         }
 
-        field_177096_e.updateDynamicTexture();
+        textureBrightness.updateDynamicTexture();
     }
 }

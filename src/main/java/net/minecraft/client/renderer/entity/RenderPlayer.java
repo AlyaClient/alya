@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer.entity;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelPlayer;
@@ -21,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
 {
-    /** this field is used to indicate the 3-pixel wide arms */
     private boolean smallArms;
 
     public RenderPlayer(RenderManager renderManager)
@@ -46,14 +44,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
         return (ModelPlayer)super.getMainModel();
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     *  
-     * @param entityYaw The yaw rotation of the passed entity
-     */
     public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         if (!entity.isUser() || this.renderManager.livingPlayer == entity)
@@ -102,8 +92,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
             {
                 modelplayer.heldItemRight = 1;
 
-                final boolean flag = (/*todo: killaura blocking*/ clientPlayer == Minecraft.getMinecraft().thePlayer) || clientPlayer.getItemInUseCount() > 0;
-                if (flag)
+                if (clientPlayer.getItemInUseCount() > 0)
                 {
                     EnumAction enumaction = itemstack.getItemUseAction();
 
@@ -120,9 +109,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
         }
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(AbstractClientPlayer entity)
     {
         return entity.getLocationSkin();
@@ -133,10 +119,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
         GlStateManager.translate(0.0F, 0.1875F, 0.0F);
     }
 
-    /**
-     * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
-     * entityLiving, partialTickTime
-     */
     protected void preRenderCallback(AbstractClientPlayer entitylivingbaseIn, float partialTickTime)
     {
         float f = 0.9375F;
@@ -152,7 +134,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
 
             if (scoreobjective != null)
             {
-                Score score = scoreboard.getValueFromObjective(entityIn.getCommandSenderName(), scoreobjective);
+                Score score = scoreboard.getValueFromObjective(entityIn.getName(), scoreobjective);
                 this.renderLivingLabel(entityIn, score.getScorePoints() + " " + scoreobjective.getDisplayName(), x, y, z, 64);
                 y += (double)((float)this.getFontRendererFromRenderManager().FONT_HEIGHT * 1.15F * p_177069_9_);
             }
@@ -185,9 +167,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
         modelplayer.renderLeftArm();
     }
 
-    /**
-     * Sets a simple glTranslate on a LivingEntity.
-     */
     protected void renderLivingAt(AbstractClientPlayer entityLivingBaseIn, double x, double y, double z)
     {
         if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isPlayerSleeping())

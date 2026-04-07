@@ -7,8 +7,8 @@ import dev.thoq.module.Category;
 import dev.thoq.module.Module;
 import dev.thoq.module.setting.BooleanSetting;
 import dev.thoq.module.setting.NumberSetting;
-import dev.thoq.util.render.RenderUtility;
 import dev.thoq.util.font.AlyaFontRenderer;
+import dev.thoq.util.render.RenderUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
@@ -18,15 +18,14 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 public final class KeystrokesModule extends Module {
-
     private static final Minecraft MC = Minecraft.getMinecraft();
-
     private final NumberSetting posX = new NumberSetting("PosX", "X position", 10, 0, 1920, 1);
     private final NumberSetting posY = new NumberSetting("PosY", "Y position", 100, 0, 1080, 1);
-    private final BooleanSetting showMouse = new BooleanSetting("ShowMouse", "Show mouse buttons", true);
+    private final BooleanSetting showMouse =
+            new BooleanSetting("ShowMouse", "Show mouse buttons", true);
     private final BooleanSetting showSpace = new BooleanSetting("ShowSpace", "Show spacebar", true);
-    private final NumberSetting gridSize = new NumberSetting("GridSize", "Grid snap size", 5, 1, 20, 1);
-
+    private final NumberSetting gridSize =
+            new NumberSetting("GridSize", "Grid snap size", 5, 1, 20, 1);
     private static final int KEY_SIZE = 22;
     private static final int KEY_SPACING = 2;
     private static final int SPACE_WIDTH = KEY_SIZE * 3 + KEY_SPACING * 2;
@@ -35,7 +34,6 @@ public final class KeystrokesModule extends Module {
     private static final int BG_PRESSED = 0xC08B5CF6;
     private static final int BORDER_COLOR = 0xFF303030;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
-
     private boolean isDragging = false;
     private int dragOffsetX = 0;
     private int dragOffsetY = 0;
@@ -47,38 +45,73 @@ public final class KeystrokesModule extends Module {
 
     @EventHandler
     public void onRender2D(final Render2DEvent event) {
-        if(MC.currentScreen != null && !(MC.currentScreen instanceof GuiChat)) {
-            return;
-        }
-
         AlyaFontRenderer fontRenderer = Alya.getInstance().getFontRendererMedium();
         GameSettings settings = MC.gameSettings;
-
         final int startX = posX.getValueAsInt();
         final int startY = posY.getValueAsInt();
 
+        boolean isChatOpen = MC.currentScreen instanceof GuiChat;
+
         final int forwardX = startX + KEY_SIZE + KEY_SPACING;
-        drawKey(fontRenderer, forwardX, startY, KEY_SIZE, getKeyName(settings.keyBindForward), isKeyPressed(settings.keyBindForward));
-
+        drawKey(
+                fontRenderer,
+                forwardX,
+                startY,
+                KEY_SIZE,
+                getKeyName(settings.keyBindForward),
+                !isChatOpen && isKeyPressed(settings.keyBindForward));
         final int row2Y = startY + KEY_SIZE + KEY_SPACING;
-        drawKey(fontRenderer, startX, row2Y, KEY_SIZE, getKeyName(settings.keyBindLeft), isKeyPressed(settings.keyBindLeft));
-        drawKey(fontRenderer, startX + KEY_SIZE + KEY_SPACING, row2Y, KEY_SIZE, getKeyName(settings.keyBindBack), isKeyPressed(settings.keyBindBack));
-        drawKey(fontRenderer, startX + (KEY_SIZE + KEY_SPACING) * 2, row2Y, KEY_SIZE, getKeyName(settings.keyBindRight), isKeyPressed(settings.keyBindRight));
-
+        drawKey(
+                fontRenderer,
+                startX,
+                row2Y,
+                KEY_SIZE,
+                getKeyName(settings.keyBindLeft),
+                !isChatOpen && isKeyPressed(settings.keyBindLeft));
+        drawKey(
+                fontRenderer,
+                startX + KEY_SIZE + KEY_SPACING,
+                row2Y,
+                KEY_SIZE,
+                getKeyName(settings.keyBindBack),
+                !isChatOpen && isKeyPressed(settings.keyBindBack));
+        drawKey(
+                fontRenderer,
+                startX + (KEY_SIZE + KEY_SPACING) * 2,
+                row2Y,
+                KEY_SIZE,
+                getKeyName(settings.keyBindRight),
+                !isChatOpen && isKeyPressed(settings.keyBindRight));
         int currentY = row2Y + KEY_SIZE + KEY_SPACING;
-
         if(showMouse.isEnabled()) {
             drawKey(fontRenderer, startX, currentY, MOUSE_WIDTH, "LMB", Mouse.isButtonDown(0));
-            drawKey(fontRenderer, startX + MOUSE_WIDTH + KEY_SPACING, currentY, MOUSE_WIDTH, "RMB", Mouse.isButtonDown(1));
+            drawKey(
+                    fontRenderer,
+                    startX + MOUSE_WIDTH + KEY_SPACING,
+                    currentY,
+                    MOUSE_WIDTH,
+                    "RMB",
+                    Mouse.isButtonDown(1));
             currentY += KEY_SIZE + KEY_SPACING;
         }
-
         if(showSpace.isEnabled()) {
-            drawKey(fontRenderer, startX, currentY, SPACE_WIDTH, "SPACE", isKeyPressed(settings.keyBindJump));
+            drawKey(
+                    fontRenderer,
+                    startX,
+                    currentY,
+                    SPACE_WIDTH,
+                    "SPACE",
+                    !isChatOpen && isKeyPressed(settings.keyBindJump));
         }
     }
 
-    private void drawKey(final AlyaFontRenderer fontRenderer, final int x, final int y, final int width, final String text, final boolean pressed) {
+    private void drawKey(
+            final AlyaFontRenderer fontRenderer,
+            final int x,
+            final int y,
+            final int width,
+            final String text,
+            final boolean pressed) {
         final int bgColor = pressed ? BG_PRESSED : BG_COLOR;
         RenderUtility.drawRect(x, y, width, KEY_SIZE, bgColor);
         RenderUtility.drawRect(x, y, width, 1, BORDER_COLOR);
@@ -135,7 +168,10 @@ public final class KeystrokesModule extends Module {
     public boolean isMouseOver(final int mouseX, final int mouseY) {
         final int x = posX.getValueAsInt();
         final int y = posY.getValueAsInt();
-        return mouseX >= x && mouseX <= x + getTotalWidth() && mouseY >= y && mouseY <= y + getTotalHeight();
+        return mouseX >= x
+                && mouseX <= x + getTotalWidth()
+                && mouseY >= y
+                && mouseY <= y + getTotalHeight();
     }
 
     public int getTotalWidth() {

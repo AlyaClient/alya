@@ -21,38 +21,21 @@ public class CommandReplaceItem extends CommandBase
 {
     private static final Map<String, Integer> SHORTCUTS = Maps.<String, Integer>newHashMap();
 
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "replaceitem";
     }
 
-    /**
-     * Return the required permission level for this command.
-     */
     public int getRequiredPermissionLevel()
     {
         return 2;
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.replaceitem.usage";
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length < 1)
@@ -160,7 +143,7 @@ public class CommandReplaceItem extends CommandBase
             }
             else
             {
-                Entity entity = func_175768_b(sender, args[1]);
+                Entity entity = getEntity(sender, args[1]);
                 sender.setCommandStat(CommandResultStats.Type.AFFECTED_ITEMS, 0);
 
                 if (entity instanceof EntityPlayer)
@@ -206,12 +189,6 @@ public class CommandReplaceItem extends CommandBase
         return MinecraftServer.getServer().getAllUsernames();
     }
 
-    /**
-     * Return whether the specified command parameter index is a username parameter.
-     *  
-     * @param args The arguments that were given
-     * @param index The argument index that we are checking
-     */
     public boolean isUsernameIndex(String[] args, int index)
     {
         return args.length > 0 && args[0].equals("entity") && index == 1;

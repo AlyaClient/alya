@@ -55,14 +55,14 @@ public class RenderChunk
     private final ReentrantLock lockCompileTask = new ReentrantLock();
     private final ReentrantLock lockCompiledChunk = new ReentrantLock();
     private ChunkCompileTaskGenerator compileTask = null;
-    private final Set<TileEntity> field_181056_j = Sets.<TileEntity>newHashSet();
+    private final Set<TileEntity> setTileEntities = Sets.<TileEntity>newHashSet();
     private final int index;
     private final FloatBuffer modelviewMatrix = GLAllocation.createDirectFloatBuffer(16);
     private final VertexBuffer[] vertexBuffers = new VertexBuffer[EnumWorldBlockLayer.values().length];
     public AxisAlignedBB boundingBox;
     private int frameIndex = -1;
     private boolean needsUpdate = true;
-    private EnumMap<EnumFacing, BlockPos> field_181702_p = null;
+    private EnumMap<EnumFacing, BlockPos> mapEnumFacing = null;
     private BlockPos[] positionOffsets16 = new BlockPos[EnumFacing.VALUES.length];
     public static final EnumWorldBlockLayer[] ENUM_WORLD_BLOCK_LAYERS = EnumWorldBlockLayer.values();
     private final EnumWorldBlockLayer[] blockLayersSingle = new EnumWorldBlockLayer[1];
@@ -198,9 +198,9 @@ public class RenderChunk
             boolean flag = Reflector.ForgeBlock_canRenderInLayer.exists();
             boolean flag1 = Reflector.ForgeHooksClient_setRenderLayer.exists();
 
-            for (Object e : BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
+            for (Object o : BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
             {
-                BlockPosM blockposm = (BlockPosM) e;
+                BlockPosM blockposm = (BlockPosM) o;
                 IBlockState iblockstate = chunkcacheof.getBlockState(blockposm);
                 Block block = iblockstate.getBlock();
 
@@ -218,7 +218,7 @@ public class RenderChunk
                     {
                         compiledchunk.addTileEntity(tileentity);
 
-                        if (tileentityspecialrenderer.func_181055_a())
+                        if (tileentityspecialrenderer.forceTileEntityRender())
                         {
                             lvt_11_1_.add(tileentity);
                         }
@@ -325,12 +325,12 @@ public class RenderChunk
         try
         {
             Set<TileEntity> set = Sets.newHashSet(lvt_11_1_);
-            Set<TileEntity> set1 = Sets.newHashSet(this.field_181056_j);
-            set.removeAll(this.field_181056_j);
+            Set<TileEntity> set1 = Sets.newHashSet(this.setTileEntities);
+            set.removeAll(this.setTileEntities);
             set1.removeAll(lvt_11_1_);
-            this.field_181056_j.clear();
-            this.field_181056_j.addAll(lvt_11_1_);
-            this.renderGlobal.func_181023_a(set1, set);
+            this.setTileEntities.clear();
+            this.setTileEntities.addAll(lvt_11_1_);
+            this.renderGlobal.updateTileEntities(set1, set);
         }
         finally
         {
@@ -436,8 +436,8 @@ public class RenderChunk
     {
         if (layer == EnumWorldBlockLayer.TRANSLUCENT && !compiledChunkIn.isLayerEmpty(layer))
         {
-            worldRendererIn.func_181674_a(x, y, z);
-            compiledChunkIn.setState(worldRendererIn.func_181672_a());
+            worldRendererIn.sortVertexData(x, y, z);
+            compiledChunkIn.setState(worldRendererIn.getVertexState());
         }
 
         worldRendererIn.finishDrawing();
@@ -525,7 +525,7 @@ public class RenderChunk
         return this.needsUpdate;
     }
 
-    public BlockPos func_181701_a(EnumFacing p_181701_1_)
+    public BlockPos getBlockPosOffset16(EnumFacing p_181701_1_)
     {
         return this.getPositionOffset16(p_181701_1_);
     }
@@ -653,7 +653,7 @@ public class RenderChunk
             for (int i = 0; i < EnumFacing.VALUES.length; ++i)
             {
                 EnumFacing enumfacing = EnumFacing.VALUES[i];
-                BlockPos blockpos = this.func_181701_a(enumfacing);
+                BlockPos blockpos = this.getBlockPosOffset16(enumfacing);
                 this.renderChunksOfset16[i] = p_getRenderChunkOffset16_1_.getRenderChunk(blockpos);
             }
 

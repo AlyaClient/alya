@@ -30,9 +30,6 @@ public class BlockRedstoneOre extends Block
         this.isOn = isOn;
     }
 
-    /**
-     * How many world ticks before ticking
-     */
     public int tickRate(World worldIn)
     {
         return 30;
@@ -44,9 +41,6 @@ public class BlockRedstoneOre extends Block
         super.onBlockClicked(worldIn, pos, playerIn);
     }
 
-    /**
-     * Triggered whenever an entity collides with this block (enters into the block)
-     */
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, Entity entityIn)
     {
         this.activate(worldIn, pos);
@@ -77,38 +71,21 @@ public class BlockRedstoneOre extends Block
         }
     }
 
-    /**
-     * Get the Item that this Block should drop when harvested.
-     *  
-     * @param fortune the level of the Fortune enchantment on the player's tool
-     */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Items.redstone;
     }
 
-    /**
-     * Get the quantity dropped based on the given fortune level
-     */
     public int quantityDroppedWithBonus(int fortune, Random random)
     {
         return this.quantityDropped(random) + random.nextInt(fortune + 1);
     }
 
-    /**
-     * Returns the quantity of items to drop on block destruction.
-     */
     public int quantityDropped(Random random)
     {
         return 4 + random.nextInt(2);
     }
 
-    /**
-     * Spawns this Block's drops into the World as EntityItems.
-     *  
-     * @param chance The chance that each Item is actually spawned (1.0 = always, 0.0 = never)
-     * @param fortune The player's fortune level
-     */
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
     {
         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);

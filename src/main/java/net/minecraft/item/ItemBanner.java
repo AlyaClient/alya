@@ -27,12 +27,6 @@ public class ItemBanner extends ItemBlock
         this.setMaxDamage(0);
     }
 
-    /**
-     * Called when a Block is right-clicked with this Item
-     *  
-     * @param pos The block being right-clicked
-     * @param side The side being right-clicked
-     */
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (side == EnumFacing.DOWN)
@@ -92,12 +86,6 @@ public class ItemBanner extends ItemBlock
         return StatCollector.translateToLocal(s);
     }
 
-    /**
-     * allows items to add custom lines of information to the mouseover description
-     *  
-     * @param tooltip All lines to display in the Item's tooltip. This is a List of Strings.
-     * @param advanced Whether the setting "Advanced tooltips" is enabled
-     */
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
     {
         NBTTagCompound nbttagcompound = stack.getSubCompound("BlockEntityTag", false);
@@ -133,17 +121,12 @@ public class ItemBanner extends ItemBlock
         }
     }
 
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     *  
-     * @param subItems The List of sub-items. This is a List of ItemStacks.
-     */
     public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
     {
         for (EnumDyeColor enumdyecolor : EnumDyeColor.values())
         {
             NBTTagCompound nbttagcompound = new NBTTagCompound();
-            TileEntityBanner.func_181020_a(nbttagcompound, enumdyecolor.getDyeDamage(), (NBTTagList)null);
+            TileEntityBanner.setBaseColorAndPatterns(nbttagcompound, enumdyecolor.getDyeDamage(), (NBTTagList)null);
             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
             nbttagcompound1.setTag("BlockEntityTag", nbttagcompound);
             ItemStack itemstack = new ItemStack(itemIn, 1, enumdyecolor.getDyeDamage());
@@ -152,9 +135,6 @@ public class ItemBanner extends ItemBlock
         }
     }
 
-    /**
-     * gets the CreativeTab this item is displayed on
-     */
     public CreativeTabs getCreativeTab()
     {
         return CreativeTabs.tabDecorations;

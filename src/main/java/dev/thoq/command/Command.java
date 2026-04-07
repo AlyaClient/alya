@@ -8,7 +8,6 @@ import java.util.List;
 public abstract class Command {
 
     protected static final Minecraft MC = Minecraft.getMinecraft();
-
     private final String name;
     private final String description;
     private final String[] aliases;

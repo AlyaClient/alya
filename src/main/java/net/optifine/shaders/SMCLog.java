@@ -3,52 +3,43 @@ package net.optifine.shaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class SMCLog
-{
+public abstract class SMCLog {
     private static final Logger LOGGER = LogManager.getLogger(SMCLog.class);
-    private static final String PREFIX = "[Shaders] ";
+    private static final String PREFIX = "[shaders] ";
 
-    public static void severe(String message)
-    {
-        LOGGER.error("[Shaders] " + message);
+    public static void severe(String message) {
+        LOGGER.error("[shaders] " + message);
     }
 
-    public static void warning(String message)
-    {
-        LOGGER.warn("[Shaders] " + message);
+    public static void warning(String message) {
+        LOGGER.warn("[shaders] " + message);
     }
 
-    public static void info(String message)
-    {
-        LOGGER.info("[Shaders] " + message);
+    public static void info(String message) {
+        LOGGER.info("[shaders] " + message);
     }
 
-    public static void fine(String message)
-    {
-        LOGGER.debug("[Shaders] " + message);
+    public static void fine(String message) {
+        LOGGER.debug("[shaders] " + message);
     }
 
-    public static void severe(String format, Object... args)
-    {
+    public static void severe(String format, Object... args) {
         String s = String.format(format, args);
-        LOGGER.error("[Shaders] " + s);
+        LOGGER.error("[shaders] " + s);
     }
 
-    public static void warning(String format, Object... args)
-    {
+    public static void warning(String format, Object... args) {
         String s = String.format(format, args);
-        LOGGER.warn("[Shaders] " + s);
+        LOGGER.warn("[shaders] " + s);
     }
 
-    public static void info(String format, Object... args)
-    {
+    public static void info(String format, Object... args) {
         String s = String.format(format, args);
-        LOGGER.info("[Shaders] " + s);
+        LOGGER.info("[shaders] " + s);
     }
 
-    public static void fine(String format, Object... args)
-    {
+    public static void fine(String format, Object... args) {
         String s = String.format(format, args);
-        LOGGER.debug("[Shaders] " + s);
+        LOGGER.debug("[shaders] " + s);
     }
 }

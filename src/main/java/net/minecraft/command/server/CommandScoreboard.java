@@ -33,38 +33,21 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class CommandScoreboard extends CommandBase
 {
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "scoreboard";
     }
 
-    /**
-     * Return the required permission level for this command.
-     */
     public int getRequiredPermissionLevel()
     {
         return 2;
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.scoreboard.usage";
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (!this.func_175780_b(sender, args))
@@ -649,7 +632,7 @@ public class CommandScoreboard extends CommandBase
 
         if (p_147190_1_ instanceof EntityPlayer && p_147190_3_ == p_147190_2_.length)
         {
-            String s4 = getCommandSenderAsPlayer(p_147190_1_).getCommandSenderName();
+            String s4 = getCommandSenderAsPlayer(p_147190_1_).getName();
 
             if (scoreboard.addPlayerToTeam(s4, s))
             {
@@ -718,7 +701,7 @@ public class CommandScoreboard extends CommandBase
 
         if (p_147199_1_ instanceof EntityPlayer && p_147199_3_ == p_147199_2_.length)
         {
-            String s3 = getCommandSenderAsPlayer(p_147199_1_).getCommandSenderName();
+            String s3 = getCommandSenderAsPlayer(p_147199_1_).getName();
 
             if (scoreboard.removePlayerFromTeams(s3))
             {
@@ -924,7 +907,7 @@ public class CommandScoreboard extends CommandBase
 
             if (p_147197_2_.length > p_147197_3_)
             {
-                Entity entity = func_175768_b(p_147197_1_, p_147197_2_[i]);
+                Entity entity = getEntity(p_147197_1_, p_147197_2_[i]);
 
                 try
                 {
@@ -1349,12 +1332,6 @@ public class CommandScoreboard extends CommandBase
         return list;
     }
 
-    /**
-     * Return whether the specified command parameter index is a username parameter.
-     *  
-     * @param args The arguments that were given
-     * @param index The argument index that we are checking
-     */
     public boolean isUsernameIndex(String[] args, int index)
     {
         return !args[0].equalsIgnoreCase("players") ? (args[0].equalsIgnoreCase("teams") ? index == 2 : false) : (args.length > 1 && args[1].equalsIgnoreCase("operation") ? index == 2 || index == 5 : index == 2);

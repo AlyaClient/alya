@@ -14,13 +14,11 @@ public class ContainerLocalMenu extends InventoryBasic implements ILockableConta
 {
     private String guiID;
     private Map<Integer, Integer> field_174895_b = Maps.<Integer, Integer>newHashMap();
-    public boolean realChest;
 
     public ContainerLocalMenu(String id, IChatComponent title, int slotCount)
     {
         super(title, slotCount);
         this.guiID = id;
-        this.realChest = title.toString().contains("container.chest");
     }
 
     public int getField(int id)

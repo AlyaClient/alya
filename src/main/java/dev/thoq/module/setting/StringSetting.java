@@ -1,7 +1,6 @@
 package dev.thoq.module.setting;
 
 public final class StringSetting extends Setting<String> {
-
     public StringSetting(final String name, final String description, final String defaultValue) {
         super(name, description, defaultValue);
     }
@@ -23,6 +22,4 @@ public final class StringSetting extends Setting<String> {
     public void setValueFromString(final String value) {
         setValue(value);
     }
-
-
 }

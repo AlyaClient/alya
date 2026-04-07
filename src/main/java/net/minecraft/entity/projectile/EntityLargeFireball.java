@@ -26,9 +26,6 @@ public class EntityLargeFireball extends EntityFireball
         super(worldIn, shooter, accelX, accelY, accelZ);
     }
 
-    /**
-     * Called when this EntityFireball hits a block or entity.
-     */
     protected void onImpact(MovingObjectPosition movingObject)
     {
         if (!this.worldObj.isRemote)
@@ -39,24 +36,18 @@ public class EntityLargeFireball extends EntityFireball
                 this.applyEnchantments(this.shootingEntity, movingObject.entityHit);
             }
 
-            boolean flag = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");
+            boolean flag = this.worldObj.getGameRules().getBoolean("mobGriefing");
             this.worldObj.newExplosion((Entity)null, this.posX, this.posY, this.posZ, (float)this.explosionPower, flag, flag);
             this.setDead();
         }
     }
 
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
     public void writeEntityToNBT(NBTTagCompound tagCompound)
     {
         super.writeEntityToNBT(tagCompound);
         tagCompound.setInteger("ExplosionPower", this.explosionPower);
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
     public void readEntityFromNBT(NBTTagCompound tagCompund)
     {
         super.readEntityFromNBT(tagCompund);

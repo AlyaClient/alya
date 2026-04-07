@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.List;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -13,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 public class WorldVertexBufferUploader
 {
     @SuppressWarnings("incomplete-switch")
-    public void func_181679_a(WorldRenderer p_181679_1_)
+    public void draw(WorldRenderer p_181679_1_)
     {
         if (p_181679_1_.getVertexCount() > 0)
         {
@@ -42,7 +41,7 @@ public class WorldVertexBufferUploader
                 {
                     int k = vertexformatelement.getType().getGlConstant();
                     int l = vertexformatelement.getIndex();
-                    ((Buffer) bytebuffer).position(vertexformat.func_181720_d(j));
+                    bytebuffer.position(vertexformat.getOffset(j));
 
                     switch (vertexformatelement$enumusage)
                     {

@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ScoreboardSaveData extends WorldSavedData
 {
-    private static final Logger logger = LogManager.getLogger(ScoreboardSaveData.class);
+    private static final Logger logger = LogManager.getLogger();
     private Scoreboard theScoreboard;
     private NBTTagCompound delayedInitNbt;
 
@@ -34,9 +34,6 @@ public class ScoreboardSaveData extends WorldSavedData
         }
     }
 
-    /**
-     * reads in data from the NBTTagCompound into this MapDataBase
-     */
     public void readFromNBT(NBTTagCompound nbt)
     {
         if (this.theScoreboard == null)
@@ -191,9 +188,6 @@ public class ScoreboardSaveData extends WorldSavedData
         }
     }
 
-    /**
-     * write data to NBTTagCompound from this MapDataBase, similar to Entities and TileEntities
-     */
     public void writeToNBT(NBTTagCompound nbt)
     {
         if (this.theScoreboard == null)
@@ -228,8 +222,8 @@ public class ScoreboardSaveData extends WorldSavedData
             nbttagcompound.setString("Suffix", scoreplayerteam.getColorSuffix());
             nbttagcompound.setBoolean("AllowFriendlyFire", scoreplayerteam.getAllowFriendlyFire());
             nbttagcompound.setBoolean("SeeFriendlyInvisibles", scoreplayerteam.getSeeFriendlyInvisiblesEnabled());
-            nbttagcompound.setString("NameTagVisibility", scoreplayerteam.getNameTagVisibility().field_178830_e);
-            nbttagcompound.setString("DeathMessageVisibility", scoreplayerteam.getDeathMessageVisibility().field_178830_e);
+            nbttagcompound.setString("NameTagVisibility", scoreplayerteam.getNameTagVisibility().internalName);
+            nbttagcompound.setString("DeathMessageVisibility", scoreplayerteam.getDeathMessageVisibility().internalName);
             NBTTagList nbttaglist1 = new NBTTagList();
 
             for (String s : scoreplayerteam.getMembershipCollection())

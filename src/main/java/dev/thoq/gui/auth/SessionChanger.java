@@ -10,7 +10,6 @@ import net.minecraft.util.Session;
 import java.util.UUID;
 
 public class SessionChanger {
-
     private static SessionChanger instance;
     private final UserAuthentication auth;
 
@@ -18,13 +17,14 @@ public class SessionChanger {
         if(instance == null) {
             instance = new SessionChanger();
         }
-
         return instance;
     }
 
     private SessionChanger() {
         UUID notSureWhyINeedThis = UUID.randomUUID();
-        AuthenticationService authService = new YggdrasilAuthenticationService(Minecraft.getMinecraft().getProxy(), notSureWhyINeedThis.toString());
+        AuthenticationService authService =
+                new YggdrasilAuthenticationService(
+                        Minecraft.getMinecraft().getProxy(), notSureWhyINeedThis.toString());
         auth = authService.createUserAuthentication(Agent.MINECRAFT);
         authService.createMinecraftSessionService();
     }
@@ -38,6 +38,4 @@ public class SessionChanger {
         Session session = new Session(username, username, "0", "legacy");
         setSession(session);
     }
-
-
 }

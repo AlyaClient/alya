@@ -70,7 +70,7 @@ public class BlockModelUtils
 
         boolean flag = modelBase.isAmbientOcclusion();
         boolean flag1 = modelBase.isBuiltInRenderer();
-        TextureAtlasSprite textureatlassprite = modelBase.getTexture();
+        TextureAtlasSprite textureatlassprite = modelBase.getParticleTexture();
         ItemCameraTransforms itemcameratransforms = modelBase.getItemCameraTransforms();
         IBakedModel ibakedmodel = new SimpleBakedModel(list, list1, flag, flag1, textureatlassprite, itemcameratransforms);
         return ibakedmodel;

@@ -5,7 +5,6 @@ import dev.thoq.event.IEvent;
 import dev.thoq.event.TemporalEvent;
 
 public final class MotionEvent implements IEvent, ICancelable, TemporalEvent {
-
     private double x;
     private double y;
     private double z;
@@ -15,7 +14,13 @@ public final class MotionEvent implements IEvent, ICancelable, TemporalEvent {
     private boolean canceled = false;
     private boolean pre = true;
 
-    public MotionEvent(final double x, final double y, final double z, final float yaw, final float pitch, final boolean onGround) {
+    public MotionEvent(
+            final double x,
+            final double y,
+            final double z,
+            final float yaw,
+            final float pitch,
+            final boolean onGround) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -79,7 +84,6 @@ public final class MotionEvent implements IEvent, ICancelable, TemporalEvent {
     public void cancel() {
         this.canceled = true;
     }
-
 
     @Override
     public boolean isPre() {

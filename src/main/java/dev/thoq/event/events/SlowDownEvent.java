@@ -6,9 +6,33 @@ import dev.thoq.event.IEvent;
 @SuppressWarnings("unused")
 public final class SlowDownEvent implements IEvent, ICancelable {
 
-    private static boolean cancelled = false;
 
-    public SlowDownEvent() {
+    private final String reason;
+    private boolean cancelled = false;
+
+    public SlowDownEvent(final String reason) {
+        this.reason = normalizeReason(reason);
+    }
+
+    private static String normalizeReason(final String raw) {
+        if(raw == null) {
+            return "unknown";
+        }
+        return switch(raw.toLowerCase()) {
+            case "eat" -> "eat";
+            case "drink" -> "drink";
+            case "block" -> "block";
+            case "bow" -> "bow";
+            default -> "unknown";
+        };
+    }
+
+    public String getType() {
+        return "slowdown";
+    }
+
+    public String getReason() {
+        return reason;
     }
 
     @Override
@@ -21,18 +45,5 @@ public final class SlowDownEvent implements IEvent, ICancelable {
         cancelled = true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof SlowDownEvent;
-    }
 
-    @Override
-    public int hashCode() {
-        return SlowDownEvent.class.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "SlowDownEvent[]";
-    }
 }

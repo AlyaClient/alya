@@ -16,18 +16,13 @@ import net.minecraft.world.World;
 
 public class ContainerEnchantment extends Container
 {
-    /** SlotEnchantmentTable object with ItemStack to be enchanted */
     public IInventory tableInventory;
-
-    /** current world (for bookshelf counting) */
     private World worldPointer;
     private BlockPos position;
     private Random rand;
     public int xpSeed;
-
-    /** 3-member array storing the enchantment levels of each slot */
     public int[] enchantLevels;
-    public int[] field_178151_h;
+    public int[] enchantmentIds;
 
     public ContainerEnchantment(InventoryPlayer playerInv, World worldIn)
     {
@@ -50,7 +45,7 @@ public class ContainerEnchantment extends Container
         };
         this.rand = new Random();
         this.enchantLevels = new int[3];
-        this.field_178151_h = new int[] { -1, -1, -1};
+        this.enchantmentIds = new int[] { -1, -1, -1};
         this.worldPointer = worldIn;
         this.position = pos;
         this.xpSeed = playerInv.player.getXPSeed();
@@ -94,14 +89,11 @@ public class ContainerEnchantment extends Container
         listener.sendProgressBarUpdate(this, 1, this.enchantLevels[1]);
         listener.sendProgressBarUpdate(this, 2, this.enchantLevels[2]);
         listener.sendProgressBarUpdate(this, 3, this.xpSeed & -16);
-        listener.sendProgressBarUpdate(this, 4, this.field_178151_h[0]);
-        listener.sendProgressBarUpdate(this, 5, this.field_178151_h[1]);
-        listener.sendProgressBarUpdate(this, 6, this.field_178151_h[2]);
+        listener.sendProgressBarUpdate(this, 4, this.enchantmentIds[0]);
+        listener.sendProgressBarUpdate(this, 5, this.enchantmentIds[1]);
+        listener.sendProgressBarUpdate(this, 6, this.enchantmentIds[2]);
     }
 
-    /**
-     * Looks for changes made in the container, sends them to every listener.
-     */
     public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
@@ -113,9 +105,9 @@ public class ContainerEnchantment extends Container
             icrafting.sendProgressBarUpdate(this, 1, this.enchantLevels[1]);
             icrafting.sendProgressBarUpdate(this, 2, this.enchantLevels[2]);
             icrafting.sendProgressBarUpdate(this, 3, this.xpSeed & -16);
-            icrafting.sendProgressBarUpdate(this, 4, this.field_178151_h[0]);
-            icrafting.sendProgressBarUpdate(this, 5, this.field_178151_h[1]);
-            icrafting.sendProgressBarUpdate(this, 6, this.field_178151_h[2]);
+            icrafting.sendProgressBarUpdate(this, 4, this.enchantmentIds[0]);
+            icrafting.sendProgressBarUpdate(this, 5, this.enchantmentIds[1]);
+            icrafting.sendProgressBarUpdate(this, 6, this.enchantmentIds[2]);
         }
     }
 
@@ -131,7 +123,7 @@ public class ContainerEnchantment extends Container
         }
         else if (id >= 4 && id <= 6)
         {
-            this.field_178151_h[id - 4] = data;
+            this.enchantmentIds[id - 4] = data;
         }
         else
         {
@@ -139,9 +131,6 @@ public class ContainerEnchantment extends Container
         }
     }
 
-    /**
-     * Callback for when the crafting matrix is changed.
-     */
     public void onCraftMatrixChanged(IInventory inventoryIn)
     {
         if (inventoryIn == this.tableInventory)
@@ -201,7 +190,7 @@ public class ContainerEnchantment extends Container
                     for (int i1 = 0; i1 < 3; ++i1)
                     {
                         this.enchantLevels[i1] = EnchantmentHelper.calcItemStackEnchantability(this.rand, i1, l, itemstack);
-                        this.field_178151_h[i1] = -1;
+                        this.enchantmentIds[i1] = -1;
 
                         if (this.enchantLevels[i1] < i1 + 1)
                         {
@@ -218,7 +207,7 @@ public class ContainerEnchantment extends Container
                             if (list != null && !list.isEmpty())
                             {
                                 EnchantmentData enchantmentdata = (EnchantmentData)list.get(this.rand.nextInt(list.size()));
-                                this.field_178151_h[j1] = enchantmentdata.enchantmentobj.effectId | enchantmentdata.enchantmentLevel << 8;
+                                this.enchantmentIds[j1] = enchantmentdata.enchantmentobj.effectId | enchantmentdata.enchantmentLevel << 8;
                             }
                         }
                     }
@@ -231,15 +220,12 @@ public class ContainerEnchantment extends Container
                 for (int i = 0; i < 3; ++i)
                 {
                     this.enchantLevels[i] = 0;
-                    this.field_178151_h[i] = -1;
+                    this.enchantmentIds[i] = -1;
                 }
             }
         }
     }
 
-    /**
-     * Handles the given Button-click on the server, currently only used by enchanting. Name is for legacy.
-     */
     public boolean enchantItem(EntityPlayer playerIn, int id)
     {
         ItemStack itemstack = this.tableInventory.getStackInSlot(0);
@@ -324,9 +310,6 @@ public class ContainerEnchantment extends Container
         return itemstack == null ? 0 : itemstack.stackSize;
     }
 
-    /**
-     * Called when the container is closed.
-     */
     public void onContainerClosed(EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);
@@ -335,7 +318,7 @@ public class ContainerEnchantment extends Container
         {
             for (int i = 0; i < this.tableInventory.getSizeInventory(); ++i)
             {
-                ItemStack itemstack = this.tableInventory.getStackInSlotOnClosing(i);
+                ItemStack itemstack = this.tableInventory.removeStackFromSlot(i);
 
                 if (itemstack != null)
                 {
@@ -350,9 +333,6 @@ public class ContainerEnchantment extends Container
         return this.worldPointer.getBlockState(this.position).getBlock() != Blocks.enchanting_table ? false : playerIn.getDistanceSq((double)this.position.getX() + 0.5D, (double)this.position.getY() + 0.5D, (double)this.position.getZ() + 0.5D) <= 64.0D;
     }
 
-    /**
-     * Take a stack from the specified inventory slot.
-     */
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
         ItemStack itemstack = null;

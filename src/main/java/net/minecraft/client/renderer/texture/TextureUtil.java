@@ -3,7 +3,6 @@ package net.minecraft.client.renderer.texture;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.Buffer;
 import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
@@ -23,7 +22,7 @@ import org.lwjgl.opengl.GL12;
 
 public class TextureUtil
 {
-    private static final Logger logger = LogManager.getLogger(TextureUtil.class);
+    private static final Logger logger = LogManager.getLogger();
     private static final IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
     public static final DynamicTexture missingTexture = new DynamicTexture(16, 16);
     public static final int[] missingTextureData = missingTexture.getTextureData();
@@ -256,10 +255,9 @@ public class TextureUtil
             aint = updateAnaglyph(p_110994_0_);
         }
 
-        ((Buffer) dataBuffer).clear();
+        dataBuffer.clear();
         dataBuffer.put(aint, p_110994_1_, p_110994_2_);
-        ((Buffer) dataBuffer).position(0);
-        ((Buffer) dataBuffer).limit(p_110994_2_);
+        dataBuffer.position(0).limit(p_110994_2_);
     }
 
     static void bindTexture(int p_94277_0_)

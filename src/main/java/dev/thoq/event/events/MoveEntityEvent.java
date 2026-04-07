@@ -5,7 +5,6 @@ import dev.thoq.event.IEvent;
 
 @SuppressWarnings("unused")
 public final class MoveEntityEvent implements IEvent, ICancelable {
-
     private final double x;
     private final double y;
     private final double z;

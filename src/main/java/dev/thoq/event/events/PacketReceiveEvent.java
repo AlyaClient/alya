@@ -5,7 +5,6 @@ import dev.thoq.event.IEvent;
 import net.minecraft.network.Packet;
 
 public final class PacketReceiveEvent implements IEvent, ICancelable {
-
     private boolean canceled = false;
     private Packet<?> packet;
 
@@ -30,6 +29,4 @@ public final class PacketReceiveEvent implements IEvent, ICancelable {
     public void cancel() {
         this.canceled = true;
     }
-
-
 }

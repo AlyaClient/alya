@@ -15,27 +15,16 @@ import net.minecraft.util.MathHelper;
 
 public class CommandHelp extends CommandBase
 {
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "help";
     }
 
-    /**
-     * Return the required permission level for this command.
-     */
     public int getRequiredPermissionLevel()
     {
         return 0;
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.help.usage";
@@ -46,12 +35,6 @@ public class CommandHelp extends CommandBase
         return Arrays.<String>asList(new String[] {"?"});
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         List<ICommand> list = this.getSortedPossibleCommands(sender);

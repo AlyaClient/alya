@@ -1,6 +1,9 @@
 package net.minecraft.network.play.client;
 
 import java.io.IOException;
+
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import dev.thoq.viamcp.loadingbase.ViaLoadingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
@@ -22,17 +25,11 @@ public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer
         this.accepted = accepted;
     }
 
-    /**
-     * Passes this Packet on to the NetHandler for processing.
-     */
     public void processPacket(INetHandlerPlayServer handler)
     {
         handler.processConfirmTransaction(this);
     }
 
-    /**
-     * Reads the raw packet data from the data stream.
-     */
     public void readPacketData(PacketBuffer buf) throws IOException
     {
         this.windowId = buf.readByte();
@@ -40,14 +37,14 @@ public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer
         this.accepted = buf.readByte() != 0;
     }
 
-    /**
-     * Writes the raw packet data to the data stream.
-     */
-    public void writePacketData(PacketBuffer buf) throws IOException
-    {
-        buf.writeByte(this.windowId);
-        buf.writeShort(this.uid);
-        buf.writeByte(this.accepted ? 1 : 0);
+    public void writePacketData(PacketBuffer buf) throws IOException {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17)) {
+            buf.writeInt(this.windowId);
+        } else {
+            buf.writeByte(this.windowId);
+            buf.writeShort(this.uid);
+            buf.writeByte(this.accepted ? 1 : 0);
+        }
     }
 
     public int getWindowId()
@@ -58,9 +55,5 @@ public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer
     public short getUid()
     {
         return this.uid;
-    }
-
-    public void setUid(short uid) {
-        this.uid = uid;
     }
 }

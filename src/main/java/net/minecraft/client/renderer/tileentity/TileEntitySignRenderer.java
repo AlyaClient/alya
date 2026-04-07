@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
+import net.minecraft.client.gui.inventory.GuiEditSign;
 import net.minecraft.client.model.ModelSign;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -20,8 +21,6 @@ import org.lwjgl.opengl.GL11;
 public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntitySign>
 {
     private static final ResourceLocation SIGN_TEXTURE = new ResourceLocation("textures/entity/sign.png");
-
-    /** The ModelSign instance for use in this renderer */
     private final ModelSign model = new ModelSign();
     private static double textRenderDistanceSq = 4096.0D;
 
@@ -106,8 +105,8 @@ public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntity
                     if (te.signText[j] != null)
                     {
                         IChatComponent ichatcomponent = te.signText[j];
-                        List<IChatComponent> list = GuiUtilRenderComponents.func_178908_a(ichatcomponent, 90, fontrenderer, false, true);
-                        String s = list != null && list.size() > 0 ? ((IChatComponent)list.get(0)).getFormattedText() : "";
+                        List<IChatComponent> list = GuiUtilRenderComponents.splitText(ichatcomponent, 90, fontrenderer, false, true);
+                        String s = list != null && list.size() > 0 ? ((IChatComponent)list.getFirst()).getFormattedText() : "";
 
                         if (j == te.lineBeingEdited)
                         {
@@ -140,6 +139,10 @@ public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntity
         if (Shaders.isShadowPass)
         {
             return false;
+        }
+        else if (Config.getMinecraft().currentScreen instanceof GuiEditSign)
+        {
+            return true;
         }
         else
         {

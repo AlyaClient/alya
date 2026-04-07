@@ -43,9 +43,6 @@ public class S38PacketPlayerListItem implements Packet<INetHandlerPlayClient>
         }
     }
 
-    /**
-     * Reads the raw packet data from the data stream.
-     */
     public void readPacketData(PacketBuffer buf) throws IOException
     {
         this.action = (S38PacketPlayerListItem.Action)buf.readEnumValue(S38PacketPlayerListItem.Action.class);
@@ -118,9 +115,6 @@ public class S38PacketPlayerListItem implements Packet<INetHandlerPlayClient>
         }
     }
 
-    /**
-     * Writes the raw packet data to the data stream.
-     */
     public void writePacketData(PacketBuffer buf) throws IOException
     {
         buf.writeEnumValue(this.action);
@@ -197,20 +191,17 @@ public class S38PacketPlayerListItem implements Packet<INetHandlerPlayClient>
         }
     }
 
-    /**
-     * Passes this Packet on to the NetHandler for processing.
-     */
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handlePlayerListItem(this);
     }
 
-    public List<S38PacketPlayerListItem.AddPlayerData> func_179767_a()
+    public List<S38PacketPlayerListItem.AddPlayerData> getEntries()
     {
         return this.players;
     }
 
-    public S38PacketPlayerListItem.Action func_179768_b()
+    public S38PacketPlayerListItem.Action getAction()
     {
         return this.action;
     }

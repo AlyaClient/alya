@@ -1,14 +1,14 @@
 local moduleTable = alya.modules.register("Speed", "F1 car", "MOVEMENT")
-
 local mode = moduleTable.addModeSetting("Mode", "Speed mode", "BHop", "BHop", "Vanilla", "Verus", "NCP")
-
 local createBHopSpeedMode = loadScript("/lua/modules/movement/speed/bhop.lua")
 local createVanillaSpeedMode = loadScript("/lua/modules/movement/speed/vanilla.lua")
 local createVerusSpeedMode = loadScript("/lua/modules/movement/speed/verus.lua")
+local createNcpSpeedMode = loadScript("/lua/modules/movement/speed/ncp.lua")
 
 createBHopSpeedMode(moduleTable, mode)
 createVanillaSpeedMode(moduleTable, mode)
 createVerusSpeedMode(moduleTable, mode)
+createNcpSpeedMode(moduleTable, mode)
 
 moduleTable.onDisable(function()
     alya.mc.setTimerSpeed(1)

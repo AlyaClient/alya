@@ -24,9 +24,6 @@ public abstract class BaseAttributeMap
         return (IAttributeInstance)this.attributesByName.get(attributeName);
     }
 
-    /**
-     * Registers an attribute with this AttributeMap, returns a modifiable AttributeInstance associated with this map
-     */
     public IAttributeInstance registerAttribute(IAttribute attribute)
     {
         if (this.attributesByName.containsKey(attribute.getAttributeUnlocalizedName()))
@@ -48,20 +45,20 @@ public abstract class BaseAttributeMap
         }
     }
 
-    protected abstract IAttributeInstance func_180376_c(IAttribute p_180376_1_);
+    protected abstract IAttributeInstance func_180376_c(IAttribute attribute);
 
     public Collection<IAttributeInstance> getAllAttributes()
     {
         return this.attributesByName.values();
     }
 
-    public void func_180794_a(IAttributeInstance p_180794_1_)
+    public void func_180794_a(IAttributeInstance instance)
     {
     }
 
-    public void removeAttributeModifiers(Multimap<String, AttributeModifier> p_111148_1_)
+    public void removeAttributeModifiers(Multimap<String, AttributeModifier> modifiers)
     {
-        for (Entry<String, AttributeModifier> entry : p_111148_1_.entries())
+        for (Entry<String, AttributeModifier> entry : modifiers.entries())
         {
             IAttributeInstance iattributeinstance = this.getAttributeInstanceByName((String)entry.getKey());
 
@@ -72,9 +69,9 @@ public abstract class BaseAttributeMap
         }
     }
 
-    public void applyAttributeModifiers(Multimap<String, AttributeModifier> p_111147_1_)
+    public void applyAttributeModifiers(Multimap<String, AttributeModifier> modifiers)
     {
-        for (Entry<String, AttributeModifier> entry : p_111147_1_.entries())
+        for (Entry<String, AttributeModifier> entry : modifiers.entries())
         {
             IAttributeInstance iattributeinstance = this.getAttributeInstanceByName((String)entry.getKey());
 

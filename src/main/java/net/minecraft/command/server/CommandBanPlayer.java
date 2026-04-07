@@ -14,48 +14,26 @@ import net.minecraft.util.BlockPos;
 
 public class CommandBanPlayer extends CommandBase
 {
-    /**
-     * Gets the name of the command
-     */
     public String getCommandName()
     {
         return "ban";
     }
 
-    /**
-     * Return the required permission level for this command.
-     */
     public int getRequiredPermissionLevel()
     {
         return 3;
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The {@link ICommandSender} who is requesting usage details.
-     */
     public String getCommandUsage(ICommandSender sender)
     {
         return "commands.ban.usage";
     }
 
-    /**
-     * Returns true if the given command sender is allowed to use this command.
-     *  
-     * @param sender The CommandSender
-     */
     public boolean canCommandSenderUseCommand(ICommandSender sender)
     {
         return MinecraftServer.getServer().getConfigurationManager().getBannedPlayers().isLanServer() && super.canCommandSenderUseCommand(sender);
     }
 
-    /**
-     * Callback when the command is invoked
-     *  
-     * @param sender The {@link ICommandSender sender} who executed the command
-     * @param args The arguments that were passed with the command
-     */
     public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length >= 1 && args[0].length() > 0)
@@ -76,7 +54,7 @@ public class CommandBanPlayer extends CommandBase
                     s = getChatComponentFromNthArg(sender, args, 1).getUnformattedText();
                 }
 
-                UserListBansEntry userlistbansentry = new UserListBansEntry(gameprofile, (Date)null, sender.getCommandSenderName(), (Date)null, s);
+                UserListBansEntry userlistbansentry = new UserListBansEntry(gameprofile, (Date)null, sender.getName(), (Date)null, s);
                 minecraftserver.getConfigurationManager().getBannedPlayers().addEntry(userlistbansentry);
                 EntityPlayerMP entityplayermp = minecraftserver.getConfigurationManager().getPlayerByUsername(args[0]);
 

@@ -4,15 +4,19 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("unused")
 public final class NumberSetting extends Setting<Double> {
-
     private final double min;
     private final double max;
     private final double increment;
-
     private boolean rangeEnabled;
     private double secondValue;
 
-    public NumberSetting(final String name, final String description, final double defaultValue, final double min, final double max, final double increment) {
+    public NumberSetting(
+            final String name,
+            final String description,
+            final double defaultValue,
+            final double min,
+            final double max,
+            final double increment) {
         super(name, description, defaultValue);
         this.min = min;
         this.max = max;
@@ -21,7 +25,12 @@ public final class NumberSetting extends Setting<Double> {
         this.secondValue = defaultValue;
     }
 
-    public NumberSetting(final String name, final String description, final double defaultValue, final double min, final double max) {
+    public NumberSetting(
+            final String name,
+            final String description,
+            final double defaultValue,
+            final double min,
+            final double max) {
         this(name, description, defaultValue, min, max, 0.1);
     }
 
@@ -63,18 +72,18 @@ public final class NumberSetting extends Setting<Double> {
     }
 
     public double getRandomValue() {
-        if (!rangeEnabled) return value;
+        if(!rangeEnabled) return value;
         double lo = Math.min(value, secondValue);
         double hi = Math.max(value, secondValue);
-        if (lo >= hi) return lo;
+        if(lo >= hi) return lo;
         return ThreadLocalRandom.current().nextDouble(lo, hi);
     }
 
     public int getRandomValueAsInt() {
-        if (!rangeEnabled) return value.intValue();
+        if(!rangeEnabled) return value.intValue();
         int lo = (int) Math.min(value, secondValue);
         int hi = (int) Math.max(value, secondValue);
-        if (lo >= hi) return lo;
+        if(lo >= hi) return lo;
         return ThreadLocalRandom.current().nextInt(lo, hi + 1);
     }
 
@@ -88,7 +97,7 @@ public final class NumberSetting extends Setting<Double> {
 
     @Override
     public String getValueAsString() {
-        if (rangeEnabled) {
+        if(rangeEnabled) {
             return value + "-" + secondValue;
         }
         return String.valueOf(value);
@@ -97,7 +106,7 @@ public final class NumberSetting extends Setting<Double> {
     @Override
     public void setValueFromString(String value) {
         try {
-            if (rangeEnabled && value.contains("-")) {
+            if(rangeEnabled && value.contains("-")) {
                 String[] parts = value.split("-", 2);
                 setValue(Double.parseDouble(parts[0]));
                 setSecondValue(Double.parseDouble(parts[1]));
@@ -107,6 +116,4 @@ public final class NumberSetting extends Setting<Double> {
         } catch(NumberFormatException ignored) {
         }
     }
-
-
 }

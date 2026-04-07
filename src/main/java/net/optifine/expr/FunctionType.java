@@ -2,12 +2,14 @@ package net.optifine.expr;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import net.optifine.shaders.uniform.Smoother;
+import net.optifine.util.MathUtils;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Config;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.optifine.shaders.uniform.Smoother;
-import net.optifine.util.MathUtils;
 
 public enum FunctionType
 {
@@ -72,14 +74,17 @@ public enum FunctionType
 
     private FunctionType(ExpressionType expressionType, String name, ExpressionType[] parameterTypes)
     {
+        this(0, expressionType, name, parameterTypes);
     }
 
     private FunctionType(int precedence, ExpressionType expressionType, String name, ExpressionType[] parameterTypes)
     {
+        this(precedence, expressionType, name, new Parameters(parameterTypes));
     }
 
     private FunctionType(ExpressionType expressionType, String name, IParameters parameters)
     {
+        this(0, expressionType, name, parameters);
     }
 
     private FunctionType(int precedence, ExpressionType expressionType, String name, IParameters parameters)
@@ -166,7 +171,7 @@ public enum FunctionType
                 return (float)Math.atan((double)evalFloat(args, 0));
 
             case ATAN2:
-                return (float)MathHelper.func_181159_b((double)evalFloat(args, 0), (double)evalFloat(args, 1));
+                return (float)MathHelper.atan2((double)evalFloat(args, 0), (double)evalFloat(args, 1));
 
             case TORAD:
                 return MathUtils.toRad(evalFloat(args, 0));

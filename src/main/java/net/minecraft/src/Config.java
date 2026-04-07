@@ -1,5 +1,31 @@
 package net.minecraft.src;
 
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
 import net.minecraft.client.LoadingScreenRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -10,11 +36,20 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.*;
-import net.minecraft.client.resources.ResourcePackRepository.Entry;
+import net.minecraft.client.resources.DefaultResourcePack;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.FrameTimer;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.optifine.DynamicLights;
 import net.optifine.GlErrors;
 import net.optifine.VersionCheckThread;
@@ -32,30 +67,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.*;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.util.List;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.PixelFormat;
 
 public class Config
 {
     public static final String OF_NAME = "OptiFine";
     public static final String MC_VERSION = "1.8.9";
     public static final String OF_EDITION = "HD_U";
-    public static final String OF_RELEASE = "L5";
-    public static final String VERSION = "OptiFine_1.8.9_HD_U_L5";
+    public static final String OF_RELEASE = "M6_pre2";
+    public static final String VERSION = "OptiFine_1.8.9_HD_U_M6_pre2";
     private static String build = null;
     private static String newRelease = null;
     private static boolean notify64BitJava = false;
@@ -77,13 +104,14 @@ public class Config
     private static int antialiasingLevel = 0;
     private static int availableProcessors = 0;
     public static boolean zoomMode = false;
+    public static boolean zoomSmoothCamera = false;
     private static int texturePackClouds = 0;
     public static boolean waterOpacityChanged = false;
     private static boolean fullscreenModeChecked = false;
     private static boolean desktopModeChecked = false;
     private static DefaultResourcePack defaultResourcePackLazy = null;
     public static final Float DEF_ALPHA_FUNC_LEVEL = Float.valueOf(0.1F);
-    private static final Logger LOGGER = LogManager.getLogger(Config.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final boolean logDetail = System.getProperty("log.detail", "false").equals("true");
     private static String mcDebugLast = null;
     private static int fpsMinLast = 0;
@@ -91,7 +119,7 @@ public class Config
 
     public static String getVersion()
     {
-        return "OptiFine_1.8.9_HD_U_L5";
+        return "OptiFine_1.8.9_HD_U_M6_pre2";
     }
 
     public static String getVersionDebug()
@@ -105,7 +133,7 @@ public class Config
             stringbuffer.append(", ");
         }
 
-        stringbuffer.append("OptiFine_1.8.9_HD_U_L5");
+        stringbuffer.append("OptiFine_1.8.9_HD_U_M6_pre2");
         String s = Shaders.getShaderPackName();
 
         if (s != null)
@@ -957,9 +985,9 @@ public class Config
         List list = resourcepackrepository.getRepositoryEntries();
         List list1 = new ArrayList();
 
-        for (Object e: list)
+        for (Object o: list)
         {
-            ResourcePackRepository.Entry resourcepackrepository$entry = (Entry) e;
+            ResourcePackRepository.Entry resourcepackrepository$entry = (ResourcePackRepository.Entry) o;
             list1.add(resourcepackrepository$entry.getResourcePack());
         }
 
@@ -1328,13 +1356,6 @@ public class Config
             try
             {
                 DisplayMode[] adisplaymode = Display.getAvailableDisplayModes();
-
-                if (adisplaymode == null || adisplaymode.length == 0)
-                {
-                    displayModes = new DisplayMode[] {desktopDisplayMode};
-                    return displayModes;
-                }
-
                 Set<Dimension> set = getDisplayModeDimensions(adisplaymode);
                 List list = new ArrayList();
 
@@ -1874,8 +1895,12 @@ public class Config
                 Display.destroy();
                 Display.setDisplayMode(displaymode);
                 Display.create((new PixelFormat()).withDepthBits(24).withSamples(i));
-                Display.setResizable(false);
-                Display.setResizable(true);
+
+                if (Util.getOSType() == Util.EnumOS.WINDOWS)
+                {
+                    Display.setResizable(false);
+                    Display.setResizable(true);
+                }
             }
             catch (LWJGLException lwjglexception2)
             {
@@ -1886,8 +1911,12 @@ public class Config
                 {
                     Display.setDisplayMode(displaymode);
                     Display.create((new PixelFormat()).withDepthBits(24));
-                    Display.setResizable(false);
-                    Display.setResizable(true);
+
+                    if (Util.getOSType() == Util.EnumOS.WINDOWS)
+                    {
+                        Display.setResizable(false);
+                        Display.setResizable(true);
+                    }
                 }
                 catch (LWJGLException lwjglexception1)
                 {
@@ -1897,8 +1926,12 @@ public class Config
                     {
                         Display.setDisplayMode(displaymode);
                         Display.create();
-                        Display.setResizable(false);
-                        Display.setResizable(true);
+
+                        if (Util.getOSType() == Util.EnumOS.WINDOWS)
+                        {
+                            Display.setResizable(false);
+                            Display.setResizable(true);
+                        }
                     }
                     catch (LWJGLException lwjglexception)
                     {
@@ -1935,7 +1968,7 @@ public class Config
         }
     }
 
-    private static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException
+    public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException
     {
         BufferedImage bufferedimage = ImageIO.read(p_readIconImage_0_);
         int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), (int[])null, 0, bufferedimage.getWidth());
@@ -1946,7 +1979,7 @@ public class Config
             bytebuffer.putInt(i << 8 | i >> 24 & 255);
         }
 
-        ((Buffer) bytebuffer).flip();
+        bytebuffer.flip();
         return bytebuffer;
     }
 
@@ -2022,8 +2055,12 @@ public class Config
                 minecraft.gameSettings.updateVSync();
                 Display.update();
                 GlStateManager.enableTexture2D();
-                Display.setResizable(false);
-                Display.setResizable(true);
+
+                if (Util.getOSType() == Util.EnumOS.WINDOWS)
+                {
+                    Display.setResizable(false);
+                    Display.setResizable(true);
+                }
             }
         }
         catch (Exception exception)
@@ -2146,10 +2183,10 @@ public class Config
         else
         {
             mcDebugLast = minecraft.debug;
-            FrameTimer frametimer = minecraft.func_181539_aj();
-            long[] along = frametimer.func_181746_c();
-            int i = frametimer.func_181750_b();
-            int j = frametimer.func_181749_a();
+            FrameTimer frametimer = minecraft.getFrameTimer();
+            long[] along = frametimer.getFrames();
+            int i = frametimer.getIndex();
+            int j = frametimer.getLastIndex();
 
             if (i == j)
             {
@@ -2278,7 +2315,7 @@ public class Config
     {
         try
         {
-            ResourceLocation resourcelocation = new ResourceLocation("Alya/Assets/Title/Alya.png");
+            ResourceLocation resourcelocation = new ResourceLocation("client/assets/title/splash.png");
             InputStream inputstream = getResourceStream(resourcelocation);
 
             if (inputstream == null)
@@ -2485,5 +2522,13 @@ public class Config
     public static boolean isQuadsToTriangles()
     {
         return !isShaders() ? false : !Shaders.canRenderQuads();
+    }
+
+    public static void checkNull(Object p_checkNull_0_, String p_checkNull_1_) throws NullPointerException
+    {
+        if (p_checkNull_0_ == null)
+        {
+            throw new NullPointerException(p_checkNull_1_);
+        }
     }
 }

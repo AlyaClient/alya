@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ModuleRepository {
-
     void save(final Module module);
 
     void remove(final Module module);
@@ -22,6 +21,4 @@ public interface ModuleRepository {
     boolean exists(final String name);
 
     int count();
-
-
 }

@@ -12,9 +12,6 @@ import net.minecraft.world.World;
 
 public class RecipesArmorDyes implements IRecipe
 {
-    /**
-     * Used to check if a recipe matches current crafting inventory
-     */
     public boolean matches(InventoryCrafting inv, World worldIn)
     {
         ItemStack itemstack = null;
@@ -52,9 +49,6 @@ public class RecipesArmorDyes implements IRecipe
         return itemstack != null && !list.isEmpty();
     }
 
-    /**
-     * Returns an Item that is the result of this recipe
-     */
     public ItemStack getCraftingResult(InventoryCrafting inv)
     {
         ItemStack itemstack = null;
@@ -101,7 +95,7 @@ public class RecipesArmorDyes implements IRecipe
                         return null;
                     }
 
-                    float[] afloat = EntitySheep.func_175513_a(EnumDyeColor.byDyeDamage(itemstack1.getMetadata()));
+                    float[] afloat = EntitySheep.getDyeRgb(EnumDyeColor.byDyeDamage(itemstack1.getMetadata()));
                     int l1 = (int)(afloat[0] * 255.0F);
                     int i2 = (int)(afloat[1] * 255.0F);
                     int j2 = (int)(afloat[2] * 255.0F);
@@ -135,9 +129,6 @@ public class RecipesArmorDyes implements IRecipe
         }
     }
 
-    /**
-     * Returns the size of the recipe area
-     */
     public int getRecipeSize()
     {
         return 10;

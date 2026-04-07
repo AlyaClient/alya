@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer.culling;
 
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,9 +12,6 @@ public class ClippingHelperImpl extends ClippingHelper
     private FloatBuffer modelviewMatrixBuffer = GLAllocation.createDirectFloatBuffer(16);
     private FloatBuffer field_78564_h = GLAllocation.createDirectFloatBuffer(16);
 
-    /**
-     * Initialises the ClippingHelper object then returns an instance of it.
-     */
     public static ClippingHelper getInstance()
     {
         instance.init();
@@ -33,18 +29,16 @@ public class ClippingHelperImpl extends ClippingHelper
 
     public void init()
     {
-        ((Buffer) this.projectionMatrixBuffer).clear();
-        ((Buffer) this.modelviewMatrixBuffer).clear();
-        ((Buffer) this.field_78564_h).clear();
+        this.projectionMatrixBuffer.clear();
+        this.modelviewMatrixBuffer.clear();
+        this.field_78564_h.clear();
         GlStateManager.getFloat(2983, this.projectionMatrixBuffer);
         GlStateManager.getFloat(2982, this.modelviewMatrixBuffer);
         float[] afloat = this.projectionMatrix;
         float[] afloat1 = this.modelviewMatrix;
-        ((Buffer) this.projectionMatrixBuffer).flip();
-        ((Buffer) this.projectionMatrixBuffer).limit(16);
+        this.projectionMatrixBuffer.flip().limit(16);
         this.projectionMatrixBuffer.get(afloat);
-        ((Buffer) this.modelviewMatrixBuffer).flip();
-        ((Buffer) this.modelviewMatrixBuffer).limit(16);
+        this.modelviewMatrixBuffer.flip().limit(16);
         this.modelviewMatrixBuffer.get(afloat1);
         this.clippingMatrix[0] = afloat1[0] * afloat[0] + afloat1[1] * afloat[4] + afloat1[2] * afloat[8] + afloat1[3] * afloat[12];
         this.clippingMatrix[1] = afloat1[0] * afloat[1] + afloat1[1] * afloat[5] + afloat1[2] * afloat[9] + afloat1[3] * afloat[13];

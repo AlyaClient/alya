@@ -35,11 +35,6 @@ public class BlockCauldron extends Block
         this.setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, Integer.valueOf(0)));
     }
 
-    /**
-     * Add all collision boxes of this Block to the list that intersect with the given mask.
-     *  
-     * @param collidingEntity the Entity colliding with this Block
-     */
     public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
     {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3125F, 1.0F);
@@ -56,17 +51,11 @@ public class BlockCauldron extends Block
         this.setBlockBoundsForItemRender();
     }
 
-    /**
-     * Sets the block's bounds for rendering it as an item
-     */
     public void setBlockBoundsForItemRender()
     {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks for render
-     */
     public boolean isOpaqueCube()
     {
         return false;
@@ -77,9 +66,6 @@ public class BlockCauldron extends Block
         return false;
     }
 
-    /**
-     * Called When an Entity Collided with the Block
-     */
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
         int i = ((Integer)state.getValue(LEVEL)).intValue();
@@ -223,9 +209,6 @@ public class BlockCauldron extends Block
         worldIn.updateComparatorOutputLevel(pos, this);
     }
 
-    /**
-     * Called similar to random ticks, but only when it is raining.
-     */
     public void fillWithRain(World worldIn, BlockPos pos)
     {
         if (worldIn.rand.nextInt(20) == 1)
@@ -239,19 +222,11 @@ public class BlockCauldron extends Block
         }
     }
 
-    /**
-     * Get the Item that this Block should drop when harvested.
-     *  
-     * @param fortune the level of the Fortune enchantment on the player's tool
-     */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Items.cauldron;
     }
 
-    /**
-     * Used by pick block on the client to get a block's item form, if it exists.
-     */
     public Item getItem(World worldIn, BlockPos pos)
     {
         return Items.cauldron;
@@ -267,17 +242,11 @@ public class BlockCauldron extends Block
         return ((Integer)worldIn.getBlockState(pos).getValue(LEVEL)).intValue();
     }
 
-    /**
-     * Convert the given metadata into a BlockState for this Block
-     */
     public IBlockState getStateFromMeta(int meta)
     {
         return this.getDefaultState().withProperty(LEVEL, Integer.valueOf(meta));
     }
 
-    /**
-     * Convert the BlockState into the correct metadata value
-     */
     public int getMetaFromState(IBlockState state)
     {
         return ((Integer)state.getValue(LEVEL)).intValue();

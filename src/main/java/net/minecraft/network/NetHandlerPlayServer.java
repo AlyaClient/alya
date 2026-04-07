@@ -97,27 +97,17 @@ import org.apache.logging.log4j.Logger;
 
 public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
 {
-    private static final Logger logger = LogManager.getLogger(NetHandlerPlayServer.class);
+    private static final Logger logger = LogManager.getLogger();
     public final NetworkManager netManager;
     private final MinecraftServer serverController;
     public EntityPlayerMP playerEntity;
     private int networkTickCount;
     private int field_175090_f;
-
-    /**
-     * Used to keep track of how the player is floating while gamerules should prevent that. Surpassing 80 ticks means
-     * kick
-     */
     private int floatingTickCount;
     private boolean field_147366_g;
     private int field_147378_h;
     private long lastPingTime;
     private long lastSentPingPacket;
-
-    /**
-     * Incremented by 20 each time a user sends a chat message, decreased by one every tick. Non-ops kicked when over
-     * 200
-     */
     private int chatSpamThresholdCount;
     private int itemDropThreshold;
     private IntHashMap<Short> field_147372_n = new IntHashMap();
@@ -135,9 +125,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         playerIn.playerNetServerHandler = this;
     }
 
-    /**
-     * Like the old updateEntity(), except more generic.
-     */
     public void update()
     {
         this.field_147366_g = false;
@@ -175,9 +162,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         return this.netManager;
     }
 
-    /**
-     * Kick a player from the server with a reason
-     */
     public void kickPlayerFromServer(String reason)
     {
         final ChatComponentText chatcomponenttext = new ChatComponentText(reason);
@@ -198,10 +182,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }));
     }
 
-    /**
-     * Processes player movement input. Includes walking, strafing, jumping, sneaking; excludes riding and toggling
-     * flying/sprinting
-     */
     public void processInput(C0CPacketInput packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -213,9 +193,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         return !Doubles.isFinite(p_183006_1_.getPositionX()) || !Doubles.isFinite(p_183006_1_.getPositionY()) || !Doubles.isFinite(p_183006_1_.getPositionZ()) || !Floats.isFinite(p_183006_1_.getPitch()) || !Floats.isFinite(p_183006_1_.getYaw());
     }
 
-    /**
-     * Processes clients perspective on player positioning and/or orientation
-     */
     public void processPlayer(C03PacketPlayer packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -358,9 +335,9 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
                     double d14 = this.playerEntity.motionX * this.playerEntity.motionX + this.playerEntity.motionY * this.playerEntity.motionY + this.playerEntity.motionZ * this.playerEntity.motionZ;
                     double d15 = d11 * d11 + d12 * d12 + d13 * d13;
 
-                    if (d15 - d14 > 100.0D && (!this.serverController.isSinglePlayer() || !this.serverController.getServerOwner().equals(this.playerEntity.getCommandSenderName())))
+                    if (d15 - d14 > 100.0D && (!this.serverController.isSinglePlayer() || !this.serverController.getServerOwner().equals(this.playerEntity.getName())))
                     {
-                        logger.warn(this.playerEntity.getCommandSenderName() + " moved too quickly! " + d11 + "," + d12 + "," + d13 + " (" + d11 + ", " + d12 + ", " + d13 + ")");
+                        logger.warn(this.playerEntity.getName() + " moved too quickly! " + d11 + "," + d12 + "," + d13 + " (" + d11 + ", " + d12 + ", " + d13 + ")");
                         this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
                         return;
                     }
@@ -390,7 +367,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
                     if (d15 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
                     {
                         flag1 = true;
-                        logger.warn(this.playerEntity.getCommandSenderName() + " moved wrongly!");
+                        logger.warn(this.playerEntity.getName() + " moved wrongly!");
                     }
 
                     this.playerEntity.setPositionAndRotation(d8, d9, d10, f1, f2);
@@ -417,7 +394,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
 
                             if (this.floatingTickCount > 80)
                             {
-                                logger.warn(this.playerEntity.getCommandSenderName() + " was kicked for floating too long!");
+                                logger.warn(this.playerEntity.getName() + " was kicked for floating too long!");
                                 this.kickPlayerFromServer("Flying is not enabled on this server");
                                 return;
                             }
@@ -484,11 +461,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         this.playerEntity.playerNetServerHandler.sendPacket(new S08PacketPlayerPosLook(x, y, z, yaw, pitch, relativeSet));
     }
 
-    /**
-     * Processes the player initiating/stopping digging on a particular spot, as well as a player dropping items?. (0:
-     * initiated, 1: reinitiated, 2? , 3-4 drop item (respectively without or with player control), 5: stopped; x,y,z,
-     * side clicked on;)
-     */
     public void processPlayerDigging(C07PacketPlayerDigging packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -572,9 +544,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Processes block placement and block activation (anvil, furnace, etc.)
-     */
     public void processPlayerBlockPlacement(C08PacketPlayerBlockPlacement packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -702,12 +671,9 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
     {
     }
 
-    /**
-     * Invoked when disconnecting, the parameter is a ChatComponent describing the reason for termination
-     */
     public void onDisconnect(IChatComponent reason)
     {
-        logger.info(this.playerEntity.getCommandSenderName() + " lost connection: " + reason);
+        logger.info(this.playerEntity.getName() + " lost connection: " + reason);
         this.serverController.refreshStatusNextTick();
         ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.left", new Object[] {this.playerEntity.getDisplayName()});
         chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
@@ -715,7 +681,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         this.playerEntity.mountEntityAndWakeUp();
         this.serverController.getConfigurationManager().playerLoggedOut(this.playerEntity);
 
-        if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
+        if (this.serverController.isSinglePlayer() && this.playerEntity.getName().equals(this.serverController.getServerOwner()))
         {
             logger.info("Stopping singleplayer server as player logged out");
             this.serverController.initiateShutdown();
@@ -759,9 +725,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Updates which quickbar slot is selected
-     */
     public void processHeldItemChange(C09PacketHeldItemChange packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -773,13 +736,10 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
         else
         {
-            logger.warn(this.playerEntity.getCommandSenderName() + " tried to set an invalid carried item");
+            logger.warn(this.playerEntity.getName() + " tried to set an invalid carried item");
         }
     }
 
-    /**
-     * Process chat messages (broadcast back to clients) and commands (executes)
-     */
     public void processChatMessage(C01PacketChatMessage packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -824,9 +784,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Handle commands that start with a /
-     */
     private void handleSlashCommand(String command)
     {
         this.serverController.getCommandManager().executeCommand(this.playerEntity, command);
@@ -839,10 +796,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         this.playerEntity.swingItem();
     }
 
-    /**
-     * Processes a range of action-types: sneaking, sprinting, waking from sleep, opening the inventory or setting jump
-     * height of the horse the player is riding
-     */
     public void processEntityAction(C0BPacketEntityAction packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -855,7 +808,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
                 break;
 
             case STOP_SNEAKING:
-                this.playerEntity.setSneaking(true);
+                this.playerEntity.setSneaking(false);
                 break;
 
             case START_SPRINTING:
@@ -892,10 +845,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Processes interactions ((un)leashing, opening command block GUI) and attacks on an entity with players currently
-     * equipped item
-     */
     public void processUseEntity(C02PacketUseEntity packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -928,7 +877,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
                     if (entity instanceof EntityItem || entity instanceof EntityXPOrb || entity instanceof EntityArrow || entity == this.playerEntity)
                     {
                         this.kickPlayerFromServer("Attempting to attack an invalid entity");
-                        this.serverController.logWarning("Player " + this.playerEntity.getCommandSenderName() + " tried to attack an invalid entity");
+                        this.serverController.logWarning("Player " + this.playerEntity.getName() + " tried to attack an invalid entity");
                         return;
                     }
 
@@ -938,10 +887,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Processes the client status updates: respawn attempt from player, opening statistics or achievements, or
-     * acquiring 'open inventory' achievement
-     */
     public void processClientStatus(C16PacketClientStatus packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -957,7 +902,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
                 }
                 else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
                 {
-                    if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
+                    if (this.serverController.isSinglePlayer() && this.playerEntity.getName().equals(this.serverController.getServerOwner()))
                     {
                         this.playerEntity.playerNetServerHandler.kickPlayerFromServer("You have died. Game over, man, it\'s game over!");
                         this.serverController.deleteWorldAndStopServer();
@@ -990,20 +935,12 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Processes the client closing windows (container)
-     */
     public void processCloseWindow(C0DPacketCloseWindow packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
         this.playerEntity.closeContainer();
     }
 
-    /**
-     * Executes a container/inventory slot manipulation as indicated by the packet. Sends the serverside result if they
-     * didn't match the indicated result and prevents further manipulation by the player until he confirms that it has
-     * the same open container/inventory
-     */
     public void processClickWindow(C0EPacketClickWindow packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -1052,10 +989,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Enchants the item identified by the packet given some convoluted conditions (matching window, which
-     * should/shouldn't be in use?)
-     */
     public void processEnchantItem(C11PacketEnchantItem packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -1068,9 +1001,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Update the server with an ItemStack in a slot.
-     */
     public void processCreativeInventoryAction(C10PacketCreativeInventoryAction packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -1131,11 +1061,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Received in response to the server requesting to confirm that the client-side open container matches the servers'
-     * after a mismatched container-slot manipulation. It will unlock the player's ability to manipulate the container
-     * contents
-     */
     public void processConfirmTransaction(C0FPacketConfirmTransaction packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -1167,7 +1092,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
 
             if (!tileentitysign.getIsEditable() || tileentitysign.getPlayer() != this.playerEntity)
             {
-                this.serverController.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
+                this.serverController.logWarning("Player " + this.playerEntity.getName() + " just tried to change non-editable sign");
                 return;
             }
 
@@ -1183,9 +1108,6 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         }
     }
 
-    /**
-     * Updates a players' ping statistics
-     */
     public void processKeepAlive(C00PacketKeepAlive packetIn)
     {
         if (packetIn.getKey() == this.field_147378_h)
@@ -1200,18 +1122,12 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         return System.nanoTime() / 1000000L;
     }
 
-    /**
-     * Processes a player starting/stopping flying
-     */
     public void processPlayerAbilities(C13PacketPlayerAbilities packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
         this.playerEntity.capabilities.isFlying = packetIn.isFlying() && this.playerEntity.capabilities.allowFlying;
     }
 
-    /**
-     * Retrieves possible tab completions for the requested command string and sends them to the client
-     */
     public void processTabComplete(C14PacketTabComplete packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -1225,19 +1141,12 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
         this.playerEntity.playerNetServerHandler.sendPacket(new S3APacketTabComplete((String[])list.toArray(new String[list.size()])));
     }
 
-    /**
-     * Updates serverside copy of client settings: language, render distance, chat visibility, chat colours, difficulty,
-     * and whether to show the cape
-     */
     public void processClientSettings(C15PacketClientSettings packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
         this.playerEntity.handleClientSettings(packetIn);
     }
 
-    /**
-     * Synchronizes serverside and clientside book contents and signing
-     */
     public void processVanilla250Packet(C17PacketCustomPayload packetIn)
     {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
@@ -1308,7 +1217,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
 
                     if (itemstack.getItem() == Items.written_book && itemstack2.getItem() == Items.writable_book)
                     {
-                        itemstack2.setTagInfo("author", new NBTTagString(this.playerEntity.getCommandSenderName()));
+                        itemstack2.setTagInfo("author", new NBTTagString(this.playerEntity.getName()));
                         itemstack2.setTagInfo("title", new NBTTagString(itemstack.getTagCompound().getString("title")));
                         itemstack2.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
                         itemstack2.setItem(Items.written_book);

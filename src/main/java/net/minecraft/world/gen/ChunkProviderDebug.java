@@ -27,10 +27,6 @@ public class ChunkProviderDebug implements IChunkProvider
         this.world = worldIn;
     }
 
-    /**
-     * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
-     * specified chunk from the map seed and chunk seed
-     */
     public Chunk provideChunk(int x, int z)
     {
         ChunkPrimer chunkprimer = new ChunkPrimer();
@@ -88,62 +84,39 @@ public class ChunkProviderDebug implements IChunkProvider
         return iblockstate;
     }
 
-    /**
-     * Checks to see if a chunk exists at x, z
-     */
     public boolean chunkExists(int x, int z)
     {
         return true;
     }
 
-    /**
-     * Populates chunk with ores etc etc
-     */
-    public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+    public void populate(IChunkProvider chunkProvider, int x, int z)
     {
     }
 
-    public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_, int p_177460_3_, int p_177460_4_)
+    public boolean populateChunk(IChunkProvider chunkProvider, Chunk chunkIn, int x, int z)
     {
         return false;
     }
 
-    /**
-     * Two modes of operation: if passed true, save all Chunks in one go.  If passed false, save up to two chunks.
-     * Return true if all chunks have been saved.
-     */
-    public boolean saveChunks(boolean p_73151_1_, IProgressUpdate progressCallback)
+    public boolean saveChunks(boolean saveAllChunks, IProgressUpdate progressCallback)
     {
         return true;
     }
 
-    /**
-     * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
-     * unimplemented.
-     */
     public void saveExtraData()
     {
     }
 
-    /**
-     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
-     */
     public boolean unloadQueuedChunks()
     {
         return false;
     }
 
-    /**
-     * Returns if the IChunkProvider supports saving.
-     */
     public boolean canSave()
     {
         return true;
     }
 
-    /**
-     * Converts the instance data to a readable string.
-     */
     public String makeString()
     {
         return "DebugLevelSource";
@@ -165,7 +138,7 @@ public class ChunkProviderDebug implements IChunkProvider
         return 0;
     }
 
-    public void recreateStructures(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
+    public void recreateStructures(Chunk chunkIn, int x, int z)
     {
     }
 

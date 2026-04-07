@@ -2,7 +2,6 @@
  * Copyright 2015-2021 Adrien 'Litarvan' Navratil
  *
  * This file is part of OpenAuth.
-
  * OpenAuth is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +26,13 @@ public class MicrosoftRefreshResponse {
     private final String refresh_token;
     private final String user_id;
 
-    public MicrosoftRefreshResponse(String token_type, long expires_in, String scope, String access_token, String refresh_token, String user_id) {
+    public MicrosoftRefreshResponse(
+            String token_type,
+            long expires_in,
+            String scope,
+            String access_token,
+            String refresh_token,
+            String user_id) {
         this.token_type = token_type;
         this.expires_in = expires_in;
         this.scope = scope;

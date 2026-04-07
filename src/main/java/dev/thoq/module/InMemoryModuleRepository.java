@@ -7,7 +7,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public final class InMemoryModuleRepository implements ModuleRepository {
-
     private final List<Module> modules = new CopyOnWriteArrayList<>();
 
     @Override
@@ -27,17 +26,12 @@ public final class InMemoryModuleRepository implements ModuleRepository {
 
     @Override
     public Optional<Module> findByName(final String name) {
-        return modules.stream()
-                .filter(module -> module.getName().equalsIgnoreCase(name))
-                .findFirst();
+        return modules.stream().filter(module -> module.getName().equalsIgnoreCase(name)).findFirst();
     }
 
     @Override
     public <T extends Module> Optional<T> findByClass(final Class<T> clazz) {
-        return modules.stream()
-                .filter(clazz::isInstance)
-                .map(clazz::cast)
-                .findFirst();
+        return modules.stream().filter(clazz::isInstance).map(clazz::cast).findFirst();
     }
 
     @Override
@@ -54,21 +48,16 @@ public final class InMemoryModuleRepository implements ModuleRepository {
 
     @Override
     public List<Module> findEnabled() {
-        return modules.stream()
-                .filter(Module::isEnabled)
-                .collect(Collectors.toList());
+        return modules.stream().filter(Module::isEnabled).collect(Collectors.toList());
     }
 
     @Override
     public boolean exists(final String name) {
-        return modules.stream()
-                .anyMatch(module -> module.getName().equalsIgnoreCase(name));
+        return modules.stream().anyMatch(module -> module.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public int count() {
         return modules.size();
     }
-
-
 }

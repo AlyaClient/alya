@@ -2,7 +2,6 @@ package net.minecraft.client.renderer.entity;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockDoublePlant;
@@ -49,7 +48,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemFishFood;
+import net.minecraft.item.ItemPotion;
+import net.minecraft.item.ItemStack;
 import net.minecraft.src.Config;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
@@ -67,17 +70,15 @@ import net.optifine.shaders.ShadersRender;
 public class RenderItem implements IResourceManagerReloadListener
 {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-    private boolean field_175058_l = true;
-
-    /** Defines the zLevel of rendering of item on GUI. */
+    private boolean notRenderingEffectsInGUI = true;
     public float zLevel;
     private final ItemModelMesher itemModelMesher;
     private final TextureManager textureManager;
+    private ModelResourceLocation modelLocation = null;
     private boolean renderItemGui = false;
     public ModelManager modelManager = null;
     private boolean renderModelHasEmissive = false;
     private boolean renderModelEmissive = false;
-    private EntityLivingBase lastEntityToRenderFor;
 
     public RenderItem(TextureManager textureManager, ModelManager modelManager)
     {
@@ -96,9 +97,9 @@ public class RenderItem implements IResourceManagerReloadListener
         this.registerItems();
     }
 
-    public void func_175039_a(boolean p_175039_1_)
+    public void isNotRenderingEffectsInGUI(boolean isNot)
     {
-        this.field_175058_l = p_175039_1_;
+        this.notRenderingEffectsInGUI = isNot;
     }
 
     public ItemModelMesher getItemModelMesher()
@@ -186,7 +187,7 @@ public class RenderItem implements IResourceManagerReloadListener
 
                 if (Config.isCustomItems())
                 {
-                    model = CustomItems.getCustomItemModel(stack, model, (ResourceLocation)null, false);
+                    model = CustomItems.getCustomItemModel(stack, model, this.modelLocation, false);
                 }
 
                 this.renderModelHasEmissive = false;
@@ -360,12 +361,12 @@ public class RenderItem implements IResourceManagerReloadListener
         }
     }
 
-    public void func_181564_a(ItemStack p_181564_1_, ItemCameraTransforms.TransformType p_181564_2_)
+    public void renderItem(ItemStack stack, ItemCameraTransforms.TransformType cameraTransformType)
     {
-        if (p_181564_1_ != null)
+        if (stack != null)
         {
-            IBakedModel ibakedmodel = this.itemModelMesher.getItemModel(p_181564_1_);
-            this.renderItemModelTransform(p_181564_1_, ibakedmodel, p_181564_2_);
+            IBakedModel ibakedmodel = this.itemModelMesher.getItemModel(stack);
+            this.renderItemModelTransform(stack, ibakedmodel, cameraTransformType);
         }
     }
 
@@ -375,7 +376,6 @@ public class RenderItem implements IResourceManagerReloadListener
         {
             IBakedModel ibakedmodel = this.itemModelMesher.getItemModel(stack);
 
-            lastEntityToRenderFor = entityToRenderFor;
             if (entityToRenderFor instanceof EntityPlayer)
             {
                 EntityPlayer entityplayer = (EntityPlayer)entityToRenderFor;
@@ -411,15 +411,12 @@ public class RenderItem implements IResourceManagerReloadListener
                 if (modelresourcelocation != null)
                 {
                     ibakedmodel = this.itemModelMesher.getModelManager().getModel(modelresourcelocation);
-
-                    if (Config.isCustomItems())
-                    {
-                        ibakedmodel = CustomItems.getCustomItemModel(stack, ibakedmodel, modelresourcelocation, true);
-                    }
+                    this.modelLocation = modelresourcelocation;
                 }
             }
 
             this.renderItemModelTransform(stack, ibakedmodel, cameraTransformType);
+            this.modelLocation = null;
         }
     }
 
@@ -441,20 +438,11 @@ public class RenderItem implements IResourceManagerReloadListener
         else
         {
             ItemCameraTransforms itemcameratransforms = model.getItemCameraTransforms();
-            itemcameratransforms.func_181689_a(cameraTransformType);
+            itemcameratransforms.applyTransform(cameraTransformType);
 
-            if (this.func_183005_a(itemcameratransforms.func_181688_b(cameraTransformType)))
+            if (this.isThereOneNegativeScale(itemcameratransforms.getTransform(cameraTransformType)))
             {
                 GlStateManager.cullFace(1028);
-            }
-        }
-
-        if(cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON && lastEntityToRenderFor instanceof EntityPlayer) {
-            final EntityPlayer player = (EntityPlayer) lastEntityToRenderFor;
-            final ItemStack heldItem = player.getHeldItem();
-            if(heldItem != null) {
-                if(heldItem.getItem() instanceof ItemSword && (player.getItemInUseCount() > 0 || player.isBlocking()))
-                    doThirdPersonBlockTransformations();
             }
         }
 
@@ -467,15 +455,9 @@ public class RenderItem implements IResourceManagerReloadListener
         this.textureManager.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
     }
 
-    private void doThirdPersonBlockTransformations() {
-        GlStateManager.translate(-0.15F, -0.2F, 0);
-        GlStateManager.rotate(70, 1, 0, 0);
-        GlStateManager.translate(0.119F, 0.2F, -0.024F);
-    }
-
-    private boolean func_183005_a(ItemTransformVec3f p_183005_1_)
+    private boolean isThereOneNegativeScale(ItemTransformVec3f itemTranformVec)
     {
-        return p_183005_1_.scale.x < 0.0F ^ p_183005_1_.scale.y < 0.0F ^ p_183005_1_.scale.z < 0.0F;
+        return itemTranformVec.scale.x < 0.0F ^ itemTranformVec.scale.y < 0.0F ^ itemTranformVec.scale.z < 0.0F;
     }
 
     public void renderItemIntoGUI(ItemStack stack, int x, int y)
@@ -499,7 +481,7 @@ public class RenderItem implements IResourceManagerReloadListener
         }
         else
         {
-            ibakedmodel.getItemCameraTransforms().func_181689_a(ItemCameraTransforms.TransformType.GUI);
+            ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GUI);
         }
 
         this.renderItem(stack, ibakedmodel);
@@ -588,9 +570,6 @@ public class RenderItem implements IResourceManagerReloadListener
         this.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, (String)null);
     }
 
-    /**
-     * Renders the stack size and/or damage bar for the given ItemStack.
-     */
     public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text)
     {
         if (stack != null)
@@ -632,8 +611,8 @@ public class RenderItem implements IResourceManagerReloadListener
                 GlStateManager.disableBlend();
                 Tessellator tessellator = Tessellator.getInstance();
                 WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-                this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
-                this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
+                this.draw(worldrenderer, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
+                this.draw(worldrenderer, xPosition + 2, yPosition + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
                 int j = 255 - i;
                 int k = i;
                 int l = 0;
@@ -650,7 +629,7 @@ public class RenderItem implements IResourceManagerReloadListener
                     }
                 }
 
-                this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, j1, 1, j, k, l, 255);
+                this.draw(worldrenderer, xPosition + 2, yPosition + 13, j1, 1, j, k, l, 255);
                 GlStateManager.enableBlend();
                 GlStateManager.enableAlpha();
                 GlStateManager.enableTexture2D();
@@ -660,13 +639,13 @@ public class RenderItem implements IResourceManagerReloadListener
         }
     }
 
-    private void func_181565_a(WorldRenderer p_181565_1_, int p_181565_2_, int p_181565_3_, int p_181565_4_, int p_181565_5_, int p_181565_6_, int p_181565_7_, int p_181565_8_, int p_181565_9_)
+    private void draw(WorldRenderer renderer, int x, int y, int width, int height, int red, int green, int blue, int alpha)
     {
-        p_181565_1_.begin(7, DefaultVertexFormats.field_181706_f);
-        p_181565_1_.pos((double)(p_181565_2_ + 0), (double)(p_181565_3_ + 0), 0.0D).func_181669_b(p_181565_6_, p_181565_7_, p_181565_8_, p_181565_9_).endVertex();
-        p_181565_1_.pos((double)(p_181565_2_ + 0), (double)(p_181565_3_ + p_181565_5_), 0.0D).func_181669_b(p_181565_6_, p_181565_7_, p_181565_8_, p_181565_9_).endVertex();
-        p_181565_1_.pos((double)(p_181565_2_ + p_181565_4_), (double)(p_181565_3_ + p_181565_5_), 0.0D).func_181669_b(p_181565_6_, p_181565_7_, p_181565_8_, p_181565_9_).endVertex();
-        p_181565_1_.pos((double)(p_181565_2_ + p_181565_4_), (double)(p_181565_3_ + 0), 0.0D).func_181669_b(p_181565_6_, p_181565_7_, p_181565_8_, p_181565_9_).endVertex();
+        renderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        renderer.pos((double)(x + 0), (double)(y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double)(x + 0), (double)(y + height), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double)(x + width), (double)(y + height), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double)(x + width), (double)(y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
         Tessellator.getInstance().draw();
     }
 

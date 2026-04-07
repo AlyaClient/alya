@@ -28,7 +28,7 @@ import org.lwjgl.opengl.GL11;
 
 public class ChunkRenderDispatcher
 {
-    private static final Logger logger = LogManager.getLogger(ChunkRenderDispatcher.class);
+    private static final Logger logger = LogManager.getLogger();
     private static final ThreadFactory threadFactory = (new ThreadFactoryBuilder()).setNameFormat("Chunk Batcher %d").setDaemon(true).build();
     private final List<ChunkRenderWorker> listThreadedWorkers;
     private final BlockingQueue<ChunkCompileTaskGenerator> queueChunkUpdates;
@@ -298,7 +298,7 @@ public class ChunkRenderDispatcher
         GL11.glNewList(p_178510_2_, GL11.GL_COMPILE);
         GlStateManager.pushMatrix();
         chunkRenderer.multModelviewMatrix();
-        this.worldVertexUploader.func_181679_a(p_178510_1_);
+        this.worldVertexUploader.draw(p_178510_1_);
         GlStateManager.popMatrix();
         GL11.glEndList();
     }
@@ -306,7 +306,7 @@ public class ChunkRenderDispatcher
     private void uploadVertexBuffer(WorldRenderer p_178506_1_, VertexBuffer vertexBufferIn)
     {
         this.vertexUploader.setVertexBuffer(vertexBufferIn);
-        this.vertexUploader.func_181679_a(p_178506_1_);
+        this.vertexUploader.draw(p_178506_1_);
     }
 
     public void clearChunkUpdates()

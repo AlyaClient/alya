@@ -2,55 +2,55 @@ package net.minecraft.util;
 
 public class FrameTimer
 {
-    private final long[] field_181752_a = new long[240];
-    private int field_181753_b;
-    private int field_181754_c;
-    private int field_181755_d;
+    private final long[] frames = new long[240];
+    private int lastIndex;
+    private int counter;
+    private int index;
 
-    public void func_181747_a(long p_181747_1_)
+    public void addFrame(long runningTime)
     {
-        this.field_181752_a[this.field_181755_d] = p_181747_1_;
-        ++this.field_181755_d;
+        this.frames[this.index] = runningTime;
+        ++this.index;
 
-        if (this.field_181755_d == 240)
+        if (this.index == 240)
         {
-            this.field_181755_d = 0;
+            this.index = 0;
         }
 
-        if (this.field_181754_c < 240)
+        if (this.counter < 240)
         {
-            this.field_181753_b = 0;
-            ++this.field_181754_c;
+            this.lastIndex = 0;
+            ++this.counter;
         }
         else
         {
-            this.field_181753_b = this.func_181751_b(this.field_181755_d + 1);
+            this.lastIndex = this.parseIndex(this.index + 1);
         }
     }
 
-    public int func_181748_a(long p_181748_1_, int p_181748_3_)
+    public int getLagometerValue(long time, int multiplier)
     {
-        double d0 = (double)p_181748_1_ / 1.6666666E7D;
-        return (int)(d0 * (double)p_181748_3_);
+        double d0 = (double)time / 1.6666666E7D;
+        return (int)(d0 * (double)multiplier);
     }
 
-    public int func_181749_a()
+    public int getLastIndex()
     {
-        return this.field_181753_b;
+        return this.lastIndex;
     }
 
-    public int func_181750_b()
+    public int getIndex()
     {
-        return this.field_181755_d;
+        return this.index;
     }
 
-    public int func_181751_b(int p_181751_1_)
+    public int parseIndex(int rawIndex)
     {
-        return p_181751_1_ % 240;
+        return rawIndex % 240;
     }
 
-    public long[] func_181746_c()
+    public long[] getFrames()
     {
-        return this.field_181752_a;
+        return this.frames;
     }
 }
