@@ -40,22 +40,13 @@ public class GuiSliderShaderOption extends GuiButtonShaderOption {
                 this.displayString = GuiShaderOptions.getButtonText(this.shaderOption, this.width);
             }
 
-            mc.getTextureManager().bindTexture(buttonTextures);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.drawTexturedModalRect(
+            drawRect(
                     this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)),
                     this.yPosition,
-                    0,
-                    66,
-                    4,
-                    20);
-            this.drawTexturedModalRect(
-                    this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)) + 4,
-                    this.yPosition,
-                    196,
-                    66,
-                    4,
-                    20);
+                    this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)) + 8,
+                    this.yPosition + this.height,
+                    0xFF404040);
         }
     }
 
