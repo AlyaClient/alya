@@ -60,6 +60,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     private int field_92021_u;
     private int field_92020_v;
     private int field_92019_w;
+    private static final int PHOTOS = 13;
 
     private GuiScreen modUpdateNotification;
 
@@ -89,7 +90,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     @Override
     public void initGui() {
         if(randomImage == null) {
-            int n = RANDOM.nextInt(12) + 1;
+            int n = RANDOM.nextInt(PHOTOS) + 1;
             randomImage = new ResourceLocation("client/assets/femboys/" + n + ".png");
         }
 
@@ -100,7 +101,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         calendar.setTime(new Date());
 
         final int i = 24;
-        final int j = this.height / 4 + 48;
+        final int j = this.height / 2 + 10;
 
         this.addSingleplayerMultiplayerButtons(j, 24);
 
@@ -242,11 +243,12 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         if(menuShader == null) menuShader = new ShaderUtil("client/shaders/main_menu_bg.glsl");
         menuShader.render();
 
-        int firstButtonY = this.height / 4 + 48;
-        int availableHeight = firstButtonY - 10;
-        int scaledSize = Math.min(140, availableHeight - 20);
+        int scaledSize = 140;
+        int buttonY = this.height / 2 + 10;
+        int maxLogoSize = buttonY - 20;
+        scaledSize = Math.min(scaledSize, maxLogoSize);
         int logoX = (this.width - scaledSize) / 2;
-        int logoY = Math.max(10, (availableHeight - scaledSize) / 2);
+        int logoY = Math.min(80, buttonY - scaledSize - 10);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation("client/assets/gui/logo.png"));
