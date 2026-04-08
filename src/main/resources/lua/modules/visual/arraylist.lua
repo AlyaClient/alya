@@ -43,11 +43,10 @@ alya.events.on("render2d", function(event)
         if name ~= "arraylist" and name ~= "clickgui" then
             if showVisual.isEnabled() or category ~= "VISUAL" then
                 local width = fontRenderer.getStringWidth(name) + padding * 2
-                local positionX = screenWidth - width - 2
+                local positionX = screenWidth - width
                 local modColor = applyWave(baseAccent, index)
 
                 alya.visual.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
-                alya.visual.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, modColor)
                 fontRenderer.drawString(name, positionX + padding - 2, positionY, modColor)
 
                 positionY = positionY + height + 2
