@@ -154,6 +154,7 @@ public final class ClickGUIScreen extends GuiScreen {
         }
         renderPanelHeader(category, panelX, panelY);
         if(expandedCategories.get(category)) {
+            RenderUtility.drawRect(panelX, panelY + PANEL_HEIGHT, PANEL_WIDTH, totalHeight - PANEL_HEIGHT, BACKGROUND_COLOR);
             renderExpandedModules(modules, panelX, panelY + PANEL_HEIGHT, category, mouseX, mouseY);
         }
         RenderUtility.drawRectOutline(panelX, panelY, PANEL_WIDTH, totalHeight, getCategoryColor(category), BORDER_WIDTH);
