@@ -1,16 +1,19 @@
 local moduleTable = alya.modules.register("ArrayList", "Displays enabled modules on screen", "VISUAL")
 local showVisual = moduleTable.addBooleanSetting("Show Visual Modules", "Show visual modules?", true)
+local waveColor = moduleTable.addBooleanSetting("Wave Color", "Enable wave effect?", true)
 
-local categoryColors = {
-    COMBAT   = 0xFFE74C3C,
-    MOVEMENT = 0xFF2ECC71,
-    PLAYER   = 0xFF8E44AD,
-    VISUAL   = 0xFF3700CE,
-    OTHER    = 0xFFF39C12,
-}
+local function getWaveFactor(index)
+    if not waveColor.isEnabled() then return 1.0 end
+    return (math.sin(os.clock() * 4 - (index * 0.4)) + 1) / 2 * 0.5 + 0.5
+end
 
-local function getCategoryColor(category)
-    return categoryColors[category] or 0xFFFF55FF
+local function applyWave(hex, index)
+    local factor = getWaveFactor(index)
+    local a = bit32.extract(hex, 24, 8)
+    local r = math.floor(bit32.extract(hex, 16, 8) * factor)
+    local g = math.floor(bit32.extract(hex, 8, 8) * factor)
+    local b = math.floor(bit32.extract(hex, 0, 8) * factor)
+    return bit32.bor(bit32.lshift(a, 24), bit32.lshift(r, 16), bit32.lshift(g, 8), b)
 end
 
 alya.events.on("render2d", function(event)
@@ -30,6 +33,7 @@ alya.events.on("render2d", function(event)
     local padding = 4
     local height = fontRenderer.getFontHeight()
     local positionY = 2
+    local baseAccent = alya.getAccent()
 
     for index = 1, #enabledModules do
         local currentModule = enabledModules[index]
@@ -40,11 +44,11 @@ alya.events.on("render2d", function(event)
             if showVisual.isEnabled() or category ~= "VISUAL" then
                 local width = fontRenderer.getStringWidth(name) + padding * 2
                 local positionX = screenWidth - width - 2
-                local color = getCategoryColor(category)
+                local modColor = applyWave(baseAccent, index)
 
                 alya.visual.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
-                alya.visual.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, color)
-                fontRenderer.drawString(name, positionX + padding - 2, positionY, 0xFFFFFFFF)
+                alya.visual.drawRect(screenWidth - 2, positionY - 1, 1, height + 2, modColor)
+                fontRenderer.drawString(name, positionX + padding - 2, positionY, modColor)
 
                 positionY = positionY + height + 2
             end

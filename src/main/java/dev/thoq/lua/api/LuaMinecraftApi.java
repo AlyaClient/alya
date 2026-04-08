@@ -405,6 +405,27 @@ public final class LuaMinecraftApi extends LuaTable {
                     }
                 });
         set(
+                "getCameraPitch",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        return minecraft.getRenderViewEntity() != null
+                                ? LuaValue.valueOf(minecraft.getRenderViewEntity().rotationPitch)
+                                : LuaValue.valueOf(0d);
+                    }
+                });
+        set(
+                "setCameraPitch",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue pitchValue) {
+                        if(minecraft.getRenderViewEntity() != null) {
+                            minecraft.getRenderViewEntity().rotationPitch = (float) pitchValue.todouble();
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
                 "getPartialTicks",
                 new ZeroArgFunction() {
                     @Override
@@ -900,6 +921,19 @@ public final class LuaMinecraftApi extends LuaTable {
                     }
                 });
         set(
+                "getBlockId",
+                new org.luaj.vm2.lib.ThreeArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue xValue, LuaValue yValue, LuaValue zValue) {
+                        if(minecraft.theWorld != null) {
+                            BlockPos blockPos = new BlockPos(xValue.toint(), yValue.toint(), zValue.toint());
+                            int blockId = net.minecraft.block.Block.getIdFromBlock(minecraft.theWorld.getBlockState(blockPos).getBlock());
+                            return LuaValue.valueOf(blockId);
+                        }
+                        return LuaValue.valueOf(0);
+                    }
+                });
+        set(
                 "rightClickBlock",
                 new org.luaj.vm2.lib.VarArgFunction() {
                     @Override
@@ -1040,30 +1074,14 @@ public final class LuaMinecraftApi extends LuaTable {
                         final int z = arguments.checkint(4);
                         final int faceIndex = arguments.optint(5, 1);
                         final BlockPos pos = new BlockPos(x, y, z);
-                        final EnumFacing facing;
-                        switch(faceIndex) {
-                            case 0:
-                                facing = EnumFacing.DOWN;
-                                break;
-                            case 1:
-                                facing = EnumFacing.UP;
-                                break;
-                            case 2:
-                                facing = EnumFacing.NORTH;
-                                break;
-                            case 3:
-                                facing = EnumFacing.SOUTH;
-                                break;
-                            case 4:
-                                facing = EnumFacing.WEST;
-                                break;
-                            case 5:
-                                facing = EnumFacing.EAST;
-                                break;
-                            default:
-                                facing = EnumFacing.UP;
-                                break;
-                        }
+                        final EnumFacing facing = switch(faceIndex) {
+                            case 0 -> EnumFacing.DOWN;
+                            case 2 -> EnumFacing.NORTH;
+                            case 3 -> EnumFacing.SOUTH;
+                            case 4 -> EnumFacing.WEST;
+                            case 5 -> EnumFacing.EAST;
+                            default -> EnumFacing.UP;
+                        };
                         final C07PacketPlayerDigging.Action digAction;
                         if(action == 0) {
                             digAction = C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
@@ -1074,6 +1092,21 @@ public final class LuaMinecraftApi extends LuaTable {
                         }
                         minecraft.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(digAction, pos, facing));
                         return LuaValue.TRUE;
+                    }
+                });
+        set(
+                "sendRotation",
+                new org.luaj.vm2.lib.TwoArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue yawValue, LuaValue pitchValue) {
+                        if(minecraft.thePlayer != null) {
+                            float yaw = (float) yawValue.todouble();
+                            float pitch = (float) pitchValue.todouble();
+                            minecraft.getNetHandler().addToSendQueue(
+                                    new net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook(
+                                            yaw, pitch, minecraft.thePlayer.onGround));
+                        }
+                        return LuaValue.NIL;
                     }
                 });
     }

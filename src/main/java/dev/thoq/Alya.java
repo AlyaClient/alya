@@ -102,6 +102,7 @@ public final class Alya {
                 new Script(Category.COMBAT, "targetstrafe"),
                 new Script(Category.PLAYER, "scaffold"),
                 new Script(Category.PLAYER, "nuker"),
+                new Script(Category.PLAYER, "fucker"),
                 new Script(Category.PLAYER, "timer"),
                 new Script(Category.EXPLOIT, "disabler"),
                 new Script(Category.OTHER, "hackerdetector"),

@@ -52,23 +52,36 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 "getPlayers",
                 new VarArgFunction() {
                     @Override
-                    public Varargs invoke(Varargs args) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return LuaValue.NIL;
-                        double reach = args.narg() >= 1 ? args.checkdouble(1) : 6.0;
-                        boolean raycastOnly = args.narg() >= 2 && args.checkboolean(2);
-                        List<EntityPlayer> players = new ArrayList<>();
-                        for(Object obj : mc.theWorld.getLoadedEntityList()) {
-                            if(!(obj instanceof EntityPlayer)) continue;
-                            EntityPlayer ep = (EntityPlayer) obj;
-                            if(ep == mc.thePlayer) continue;
-                            if(ep.isInvisible()) continue;
-                            if(mc.thePlayer.getDistanceToEntity(ep) > reach) continue;
-                            if(raycastOnly && !mc.thePlayer.canEntityBeSeen(ep)) continue;
-                            players.add(ep);
+                    public Varargs invoke(final Varargs args) {
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
+                        final double reach = args.narg() >= 1 ? args.checkdouble(1) : 6.0;
+                        final boolean raycastOnly = args.narg() >= 2 && args.checkboolean(2);
+                        final List<EntityPlayer> players = new ArrayList<>();
+                        for(final Object object : mc.theWorld.getLoadedEntityList()) {
+                            if(!(object instanceof final EntityPlayer entityPlayer)) {
+                                continue;
+                            }
+                            if(entityPlayer == mc.thePlayer) {
+                                continue;
+                            }
+                            if(entityPlayer.isInvisible()) {
+                                continue;
+                            }
+                            if(mc.thePlayer.getDistanceToEntity(entityPlayer) > reach) {
+                                continue;
+                            }
+                            if(raycastOnly && !mc.thePlayer.canEntityBeSeen(entityPlayer)) {
+                                continue;
+                            }
+                            players.add(entityPlayer);
                         }
                         players.sort(Comparator.comparingDouble(e -> mc.thePlayer.getDistanceToEntity(e)));
                         LuaTable result = new LuaTable();
-                        for(int i = 0; i < players.size(); i++) {
+                        for(int i = 0;
+                            i < players.size();
+                            i++) {
                             result.set(i + 1, entityToTable(players.get(i)));
                         }
                         return result;
@@ -79,13 +92,18 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.theWorld == null || mc.thePlayer == null) return new LuaTable();
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return new LuaTable();
+                        }
                         LuaTable result = new LuaTable();
                         int i = 1;
                         for(Object obj : mc.theWorld.getLoadedEntityList()) {
-                            if(!(obj instanceof EntityPlayer)) continue;
-                            EntityPlayer ep = (EntityPlayer) obj;
-                            if(ep == mc.thePlayer) continue;
+                            if(!(obj instanceof EntityPlayer ep)) {
+                                continue;
+                            }
+                            if(ep == mc.thePlayer) {
+                                continue;
+                            }
                             LuaTable t = new LuaTable();
                             t.set("id", LuaValue.valueOf(ep.getEntityId()));
                             t.set("name", LuaValue.valueOf(ep.getName()));
@@ -95,10 +113,10 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                             t.set("lastX", LuaValue.valueOf(ep.lastTickPosX));
                             t.set("lastY", LuaValue.valueOf(ep.lastTickPosY));
                             t.set("lastZ", LuaValue.valueOf(ep.lastTickPosZ));
-                            t.set("width", LuaValue.valueOf((double) ep.width));
-                            t.set("height", LuaValue.valueOf((double) ep.height));
-                            t.set("health", LuaValue.valueOf((double) ep.getHealth()));
-                            t.set("maxHealth", LuaValue.valueOf((double) ep.getMaxHealth()));
+                            t.set("width", LuaValue.valueOf(ep.width));
+                            t.set("height", LuaValue.valueOf(ep.height));
+                            t.set("health", LuaValue.valueOf(ep.getHealth()));
+                            t.set("maxHealth", LuaValue.valueOf(ep.getMaxHealth()));
                             t.set("hurtTime", LuaValue.valueOf(ep.hurtTime));
                             t.set("isInvisible", LuaValue.valueOf(ep.isInvisible()));
                             result.set(i++, t);
@@ -111,32 +129,53 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new VarArgFunction() {
                     @Override
                     public Varargs invoke(Varargs args) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return new LuaTable();
-                        double reach = args.narg() >= 1 ? args.checkdouble(1) : 6.0;
-                        boolean raycastOnly = args.narg() >= 2 && args.checkboolean(2);
-                        boolean players = args.narg() < 3 || args.checkboolean(3);
-                        boolean hostile = args.narg() < 4 || args.checkboolean(4);
-                        boolean passive = args.narg() < 5 || args.checkboolean(5);
-                        List<EntityLivingBase> targets = new ArrayList<>();
-                        for(Object obj : mc.theWorld.getLoadedEntityList()) {
-                            if(!(obj instanceof EntityLivingBase)) continue;
-                            EntityLivingBase e = (EntityLivingBase) obj;
-                            if(e == mc.thePlayer) continue;
-                            if(e.isInvisible()) continue;
-                            if(mc.thePlayer.getDistanceToEntity(e) > reach) continue;
-                            if(raycastOnly && !mc.thePlayer.canEntityBeSeen(e)) continue;
-                            boolean isPlayer = e instanceof EntityPlayer;
-                            boolean isHostile = e instanceof IMob;
-                            boolean isPassive = e instanceof IAnimals && !isHostile;
-                            if(isPlayer && !players) continue;
-                            if(isHostile && !hostile) continue;
-                            if(isPassive && !passive) continue;
-                            if(!isPlayer && !isHostile && !isPassive) continue;
-                            targets.add(e);
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return new LuaTable();
+                        }
+                        final double reach = args.narg() >= 1 ? args.checkdouble(1) : 6.0;
+                        final boolean raycastOnly = args.narg() >= 2 && args.checkboolean(2);
+                        final boolean players = args.narg() < 3 || args.checkboolean(3);
+                        final boolean hostile = args.narg() < 4 || args.checkboolean(4);
+                        final boolean passive = args.narg() < 5 || args.checkboolean(5);
+                        final List<EntityLivingBase> targets = new ArrayList<>();
+                        for(Object object : mc.theWorld.getLoadedEntityList()) {
+                            if(!(object instanceof final EntityLivingBase entityLivingBase)) {
+                                continue;
+                            }
+                            if(entityLivingBase == mc.thePlayer) {
+                                continue;
+                            }
+                            if(entityLivingBase.isInvisible()) {
+                                continue;
+                            }
+                            if(mc.thePlayer.getDistanceToEntity(entityLivingBase) > reach) {
+                                continue;
+                            }
+                            if(raycastOnly && !mc.thePlayer.canEntityBeSeen(entityLivingBase)) {
+                                continue;
+                            }
+                            boolean isPlayer = entityLivingBase instanceof EntityPlayer;
+                            boolean isHostile = entityLivingBase instanceof IMob;
+                            boolean isPassive = entityLivingBase instanceof IAnimals && !isHostile;
+                            if(isPlayer && !players) {
+                                continue;
+                            }
+                            if(isHostile && !hostile) {
+                                continue;
+                            }
+                            if(isPassive && !passive) {
+                                continue;
+                            }
+                            if(!isPlayer && !isHostile && !isPassive) {
+                                continue;
+                            }
+                            targets.add(entityLivingBase);
                         }
                         targets.sort(Comparator.comparingDouble(e -> mc.thePlayer.getDistanceToEntity(e)));
                         LuaTable result = new LuaTable();
-                        for(int i = 0; i < targets.size(); i++) {
+                        for(int i = 0;
+                            i < targets.size();
+                            i++) {
                             result.set(i + 1, livingToTable(targets.get(i)));
                         }
                         return result;
@@ -147,7 +186,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new VarArgFunction() {
                     @Override
                     public Varargs invoke(Varargs args) {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         LuaTable entityTable = args.checktable(1);
                         double ex = entityTable.get("x").todouble();
                         double ey = entityTable.get("y").todouble();
@@ -160,8 +201,8 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                         float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90.0f;
                         float pitch = (float) -Math.toDegrees(Math.atan2(dy, dist));
                         LuaTable rot = new LuaTable();
-                        rot.set("yaw", LuaValue.valueOf((double) yaw));
-                        rot.set("pitch", LuaValue.valueOf((double) pitch));
+                        rot.set("yaw", LuaValue.valueOf(yaw));
+                        rot.set("pitch", LuaValue.valueOf(pitch));
                         return rot;
                     }
                 });
@@ -171,7 +212,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                     @Override
                     public LuaValue call() {
                         float sens = mc.gameSettings.mouseSensitivity * 0.6f + 0.2f;
-                        return LuaValue.valueOf((double) (sens * sens * sens * 8.0f));
+                        return LuaValue.valueOf(sens * sens * sens * 8.0f);
                     }
                 });
         set(
@@ -179,10 +220,14 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue entityIdValue) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         int id = entityIdValue.toint();
                         Entity entity = mc.theWorld.getEntityByID(id);
-                        if(entity == null) return LuaValue.FALSE;
+                        if(entity == null) {
+                            return LuaValue.FALSE;
+                        }
                         mc.thePlayer.swingItem();
                         mc.getNetHandler()
                                 .addToSendQueue(new C02PacketUseEntity(entity, C02PacketUseEntity.Action.ATTACK));
@@ -194,7 +239,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer != null) mc.thePlayer.swingItem();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.swingItem();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -203,9 +250,13 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue entityIdValue) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         Entity entity = mc.theWorld.getEntityByID(entityIdValue.toint());
-                        if(entity instanceof EntityLivingBase) mc.thePlayer.onEnchantmentCritical(entity);
+                        if(entity instanceof EntityLivingBase) {
+                            mc.thePlayer.onEnchantmentCritical(entity);
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -214,9 +265,13 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue entityIdValue) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         Entity entity = mc.theWorld.getEntityByID(entityIdValue.toint());
-                        if(entity instanceof EntityLivingBase) mc.thePlayer.onCriticalHit(entity);
+                        if(entity instanceof EntityLivingBase) {
+                            mc.thePlayer.onCriticalHit(entity);
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -225,7 +280,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         mc.getNetHandler()
                                 .addToSendQueue(
                                         new C08PacketPlayerBlockPlacement(
@@ -238,7 +295,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         mc.getNetHandler()
                                 .addToSendQueue(
                                         new C07PacketPlayerDigging(
@@ -253,7 +312,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer == null) return LuaValue.FALSE;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.FALSE;
+                        }
                         return LuaValue.valueOf(
                                 mc.thePlayer.getHeldItem() != null
                                         && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword);
@@ -282,9 +343,13 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue entityIdValue) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return LuaValue.FALSE;
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return LuaValue.FALSE;
+                        }
                         Entity entity = mc.theWorld.getEntityByID(entityIdValue.toint());
-                        if(entity == null) return LuaValue.FALSE;
+                        if(entity == null) {
+                            return LuaValue.FALSE;
+                        }
                         return LuaValue.valueOf(mc.thePlayer.canEntityBeSeen(entity));
                     }
                 });
@@ -332,7 +397,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new VarArgFunction() {
                     @Override
                     public Varargs invoke(Varargs args) {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         double x = mc.thePlayer.posX;
                         double y = mc.thePlayer.posY;
                         double z = mc.thePlayer.posZ;
@@ -349,7 +416,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         mc.leftClickCounter = 0;
                         mc.clickMouse();
                         return LuaValue.NIL;
@@ -360,7 +429,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         try {
                             java.lang.reflect.Method m =
                                     net.minecraft.client.Minecraft.class.getDeclaredMethod("rightClickMouse");
@@ -393,7 +464,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                     @Override
                     public LuaValue call() {
                         return mc.thePlayer != null
-                                ? LuaValue.valueOf((double) mc.thePlayer.rotationYaw)
+                                ? LuaValue.valueOf(mc.thePlayer.rotationYaw)
                                 : LuaValue.valueOf(0d);
                     }
                 });
@@ -403,7 +474,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                     @Override
                     public LuaValue call() {
                         return mc.thePlayer != null
-                                ? LuaValue.valueOf((double) mc.thePlayer.rotationPitch)
+                                ? LuaValue.valueOf(mc.thePlayer.rotationPitch)
                                 : LuaValue.valueOf(0d);
                     }
                 });
@@ -412,7 +483,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.rotationPitch = (float) v.todouble();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.rotationPitch = (float) v.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -421,7 +494,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.rotationYaw = (float) v.todouble();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.rotationYaw = (float) v.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -430,7 +505,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.cameraPitch = (float) v.todouble();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.cameraPitch = (float) v.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -439,7 +516,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.hurtTime = v.toint();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.hurtTime = v.toint();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -448,7 +527,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new VarArgFunction() {
                     @Override
                     public Varargs invoke(Varargs args) {
-                        if(mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         float yaw = (float) args.checkdouble(1);
                         float pitch = (float) args.checkdouble(2);
                         mc.thePlayer.rotationYaw = yaw;
@@ -459,13 +540,32 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                     }
                 });
         set(
+                "setServerRotation",
+                new VarArgFunction() {
+                    @Override
+                    public Varargs invoke(Varargs args) {
+                        if(mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
+                        float yaw = (float) args.checkdouble(1);
+                        float pitch = (float) args.checkdouble(2);
+                        mc.thePlayer.rotationYaw = yaw;
+                        mc.thePlayer.rotationPitch = pitch;
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
                 "getEntityById",
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue idValue) {
-                        if(mc.theWorld == null || mc.thePlayer == null) return LuaValue.NIL;
+                        if(mc.theWorld == null || mc.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         Entity entity = mc.theWorld.getEntityByID(idValue.toint());
-                        if(!(entity instanceof EntityLivingBase)) return LuaValue.NIL;
+                        if(!(entity instanceof EntityLivingBase)) {
+                            return LuaValue.NIL;
+                        }
                         return livingToTable((EntityLivingBase) entity);
                     }
                 });
@@ -474,7 +574,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.moveForward = (float) v.todouble();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.moveForward = (float) v.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -483,7 +585,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.moveStrafing = (float) v.todouble();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.moveStrafing = (float) v.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -492,10 +596,14 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue slotValue) {
-                        if(mc.thePlayer == null) return LuaValue.valueOf("");
+                        if(mc.thePlayer == null) {
+                            return LuaValue.valueOf("");
+                        }
                         net.minecraft.item.ItemStack stack =
                                 mc.thePlayer.inventory.getStackInSlot(slotValue.toint());
-                        if(stack == null) return LuaValue.valueOf("");
+                        if(stack == null) {
+                            return LuaValue.valueOf("");
+                        }
                         return LuaValue.valueOf(stack.getItem().getUnlocalizedName());
                     }
                 });
@@ -504,7 +612,9 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(mc.thePlayer != null) mc.thePlayer.inventory.currentItem = v.toint();
+                        if(mc.thePlayer != null) {
+                            mc.thePlayer.inventory.currentItem = v.toint();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -513,9 +623,10 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(mc.thePlayer != null && mc.theWorld != null)
+                        if(mc.thePlayer != null && mc.theWorld != null) {
                             mc.playerController.sendUseItem(
                                     mc.thePlayer, mc.theWorld, mc.thePlayer.getCurrentEquippedItem());
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -526,16 +637,16 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
         t.set("id", LuaValue.valueOf(e.getEntityId()));
         String name =
                 e instanceof EntityPlayer
-                        ? ((EntityPlayer) e).getName()
+                        ? e.getName()
                         : e.hasCustomName() ? e.getCustomNameTag() : e.getClass().getSimpleName();
         t.set("name", LuaValue.valueOf(name));
         t.set("x", LuaValue.valueOf(e.posX));
         t.set("y", LuaValue.valueOf(e.posY));
         t.set("z", LuaValue.valueOf(e.posZ));
-        t.set("eyeHeight", LuaValue.valueOf((double) e.getEyeHeight()));
-        t.set("health", LuaValue.valueOf((double) e.getHealth()));
+        t.set("eyeHeight", LuaValue.valueOf(e.getEyeHeight()));
+        t.set("health", LuaValue.valueOf(e.getHealth()));
         t.set("hurtTime", LuaValue.valueOf(e.hurtTime));
-        t.set("distance", LuaValue.valueOf((double) mc.thePlayer.getDistanceToEntity(e)));
+        t.set("distance", LuaValue.valueOf(mc.thePlayer.getDistanceToEntity(e)));
         t.set("isInvisible", LuaValue.valueOf(e.isInvisible()));
         t.set("isPlayer", LuaValue.valueOf(e instanceof EntityPlayer));
         t.set("isHostile", LuaValue.valueOf(e instanceof IMob));
@@ -550,10 +661,10 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
         t.set("x", LuaValue.valueOf(ep.posX));
         t.set("y", LuaValue.valueOf(ep.posY));
         t.set("z", LuaValue.valueOf(ep.posZ));
-        t.set("eyeHeight", LuaValue.valueOf((double) ep.getEyeHeight()));
-        t.set("health", LuaValue.valueOf((double) ep.getHealth()));
+        t.set("eyeHeight", LuaValue.valueOf(ep.getEyeHeight()));
+        t.set("health", LuaValue.valueOf(ep.getHealth()));
         t.set("hurtTime", LuaValue.valueOf(ep.hurtTime));
-        t.set("distance", LuaValue.valueOf((double) mc.thePlayer.getDistanceToEntity(ep)));
+        t.set("distance", LuaValue.valueOf(mc.thePlayer.getDistanceToEntity(ep)));
         t.set("isInvisible", LuaValue.valueOf(ep.isInvisible()));
         return t;
     }
