@@ -8,6 +8,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.util.ChatComponentText;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
@@ -39,6 +40,7 @@ public final class LuaEventApi extends LuaTable {
         EVENT_CLASS_MAP.put("slowdown", SlowDownEvent.class);
         EVENT_CLASS_MAP.put("blockplaceable", BlockPlaceableEvent.class);
         EVENT_CLASS_MAP.put("render3d", Render3DEvent.class);
+        EVENT_CLASS_MAP.put("chatreceived", ChatReceivedEvent.class);
     }
 
     public LuaEventApi() {
@@ -48,7 +50,9 @@ public final class LuaEventApi extends LuaTable {
                     @Override
                     @SuppressWarnings("unchecked")
                     public LuaValue call(LuaValue eventNameValue, LuaValue callbackFunction) {
-                        if(!(callbackFunction instanceof LuaFunction luaFunction)) return LuaValue.NIL;
+                        if(!(callbackFunction instanceof LuaFunction luaFunction)) {
+                            return LuaValue.NIL;
+                        }
                         final String eventKey = eventNameValue.tojstring().toLowerCase();
                         final Class<? extends IEvent> eventClass = EVENT_CLASS_MAP.get(eventKey);
                         if(eventClass == null) {
@@ -316,8 +320,9 @@ public final class LuaEventApi extends LuaTable {
                     new OneArgFunction() {
                         @Override
                         public LuaValue call(LuaValue v) {
-                            if(mc.thePlayer != null && mc.thePlayer.movementInput != null)
+                            if(mc.thePlayer != null && mc.thePlayer.movementInput != null) {
                                 mc.thePlayer.movementInput.moveForward = (float) v.todouble();
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -326,8 +331,9 @@ public final class LuaEventApi extends LuaTable {
                     new OneArgFunction() {
                         @Override
                         public LuaValue call(LuaValue v) {
-                            if(mc.thePlayer != null && mc.thePlayer.movementInput != null)
+                            if(mc.thePlayer != null && mc.thePlayer.movementInput != null) {
                                 mc.thePlayer.movementInput.moveStrafe = (float) v.todouble();
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -362,9 +368,10 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetSendEvent.getPacket() instanceof C0BPacketEntityAction)
+                            if(packetSendEvent.getPacket() instanceof C0BPacketEntityAction) {
                                 return LuaValue.valueOf(
                                         ((C0BPacketEntityAction) packetSendEvent.getPacket()).getAction().name());
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -373,9 +380,10 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity)
+                            if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity) {
                                 return LuaValue.valueOf(
                                         ((net.minecraft.network.play.client.C02PacketUseEntity) packetSendEvent.getPacket()).getAction().name());
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -387,7 +395,9 @@ public final class LuaEventApi extends LuaTable {
                             if(packetSendEvent.getPacket() instanceof net.minecraft.network.play.client.C02PacketUseEntity usePacket) {
                                 if(mc.theWorld != null) {
                                     net.minecraft.entity.Entity attackedEntity = usePacket.getEntityFromWorld(mc.theWorld);
-                                    if(attackedEntity != null) return LuaValue.valueOf(attackedEntity.getEntityId());
+                                    if(attackedEntity != null) {
+                                        return LuaValue.valueOf(attackedEntity.getEntityId());
+                                    }
                                 }
                             }
                             return LuaValue.valueOf(-1);
@@ -424,12 +434,14 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 return LuaValue.valueOf(
                                         ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionX());
-                            if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                            }
+                            if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion) {
                                 return LuaValue.valueOf(
                                         ((S27PacketExplosion) packetReceiveEvent.getPacket()).getX());
+                            }
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -438,12 +450,14 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 return LuaValue.valueOf(
                                         ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionY());
-                            if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                            }
+                            if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion) {
                                 return LuaValue.valueOf(
                                         ((S27PacketExplosion) packetReceiveEvent.getPacket()).getY());
+                            }
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -452,12 +466,14 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 return LuaValue.valueOf(
                                         ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getMotionZ());
-                            if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                            }
+                            if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion) {
                                 return LuaValue.valueOf(
                                         ((S27PacketExplosion) packetReceiveEvent.getPacket()).getZ());
+                            }
                             return LuaValue.valueOf(0d);
                         }
                     });
@@ -466,11 +482,12 @@ public final class LuaEventApi extends LuaTable {
                     new OneArgFunction() {
                         @Override
                         public LuaValue call(LuaValue val) {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionX = val.toint();
-                            else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                            } else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion) {
                                 ((S27PacketExplosion) packetReceiveEvent.getPacket()).posX =
                                         (float) val.todouble();
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -479,11 +496,12 @@ public final class LuaEventApi extends LuaTable {
                     new OneArgFunction() {
                         @Override
                         public LuaValue call(LuaValue val) {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionY = val.toint();
-                            else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                            } else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion) {
                                 ((S27PacketExplosion) packetReceiveEvent.getPacket()).posY =
                                         (float) val.todouble();
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -492,11 +510,12 @@ public final class LuaEventApi extends LuaTable {
                     new OneArgFunction() {
                         @Override
                         public LuaValue call(LuaValue val) {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).motionZ = val.toint();
-                            else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion)
+                            } else if(packetReceiveEvent.getPacket() instanceof S27PacketExplosion) {
                                 ((S27PacketExplosion) packetReceiveEvent.getPacket()).posZ =
                                         (float) val.todouble();
+                            }
                             return LuaValue.NIL;
                         }
                     });
@@ -505,9 +524,10 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity)
+                            if(packetReceiveEvent.getPacket() instanceof S12PacketEntityVelocity) {
                                 return LuaValue.valueOf(
                                         ((S12PacketEntityVelocity) packetReceiveEvent.getPacket()).getEntityID());
+                            }
                             return LuaValue.valueOf(-1);
                         }
                     });
@@ -564,6 +584,43 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(slowDownEvent.isCanceled());
                         }
                     });
+        } else if(event instanceof final ChatReceivedEvent chatReceivedEvent) {
+            eventTable.set(
+                    "getMessage",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(chatReceivedEvent.getMessage().getUnformattedText());
+                        }
+                    });
+            eventTable.set(
+                    "setMessage",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(final LuaValue messageValue) {
+                            chatReceivedEvent.setMessage(new ChatComponentText(messageValue.tojstring()));
+                            return LuaValue.NIL;
+                        }
+                    }
+            );
+            eventTable.set(
+                    "isCanceled",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(chatReceivedEvent.isCanceled());
+                        }
+                    });
+            eventTable.set(
+                    "cancel",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            chatReceivedEvent.cancel();
+                            return LuaValue.NIL;
+                        }
+                    }
+            );
         }
         return eventTable;
     }

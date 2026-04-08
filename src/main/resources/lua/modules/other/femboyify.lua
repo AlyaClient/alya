@@ -1,0 +1,47 @@
+local moduleTable = alya.modules.register("femboyify", "how to become a femboy", "OTHER")
+
+local cooldown = moduleTable.addNumberSetting("Cooldown", "seconds between messages", 5.0, 1.0, 60.0, 1)
+local autoStart = moduleTable.addBooleanSetting("Auto Start", "start automatically on enable", false)
+
+local messages = {}
+local timer = alya.timer.create()
+
+local function splitLines(text)
+    local lines = {}
+    for line in text:gmatch("[^\r\n]+") do
+        table.insert(lines, line)
+    end
+    return lines
+end
+
+local function sendRandomMessage()
+    if #messages == 0 then return end
+    local index = math.random(1, #messages)
+    alya.mc.sendChatMessage(messages[index])
+end
+
+local function loadMessages()
+    local content = readResource("/assets/minecraft/client/assets/how_to_become_a_femboy.txt")
+    if content then
+        messages = splitLines(content)
+    end
+end
+
+moduleTable.onEnable(function()
+    loadMessages()
+    if #messages > 0 then
+        sendRandomMessage()
+        timer.reset()
+    end
+end)
+
+alya.events.on("tick", function(event)
+    if not moduleTable.isEnabled() then return end
+    if #messages == 0 then return end
+    
+    local cooldownMs = cooldown.getValueAsInt() * 1000
+    if timer.hasElapsed(cooldownMs) then
+        sendRandomMessage()
+        timer.reset()
+    end
+end)

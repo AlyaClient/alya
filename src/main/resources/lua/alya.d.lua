@@ -80,6 +80,10 @@
 ---@field cancel fun()
 ---@field isCanceled fun(): boolean
 
+---@class AlyaChatReceivedEvent : AlyaCancelableEvent
+---@field getMessage fun(): string
+---@field setMessage fun(message: string)
+
 ---@class AlyaSlowDownEvent : AlyaCancelableEvent
 ---@field getReason fun(): "eat"|"drink"|"block"|"bow"|"unknown"
 
@@ -129,8 +133,8 @@ function AlyaModules.getByCategory(category) end
 local AlyaEvents = {}
 
 ---subscribes a callback to named game event
----@param eventName "motion"|"update"|"render2d"|"render3d"|"tick"|"timeupdate"|"playermove"|"playerinput"|"packetsend"|"packetreceive"|"moveentity"|"slowdown"|"blockplaceable"
----@param callback fun(event: AlyaMotionEvent|AlyaRender2DEvent|AlyaCancelableEvent|AlyaPacketSendEvent)
+---@param eventName "motion"|"update"|"render2d"|"render3d"|"tick"|"timeupdate"|"playermove"|"playerinput"|"packetsend"|"packetreceive"|"moveentity"|"slowdown"|"blockplaceable"|"chatreceived"
+---@param callback fun(event: AlyaMotionEvent|AlyaRender2DEvent|AlyaCancelableEvent|AlyaPacketSendEvent|AlyaChatReceivedEvent)
 function AlyaEvents.on(eventName, callback) end
 
 ---returns a list of registered event names
@@ -228,6 +232,34 @@ function MathUtil.isBetween(val, min, max) end
 
 ---securely generate a random number
 function MathUtil.makeRandom() end
+
+---@class AlyaRegex
+local AlyaRegex = {}
+
+---returns true if pattern matches anywhere in text
+---@param pattern string @param text string
+---@return boolean
+function AlyaRegex.match(pattern, text) end
+
+---returns match info table {start, end, group} or nil if no match
+---@param pattern string @param text string
+---@return { [1]: integer, [2]: integer, [3]: string }|nil
+function AlyaRegex.find(pattern, text) end
+
+---returns text with all pattern matches replaced
+---@param pattern string @param text string @param replacement string
+---@return string
+function AlyaRegex.replace(pattern, text, replacement) end
+
+---returns array of all matches with {start, end, group}
+---@param pattern string @param text string
+---@return { [1]: integer, [2]: integer, [3]: string }[]
+function AlyaRegex.findAll(pattern, text) end
+
+---replaces pattern matches with asterisks of matching length
+---@param pattern string @param text string
+---@return string
+function AlyaRegex.censor(pattern, text) end
 
 ---@class AlyaVisual
 local AlyaVisual = {}
@@ -411,6 +443,10 @@ function AlyaMC.setHitboxExpansion(expansion) end
 ---resets entity hitbox expansion to default
 function AlyaMC.resetHitboxExpansion() end
 
+---sends a chat message to the server
+---@param message string
+function AlyaMC.sendChatMessage(message) end
+
 ---@class AlyaFontRenderer
 ---@field drawString fun(text: string, x: number, y: number, color: integer)
 ---@field drawStringWithShadow fun(text: string, x: number, y: number, color: integer)
@@ -559,6 +595,7 @@ function AlyaCombat.setClientRotation(yaw, pitch) end
 ---@field visual AlyaVisual
 ---@field timer AlyaTimer
 ---@field mc AlyaMC
+---@field regex AlyaRegex
 ---@field mathutil fun(): MathUtil
 ---@field getFontRenderer fun(): AlyaFontRenderer
 ---@field getFontRendererSmall fun(): AlyaFontRenderer
@@ -577,3 +614,8 @@ alya = {}
 ---@param resourcePath string e.g. "/lua/modules/movement/flight/motion.lua"
 ---@return any
 function loadScript(resourcePath) end
+
+---reads text content from a classpath resource
+---@param resourcePath string e.g. "/assets/minecraft/client/assets/somefile.txt"
+---@return string|nil
+function readResource(resourcePath) end

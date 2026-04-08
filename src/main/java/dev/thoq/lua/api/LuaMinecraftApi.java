@@ -956,5 +956,16 @@ public final class LuaMinecraftApi extends LuaTable {
                         return new Vec3(f2 * f3, f4, f1 * f3);
                     }
                 });
+        set(
+                "sendChatMessage",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue messageValue) {
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.sendChatMessage(messageValue.tojstring());
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
     }
 }
