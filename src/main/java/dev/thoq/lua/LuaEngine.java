@@ -44,6 +44,7 @@ public final class LuaEngine {
         alyaTable.set("mc", new LuaMinecraftApi());
         alyaTable.set("combat", new LuaCombatApi());
         alyaTable.set("mathutil", new LuaMathUtilApi());
+        alyaTable.set("regex", new LuaRegexApi());
         alyaTable.set(
                 "reload",
                 new ZeroArgFunction() {
@@ -98,6 +99,35 @@ public final class LuaEngine {
                             Alya.getInstance()
                                     .getLogger()
                                     .error("Lua error loading {}: {}", resourcePath, luaError.getMessage());
+                            return LuaValue.NIL;
+                        }
+                    }
+                });
+        globals.set(
+                "readResource",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue resourcePathValue) {
+                        final String resourcePath = resourcePathValue.tojstring();
+                        try {
+                            final String devDir = System.getProperty("client.dev.resources");
+                            InputStream inputStream = null;
+                            if(devDir != null) {
+                                final File devFile = new File(devDir + resourcePath);
+                                if(devFile.exists()) {
+                                    inputStream = new FileInputStream(devFile);
+                                }
+                            }
+                            if(inputStream == null) {
+                                inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
+                            }
+                            if(inputStream == null) {
+                                return LuaValue.NIL;
+                            }
+                            String content = new String(inputStream.readAllBytes());
+                            inputStream.close();
+                            return LuaValue.valueOf(content);
+                        } catch(final Exception e) {
                             return LuaValue.NIL;
                         }
                     }

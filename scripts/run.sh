@@ -5,7 +5,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     OS_FLAGS="-XstartOnFirstThread"
 fi
 
-JDK_PATH="$HOME/.sdkman/candidates/java/25.0.2-zulu/bin/java"
+JDK_PATH="$HOME/Library/Java/JavaVirtualMachines/azul-26/Contents/Home/bin/java"
 echo "JDK PATH: $JDK_PATH"
 
 SCRIPT_DIR=$(pwd)
@@ -19,6 +19,8 @@ $JDK_PATH $OS_FLAGS \
   "-Dminecraft.launcher.version=3.2.13" \
   "-Dio.netty.transport.noNative=true" \
   "-Dminecraft.client.jar=$SCRIPT_DIR/build/libs/Alya-1.0.jar" \
+  --enable-native-access=ALL-UNNAMED \
+  --sun-misc-unsafe-memory-access=allow \
   -cp "$CP" \
   -Xmx4G \
   -XX:+UnlockExperimentalVMOptions \
