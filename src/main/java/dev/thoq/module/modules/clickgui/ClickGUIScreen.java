@@ -47,6 +47,8 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int DEFAULT_CATEGORY_COLOR = 0x20444444;
     private static final int ICON_SIZE = 7;
     private static final int BOTTOM_ICON_SIZE = 7;
+    private static final int BOTTOM_PANEL_SPACING = 10;
+    private static final int PANEL_PADDING = 2;
 
     private static final AlyaFontRenderer font = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 7.5F);
     private static final AlyaFontRenderer settingsFont = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 6.5F);
@@ -148,7 +150,7 @@ public final class ClickGUIScreen extends GuiScreen {
         }
         int totalHeight = PANEL_HEIGHT;
         if(expandedCategories.get(category)) {
-            totalHeight += calculateExpandedHeight(modules) + 1;
+            totalHeight += calculateExpandedHeight(modules) + 1 + PANEL_PADDING / 2;
         }
         renderPanelHeader(category, panelX, panelY);
         if(expandedCategories.get(category)) {
@@ -160,7 +162,7 @@ public final class ClickGUIScreen extends GuiScreen {
     private void renderPanelHeader(final Category category, final int panelX, final int panelY) {
         RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
         final String categoryName = category.getDisplayName().toLowerCase();
-        font.drawString(categoryName, panelX + 4, panelY + 5, TEXT_COLOR);
+        font.drawString(categoryName, panelX + 4 + PANEL_PADDING, panelY + 5, TEXT_COLOR);
         final int categoryColor = getCategoryColor(category);
         final float r = (categoryColor >> 16 & 0xFF) / 255.0F;
         final float g = (categoryColor >> 8 & 0xFF) / 255.0F;
@@ -169,7 +171,7 @@ public final class ClickGUIScreen extends GuiScreen {
         GlStateManager.color(r, g, b, 1.0F);
         RenderUtility.drawImage(
                 new ResourceLocation("client/icons/categories/" + categoryName + "_good.png"),
-                panelX + PANEL_WIDTH - ICON_SIZE - 4, iconY, ICON_SIZE, ICON_SIZE);
+                panelX + PANEL_WIDTH - ICON_SIZE - 4 - PANEL_PADDING, iconY, ICON_SIZE, ICON_SIZE);
         final boolean expanded = expandedCategories.get(category);
         if(expanded) {
             GlStateManager.color(r, g, b, 1.0F);
@@ -179,7 +181,7 @@ public final class ClickGUIScreen extends GuiScreen {
         final String eyeIconName = expanded ? "eye_open.png" : "eye_close.png";
         RenderUtility.drawImage(
                 new ResourceLocation("client/icons/" + eyeIconName),
-                panelX + PANEL_WIDTH - (ICON_SIZE * 2) - 6, iconY, ICON_SIZE, ICON_SIZE);
+                panelX + PANEL_WIDTH - (ICON_SIZE * 2) - 6 - PANEL_PADDING, iconY, ICON_SIZE, ICON_SIZE);
     }
 
     private int calculateExpandedHeight(final List<Module> modules) {
@@ -225,7 +227,7 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseY) {
         int currentY = startY;
         for(final Module module : modules) {
-            renderModuleButton(module, panelX, currentY, category, mouseX, mouseY);
+            renderModuleButton(module, panelX + PANEL_PADDING, currentY, category, mouseX, mouseY);
             currentY += MODULE_HEIGHT;
             if(expandedModules.getOrDefault(module, false)) {
                 currentY = renderModuleSettings(module, panelX, currentY, category, mouseX, mouseY);
@@ -241,16 +243,17 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseX,
             final int mouseY) {
         int currentY = startY;
-        RenderUtility.drawRect(panelX + 1, currentY, PANEL_WIDTH - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
+        final int paddedWidth = PANEL_WIDTH - PANEL_PADDING * 2;
+        RenderUtility.drawRect(panelX + PANEL_PADDING + 1, currentY, paddedWidth - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
         currentY += SETTING_GROUP_PADDING;
         for(final Setting<?> setting : module.getSettings()) {
             if(!setting.isVisible()) {
                 continue;
             }
-            renderSettingButton(setting, panelX, currentY, category, mouseX, mouseY);
+            renderSettingButton(setting, panelX + PANEL_PADDING, currentY, category, mouseX, mouseY);
             currentY += SETTING_HEIGHT;
         }
-        RenderUtility.drawRect(panelX + 1, currentY, PANEL_WIDTH - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
+        RenderUtility.drawRect(panelX + PANEL_PADDING + 1, currentY, paddedWidth - 2, SETTING_GROUP_PADDING, SETTING_BACKGROUND_COLOR);
         currentY += SETTING_GROUP_PADDING;
         return currentY;
     }
@@ -269,9 +272,9 @@ public final class ClickGUIScreen extends GuiScreen {
             if(hovered) {
                 backgroundColor = dimColor(backgroundColor, HOVER_DIM);
             }
-            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, backgroundColor);
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - PANEL_PADDING * 2 - 2, MODULE_HEIGHT, backgroundColor);
         } else {
-            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
+            RenderUtility.drawRect(positionX + 1, positionY, PANEL_WIDTH - PANEL_PADDING * 2 - 2, MODULE_HEIGHT, BACKGROUND_COLOR);
         }
         final String moduleName = module.getName().toLowerCase().replace(" ", "");
         final int textColor =
@@ -286,12 +289,13 @@ public final class ClickGUIScreen extends GuiScreen {
             final Category category,
             final int mouseX,
             final int mouseY) {
+        final int paddedWidth = PANEL_WIDTH - PANEL_PADDING * 2;
         final int settingX = positionX + SETTING_INDENT;
-        final int settingWidth = PANEL_WIDTH - SETTING_INDENT * 2;
+        final int settingWidth = paddedWidth - SETTING_INDENT * 2;
         RenderUtility.drawRect(
-                positionX + 1, positionY, PANEL_WIDTH - 2, SETTING_HEIGHT, SETTING_BACKGROUND_COLOR);
+                positionX + 1, positionY, paddedWidth - 2, SETTING_HEIGHT, SETTING_BACKGROUND_COLOR);
         final int textX = settingX + 3;
-        final int settingRight = positionX + PANEL_WIDTH - SETTING_INDENT;
+        final int settingRight = positionX + paddedWidth - SETTING_INDENT;
         if(setting instanceof BooleanSetting booleanSetting) {
             final boolean boolHovered = isMouseOver(mouseX, mouseY, positionX, positionY, SETTING_HEIGHT);
             if(booleanSetting.isEnabled()) {
@@ -404,7 +408,7 @@ public final class ClickGUIScreen extends GuiScreen {
 
     private void renderBottomBar(final int mouseX, final int mouseY) {
         final int configsPanelX = width - PANEL_WIDTH;
-        final int scriptsPanelX = configsPanelX - PANEL_WIDTH;
+        final int scriptsPanelX = configsPanelX - BOTTOM_PANEL_SPACING - PANEL_WIDTH;
         final int panelY = height - PANEL_HEIGHT;
 
         renderBottomPanel("scripts", scriptsPanelX, panelY, scriptsExpanded, getScriptEntries(), new String[0],
@@ -428,9 +432,9 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseY,
             final boolean isScripts) {
         RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
-        font.drawString(title, panelX + 4, panelY + 5, TEXT_COLOR);
+        font.drawString(title, panelX + 4 + PANEL_PADDING, panelY + 5, TEXT_COLOR);
 
-        int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3;
+        int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3 - PANEL_PADDING;
         final int iconY = panelY + (PANEL_HEIGHT - BOTTOM_ICON_SIZE) / 2;
 
         GlStateManager.color(0.6F, 0.6F, 0.6F, 1.0F);
@@ -453,7 +457,7 @@ public final class ClickGUIScreen extends GuiScreen {
                 i < entries.length;
                 i++) {
                 final String entry = entries[i];
-                final boolean hovered = mouseX >= panelX && mouseX <= panelX + PANEL_WIDTH
+                final boolean hovered = mouseX >= panelX + PANEL_PADDING && mouseX <= panelX + PANEL_PADDING + PANEL_WIDTH - PANEL_PADDING * 2
                         && mouseY >= entryY && mouseY <= entryY + MODULE_HEIGHT;
 
                 if(isScripts) {
@@ -462,20 +466,20 @@ public final class ClickGUIScreen extends GuiScreen {
                     if(hovered) {
                         bgColor = dimColor(bgColor, HOVER_DIM);
                     }
-                    RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, MODULE_HEIGHT, bgColor);
+                    RenderUtility.drawRect(panelX + PANEL_PADDING, entryY, PANEL_WIDTH - PANEL_PADDING * 2, MODULE_HEIGHT, bgColor);
                 } else {
                     int bgColor = MODULE_BACKGROUND_COLOR;
                     if(hovered) {
                         bgColor = dimColor(bgColor, HOVER_DIM);
                     }
-                    RenderUtility.drawRect(panelX, entryY, PANEL_WIDTH, MODULE_HEIGHT, bgColor);
+                    RenderUtility.drawRect(panelX + PANEL_PADDING, entryY, PANEL_WIDTH - PANEL_PADDING * 2, MODULE_HEIGHT, bgColor);
                 }
 
-                font.drawString(entry, panelX + 4, entryY + 5, TEXT_COLOR);
+                font.drawString(entry, panelX + PANEL_PADDING + 4, entryY + 5, TEXT_COLOR);
 
                 if(!isScripts && i < entryDates.length && entryDates[i] != null) {
                     final float dateWidth = settingsFont.getStringWidth(entryDates[i]);
-                    settingsFont.drawString(entryDates[i], panelX + PANEL_WIDTH - dateWidth - 4, entryY + 5, 0xFF888888);
+                    settingsFont.drawString(entryDates[i], panelX + PANEL_WIDTH - PANEL_PADDING - dateWidth - 4, entryY + 5, 0xFF888888);
                 }
 
                 entryY += MODULE_HEIGHT;
@@ -543,7 +547,7 @@ public final class ClickGUIScreen extends GuiScreen {
 
     private boolean handleBottomBarClick(final int mouseX, final int mouseY, final int mouseButton) {
         final int configsPanelX = width - PANEL_WIDTH;
-        final int scriptsPanelX = configsPanelX - PANEL_WIDTH;
+        final int scriptsPanelX = configsPanelX - BOTTOM_PANEL_SPACING - PANEL_WIDTH;
         final int panelY = height - PANEL_HEIGHT;
 
         if(mouseX >= scriptsPanelX && mouseX <= scriptsPanelX + PANEL_WIDTH
@@ -584,7 +588,7 @@ public final class ClickGUIScreen extends GuiScreen {
     }
 
     private boolean handleBottomPanelIconClick(final int mouseX, final int panelX, final boolean isScripts) {
-        int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3;
+        int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3 - PANEL_PADDING;
 
         iconX -= BOTTOM_ICON_SIZE + 2;
 
@@ -613,8 +617,9 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseX, final int mouseY, final int mouseButton, final boolean isScripts) {
         final int entryTotalHeight = entries.length * MODULE_HEIGHT;
         int entryY = panelY - entryTotalHeight;
+        final int paddedWidth = PANEL_WIDTH - PANEL_PADDING * 2;
         for(final String entry : entries) {
-            if(mouseX >= panelX && mouseX <= panelX + PANEL_WIDTH
+            if(mouseX >= panelX + PANEL_PADDING && mouseX <= panelX + PANEL_PADDING + paddedWidth
                     && mouseY >= entryY && mouseY <= entryY + MODULE_HEIGHT) {
                 if(mouseButton == 0) {
                     if(isScripts) {
@@ -719,14 +724,14 @@ public final class ClickGUIScreen extends GuiScreen {
         }
         int currentY = panelY + PANEL_HEIGHT;
         for(final Module module : modules) {
-            if(isMouseOver(mouseX, mouseY, panelX, currentY, MODULE_HEIGHT)) {
+            if(isMouseOver(mouseX, mouseY, panelX + PANEL_PADDING, currentY, MODULE_HEIGHT)) {
                 handleModuleClick(module, mouseButton);
                 return true;
             }
             currentY += MODULE_HEIGHT;
             if(expandedModules.getOrDefault(module, false)) {
                 currentY += SETTING_GROUP_PADDING;
-                if(tryHandleSettingClick(module, panelX, currentY, mouseX, mouseY, mouseButton)) {
+                if(tryHandleSettingClick(module, panelX + PANEL_PADDING, currentY, mouseX, mouseY, mouseButton)) {
                     return true;
                 }
                 currentY += countVisibleSettings(module) * SETTING_HEIGHT + SETTING_GROUP_PADDING;

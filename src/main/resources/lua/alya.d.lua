@@ -373,6 +373,10 @@ function AlyaMC.getCameraYaw() end
 ---@param yaw number
 function AlyaMC.setCameraYaw(yaw) end
 ---@return number
+function AlyaMC.getCameraPitch() end
+---@param pitch number
+function AlyaMC.setCameraPitch(pitch) end
+---@return number
 function AlyaMC.getCurrentTime() end
 ---@return number
 function AlyaMC.getLastPosX() end
@@ -446,6 +450,27 @@ function AlyaMC.resetHitboxExpansion() end
 ---sends a chat message to the server
 ---@param message string
 function AlyaMC.sendChatMessage(message) end
+
+---breaks a block using the specified action and position
+---@param action integer 0 = START_DESTROY_BLOCK, 1 = STOP_DESTROY_BLOCK, 2 = ABORT_DESTROY_BLOCK
+---@param x integer block x
+---@param y integer block y
+---@param z integer block z
+---@param facing? integer block face (0=down, 1=up, 2=north, 3=south, 4=west, 5=east)
+---@return boolean success
+function AlyaMC.breakBlock(action, x, y, z, facing) end
+
+---returns the block ID at the given position
+---@param x integer
+---@param y integer
+---@param z integer
+---@return integer block ID
+function AlyaMC.getBlockId(x, y, z) end
+
+---sends a rotation packet to the server
+---@param yaw number
+---@param pitch number
+function AlyaMC.sendRotation(yaw, pitch) end
 
 ---@class AlyaFontRenderer
 ---@field drawString fun(text: string, x: number, y: number, color: integer)
@@ -584,6 +609,11 @@ function AlyaCombat.getPlayerPitch() end
 ---@param pitch number
 function AlyaCombat.setClientRotation(yaw, pitch) end
 
+---sets the players rotation server side (sends to server)
+---@param yaw number
+---@param pitch number
+function AlyaCombat.setServerRotation(yaw, pitch) end
+
 ---@class client
 ---@field modules AlyaModules
 ---@field combat AlyaCombat
@@ -609,6 +639,10 @@ function AlyaCombat.setClientRotation(yaw, pitch) end
 ---global client API table
 ---@type client
 alya = {}
+
+---returns the current accent color as integer
+---@return integer
+function alya.getAccent() end
 
 ---loads and executes Lua script from classpath resource path, returns script's return value
 ---@param resourcePath string e.g. "/lua/modules/movement/flight/motion.lua"

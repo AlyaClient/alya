@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.*;
 import org.jspecify.annotations.NonNull;
 import org.luaj.vm2.LuaTable;
@@ -36,12 +37,16 @@ public final class LuaMinecraftApi extends LuaTable {
             eventBus.subscribe(
                     ReachEvent.class,
                     event -> {
-                        if(reachOverride > 0) event.setReachDistance(reachOverride);
+                        if(reachOverride > 0) {
+                            event.setReachDistance(reachOverride);
+                        }
                     });
             eventBus.subscribe(
                     HitboxEvent.class,
                     event -> {
-                        if(hitboxExpansion >= 0) event.setExpansion(hitboxExpansion);
+                        if(hitboxExpansion >= 0) {
+                            event.setExpansion(hitboxExpansion);
+                        }
                     });
             eventBus.subscribe(
                     PacketSendEvent.class,
@@ -135,7 +140,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.theWorld == null) return LuaValue.valueOf(0L);
+                        if(minecraft.theWorld == null) {
+                            return LuaValue.valueOf(0L);
+                        }
                         return LuaValue.valueOf((double) minecraft.theWorld.getWorldTime());
                     }
                 });
@@ -144,8 +151,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue timeValue) {
-                        if(minecraft.theWorld != null)
+                        if(minecraft.theWorld != null) {
                             minecraft.theWorld.setWorldTime((long) timeValue.todouble());
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -193,7 +201,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(minecraft.thePlayer == null) return LuaValue.NIL;
+                        if(minecraft.thePlayer == null) {
+                            return LuaValue.NIL;
+                        }
                         minecraft.thePlayer.setPosition(
                                 minecraft.thePlayer.posX,
                                 v.todouble(),
@@ -236,7 +246,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue motionValue) {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.motionX = motionValue.todouble();
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.motionX = motionValue.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -245,7 +257,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue motionValue) {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.motionY = motionValue.todouble();
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.motionY = motionValue.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -254,7 +268,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue motionValue) {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.motionZ = motionValue.todouble();
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.motionZ = motionValue.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -281,7 +297,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue ticksValue) {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.jumpTicks = ticksValue.toint();
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.jumpTicks = ticksValue.toint();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -290,7 +308,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.jump();
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.jump();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -299,8 +319,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue sprintingValue) {
-                        if(minecraft.thePlayer != null)
+                        if(minecraft.thePlayer != null) {
                             minecraft.thePlayer.setSprinting(sprintingValue.toboolean());
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -377,8 +398,30 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue yawValue) {
-                        if(minecraft.getRenderViewEntity() != null)
+                        if(minecraft.getRenderViewEntity() != null) {
                             minecraft.getRenderViewEntity().rotationYaw = (float) yawValue.todouble();
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "getCameraPitch",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        return minecraft.getRenderViewEntity() != null
+                                ? LuaValue.valueOf(minecraft.getRenderViewEntity().rotationPitch)
+                                : LuaValue.valueOf(0d);
+                    }
+                });
+        set(
+                "setCameraPitch",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue pitchValue) {
+                        if(minecraft.getRenderViewEntity() != null) {
+                            minecraft.getRenderViewEntity().rotationPitch = (float) pitchValue.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -443,8 +486,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue fallDistance) {
-                        if(minecraft.thePlayer != null)
+                        if(minecraft.thePlayer != null) {
                             minecraft.thePlayer.fallDistance = fallDistance.tofloat();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -482,7 +526,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null) return LuaValue.valueOf(0);
+                        if(minecraft.thePlayer == null) {
+                            return LuaValue.valueOf(0);
+                        }
                         return LuaValue.valueOf(minecraft.thePlayer.rotationYaw);
                     }
                 });
@@ -491,7 +537,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null) return LuaValue.valueOf(0);
+                        if(minecraft.thePlayer == null) {
+                            return LuaValue.valueOf(0);
+                        }
                         return LuaValue.valueOf(minecraft.thePlayer.rotationPitch);
                     }
                 });
@@ -500,7 +548,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.valueOf(0);
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) {
+                            return LuaValue.valueOf(0);
+                        }
                         return LuaValue.valueOf(minecraft.thePlayer.movementInput.moveForward);
                     }
                 });
@@ -509,7 +559,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.valueOf(0);
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) {
+                            return LuaValue.valueOf(0);
+                        }
                         return LuaValue.valueOf(minecraft.thePlayer.movementInput.moveStrafe);
                     }
                 });
@@ -518,7 +570,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.NIL;
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) {
+                            return LuaValue.NIL;
+                        }
                         minecraft.thePlayer.movementInput.moveForward = (float) v.todouble();
                         return LuaValue.NIL;
                     }
@@ -528,7 +582,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) return LuaValue.NIL;
+                        if(minecraft.thePlayer == null || minecraft.thePlayer.movementInput == null) {
+                            return LuaValue.NIL;
+                        }
                         minecraft.thePlayer.movementInput.moveStrafe = (float) v.todouble();
                         return LuaValue.NIL;
                     }
@@ -538,7 +594,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+                            return LuaValue.FALSE;
+                        }
                         java.util.List<?> boxes =
                                 minecraft.theWorld.getCollidingBoundingBoxes(
                                         minecraft.thePlayer,
@@ -582,7 +640,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null) return LuaValue.FALSE;
+                        if(minecraft.thePlayer == null) {
+                            return LuaValue.FALSE;
+                        }
                         ItemStack held = minecraft.thePlayer.getHeldItem();
                         return LuaValue.valueOf(held != null && held.getItem() instanceof ItemBlock);
                     }
@@ -592,7 +652,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new OneArgFunction() {
                     @Override
                     public LuaValue call(LuaValue v) {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.stepHeight = (float) v.todouble();
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.stepHeight = (float) v.todouble();
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -601,7 +663,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer != null) minecraft.thePlayer.stepHeight = 0.5f;
+                        if(minecraft.thePlayer != null) {
+                            minecraft.thePlayer.stepHeight = 0.5f;
+                        }
                         return LuaValue.NIL;
                     }
                 });
@@ -650,7 +714,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+                            return LuaValue.FALSE;
+                        }
                         BlockPos pos =
                                 new BlockPos(
                                         minecraft.thePlayer.posX,
@@ -673,7 +739,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.currentScreen == null) return LuaValue.valueOf("none");
+                        if(minecraft.currentScreen == null) {
+                            return LuaValue.valueOf("none");
+                        }
                         return LuaValue.valueOf(minecraft.currentScreen.getClass().getSimpleName());
                     }
                 });
@@ -735,7 +803,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+                            return LuaValue.FALSE;
+                        }
                         double x = minecraft.thePlayer.posX;
                         double z = minecraft.thePlayer.posZ;
                         double blockX = Math.floor(x);
@@ -756,8 +826,12 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null) return LuaValue.valueOf(-1);
-                        for(int slotIndex = 0; slotIndex < 9; slotIndex++) {
+                        if(minecraft.thePlayer == null) {
+                            return LuaValue.valueOf(-1);
+                        }
+                        for(int slotIndex = 0;
+                            slotIndex < 9;
+                            slotIndex++) {
                             ItemStack itemStack = minecraft.thePlayer.inventory.getStackInSlot(slotIndex);
                             if(itemStack != null && itemStack.getItem() instanceof ItemBlock) {
                                 return LuaValue.valueOf(slotIndex);
@@ -771,7 +845,9 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null) return LuaValue.valueOf(-1);
+                        if(minecraft.thePlayer == null) {
+                            return LuaValue.valueOf(-1);
+                        }
                         return LuaValue.valueOf(minecraft.thePlayer.inventory.currentItem);
                     }
                 });
@@ -845,6 +921,19 @@ public final class LuaMinecraftApi extends LuaTable {
                     }
                 });
         set(
+                "getBlockId",
+                new org.luaj.vm2.lib.ThreeArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue xValue, LuaValue yValue, LuaValue zValue) {
+                        if(minecraft.theWorld != null) {
+                            BlockPos blockPos = new BlockPos(xValue.toint(), yValue.toint(), zValue.toint());
+                            int blockId = net.minecraft.block.Block.getIdFromBlock(minecraft.theWorld.getBlockState(blockPos).getBlock());
+                            return LuaValue.valueOf(blockId);
+                        }
+                        return LuaValue.valueOf(0);
+                    }
+                });
+        set(
                 "rightClickBlock",
                 new org.luaj.vm2.lib.VarArgFunction() {
                     @Override
@@ -887,8 +976,12 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.theWorld == null) return LuaValue.FALSE;
-                        if(!minecraft.thePlayer.onGround) return LuaValue.FALSE;
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+                            return LuaValue.FALSE;
+                        }
+                        if(!minecraft.thePlayer.onGround) {
+                            return LuaValue.FALSE;
+                        }
                         BlockPos icePos = new BlockPos(
                                 minecraft.thePlayer.posX,
                                 minecraft.thePlayer.getEntityBoundingBox().minY - 0.1,
@@ -963,6 +1056,55 @@ public final class LuaMinecraftApi extends LuaTable {
                     public LuaValue call(LuaValue messageValue) {
                         if(minecraft.thePlayer != null) {
                             minecraft.thePlayer.sendChatMessage(messageValue.tojstring());
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "breakBlock",
+                new org.luaj.vm2.lib.VarArgFunction() {
+                    @Override
+                    public org.luaj.vm2.Varargs invoke(org.luaj.vm2.Varargs arguments) {
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+                            return LuaValue.FALSE;
+                        }
+                        final int action = arguments.checkint(1);
+                        final int x = arguments.checkint(2);
+                        final int y = arguments.checkint(3);
+                        final int z = arguments.checkint(4);
+                        final int faceIndex = arguments.optint(5, 1);
+                        final BlockPos pos = new BlockPos(x, y, z);
+                        final EnumFacing facing = switch(faceIndex) {
+                            case 0 -> EnumFacing.DOWN;
+                            case 2 -> EnumFacing.NORTH;
+                            case 3 -> EnumFacing.SOUTH;
+                            case 4 -> EnumFacing.WEST;
+                            case 5 -> EnumFacing.EAST;
+                            default -> EnumFacing.UP;
+                        };
+                        final C07PacketPlayerDigging.Action digAction;
+                        if(action == 0) {
+                            digAction = C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
+                        } else if(action == 1) {
+                            digAction = C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK;
+                        } else {
+                            digAction = C07PacketPlayerDigging.Action.ABORT_DESTROY_BLOCK;
+                        }
+                        minecraft.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(digAction, pos, facing));
+                        return LuaValue.TRUE;
+                    }
+                });
+        set(
+                "sendRotation",
+                new org.luaj.vm2.lib.TwoArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue yawValue, LuaValue pitchValue) {
+                        if(minecraft.thePlayer != null) {
+                            float yaw = (float) yawValue.todouble();
+                            float pitch = (float) pitchValue.todouble();
+                            minecraft.getNetHandler().addToSendQueue(
+                                    new net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook(
+                                            yaw, pitch, minecraft.thePlayer.onGround));
                         }
                         return LuaValue.NIL;
                     }

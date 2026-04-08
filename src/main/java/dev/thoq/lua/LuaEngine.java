@@ -1,6 +1,7 @@
 package dev.thoq.lua;
 
 import dev.thoq.Alya;
+import dev.thoq.gui.UIConstants;
 import dev.thoq.gui.toast.Toast;
 import dev.thoq.gui.toast.ToastManager;
 import dev.thoq.lua.api.*;
@@ -70,6 +71,14 @@ public final class LuaEngine {
                         return LuaValue.valueOf(Alya.getVersion());
                     }
                 });
+        alyaTable.set(
+                "getAccent",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        return LuaValue.valueOf(UIConstants.ACCENT_COLOR);
+                    }
+                });
         globals.set("alya", alyaTable);
         globals.set(
                 "loadScript",
@@ -95,7 +104,8 @@ public final class LuaEngine {
                             }
                             final LuaValue chunk = globals.load(new InputStreamReader(inputStream), resourcePath);
                             return chunk.call();
-                        } catch(final LuaError | FileNotFoundException luaError) {
+                        } catch(final LuaError |
+                                      FileNotFoundException luaError) {
                             Alya.getInstance()
                                     .getLogger()
                                     .error("Lua error loading {}: {}", resourcePath, luaError.getMessage());
@@ -132,6 +142,12 @@ public final class LuaEngine {
                         }
                     }
                 });
+        globals.set("getAccent", new ZeroArgFunction() {
+            @Override
+            public LuaValue call() {
+                return LuaValue.valueOf(UIConstants.ACCENT_COLOR);
+            }
+        });
     }
 
     public void loadScript(final String resourcePath) {
@@ -167,7 +183,7 @@ public final class LuaEngine {
     }
 
     private String[] getAlyaScriptCore() {
-        return new String[] {
+        return new String[]{
                 "util/movement.lua",
                 "util/chat.lua",
                 "util/visual.lua",
@@ -201,7 +217,9 @@ public final class LuaEngine {
             return;
         }
         final File[] luaFiles = scriptsDir.listFiles((dir, name) -> name.endsWith(".lua"));
-        if(luaFiles == null) return;
+        if(luaFiles == null) {
+            return;
+        }
         for(final File luaFile : luaFiles) {
             if(loadedExternalScripts.contains(luaFile.getName())) {
                 loadExternalScript(luaFile);

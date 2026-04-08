@@ -2241,28 +2241,28 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     }
 
     private void updateMainMenu(GuiMainMenu p_updateMainMenu_1_) {
+        //noinspection CommentedOutCode
         try {
             String s = null;
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            int i = calendar.get(5);
-            int j = calendar.get(2) + 1;
-
-            if(i == 8 && j == 4) {
-                s = "Happy birthday, OptiFine!";
-            }
-
-            if(i == 14 && j == 8) {
-                s = "Happy birthday, sp614x!";
-            }
-
-            if(s == null) {
-                return;
-            }
-
-            Reflector.setFieldValue(p_updateMainMenu_1_, Reflector.GuiMainMenu_splashText, s);
-        } catch(Throwable var6) {
-            ;
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(new Date());
+//            int i = calendar.get(5);
+//            int j = calendar.get(2) + 1;
+//
+//            if(i == 8 && j == 4) {
+//                s = "Happy birthday, OptiFine!";
+//            }
+//
+//            if(i == 14 && j == 8) {
+//                s = "Happy birthday, sp614x!";
+//            }
+//
+//            if(s == null) {
+//                return;
+//            }
+//
+//            Reflector.setFieldValue(p_updateMainMenu_1_, Reflector.GuiMainMenu_splashText, s);
+        } catch(Throwable _) {
         }
     }
 
