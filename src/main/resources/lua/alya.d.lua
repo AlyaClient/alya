@@ -447,6 +447,15 @@ function AlyaMC.resetHitboxExpansion() end
 ---@param message string
 function AlyaMC.sendChatMessage(message) end
 
+---breaks a block using the specified action and position
+---@param action integer 0 = START_DESTROY_BLOCK, 1 = STOP_DESTROY_BLOCK, 2 = ABORT_DESTROY_BLOCK
+---@param x integer block x
+---@param y integer block y
+---@param z integer block z
+---@param facing? integer block face (0=down, 1=up, 2=north, 3=south, 4=west, 5=east)
+---@return boolean success
+function AlyaMC.breakBlock(action, x, y, z, facing) end
+
 ---@class AlyaFontRenderer
 ---@field drawString fun(text: string, x: number, y: number, color: integer)
 ---@field drawStringWithShadow fun(text: string, x: number, y: number, color: integer)
