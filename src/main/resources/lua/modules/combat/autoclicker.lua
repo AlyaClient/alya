@@ -1,6 +1,7 @@
 local moduleTable = alya.modules.register("AutoClicker", "Clicks for you.", "COMBAT")
-local mode      = moduleTable.addModeSetting("Mode", "", "Normal", "Normal", "Drag")
-local cps       = moduleTable.addNumberSetting("CPS", "", 9, 0, 20, 0.01)
+local mode        = moduleTable.addModeSetting("Mode", "", "Normal", "Normal", "Drag")
+local cps         = moduleTable.addNumberSetting("CPS", "", 9, 0, 20, 0.01)
+
 cps.setRangeEnabled(true)
 cps.setSecondValue(11)
 local dragTime  = moduleTable.addNumberSetting("Duration (MS)", "", 1200, 100, 2000, 100)

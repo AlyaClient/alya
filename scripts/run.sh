@@ -2,10 +2,10 @@
 
 OS_FLAGS=""
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    OS_FLAGS="-XstartOnFirstThread"
+  OS_FLAGS="-XstartOnFirstThread"
 fi
 
-JDK_PATH="$HOME/Library/Java/JavaVirtualMachines/azul-26/Contents/Home/bin/java"
+JDK_PATH="$HOME/.sdkman/candidates/java/26-zulu/bin/java"
 echo "JDK PATH: $JDK_PATH"
 
 SCRIPT_DIR=$(pwd)

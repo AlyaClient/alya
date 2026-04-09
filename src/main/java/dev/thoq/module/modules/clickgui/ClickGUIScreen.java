@@ -38,6 +38,7 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int SETTING_GROUP_PADDING = 2;
     private static final int PANEL_SPACING = 130;
     private static final int SETTING_INDENT = 6;
+    private static final int CATEGORY_PANEL_BACKGROUND_COLOR = 0xFF1A181A;
     private static final int BACKGROUND_COLOR = 0xFF181A17;
     private static final int MODULE_BACKGROUND_COLOR = 0xFF232623;
     private static final int SETTING_BACKGROUND_COLOR = 0xFF111311;
@@ -47,10 +48,10 @@ public final class ClickGUIScreen extends GuiScreen {
     private static final int DEFAULT_CATEGORY_COLOR = 0x20444444;
     private static final int ICON_SIZE = 7;
     private static final int BOTTOM_ICON_SIZE = 7;
-    private static final int BOTTOM_PANEL_SPACING = 10;
-    private static final int PANEL_PADDING = 2;
+    private static final int BOTTOM_PANEL_SPACING = 2;
+    private static final int PANEL_PADDING = 1;
 
-    private static final AlyaFontRenderer font = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 7.5F);
+    private static final AlyaFontRenderer boldFont = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 7.5F);
     private static final AlyaFontRenderer settingsFont = new AlyaFontRenderer("client/fonts/Lato-Bold.ttf", 6.5F);
     private static final Map<Category, Integer> CATEGORY_COLORS = new HashMap<>();
 
@@ -150,20 +151,20 @@ public final class ClickGUIScreen extends GuiScreen {
         }
         int totalHeight = PANEL_HEIGHT;
         if(expandedCategories.get(category)) {
-            totalHeight += calculateExpandedHeight(modules) + 1 + PANEL_PADDING / 2;
+            totalHeight += calculateExpandedHeight(modules) + 1 + PANEL_PADDING;
         }
         renderPanelHeader(category, panelX, panelY);
         if(expandedCategories.get(category)) {
-            RenderUtility.drawRect(panelX, panelY + PANEL_HEIGHT, PANEL_WIDTH, totalHeight - PANEL_HEIGHT, BACKGROUND_COLOR);
+            RenderUtility.drawRect(panelX, panelY + PANEL_HEIGHT, PANEL_WIDTH, totalHeight - PANEL_HEIGHT, CATEGORY_PANEL_BACKGROUND_COLOR);
             renderExpandedModules(modules, panelX, panelY + PANEL_HEIGHT, category, mouseX, mouseY);
         }
         RenderUtility.drawRectOutline(panelX, panelY, PANEL_WIDTH, totalHeight, getCategoryColor(category), BORDER_WIDTH);
     }
 
     private void renderPanelHeader(final Category category, final int panelX, final int panelY) {
-        RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
+        RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, CATEGORY_PANEL_BACKGROUND_COLOR);
         final String categoryName = category.getDisplayName().toLowerCase();
-        font.drawString(categoryName, panelX + 4 + PANEL_PADDING, panelY + 5, TEXT_COLOR);
+        boldFont.drawString(categoryName, panelX + 4 + PANEL_PADDING, panelY + 5, TEXT_COLOR);
         final int categoryColor = getCategoryColor(category);
         final float r = (categoryColor >> 16 & 0xFF) / 255.0F;
         final float g = (categoryColor >> 8 & 0xFF) / 255.0F;
@@ -280,7 +281,7 @@ public final class ClickGUIScreen extends GuiScreen {
         final String moduleName = module.getName().toLowerCase().replace(" ", "");
         final int textColor =
                 extended ? (module.isEnabled() ? getCategoryColor(category) : TEXT_COLOR) : TEXT_COLOR;
-        font.drawString(moduleName, positionX + 4, positionY + 5, textColor);
+        boldFont.drawString(moduleName, positionX + 4, positionY + 5, textColor);
     }
 
     private void renderSettingButton(
@@ -314,7 +315,7 @@ public final class ClickGUIScreen extends GuiScreen {
                 RenderUtility.drawRect(settingX, positionY, settingWidth, SETTING_HEIGHT, dimColor(SETTING_BACKGROUND_COLOR, HOVER_DIM));
             }
             settingsFont.drawString(setting.getName(), textX, positionY + 1, TEXT_COLOR);
-            final String modeValue = modeSetting.getValue();
+            final String modeValue = modeSetting.getValue().toUpperCase().replace(" ", "_");
             final float modeWidth = settingsFont.getStringWidth(modeValue);
             settingsFont.drawString(modeValue, settingRight - modeWidth - 2, positionY + 1, TEXT_COLOR);
         } else if(setting instanceof NumberSetting numberSetting) {
@@ -433,7 +434,7 @@ public final class ClickGUIScreen extends GuiScreen {
             final int mouseY,
             final boolean isScripts) {
         RenderUtility.drawRect(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, BACKGROUND_COLOR);
-        font.drawString(title, panelX + 4 + PANEL_PADDING, panelY + 5, TEXT_COLOR);
+        boldFont.drawString(title, panelX + 4 + PANEL_PADDING, panelY + 5, TEXT_COLOR);
 
         int iconX = panelX + PANEL_WIDTH - BOTTOM_ICON_SIZE - 3 - PANEL_PADDING;
         final int iconY = panelY + (PANEL_HEIGHT - BOTTOM_ICON_SIZE) / 2;
@@ -476,7 +477,7 @@ public final class ClickGUIScreen extends GuiScreen {
                     RenderUtility.drawRect(panelX + PANEL_PADDING, entryY, PANEL_WIDTH - PANEL_PADDING * 2, MODULE_HEIGHT, bgColor);
                 }
 
-                font.drawString(entry, panelX + PANEL_PADDING + 4, entryY + 5, TEXT_COLOR);
+                boldFont.drawString(entry, panelX + PANEL_PADDING + 4, entryY + 5, TEXT_COLOR);
 
                 if(!isScripts && i < entryDates.length && entryDates[i] != null) {
                     final float dateWidth = settingsFont.getStringWidth(entryDates[i]);

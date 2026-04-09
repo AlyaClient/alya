@@ -46,8 +46,8 @@ alya.events.on("render2d", function(event)
                 local positionX = screenWidth - width
                 local modColor = applyWave(baseAccent, index)
 
-                alya.visual.drawRect(positionX - 1, positionY - 1, width + 2, height + 2, 0x90000000)
-                fontRenderer.drawString(name, positionX + padding - 2, positionY, modColor)
+                alya.visual.drawRect(positionX - 1, positionY - 2, width + 2, height + 2, 0x90000000)
+                fontRenderer.drawString(name, positionX + padding - 2, positionY - 1, modColor)
 
                 positionY = positionY + height + 2
             end
