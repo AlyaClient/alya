@@ -71,7 +71,7 @@ public final class MovementUtil implements IUtil {
 
     public static void setSpeed(final double speed, double strafePercentage) {
         strafePercentage /= 100;
-        strafePercentage = Math.min(1, Math.max(0, strafePercentage));
+        strafePercentage = Math.clamp(strafePercentage, 0, 1);
         if(!isMoving()) return;
         final double currentSpeed = getMoveSpeed();
         if(currentSpeed == 0) {
