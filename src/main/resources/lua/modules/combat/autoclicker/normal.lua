@@ -6,7 +6,7 @@ local function createNormalMode(moduleTable, mode, cps)
         if minVal > maxVal then
             minVal, maxVal = maxVal, minVal
         end
-        return math.floor(minVal + math.random() * (maxVal - minVal))
+        return math.floor(minVal + alya.mathutil.makeRandom() * (maxVal - minVal))
     end
     alya.events.on("motion", function(event)
         if not moduleTable.isEnabled() then

@@ -90,6 +90,7 @@
 ---@class AlyaPacketSendEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
 ---@field getEntityAction fun(): string|nil action name for C0BPacketEntityAction (e.g. "STOP_SPRINTING"), nil otherwise
+---@field delayProcessing fun(delay: integer)
 
 ---@class AlyaPacketReceiveEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
@@ -100,6 +101,7 @@
 ---@field setMotionX fun(v: number)
 ---@field setMotionY fun(v: number)
 ---@field setMotionZ fun(v: number)
+---@field delayProcessing fun(delay: integer)
 
 ---@class AlyaModules
 local AlyaModules = {}
