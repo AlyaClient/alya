@@ -2,11 +2,13 @@ package dev.thoq.lua.api;
 
 import dev.thoq.util.IUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -420,7 +422,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                             return LuaValue.NIL;
                         }
                         mc.leftClickCounter = 0;
-                        mc.clickMouse();
+                        KeyBinding.onTick(mc.gameSettings.keyBindAttack.getKeyCode());
                         return LuaValue.NIL;
                     }
                 });
@@ -432,13 +434,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                         if(mc.thePlayer == null) {
                             return LuaValue.NIL;
                         }
-                        try {
-                            java.lang.reflect.Method m =
-                                    net.minecraft.client.Minecraft.class.getDeclaredMethod("rightClickMouse");
-                            m.setAccessible(true);
-                            m.invoke(mc);
-                        } catch(Exception ignored) {
-                        }
+                        KeyBinding.onTick(mc.gameSettings.keyBindUseItem.getKeyCode());
                         return LuaValue.NIL;
                     }
                 });
@@ -599,7 +595,7 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                         if(mc.thePlayer == null) {
                             return LuaValue.valueOf("");
                         }
-                        net.minecraft.item.ItemStack stack =
+                        ItemStack stack =
                                 mc.thePlayer.inventory.getStackInSlot(slotValue.toint());
                         if(stack == null) {
                             return LuaValue.valueOf("");

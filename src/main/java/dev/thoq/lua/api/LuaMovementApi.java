@@ -31,7 +31,7 @@ public final class LuaMovementApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf((double) MovementUtil.getMoveYaw());
+                        return LuaValue.valueOf(MovementUtil.getMoveYaw());
                     }
                 });
         set(
@@ -55,7 +55,7 @@ public final class LuaMovementApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf((double) MovementUtil.getSpeed());
+                        return LuaValue.valueOf(MovementUtil.getSpeed());
                     }
                 });
         set(
@@ -84,7 +84,7 @@ public final class LuaMovementApi extends LuaTable {
                         return LuaValue.NIL;
                     }
                 });
-        set("SPRINT_SPEED", LuaValue.valueOf((double) MovementUtil.SPRINT_SPEED));
-        set("WALK_SPEED", LuaValue.valueOf((double) MovementUtil.WALK_SPEED));
+        set("SPRINT_SPEED", LuaValue.valueOf(MovementUtil.SPRINT_SPEED));
+        set("WALK_SPEED", LuaValue.valueOf(MovementUtil.WALK_SPEED));
     }
 }

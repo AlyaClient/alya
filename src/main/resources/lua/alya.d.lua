@@ -453,6 +453,10 @@ function AlyaMC.resetHitboxExpansion() end
 ---@param message string
 function AlyaMC.sendChatMessage(message) end
 
+---sends a C0BPacketEntityAction to update the server sprint state manually
+---@param state boolean true for START_SPRINTING, false for STOP_SPRINTING
+function AlyaMC.sendSprintPacket(state) end
+
 ---breaks a block using the specified action and position
 ---@param action integer 0 = START_DESTROY_BLOCK, 1 = STOP_DESTROY_BLOCK, 2 = ABORT_DESTROY_BLOCK
 ---@param x integer block x

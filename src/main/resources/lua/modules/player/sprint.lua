@@ -3,7 +3,10 @@ local omniSprint = moduleTable.addBooleanSetting("OmniSprint", "Sprint in all di
 
 alya.events.on("playerinput", function(event)
     if not moduleTable.isEnabled() then return end
-    if not alya.movement.isMoving() then return end
+    if not alya.movement.isMoving() then 
+        alya.mc.setSprinting(false)
+        return 
+    end
 
     local scaffoldModule = alya.modules.get("Scaffold")
     if scaffoldModule and scaffoldModule.isEnabled() then
@@ -25,4 +28,8 @@ alya.events.on("playerinput", function(event)
             alya.mc.setSprinting(false)
         end
     end
+end)
+
+moduleTable.onDisable(function()
+    alya.mc.setSprinting(false)
 end)

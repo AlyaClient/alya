@@ -8,14 +8,11 @@ local function createNormalMode(moduleTable, mode, cps)
         end
         return math.floor(minVal + alya.mathutil.makeRandom() * (maxVal - minVal))
     end
-    alya.events.on("motion", function(event)
+    alya.events.on("update", function(event)
         if not moduleTable.isEnabled() then
             return
         end
         if not mode.is("Normal") then
-            return
-        end
-        if not event.isPre() then
             return
         end
         if not alya.combat.isAttackKeyDown() then

@@ -9,6 +9,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.util.*;
 import org.jspecify.annotations.NonNull;
 import org.luaj.vm2.LuaTable;
@@ -1105,6 +1106,19 @@ public final class LuaMinecraftApi extends LuaTable {
                             minecraft.getNetHandler().addToSendQueue(
                                     new net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook(
                                             yaw, pitch, minecraft.thePlayer.onGround));
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "sendSprintPacket",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue stateValue) {
+                        if(minecraft.thePlayer != null) {
+                            boolean state = stateValue.toboolean();
+                            C0BPacketEntityAction.Action action = state ? C0BPacketEntityAction.Action.START_SPRINTING : C0BPacketEntityAction.Action.STOP_SPRINTING;
+                            minecraft.getNetHandler().addToSendQueue(new C0BPacketEntityAction(minecraft.thePlayer, action));
                         }
                         return LuaValue.NIL;
                     }
