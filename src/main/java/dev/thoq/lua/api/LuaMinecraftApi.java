@@ -4,6 +4,7 @@ import dev.thoq.event.events.HitboxEvent;
 import dev.thoq.event.events.PacketSendEvent;
 import dev.thoq.event.events.ReachEvent;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -598,7 +599,7 @@ public final class LuaMinecraftApi extends LuaTable {
                         if(minecraft.thePlayer == null || minecraft.theWorld == null) {
                             return LuaValue.FALSE;
                         }
-                        java.util.List<?> boxes =
+                        List<?> boxes =
                                 minecraft.theWorld.getCollidingBoundingBoxes(
                                         minecraft.thePlayer,
                                         minecraft
@@ -1123,5 +1124,19 @@ public final class LuaMinecraftApi extends LuaTable {
                         return LuaValue.NIL;
                     }
                 });
+        set(
+                "isOnSolidBlock",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+                            return LuaValue.FALSE;
+                        }
+                        final BlockPos blockPos = new BlockPos(minecraft.thePlayer.posX, minecraft.thePlayer.posY - 1, minecraft.thePlayer.posZ);
+                        final Material material = minecraft.theWorld.getBlockState(blockPos).getBlock().getMaterial();
+                        return LuaValue.valueOf(material.isOpaque() || material.isLiquid());
+                    }
+                }
+        );
     }
 }
