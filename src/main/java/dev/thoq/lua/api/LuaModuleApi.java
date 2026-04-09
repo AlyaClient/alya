@@ -19,12 +19,16 @@ public final class LuaModuleApi extends LuaTable {
                     @Override
                     public LuaValue call(
                             LuaValue nameValue, LuaValue descriptionValue, LuaValue categoryString) {
-                        final String categoryName = categoryString.tojstring().toUpperCase();
                         Category category;
-                        try {
-                            category = Category.valueOf(categoryName);
-                        } catch(IllegalArgumentException illegalArgumentException) {
-                            category = Category.OTHER;
+                        if(Alya.getInstance().getLuaEngine().isLoadingExternalScript()) {
+                            category = Category.SCRIPTS;
+                        } else {
+                            final String categoryName = categoryString.tojstring().toUpperCase();
+                            try {
+                                category = Category.valueOf(categoryName);
+                            } catch(IllegalArgumentException illegalArgumentException) {
+                                category = Category.OTHER;
+                            }
                         }
                         final LuaModule luaModule =
                                 new LuaModule(nameValue.tojstring(), descriptionValue.tojstring(), category);
