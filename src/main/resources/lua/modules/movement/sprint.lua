@@ -1,4 +1,4 @@
-local moduleTable = alya.modules.register("Sprint", "Auto-Sprint", "PLAYER")
+local moduleTable = alya.modules.register("Sprint", "Auto-Sprint", "MOVEMENT")
 local omniSprint = moduleTable.addBooleanSetting("OmniSprint", "Sprint in all directions", false)
 
 alya.events.on("playerinput", function(event)

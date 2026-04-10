@@ -51,7 +51,7 @@ jobs:
       - name: Update latest tag
         run: |
           git tag -f latest
-          git push -f origin latest
+          git push --force origin latest
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
