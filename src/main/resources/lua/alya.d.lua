@@ -396,7 +396,7 @@ function AlyaMC.getHurtTime() end
 function AlyaMC.getEntityId() end
 ---@param boolean
 function AlyaMC.setSneakPressed(pressed) end
----@param boolean
+---@return boolean
 function AlyaMC.isOnSolidBlock() end
 
 ---sets the player's step height (vanilla default is 0.5)

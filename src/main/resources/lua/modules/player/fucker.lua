@@ -16,8 +16,8 @@ local currentPitch = 0
 local rotationSpeed = 0.15
 
 local bedBlockIds = {
-    [26] = true,   -- bed
-    [355] = true,  -- bed (white)
+    [26] = true,  -- bed
+    [355] = true, -- bed (white)
 }
 
 local function isTargetBlock(block)
@@ -72,12 +72,12 @@ local function findPathToTarget(targetX, targetY, targetZ)
         end
 
         local neighbors = {
-            { x = current.x + 1, y = current.y, z = current.z },
-            { x = current.x - 1, y = current.y, z = current.z },
-            { x = current.x, y = current.y, z = current.z + 1 },
-            { x = current.x, y = current.y, z = current.z - 1 },
-            { x = current.x, y = current.y + 1, z = current.z },
-            { x = current.x, y = current.y - 1, z = current.z },
+            { x = current.x + 1, y = current.y,     z = current.z },
+            { x = current.x - 1, y = current.y,     z = current.z },
+            { x = current.x,     y = current.y,     z = current.z + 1 },
+            { x = current.x,     y = current.y,     z = current.z - 1 },
+            { x = current.x,     y = current.y + 1, z = current.z },
+            { x = current.x,     y = current.y - 1, z = current.z },
         }
 
         for _, neighbor in ipairs(neighbors) do
@@ -138,14 +138,14 @@ local function getRotationToBlock(x, y, z)
     local playerX = alya.mc.getPlayerX()
     local playerY = alya.mc.getPlayerY() + 1.5
     local playerZ = alya.mc.getPlayerZ()
-    
+
     local dx = x + 0.5 - playerX
     local dy = y + 0.5 - playerY
     local dz = z + 0.5 - playerZ
-    
+
     local yaw = math.atan2(-dx, dz) * (180 / math.pi)
     local pitch = math.atan2(dy, math.sqrt(dx * dx + dz * dz)) * (180 / math.pi)
-    
+
     return yaw, pitch
 end
 
@@ -238,12 +238,12 @@ alya.events.on("motion", function(event)
         if #pathBlocks > 0 then
             local nextBlock = pathBlocks[1]
             local targetYaw, targetPitch = getRotationToBlock(nextBlock.x, nextBlock.y, nextBlock.z)
-            
+
             currentYaw = lerpAngle(currentYaw, targetYaw, rotationSpeed)
             currentPitch = lerpAngle(currentPitch, targetPitch, rotationSpeed)
-            
+
             alya.combat.setClientRotation(currentYaw, currentPitch)
-            
+
             if hasLineOfSight(nextBlock.x, nextBlock.y, nextBlock.z) then
                 alya.mc.sendRotation(currentYaw, currentPitch)
                 breakBlockInstant(nextBlock.x, nextBlock.y, nextBlock.z)
@@ -261,11 +261,11 @@ alya.events.on("render3d", function(event)
     if not moduleTable.isEnabled() then return end
     if not highlight.isEnabled() then return end
     if not targetBlockPos then return end
-    
+
     local x = targetBlockPos.x
     local y = targetBlockPos.y
     local z = targetBlockPos.z
-    
+
     local color = alya.visual.toARGB(255, 255, 0, 0)
     alya.visual.drawBox3D(x + 0.5, y + 0.5, z + 0.5, 1, 1, color, 2.0)
 end)
