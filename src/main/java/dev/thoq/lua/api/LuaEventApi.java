@@ -5,6 +5,8 @@ import dev.thoq.event.IEvent;
 import dev.thoq.event.IEventListener;
 import dev.thoq.event.events.*;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
@@ -388,6 +390,27 @@ public final class LuaEventApi extends LuaTable {
                         }
                     });
             eventTable.set(
+                    "delayProcessing",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(LuaValue delayValue) {
+                            long delay = delayValue.tolong();
+                            net.minecraft.network.Packet<?> packet = packetSendEvent.getPacket();
+                            packetSendEvent.cancel();
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(delay);
+                                } catch(InterruptedException ignored) {}
+                                mc.addScheduledTask(() -> {
+                                    if(mc.getNetHandler() != null && mc.getNetHandler().getNetworkManager() != null) {
+                                        mc.getNetHandler().getNetworkManager().sendPacketNoEvent(packet);
+                                    }
+                                });
+                            }).start();
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
                     "getAttackedEntityId",
                     new ZeroArgFunction() {
                         @Override
@@ -516,6 +539,28 @@ public final class LuaEventApi extends LuaTable {
                                 ((S27PacketExplosion) packetReceiveEvent.getPacket()).posZ =
                                         (float) val.todouble();
                             }
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "delayProcessing",
+                    new OneArgFunction() {
+                        @SuppressWarnings("unchecked")
+                        @Override
+                        public LuaValue call(LuaValue delayValue) {
+                            long delay = delayValue.tolong();
+                            net.minecraft.network.Packet<?> packet = packetReceiveEvent.getPacket();
+                            packetReceiveEvent.cancel();
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(delay);
+                                } catch(InterruptedException ignored) {}
+                                mc.addScheduledTask(() -> {
+                                    if(mc.getNetHandler() != null) {
+                                        ((Packet<INetHandlerPlayClient>) packet).processPacket(mc.getNetHandler());
+                                    }
+                                });
+                            }).start();
                             return LuaValue.NIL;
                         }
                     });

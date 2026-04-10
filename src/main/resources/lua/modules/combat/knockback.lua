@@ -34,7 +34,7 @@ alya.events.on("motion", function(event)
                 elseif targetEntity.hurtTime <= hurtTimeThreshold.getValue() then
 
                     if packetWTap.getValue() then
-                        alya.packets.sendAction("STOP_SPRINTING")
+                        alya.mc.sendSprintPacket(false)
                     end
 
                     alya.combat.attackEntity(entityIdentifier)
@@ -50,7 +50,7 @@ alya.events.on("motion", function(event)
         end
     else
         if shouldRestartSprint then
-            alya.packets.sendAction("START_SPRINTING")
+            alya.mc.sendSprintPacket(true)
             shouldRestartSprint = false
         end
     end

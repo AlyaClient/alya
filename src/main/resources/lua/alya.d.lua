@@ -90,6 +90,7 @@
 ---@class AlyaPacketSendEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
 ---@field getEntityAction fun(): string|nil action name for C0BPacketEntityAction (e.g. "STOP_SPRINTING"), nil otherwise
+---@field delayProcessing fun(delay: integer)
 
 ---@class AlyaPacketReceiveEvent : AlyaCancelableEvent
 ---@field getPacketClass fun(): string
@@ -100,6 +101,7 @@
 ---@field setMotionX fun(v: number)
 ---@field setMotionY fun(v: number)
 ---@field setMotionZ fun(v: number)
+---@field delayProcessing fun(delay: integer)
 
 ---@class AlyaModules
 local AlyaModules = {}
@@ -394,6 +396,8 @@ function AlyaMC.getHurtTime() end
 function AlyaMC.getEntityId() end
 ---@param boolean
 function AlyaMC.setSneakPressed(pressed) end
+---@param boolean
+function AlyaMC.isOnSolidBlock() end
 
 ---sets the player's step height (vanilla default is 0.5)
 ---@param height number
@@ -450,6 +454,10 @@ function AlyaMC.resetHitboxExpansion() end
 ---sends a chat message to the server
 ---@param message string
 function AlyaMC.sendChatMessage(message) end
+
+---sends a C0BPacketEntityAction to update the server sprint state manually
+---@param state boolean true for START_SPRINTING, false for STOP_SPRINTING
+function AlyaMC.sendSprintPacket(state) end
 
 ---breaks a block using the specified action and position
 ---@param action integer 0 = START_DESTROY_BLOCK, 1 = STOP_DESTROY_BLOCK, 2 = ABORT_DESTROY_BLOCK

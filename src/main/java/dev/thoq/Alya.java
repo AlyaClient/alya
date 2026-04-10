@@ -106,10 +106,12 @@ public final class Alya {
                 new Script(Category.PLAYER, "norotate"),
                 new Script(Category.PLAYER, "timer"),
                 new Script(Category.EXPLOIT, "disabler"),
+                new Script(Category.EXPLOIT, "chatfilter"),
+                new Script(Category.EXPLOIT, "femboyify"),
+                new Script(Category.EXPLOIT, "pingspoofer"),
                 new Script(Category.OTHER, "hackerdetector"),
                 new Script(Category.OTHER, "worldtime"),
-                new Script(Category.OTHER, "chatfilter"),
-                new Script(Category.OTHER, "femboyify")
+                new Script(Category.OTHER, "dev")
         );
     }
 

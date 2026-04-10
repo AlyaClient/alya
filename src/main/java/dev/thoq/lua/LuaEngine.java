@@ -23,6 +23,7 @@ public final class LuaEngine {
     private final Globals globals;
     private final List<String> loadedScripts = new ArrayList<>();
     private final Set<String> loadedExternalScripts = new LinkedHashSet<>();
+    private boolean isLoadingExternalScript = false;
     private LuaEventApi eventApi;
 
     public LuaEngine() {
@@ -228,6 +229,7 @@ public final class LuaEngine {
     }
 
     public void loadExternalScript(final File file) {
+        isLoadingExternalScript = true;
         try(final FileInputStream fis = new FileInputStream(file)) {
             final LuaValue chunk = globals.load(new InputStreamReader(fis), file.getName());
             chunk.call();
@@ -239,6 +241,8 @@ public final class LuaEngine {
             ChatUtil.sendError("[Lua] " + file.getName() + ": " + luaError.getMessage());
         } catch(final Exception exception) {
             Alya.getInstance().getLogger().error("Error loading {}: {}", file.getName(), exception.getMessage());
+        } finally {
+            isLoadingExternalScript = false;
         }
     }
 
@@ -308,6 +312,10 @@ public final class LuaEngine {
 
     public boolean isExternalScriptLoaded(final String fileName) {
         return loadedExternalScripts.contains(fileName);
+    }
+
+    public boolean isLoadingExternalScript() {
+        return isLoadingExternalScript;
     }
 
     public void toggleExternalScript(final String fileName) {

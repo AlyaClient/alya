@@ -239,15 +239,17 @@ alya.events.on("motion", function(motionEvent)
         end
     end
 
-    if tomfoolery.isEnabled() then
-        for _, targetEntity in ipairs(targetEntities) do
-            if shouldExecuteAttack() and isFacingEntity(targetEntity, calculatedYaw, calculatedPitch) then
-                executeAttack(targetEntity)
+    if shouldExecuteAttack() then
+        if tomfoolery.isEnabled() then
+            for _, targetEntity in ipairs(targetEntities) do
+                if not rotationMode.is("Legit") or isFacingEntity(targetEntity, calculatedYaw, calculatedPitch) then
+                    executeAttack(targetEntity)
+                end
             end
-        end
-    else
-        if shouldExecuteAttack() and isFacingEntity(primaryTarget, calculatedYaw, calculatedPitch) then
-            executeAttack(primaryTarget)
+        else
+            if not rotationMode.is("Legit") or isFacingEntity(primaryTarget, calculatedYaw, calculatedPitch) then
+                executeAttack(primaryTarget)
+            end
         end
     end
     executeBlocking()
