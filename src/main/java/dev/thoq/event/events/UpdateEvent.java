@@ -31,8 +31,8 @@ public final class UpdateEvent implements IEvent, ICancelable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof UpdateEvent;
+    public boolean equals(Object object) {
+        return object instanceof UpdateEvent;
     }
 
     @Override
@@ -54,4 +54,6 @@ public final class UpdateEvent implements IEvent, ICancelable {
     public void cancel() {
         this.canceled = true;
     }
+
+
 }

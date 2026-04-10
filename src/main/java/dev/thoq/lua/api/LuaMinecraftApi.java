@@ -834,7 +834,7 @@ public final class LuaMinecraftApi extends LuaTable {
                         double blockZ = Math.floor(z);
                         double fracX = x - blockX;
                         double fracZ = z - blockZ;
-                        double edgeThreshold = 0.3;
+                        double edgeThreshold = 0.55;
                         boolean nearEdge =
                                 fracX < edgeThreshold
                                         || fracX > (1.0 - edgeThreshold)
