@@ -3,7 +3,7 @@ package net.minecraft.network.play.client;
 import java.io.IOException;
 
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import dev.thoq.viamcp.loadingbase.ViaLoadingBase;
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
@@ -38,7 +38,7 @@ public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer
     }
 
     public void writePacketData(PacketBuffer buf) throws IOException {
-        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_17)) {
             buf.writeInt(this.windowId);
         } else {
             buf.writeByte(this.windowId);
