@@ -29,6 +29,7 @@ import org.lwjgl.opengl.GL11;
 
 @SuppressWarnings("unused")
 public final class RenderUtility {
+
     public static void drawRect(
             final float x, final float y, final float width, final float height, final int color) {
         Gui.drawRect(x, y, x + width, y + height, color);
@@ -495,4 +496,22 @@ public final class RenderUtility {
         GlStateManager.enableAlpha();
         GlStateManager.disableBlend();
     }
+
+    public static int interpolateColor(int from, int to, float t) {
+        int aFrom = (from >> 24) & 0xFF, rFrom = (from >> 16) & 0xFF,
+                gFrom = (from >> 8) & 0xFF,  bFrom = from & 0xFF;
+        int aTo   = (to   >> 24) & 0xFF, rTo   = (to   >> 16) & 0xFF,
+                gTo   = (to   >>  8) & 0xFF, bTo   = to   & 0xFF;
+        return extractColor(t, aFrom, rFrom, gFrom, bFrom, aTo, rTo, gTo, bTo);
+    }
+
+    public static int extractColor(float t, int aFrom, int rFrom, int gFrom, int bFrom, int aTo, int rTo, int gTo, int bTo) {
+        int a = (int)(aFrom + (aTo - aFrom) * t);
+        int r = (int)(rFrom + (rTo - rFrom) * t);
+        int g = (int)(gFrom + (gTo - gFrom) * t);
+        int b = (int)(bFrom + (bTo - bFrom) * t);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+
 }

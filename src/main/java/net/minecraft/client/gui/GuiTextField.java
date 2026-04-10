@@ -2,6 +2,8 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import dev.thoq.gui.UIConstants;
+import dev.thoq.util.render.RenderUtility;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -52,6 +54,13 @@ public class GuiTextField extends Gui {
 
   private GuiPageButtonList.GuiResponder field_175210_x;
   private Predicate<String> field_175209_y = Predicates.<String>alwaysTrue();
+
+  /** Underline fade animation: 0.0 = gray (#555555), 1.0 = ACCENT_COLOR */
+  private float underlineProgress = 0.0f;
+
+  private static final int UNDERLINE_COLOR_UNFOCUSED = 0xFF555555;
+  private static final long FADE_DURATION_MS = 200;
+  private long lastUpdateTime = System.currentTimeMillis();
 
   public GuiTextField(
       int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
@@ -398,22 +407,19 @@ public class GuiTextField extends Gui {
 
   /** Draws the textbox */
   public void drawTextBox() {
-    if (this.getVisible()) {
-      if (this.getEnableBackgroundDrawing()) {
-        drawRect(
-            this.xPosition - 1,
-            this.yPosition - 1,
-            this.xPosition + this.width + 1,
-            this.yPosition + this.height + 1,
-            -6250336);
-        drawRect(
-            this.xPosition,
-            this.yPosition,
-            this.xPosition + this.width,
-            this.yPosition + this.height,
-            -16777216);
-      }
+    long now = System.currentTimeMillis();
+    long elapsed = now - lastUpdateTime;
+    lastUpdateTime = now;
+    float delta = (float) elapsed / FADE_DURATION_MS;
+    if (this.isFocused) {
+      underlineProgress = Math.min(1.0f, underlineProgress + delta);
+    } else {
+      underlineProgress = Math.max(0.0f, underlineProgress - delta);
+    }
 
+    int underlineColor = RenderUtility.interpolateColor(UNDERLINE_COLOR_UNFOCUSED, UIConstants.ACCENT_COLOR, underlineProgress);
+
+    if (this.getVisible()) {
       int i = this.isEnabled ? this.enabledColor : this.disabledColor;
       int j = this.cursorPosition - this.lineScrollOffset;
       int k = this.selectionEnd - this.lineScrollOffset;
@@ -431,7 +437,7 @@ public class GuiTextField extends Gui {
         k = s.length();
       }
 
-      if (s.length() > 0) {
+      if (!s.isEmpty()) {
         String s1 = flag ? s.substring(0, j) : s;
         j1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) l, (float) i1, i);
       }
@@ -467,6 +473,9 @@ public class GuiTextField extends Gui {
         int l1 = l + this.fontRendererInstance.getStringWidth(s.substring(0, k));
         this.drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.FONT_HEIGHT);
       }
+
+      int underlineY = this.yPosition + this.height;
+      Gui.drawRect(this.xPosition, underlineY, this.xPosition + this.width, underlineY + 1, underlineColor);
     }
   }
 
@@ -553,6 +562,7 @@ public class GuiTextField extends Gui {
     }
 
     this.isFocused = p_146195_1_;
+    this.lastUpdateTime = System.currentTimeMillis();
   }
 
   /** Getter for the focused field */
