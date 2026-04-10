@@ -79,7 +79,7 @@ alya.events.on("motion", function(event)
         local pitch = alya.mc.getCameraPitch()
         local yaw = alya.mc.getCameraYaw()
 
-        local pitchOk = alya.mathutil.isBetween(pitch, 72, 87)
+        local pitchOk = alya.mathutil.isBetween(pitch, 45, 90)
         local yawOk = alya.mathutil.isBetween(yaw, yaw - 110, yaw + 110)
 
         shouldSneak = pitchOk and yawOk
