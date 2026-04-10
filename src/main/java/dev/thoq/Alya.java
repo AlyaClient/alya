@@ -83,7 +83,7 @@ public final class Alya {
                 new Script(Category.MOVEMENT, "highjump"),
                 new Script(Category.MOVEMENT, "wee"),
                 new Script(Category.MOVEMENT, "sneak"),
-                new Script(Category.PLAYER, "sprint"),
+                new Script(Category.MOVEMENT, "sprint"),
                 new Script(Category.PLAYER, "noslowdown"),
                 new Script(Category.PLAYER, "inventory"),
                 //todo: fix blink
