@@ -7,19 +7,25 @@ import dev.thoq.alya.BuildConfig;
 import dev.thoq.gui.auth.AltManagerGui;
 import dev.thoq.util.font.AlyaFontRenderer;
 import dev.thoq.util.misc.BrowserUtil;
-import dev.thoq.util.render.ShaderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.optifine.CustomPanorama;
+import net.optifine.CustomPanoramaProperties;
 import net.optifine.reflect.Reflector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.util.glu.Project;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -38,16 +44,15 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     private static final Logger logger = LogManager.getLogger(GuiMainMenu.class);
     private static final Random RANDOM = new Random();
-    private static ShaderUtil menuShader = null;
-
+    private float updateCounter;
+    private int panoramaTimer;
+    private static final ResourceLocation[] titlePanoramaPaths = new ResourceLocation[]{new ResourceLocation("client/panorama/panorama_0.png"), new ResourceLocation("client/panorama/panorama_1.png"), new ResourceLocation("client/panorama/panorama_2.png"), new ResourceLocation("client/panorama/panorama_3.png"), new ResourceLocation("client/panorama/panorama_4.png"), new ResourceLocation("client/panorama/panorama_5.png")};
     private final boolean field_175375_v = true;
-
+    private ResourceLocation backgroundTexture;
     private final Object threadLock = new Object();
 
     private String openGLWarning1;
-
     private String openGLWarning2;
-
     private String openGLWarningLink;
     public static final String field_96138_a =
             "Please click "
@@ -84,6 +89,11 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     @Override
+    public void updateScreen() {
+        ++this.panoramaTimer;
+    }
+
+    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
     }
 
@@ -93,6 +103,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
             int n = RANDOM.nextInt(PHOTOS) + 1;
             randomImage = new ResourceLocation("client/assets/femboys/" + n + ".png");
         }
+
+        final DynamicTexture viewportTexture1 = new DynamicTexture(256, 256);
+        this.backgroundTexture = this.mc.getTextureManager().getDynamicTextureLocation("background", viewportTexture1);
 
         final DynamicTexture viewportTexture = new DynamicTexture(256, 256);
         ResourceLocation backgroundTexture =
@@ -197,6 +210,15 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     @Override
+    public void confirmClicked(boolean result, int id) {
+        if(result) {
+            BrowserUtil.open(this.openGLWarningLink);
+        }
+
+        this.mc.displayGuiScreen(this);
+    }
+
+    @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if(button.id == 0) {
             this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
@@ -229,20 +251,181 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
     }
 
-    @Override
-    public void confirmClicked(boolean result, int id) {
-        if(result) {
-            BrowserUtil.open(this.openGLWarningLink);
+    private void drawPanorama(int p_73970_1_, int p_73970_2_, float p_73970_3_) {
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.matrixMode(5889);
+        GlStateManager.pushMatrix();
+        GlStateManager.loadIdentity();
+        Project.gluPerspective(120.0F, 1.0F, 0.05F, 10.0F);
+        GlStateManager.matrixMode(5888);
+        GlStateManager.pushMatrix();
+        GlStateManager.loadIdentity();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.disableCull();
+        GlStateManager.depthMask(false);
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        int i = 8;
+        int j = 64;
+        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
+
+        if(custompanoramaproperties != null) {
+            j = custompanoramaproperties.getBlur1();
         }
 
-        this.mc.displayGuiScreen(this);
+        for(int k = 0; k < j; ++k) {
+            GlStateManager.pushMatrix();
+            float f = ((float) (k % i) / (float) i - 0.5F) / 64.0F;
+            float f1 = ((float) (k / i) / (float) i - 0.5F) / 64.0F;
+            float f2 = 0.0F;
+            GlStateManager.translate(f, f1, f2);
+            GlStateManager.rotate(MathHelper.sin(((float) this.panoramaTimer + p_73970_3_) / 400.0F) * 25.0F + 20.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(-((float) this.panoramaTimer + p_73970_3_) * 0.1F, 0.0F, 1.0F, 0.0F);
+
+            for(int l = 0; l < 6; ++l) {
+                GlStateManager.pushMatrix();
+
+                if(l == 1) {
+                    GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+                }
+
+                if(l == 2) {
+                    GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+                }
+
+                if(l == 3) {
+                    GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+                }
+
+                if(l == 4) {
+                    GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
+                }
+
+                if(l == 5) {
+                    GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
+                }
+
+                ResourceLocation[] aresourcelocation = titlePanoramaPaths;
+
+                if(custompanoramaproperties != null) {
+                    aresourcelocation = custompanoramaproperties.getPanoramaLocations();
+                }
+
+                this.mc.getTextureManager().bindTexture(aresourcelocation[l]);
+                worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+                int i1 = 255 / (k + 1);
+                float f3 = 0.0F;
+                worldrenderer.pos(-1.0D, -1.0D, 1.0D).tex(0.0D, 0.0D).color(255, 255, 255, i1).endVertex();
+                worldrenderer.pos(1.0D, -1.0D, 1.0D).tex(1.0D, 0.0D).color(255, 255, 255, i1).endVertex();
+                worldrenderer.pos(1.0D, 1.0D, 1.0D).tex(1.0D, 1.0D).color(255, 255, 255, i1).endVertex();
+                worldrenderer.pos(-1.0D, 1.0D, 1.0D).tex(0.0D, 1.0D).color(255, 255, 255, i1).endVertex();
+                tessellator.draw();
+                GlStateManager.popMatrix();
+            }
+
+            GlStateManager.popMatrix();
+            GlStateManager.colorMask(true, true, true, false);
+        }
+
+        worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
+        GlStateManager.colorMask(true, true, true, true);
+        GlStateManager.matrixMode(5889);
+        GlStateManager.popMatrix();
+        GlStateManager.matrixMode(5888);
+        GlStateManager.popMatrix();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableCull();
+        GlStateManager.enableDepth();
+    }
+
+    private void rotateAndBlurSkybox(float p_73968_1_) {
+        this.mc.getTextureManager().bindTexture(this.backgroundTexture);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, 256, 256);
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.colorMask(true, true, true, false);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        GlStateManager.disableAlpha();
+        int i = 3;
+        int j = 3;
+        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
+
+        if(custompanoramaproperties != null) {
+            j = custompanoramaproperties.getBlur2();
+        }
+
+        for(int k = 0; k < j; ++k) {
+            float f = 1.0F / (float) (k + 1);
+            int l = this.width;
+            int i1 = this.height;
+            float f1 = (float) (k - i / 2) / 256.0F;
+            worldrenderer.pos(l, i1, this.zLevel).tex(0.0F + f1, 1.0D).color(1.0F, 1.0F, 1.0F, f).endVertex();
+            worldrenderer.pos(l, 0.0D, this.zLevel).tex(1.0F + f1, 1.0D).color(1.0F, 1.0F, 1.0F, f).endVertex();
+            worldrenderer.pos(0.0D, 0.0D, this.zLevel).tex(1.0F + f1, 0.0D).color(1.0F, 1.0F, 1.0F, f).endVertex();
+            worldrenderer.pos(0.0D, i1, this.zLevel).tex(0.0F + f1, 0.0D).color(1.0F, 1.0F, 1.0F, f).endVertex();
+        }
+
+        tessellator.draw();
+        GlStateManager.enableAlpha();
+        GlStateManager.colorMask(true, true, true, true);
+    }
+
+    private void renderSkybox(int p_73971_1_, int p_73971_2_, float p_73971_3_) {
+        this.mc.getFramebuffer().unbindFramebuffer();
+        GlStateManager.viewport(0, 0, 256, 256);
+        this.drawPanorama(p_73971_1_, p_73971_2_, p_73971_3_);
+        this.rotateAndBlurSkybox(p_73971_3_);
+        int i = 3;
+        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
+
+        if(custompanoramaproperties != null) {
+            i = custompanoramaproperties.getBlur3();
+        }
+
+        for(int j = 0; j < i; ++j) {
+            this.rotateAndBlurSkybox(p_73971_3_);
+            this.rotateAndBlurSkybox(p_73971_3_);
+        }
+
+        this.mc.getFramebuffer().bindFramebuffer(true);
+        GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
+        float f2 = this.width > this.height ? 120.0F / (float) this.width : 120.0F / (float) this.height;
+        float f = (float) this.height * f2 / 256.0F;
+        float f1 = (float) this.width * f2 / 256.0F;
+        int k = this.width;
+        int l = this.height;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        worldrenderer.pos(0.0D, l, this.zLevel).tex(0.5F - f, 0.5F + f1).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+        worldrenderer.pos(k, l, this.zLevel).tex(0.5F - f, 0.5F - f1).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+        worldrenderer.pos(k, 0.0D, this.zLevel).tex(0.5F + f, 0.5F - f1).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, this.zLevel).tex(0.5F + f, 0.5F + f1).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+        tessellator.draw();
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        if(menuShader == null) menuShader = new ShaderUtil("client/shaders/main_menu_bg.glsl");
-        menuShader.render();
-
+        GlStateManager.disableAlpha();
+        this.renderSkybox(mouseX, mouseY, partialTicks);
+        GlStateManager.enableAlpha();
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        int i = 274;
+        int j = this.width / 2 - i / 2;
+        int k = 30;
+        int l = -2130706433;
+        int i1 = 16777215;
+        int j1 = 0;
+        int k1 = Integer.MIN_VALUE;
         int scaledSize = 140;
         int buttonY = this.height / 2 + 10;
         int maxLogoSize = buttonY - 20;
