@@ -120,8 +120,57 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         int optionsWidth = 24 + (int) Alya.getInstance().getFontRendererSmall().getStringWidth(I18n.format("menu.options").replace("...", "")) + 4;
         int langWidth = 24 + (int) Alya.getInstance().getFontRendererSmall().getStringWidth(I18n.format("options.language").replace("...", "")) + 4;
+        int senseWidth = 24 + (int) Alya.getInstance().getFontRendererSmall().getStringWidth("Sense") + 4;
+        int discordWidth = 24 + (int) Alya.getInstance().getFontRendererSmall().getStringWidth("Discord") + 4;
+        int langX = this.width - 24 - 4 - optionsWidth - 2 - langWidth - 2;
+        int senseX = langX - senseWidth - 2;
+        int discordX = senseX - discordWidth - 2;
         this.buttonList.add(
-                new GuiButton(5, this.width - 24 - 4 - optionsWidth - 2 - langWidth - 2, 4, langWidth, 24, "") {
+                new GuiButton(10, senseX, 4, senseWidth, 24, "") {
+                    @Override
+                    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+                        if(this.visible) {
+                            this.hovered =
+                                    mouseX >= this.xPosition
+                                            && mouseY >= this.yPosition
+                                            && mouseX < this.xPosition + this.width
+                                            && mouseY < this.yPosition + this.height;
+                            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                            mc.getTextureManager().bindTexture(new ResourceLocation(mc.gameSettings.sense ? "client/icons/sense.png" : "client/icons/no_sense.png"));
+                            drawModalRectWithCustomSizedTexture(this.xPosition + 4, this.yPosition + 4, 0, 0, 16, 16, 16, 16);
+
+                            String text = "Sense";
+                            AlyaFontRenderer font = Alya.getInstance().getFontRendererSmall();
+                            float textY = this.yPosition + (this.height - font.getHeight()) / 2.0F + 1.0F;
+                            font.drawString(text, this.xPosition + 22, textY, -1);
+                            this.mouseDragged(mc, mouseX, mouseY);
+                        }
+                    }
+                });
+        this.buttonList.add(
+                new GuiButton(11, discordX, 4, discordWidth, 24, "") {
+                    @Override
+                    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+                        if(this.visible) {
+                            this.hovered =
+                                    mouseX >= this.xPosition
+                                            && mouseY >= this.yPosition
+                                            && mouseX < this.xPosition + this.width
+                                            && mouseY < this.yPosition + this.height;
+                            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                            mc.getTextureManager().bindTexture(new ResourceLocation("client/icons/discord.png"));
+                            drawModalRectWithCustomSizedTexture(this.xPosition + 4, this.yPosition + 4, 0, 0, 16, 16, 16, 16);
+
+                            String text = "Discord";
+                            AlyaFontRenderer font = Alya.getInstance().getFontRendererSmall();
+                            float textY = this.yPosition + (this.height - font.getHeight()) / 2.0F + 1.0F;
+                            font.drawString(text, this.xPosition + 22, textY, -1);
+                            this.mouseDragged(mc, mouseX, mouseY);
+                        }
+                    }
+                });
+        this.buttonList.add(
+                new GuiButton(5, langX, 4, langWidth, 24, "") {
                     @Override
                     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
                         if(this.visible) {
@@ -239,6 +288,15 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         if(button.id == 14) {
             this.mc.displayGuiScreen(new AltManagerGui());
+        }
+
+        if(button.id == 10) {
+            this.mc.gameSettings.sense = !this.mc.gameSettings.sense;
+            this.mc.gameSettings.saveOptions();
+        }
+
+        if(button.id == 11) {
+            BrowserUtil.open("https://discord.gg/J3XUnGaZjQ");
         }
 
         if(button.id == 4) {
