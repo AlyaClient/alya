@@ -60,7 +60,7 @@ public class GuiProtocolSelector extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        list.drawScreen(mouseX, mouseY, partialTicks);
+        list.drawScreen(mouseX, mouseY);
         GlStateManager.pushMatrix();
         GlStateManager.scale(2.0, 2.0, 2.0);
         String title = EnumChatFormatting.BOLD + "ViaMCP";

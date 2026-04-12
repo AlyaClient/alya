@@ -61,7 +61,7 @@ public class GuiSnooper extends GuiScreen {
   /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     this.drawDefaultBackground();
-    this.field_146606_s.drawScreen(mouseX, mouseY, partialTicks);
+    this.field_146606_s.drawScreen(mouseX, mouseY);
     drawCenteredString(this.field_146610_i, this.width / 2, 8, 16777215);
     int i = 22;
 

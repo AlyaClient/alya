@@ -105,7 +105,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
   /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     this.drawDefaultBackground();
-    this.field_175311_g.drawScreen(mouseX, mouseY, partialTicks);
+    this.field_175311_g.drawScreen(mouseX, mouseY);
     this.drawCenteredString(this.field_175315_a, this.width / 2, 8, 16777215);
     this.drawString(this.field_175313_s, 50, 30, 10526880);
     this.drawString(this.field_175312_t, 50, 70, 10526880);
