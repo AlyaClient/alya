@@ -117,16 +117,8 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
             I18n.format("options.controls", new Object[0])));
     this.buttonList.add(
         new GuiButton(
-            102,
-            this.width / 2 - 155,
-            this.height / 6 + 96 - 6,
-            150,
-            20,
-            I18n.format("options.language", new Object[0])));
-    this.buttonList.add(
-        new GuiButton(
             103,
-            this.width / 2 + 5,
+            this.width / 2 - 155,
             this.height / 6 + 96 - 6,
             150,
             20,
@@ -134,15 +126,15 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
     this.buttonList.add(
         new GuiButton(
             105,
-            this.width / 2 - 155,
-            this.height / 6 + 120 - 6,
+            this.width / 2 + 5,
+            this.height / 6 + 96 - 6,
             150,
             20,
             I18n.format("options.resourcepack", new Object[0])));
     this.buttonList.add(
         new GuiButton(
             104,
-            this.width / 2 + 5,
+            this.width / 2 - 155,
             this.height / 6 + 120 - 6,
             150,
             20,
@@ -150,8 +142,8 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
     this.buttonList.add(
         new GuiButton(
             8675309,
-            this.width / 2 - 155,
-            this.height / 6 + 144 - 6,
+            this.width / 2 + 5,
+            this.height / 6 + 120 - 6,
             150,
             20,
             "Super Secret Settings..."));
@@ -159,7 +151,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
         new GuiButton(
             200,
             this.width / 2 - 100,
-            this.height / 6 + 168,
+            this.height / 6 + 168 - 6,
             200,
             20,
             I18n.format("gui.done", new Object[0])));
