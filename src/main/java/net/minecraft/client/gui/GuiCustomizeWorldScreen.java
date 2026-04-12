@@ -1756,7 +1756,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen
   /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     this.drawDefaultBackground();
-    this.field_175349_r.drawScreen(mouseX, mouseY, partialTicks);
+    this.field_175349_r.drawScreen(mouseX, mouseY);
     this.drawCenteredString(this.field_175341_a, this.width / 2, 2, 16777215);
     this.drawCenteredString(this.field_175333_f, this.width / 2, 12, 16777215);
     this.drawCenteredString(this.field_175335_g, this.width / 2, 22, 16777215);

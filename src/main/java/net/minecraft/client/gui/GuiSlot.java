@@ -61,12 +61,12 @@ public abstract class GuiSlot
     this.showSelectionBox = showSelectionBoxIn;
   }
 
-  protected void setHasListHeader(boolean hasListHeaderIn, int headerPaddingIn)
+  protected void setHasListHeader(int headerPaddingIn)
   {
-    this.hasListHeader = hasListHeaderIn;
+    this.hasListHeader = true;
     this.headerPadding = headerPaddingIn;
 
-    if (!hasListHeaderIn)
+    if (false)
     {
       this.headerPadding = 0;
     }
@@ -164,7 +164,7 @@ public abstract class GuiSlot
     }
   }
 
-  public void drawScreen(int mouseXIn, int mouseYIn, float p_148128_3_)
+  public void drawScreen(int mouseXIn, int mouseYIn)
   {
     if (this.field_178041_q)
     {
@@ -190,24 +190,24 @@ public abstract class GuiSlot
       this.drawSelectionBox(k, l, mouseXIn, mouseYIn);
       GlStateManager.disableDepth();
       int i1 = 4;
-      this.overlayBackground(0, this.top, 255, 255);
-      this.overlayBackground(this.bottom, this.height, 255, 255);
+      this.overlayBackground(0, this.top);
+      this.overlayBackground(this.bottom, this.height);
       GlStateManager.enableBlend();
       GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
       GlStateManager.disableAlpha();
       GlStateManager.shadeModel(7425);
       GlStateManager.disableTexture2D();
       worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-      worldrenderer.pos((double)this.left, (double)(this.top + i1), 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 0).endVertex();
-      worldrenderer.pos((double)this.right, (double)(this.top + i1), 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 0).endVertex();
-      worldrenderer.pos((double)this.right, (double)this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-      worldrenderer.pos((double)this.left, (double)this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+      worldrenderer.pos(this.left, this.top + i1, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 0).endVertex();
+      worldrenderer.pos(this.right, this.top + i1, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 0).endVertex();
+      worldrenderer.pos(this.right, this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+      worldrenderer.pos(this.left, this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
       tessellator.draw();
       worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-      worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-      worldrenderer.pos((double)this.right, (double)this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-      worldrenderer.pos((double)this.right, (double)(this.bottom - i1), 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 0).endVertex();
-      worldrenderer.pos((double)this.left, (double)(this.bottom - i1), 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 0).endVertex();
+      worldrenderer.pos(this.left, this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+      worldrenderer.pos(this.right, this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+      worldrenderer.pos(this.right, this.bottom - i1, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 0).endVertex();
+      worldrenderer.pos(this.left, this.bottom - i1, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 0).endVertex();
       tessellator.draw();
       int j1 = this.func_148135_f();
 
@@ -223,22 +223,22 @@ public abstract class GuiSlot
         }
 
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos((double)i, (double)this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-        worldrenderer.pos((double)j, (double)this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-        worldrenderer.pos((double)j, (double)this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-        worldrenderer.pos((double)i, (double)this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(i, this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(j, this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(j, this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(i, this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
         tessellator.draw();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos((double)i, (double)(l1 + k1), 0.0D).tex(0.0D, 1.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)j, (double)(l1 + k1), 0.0D).tex(1.0D, 1.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)j, (double)l1, 0.0D).tex(1.0D, 0.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)i, (double)l1, 0.0D).tex(0.0D, 0.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(i, l1 + k1, 0.0D).tex(0.0D, 1.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(j, l1 + k1, 0.0D).tex(1.0D, 1.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(j, l1, 0.0D).tex(1.0D, 0.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(i, l1, 0.0D).tex(0.0D, 0.0D).color(128, 128, 128, 255).endVertex();
         tessellator.draw();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos((double)i, (double)(l1 + k1 - 1), 0.0D).tex(0.0D, 1.0D).color(192, 192, 192, 255).endVertex();
-        worldrenderer.pos((double)(j - 1), (double)(l1 + k1 - 1), 0.0D).tex(1.0D, 1.0D).color(192, 192, 192, 255).endVertex();
-        worldrenderer.pos((double)(j - 1), (double)l1, 0.0D).tex(1.0D, 0.0D).color(192, 192, 192, 255).endVertex();
-        worldrenderer.pos((double)i, (double)l1, 0.0D).tex(0.0D, 0.0D).color(192, 192, 192, 255).endVertex();
+        worldrenderer.pos(i, l1 + k1 - 1, 0.0D).tex(0.0D, 1.0D).color(192, 192, 192, 255).endVertex();
+        worldrenderer.pos(j - 1, l1 + k1 - 1, 0.0D).tex(1.0D, 1.0D).color(192, 192, 192, 255).endVertex();
+        worldrenderer.pos(j - 1, l1, 0.0D).tex(1.0D, 0.0D).color(192, 192, 192, 255).endVertex();
+        worldrenderer.pos(i, l1, 0.0D).tex(0.0D, 0.0D).color(192, 192, 192, 255).endVertex();
         tessellator.draw();
       }
 
@@ -404,14 +404,14 @@ public abstract class GuiSlot
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableTexture2D();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos((double)i1, (double)(k + l + 2), 0.0D).tex(0.0D, 1.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)j1, (double)(k + l + 2), 0.0D).tex(1.0D, 1.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)j1, (double)(k - 2), 0.0D).tex(1.0D, 0.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)i1, (double)(k - 2), 0.0D).tex(0.0D, 0.0D).color(128, 128, 128, 255).endVertex();
-        worldrenderer.pos((double)(i1 + 1), (double)(k + l + 1), 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-        worldrenderer.pos((double)(j1 - 1), (double)(k + l + 1), 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-        worldrenderer.pos((double)(j1 - 1), (double)(k - 1), 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-        worldrenderer.pos((double)(i1 + 1), (double)(k - 1), 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(i1, k + l + 2, 0.0D).tex(0.0D, 1.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(j1, k + l + 2, 0.0D).tex(1.0D, 1.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(j1, k - 2, 0.0D).tex(1.0D, 0.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(i1, k - 2, 0.0D).tex(0.0D, 0.0D).color(128, 128, 128, 255).endVertex();
+        worldrenderer.pos(i1 + 1, k + l + 1, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(j1 - 1, k + l + 1, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(j1 - 1, k - 1, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+        worldrenderer.pos(i1 + 1, k - 1, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
       }
@@ -428,19 +428,58 @@ public abstract class GuiSlot
     return this.width / 2 + 124;
   }
 
-  protected void overlayBackground(int startY, int endY, int startAlpha, int endAlpha)
+  protected void overlayBackground(int startY, int endY)
   {
     Tessellator tessellator = Tessellator.getInstance();
     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-    this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
-    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-    float f = 32.0F;
-    worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-    worldrenderer.pos((double)this.left, (double)endY, 0.0D).tex(0.0D, (double)((float)endY / 32.0F)).color(64, 64, 64, endAlpha).endVertex();
-    worldrenderer.pos((double)(this.left + this.width), (double)endY, 0.0D).tex((double)((float)this.width / 32.0F), (double)((float)endY / 32.0F)).color(64, 64, 64, endAlpha).endVertex();
-    worldrenderer.pos((double)(this.left + this.width), (double)startY, 0.0D).tex((double)((float)this.width / 32.0F), (double)((float)startY / 32.0F)).color(64, 64, 64, startAlpha).endVertex();
-    worldrenderer.pos((double)this.left, (double)startY, 0.0D).tex(0.0D, (double)((float)startY / 32.0F)).color(64, 64, 64, startAlpha).endVertex();
+    GlStateManager.disableTexture2D();
+    GlStateManager.enableBlend();
+    GlStateManager.disableAlpha();
+    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+    GlStateManager.shadeModel(7425);
+
+    int startColor, endColor;
+    if (this.mc.theWorld != null) {
+      startColor = -1072689136;
+      endColor = -804253680;
+    } else {
+      startColor = 0xFF000000;
+      endColor = 0xFF0F0F0F;
+    }
+
+    float f = (float)startY / (float)this.height;
+    float f1 = (float)endY / (float)this.height;
+
+    float a = (float)(startColor >> 24 & 255) / 255.0F;
+    float r = (float)(startColor >> 16 & 255) / 255.0F;
+    float g = (float)(startColor >> 8 & 255) / 255.0F;
+    float b = (float)(startColor & 255) / 255.0F;
+    float a1 = (float)(endColor >> 24 & 255) / 255.0F;
+    float r1 = (float)(endColor >> 16 & 255) / 255.0F;
+    float g1 = (float)(endColor >> 8 & 255) / 255.0F;
+    float b1 = (float)(endColor & 255) / 255.0F;
+
+    float ar = a + (a1 - a) * f;
+    float rr = r + (r1 - r) * f;
+    float gr = g + (g1 - g) * f;
+    float br = b + (b1 - b) * f;
+
+    float ar1 = a + (a1 - a) * f1;
+    float rr1 = r + (r1 - r) * f1;
+    float gr1 = g + (g1 - g) * f1;
+    float br1 = b + (b1 - b) * f1;
+
+    worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+    worldrenderer.pos(this.right, startY, 0.0D).color(rr, gr, br, ar).endVertex();
+    worldrenderer.pos(this.left, startY, 0.0D).color(rr, gr, br, ar).endVertex();
+    worldrenderer.pos(this.left, endY, 0.0D).color(rr1, gr1, br1, ar1).endVertex();
+    worldrenderer.pos(this.right, endY, 0.0D).color(rr1, gr1, br1, ar1).endVertex();
     tessellator.draw();
+
+    GlStateManager.shadeModel(7424);
+    GlStateManager.disableBlend();
+    GlStateManager.enableAlpha();
+    GlStateManager.enableTexture2D();
   }
 
   public void setSlotXBoundsFromLeft(int leftIn)
@@ -456,16 +495,6 @@ public abstract class GuiSlot
 
   protected void drawContainerBackground(Tessellator p_drawContainerBackground_1_)
   {
-    WorldRenderer worldrenderer = p_drawContainerBackground_1_.getWorldRenderer();
-    this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
-    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-    float f = 32.0F;
-    worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-    worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex((double)((float)this.left / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
-    worldrenderer.pos((double)this.right, (double)this.bottom, 0.0D).tex((double)((float)this.right / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
-    worldrenderer.pos((double)this.right, (double)this.top, 0.0D).tex((double)((float)this.right / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
-    worldrenderer.pos((double)this.left, (double)this.top, 0.0D).tex((double)((float)this.left / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
-    p_drawContainerBackground_1_.draw();
   }
 }
 

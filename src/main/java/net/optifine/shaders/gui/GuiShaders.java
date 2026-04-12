@@ -335,7 +335,7 @@ public class GuiShaders extends GuiScreenOF
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.shaderList.drawScreen(mouseX, mouseY, partialTicks);
+        this.shaderList.drawScreen(mouseX, mouseY);
 
         if (this.updateTimer <= 0)
         {

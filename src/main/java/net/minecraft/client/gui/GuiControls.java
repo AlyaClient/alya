@@ -149,7 +149,7 @@ public class GuiControls extends GuiScreen {
   /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     this.drawDefaultBackground();
-    this.keyBindingList.drawScreen(mouseX, mouseY, partialTicks);
+    this.keyBindingList.drawScreen(mouseX, mouseY);
     this.drawCenteredString(this.screenTitle, this.width / 2, 8, 16777215);
     boolean flag = true;
 

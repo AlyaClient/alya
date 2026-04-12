@@ -120,6 +120,7 @@ public class GameSettings {
     public boolean useNativeTransport = true;
     public boolean entityShadows = true;
     public boolean realmsNotifications = true;
+    public boolean sense = true;
     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
     public KeyBinding keyBindBack = new KeyBinding("key.back", 31, "key.categories.movement");
@@ -925,6 +926,10 @@ public class GameSettings {
                                 this.realmsNotifications = astring[1].equals("true");
                             }
 
+                            if(astring[0].equals("sense")) {
+                                this.sense = astring[1].equals("true");
+                            }
+
                             for(KeyBinding keybinding : this.keyBindings) {
                                 if(astring[0].equals("key_" + keybinding.getKeyDescription())) {
                                     keybinding.setKeyCode(Integer.parseInt(astring[1]));
@@ -1040,6 +1045,7 @@ public class GameSettings {
             printwriter.println("useNativeTransport:" + this.useNativeTransport);
             printwriter.println("entityShadows:" + this.entityShadows);
             printwriter.println("realmsNotifications:" + this.realmsNotifications);
+            printwriter.println("sense:" + this.sense);
 
             for(KeyBinding keybinding : this.keyBindings) {
                 printwriter.println("key_" + keybinding.getKeyDescription() + ":" + keybinding.getKeyCode());

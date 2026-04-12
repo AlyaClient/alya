@@ -173,7 +173,7 @@ public class GuiStats extends GuiScreen implements IProgressMeter {
           this.height / 2 + (int) font.getFontHeight() * 2,
           16777215);
     } else {
-      this.displaySlot.drawScreen(mouseX, mouseY, partialTicks);
+      this.displaySlot.drawScreen(mouseX, mouseY);
       this.drawCenteredString(this.screenTitle, this.width / 2, 20, 16777215);
       super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -256,7 +256,7 @@ public class GuiStats extends GuiScreen implements IProgressMeter {
     protected Stats(Minecraft mcIn) {
       super(mcIn, GuiStats.this.width, GuiStats.this.height, 32, GuiStats.this.height - 64, 20);
       this.setShowSelectionBox(false);
-      this.setHasListHeader(true, 20);
+      this.setHasListHeader(20);
     }
 
     protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {}

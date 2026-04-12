@@ -216,7 +216,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
   public void drawScreen(int mouseX, int mouseY, float partialTicks)
   {
-    this.availableWorlds.drawScreen(mouseX, mouseY, partialTicks);
+    this.availableWorlds.drawScreen(mouseX, mouseY);
     this.drawCenteredString(this.fontRendererObj, this.screenTitle, this.width / 2, 20, 16777215);
     super.drawScreen(mouseX, mouseY, partialTicks);
   }

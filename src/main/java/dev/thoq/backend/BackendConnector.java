@@ -21,6 +21,7 @@
 package dev.thoq.backend;
 
 import dev.thoq.Alya;
+import net.minecraft.client.Minecraft;
 
 import java.io.IOException;
 import java.net.URI;
@@ -47,6 +48,7 @@ public final class BackendConnector {
     }
 
     public void poll() {
+        if(!Minecraft.getMinecraft().gameSettings.sense) return;
         try {
             sendUserOnline();
         } catch(final Exception exception) {

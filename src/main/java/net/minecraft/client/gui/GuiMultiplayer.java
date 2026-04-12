@@ -340,7 +340,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     this.hoveringText = null;
     this.drawDefaultBackground();
-    this.serverListSelector.drawScreen(mouseX, mouseY, partialTicks);
+    this.serverListSelector.drawScreen(mouseX, mouseY);
     drawCenteredString(I18n.format("multiplayer.title"), this.width / 2, 20, 16777215);
     super.drawScreen(mouseX, mouseY, partialTicks);
 

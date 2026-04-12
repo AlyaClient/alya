@@ -97,7 +97,7 @@ public class GuiLanguage extends GuiScreen {
 
   /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-    this.list.drawScreen(mouseX, mouseY, partialTicks);
+    this.list.drawScreen(mouseX, mouseY);
     this.drawCenteredString(
         I18n.format("options.language", new Object[0]), this.width / 2, 16, 16777215);
     this.drawCenteredString(
