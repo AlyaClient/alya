@@ -21,15 +21,7 @@ If you need further guidance, you can find us on the following platforms:
 
 ## Getting started
 
-> Here you should address guidelines about future functionalities, milestone
-labels, bugs and unlisted features, issued assignments, etc. Since now we have
-an `Issue` and a `Pull Request` template, you can reference them directly:
-
-> **ProTip:** It's important people know the rules for contributing in the
-project. It's irritating for people trying to help when they are pushed back
-because they didn't follow some process that they didn't know existed. This file
-is the place for these processes and it will lower the barrier to entry for
-contribution.
+See [README](README.md)
 
 ## Coding conventions
 
