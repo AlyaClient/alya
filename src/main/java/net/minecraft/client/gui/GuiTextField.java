@@ -2,8 +2,8 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import dev.thoq.gui.UIConstants;
-import dev.thoq.util.render.RenderUtility;
+import bypass.gui.UIConstants;
+import bypass.util.render.RenderUtility;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;

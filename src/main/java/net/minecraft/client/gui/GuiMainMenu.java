@@ -2,11 +2,11 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import dev.thoq.Alya;
-import dev.thoq.alya.BuildConfig;
-import dev.thoq.gui.auth.AltManagerGui;
-import dev.thoq.util.font.AlyaFontRenderer;
-import dev.thoq.util.misc.BrowserUtil;
+import bypass.Alya;
+import bypass.BuildConfig;
+import bypass.gui.auth.AltManagerGui;
+import bypass.util.font.AlyaFontRenderer;
+import bypass.util.misc.BrowserUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;

@@ -1,7 +1,5 @@
 package net.minecraft.client.multiplayer;
 
-import dev.thoq.Alya;
-import dev.thoq.event.events.ReachEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

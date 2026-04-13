@@ -70,7 +70,7 @@ val generateBuildConfig by tasks.registering {
     }
 
     val outputDir = generatedSrcDir.get().asFile
-    val packageDir = File(outputDir, "dev/thoq/alya")
+    val packageDir = File(outputDir, "bypass")
 
     outputs.dir(outputDir)
 
@@ -78,7 +78,7 @@ val generateBuildConfig by tasks.registering {
         packageDir.mkdirs()
         File(packageDir, "BuildConfig.java").writeText(
             """
-                package dev.thoq.alya;
+                package bypass;
                 
                 public class BuildConfig {
                     public static final String GIT_HASH = "$gitHash";

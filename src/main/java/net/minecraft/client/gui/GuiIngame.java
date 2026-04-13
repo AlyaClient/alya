@@ -2,10 +2,10 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import dev.thoq.Alya;
-import dev.thoq.event.events.Render2DEvent;
-import dev.thoq.gui.toast.ToastManager;
-import dev.thoq.lua.api.LuaMinecraftApi;
+import bypass.Alya;
+import bypass.event.events.Render2DEvent;
+import bypass.gui.toast.ToastManager;
+import bypass.lua.api.LuaMinecraftApi;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

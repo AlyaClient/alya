@@ -4,14 +4,12 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 
-import dev.thoq.Alya;
-import dev.thoq.event.events.ReachEvent;
-import dev.thoq.event.events.Render3DEvent;
+import bypass.Alya;
+import bypass.event.events.ReachEvent;
+import bypass.event.events.Render3DEvent;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -102,8 +100,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.Project;
-import dev.thoq.Alya;
-import dev.thoq.event.events.Render3DEvent;
 
 public class EntityRenderer implements IResourceManagerReloadListener {
     private static final Logger logger = LogManager.getLogger();

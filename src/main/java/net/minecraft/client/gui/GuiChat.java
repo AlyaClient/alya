@@ -1,9 +1,9 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
-import dev.thoq.Alya;
-import dev.thoq.module.Module;
-import dev.thoq.module.modules.render.KeystrokesModule;
+import bypass.Alya;
+import bypass.module.Module;
+import bypass.module.modules.render.KeystrokesModule;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;

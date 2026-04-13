@@ -20,8 +20,8 @@
 
 package start;
 
-import dev.thoq.util.misc.Array;
-import dev.thoq.util.misc.Platform;
+import bypass.util.misc.Array;
+import bypass.util.misc.Platform;
 
 public final class Main {
 

@@ -5,8 +5,8 @@ import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Optional;
 
-import dev.thoq.Alya;
-import dev.thoq.module.Module;
+import bypass.Alya;
+import bypass.module.Module;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;

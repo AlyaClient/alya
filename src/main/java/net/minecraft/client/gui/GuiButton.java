@@ -1,8 +1,8 @@
 package net.minecraft.client.gui;
 
-import dev.thoq.gui.UIConstants;
-import dev.thoq.util.font.AlyaFontRenderer;
-import dev.thoq.util.render.RenderUtility;
+import bypass.gui.UIConstants;
+import bypass.util.font.AlyaFontRenderer;
+import bypass.util.render.RenderUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;

@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import dev.thoq.gui.toast.ToastManager;
+import bypass.gui.toast.ToastManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

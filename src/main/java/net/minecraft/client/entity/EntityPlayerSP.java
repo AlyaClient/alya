@@ -1,11 +1,11 @@
 package net.minecraft.client.entity;
 
-import dev.thoq.Alya;
-import dev.thoq.event.events.MotionEvent;
-import dev.thoq.event.events.MoveEntityEvent;
-import dev.thoq.event.events.PlayerMoveEvent;
-import dev.thoq.event.events.SlowDownEvent;
-import dev.thoq.event.events.UpdateEvent;
+import bypass.Alya;
+import bypass.event.events.MotionEvent;
+import bypass.event.events.MoveEntityEvent;
+import bypass.event.events.PlayerMoveEvent;
+import bypass.event.events.SlowDownEvent;
+import bypass.event.events.UpdateEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;

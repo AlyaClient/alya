@@ -1,5 +1,6 @@
 package net.minecraft.client;
 
+import bypass.module.Module;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -12,10 +13,10 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import de.florianmichael.viamcp.fixes.AttackOrder;
-import dev.thoq.Alya;
-import dev.thoq.event.events.BlockPlaceableEvent;
-import dev.thoq.event.events.TickEvent;
-import dev.thoq.util.misc.Vector4i;
+import bypass.Alya;
+import bypass.event.events.BlockPlaceableEvent;
+import bypass.event.events.TickEvent;
+import bypass.util.misc.Vector4i;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -117,7 +118,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import static net.minecraft.src.Config.getDefaultResourcePack;
 import static net.minecraft.src.Config.readIconImage;
 
 public class Minecraft implements IThreadListener {
@@ -1962,7 +1962,7 @@ public class Minecraft implements IThreadListener {
                     if(this.currentScreen != null) {
                         this.currentScreen.handleKeyboardInput();
                     } else {
-                        for(dev.thoq.module.Module module :
+                        for(Module module :
                                 Alya.getInstance().getModuleManager().getModules()) {
                             if(module.getKeyCode() != 0 && module.getKeyCode() == k) {
                                 module.toggle();
