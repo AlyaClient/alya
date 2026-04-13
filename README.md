@@ -1,6 +1,16 @@
+<div align="center">
+  <img src="src/main/resources/assets/minecraft/client/assets/gui/logo.png" width="128" height="128" alt="Alya Logo" />
+
 # Alya
 
-Alya client is a free, open-source Minecraft cheat client.
+*A free, open-source Minecraft cheat client.*
+
+![Build](https://github.com/alyaclient/alya/actions/workflows/release.yml/badge.svg)
+![License](https://img.shields.io/badge/license-GPL--2.0--only-pink)
+![Java](https://img.shields.io/badge/java-25-pink)
+</div>
+
+---
 
 ## Setting up
 
@@ -18,6 +28,8 @@ Open the project in IntelliJ, import it and run the `Start` or `Start (macOS)` r
 1. Init the Gradle wrapper and package libraries: `./scripts/init.sh`
 2. Build the project: `./gradlew jar shadowJar`
 3. Run the project: `./scripts/run.sh`
+
+---
 
 ## Project Structure
 
@@ -45,33 +57,3 @@ you will (obviously) be digging through `net.minecraft`.
 ├── scripts                # utilities
 └── build.gradle.kts
 ```
-
-## Support
-
-If you have trouble, please feel free to join our [Discord](https://discord.gg/J3XUnGaZjQ)
-or DM `@thoqx` on Discord.
-
-## License
-
-This project uses the GPL-2.0-only license.
-
-PERMISSIONS
-- Use the software for any purpose
-- Study and read the source code
-- Modify the source code
-- Distribute original copies
-- Distribute modified copies, under the same license
-
-CONDITIONS
-- Copyleft: any distributed version must also be licensed under GPL-2.0
-- Source code must be made available when distributing
-- Original license and copyright notices must be preserved
-- No additional restrictions may be imposed on recipients
-
-RESTRICTIONS
-- Cannot be relicensed under a different or more restrictive license
-- Cannot be distributed as closed-source without providing source
-- Cannot be upgraded to GPL-3.0 or any other version
-  (the "-only" suffix locks it strictly to version 2)
-
-See the [LICENSE](LICENSE) file for more information.
