@@ -1,0 +1,95 @@
+/*
+ * Copyright (c) 2026 Alya Client.
+ *
+ * Alya Client is a free, open-source Minecraft hacked client.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+package bypass.util.openauth.model.response;
+
+/**
+ * Minecraft player profile
+ *
+ * <p>Represents a Minecraft player profile data. UUID is {@link #id} and username is {@link #name}.
+ *
+ * @author Litarvan
+ * @version 1.1.0
+ */
+public class MinecraftProfile {
+    private final String id;
+    private final String name;
+    private final MinecraftSkin[] skins;
+
+    public MinecraftProfile(String id, String name, MinecraftSkin[] skins) {
+        this.id = id;
+        this.name = name;
+        this.skins = skins;
+    }
+
+    /**
+     * @return The player Minecraft UUID
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @return The player Minecraft username
+     */
+    public String getName() {
+        return name;
+    }
+
+    public MinecraftSkin[] getSkins() {
+        return skins;
+    }
+
+    @SuppressWarnings("unused")
+    public static class MinecraftSkin {
+        private final String id;
+        private final String state;
+        private final String url;
+        private final String variant;
+        private final String alias;
+
+        public MinecraftSkin(String id, String state, String url, String variant, String alias) {
+            this.id = id;
+            this.state = state;
+            this.url = url;
+            this.variant = variant;
+            this.alias = alias;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getVariant() {
+            return variant;
+        }
+
+        public String getAlias() {
+            return alias;
+        }
+    }
+}

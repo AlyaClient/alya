@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
-import dev.thoq.Alya;
-import dev.thoq.util.font.AlyaFontRenderer;
+import bypass.Alya;
+import bypass.util.font.AlyaFontRenderer;
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;

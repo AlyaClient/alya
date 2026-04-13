@@ -1,7 +1,7 @@
 package net.minecraft.util;
 
-import dev.thoq.Alya;
-import dev.thoq.event.events.PlayerInputEvent;
+import bypass.Alya;
+import bypass.event.events.PlayerInputEvent;
 import net.minecraft.client.settings.GameSettings;
 
 public class MovementInputFromOptions extends MovementInput {
