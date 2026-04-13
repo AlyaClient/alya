@@ -1,7 +1,7 @@
 <div align="center">
   <img src="src/main/resources/assets/minecraft/client/assets/gui/logo.png" width="128" height="128" alt="Alya Logo" />
 
-# Alya
+<h1>Alya</h1>
 
 *A free, open-source Minecraft cheat client.*
 
