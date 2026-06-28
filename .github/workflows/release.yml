@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up JDK 25
         uses: actions/setup-java@v4
@@ -48,10 +51,11 @@ jobs:
         id: sha
         run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Update latest tag
+      - name: Update latest tag (force update)
         run: |
+          git fetch --tags origin
           git tag -f latest
-          git push --force origin latest
+          git push origin +refs/tags/latest:refs/tags/latest
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
