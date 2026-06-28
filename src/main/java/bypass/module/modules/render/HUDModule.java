@@ -109,7 +109,7 @@ public final class HUDModule extends Module {
             if(image != null) {
                 final int screenWidth = event.scaledResolution().getScaledWidth();
                 final int screenHeight = event.scaledResolution().getScaledHeight();
-                final int maxSize = 100;
+                final int maxSize = 150;
                 MC.getTextureManager().bindTexture(image);
                 final int texW = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
                 final int texH = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
@@ -125,7 +125,7 @@ public final class HUDModule extends Module {
     }
 
     private void updateBPS() {
-        if (MC.thePlayer == null) {
+        if(MC.thePlayer == null) {
             blocksPerSecond = 0;
             return;
         }
@@ -136,7 +136,9 @@ public final class HUDModule extends Module {
             final double deltaZ = MC.thePlayer.posZ - lastZ;
             final double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
             final double timeDelta = (currentTime - lastBPSUpdate) / 1000.0;
-            if(timeDelta > 0) blocksPerSecond = blocksPerSecond * 0.8 + (distance / timeDelta) * 0.2;
+            if(timeDelta > 0) {
+                blocksPerSecond = blocksPerSecond * 0.8 + (distance / timeDelta) * 0.2;
+            }
             lastX = MC.thePlayer.posX;
             lastY = MC.thePlayer.posY;
             lastZ = MC.thePlayer.posZ;

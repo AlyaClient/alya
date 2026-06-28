@@ -20,6 +20,10 @@
 
 package bypass.lua.api;
 
+import bypass.Alya;
+import bypass.event.EventHandler;
+import bypass.event.events.PacketSendEvent;
+import bypass.event.events.TickEvent;
 import bypass.util.IUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -30,10 +34,10 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import org.luaj.vm2.LuaTable;
@@ -49,8 +53,10 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private final Set<String> friends = new HashSet<>();
     public static boolean isForcedBlocking = false;
+    public boolean isC0BPacketEntityActionBeingSent = false;
 
     public LuaCombatApi() {
+        Alya.getInstance().getEventBus().subscribe(this);
         set(
                 "setForcedBlocking",
                 new OneArgFunction() {
@@ -245,14 +251,18 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                         if(mc.theWorld == null || mc.thePlayer == null) {
                             return LuaValue.NIL;
                         }
-                        int id = entityIdValue.toint();
-                        Entity entity = mc.theWorld.getEntityByID(id);
+                        final int id = entityIdValue.toint();
+                        final Entity entity = mc.theWorld.getEntityByID(id);
                         if(entity == null) {
                             return LuaValue.FALSE;
                         }
+
+                        if(isC0BPacketEntityActionBeingSent) {
+                            return LuaValue.FALSE;
+                        }
+
                         mc.thePlayer.swingItem();
-                        mc.getNetHandler()
-                                .addToSendQueue(new C02PacketUseEntity(entity, C02PacketUseEntity.Action.ATTACK));
+                        mc.playerController.attackEntity(mc.thePlayer, entity);
                         return LuaValue.TRUE;
                     }
                 });
@@ -546,8 +556,8 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
                         if(mc.thePlayer == null) {
                             return LuaValue.NIL;
                         }
-                        float yaw = (float) args.checkdouble(1);
-                        float pitch = (float) args.checkdouble(2);
+                        final float yaw = (float) args.checkdouble(1);
+                        final float pitch = (float) Math.clamp(args.checkdouble(2), -90.0, 90.0);
                         mc.thePlayer.rotationYaw = yaw;
                         mc.thePlayer.renderYawOffset = yaw;
                         mc.thePlayer.rotationYawHead = yaw;
@@ -684,4 +694,18 @@ public final class LuaCombatApi extends LuaTable implements IUtil {
         t.set("isInvisible", LuaValue.valueOf(ep.isInvisible()));
         return t;
     }
+
+    @EventHandler
+    public void onSendPacket(final PacketSendEvent event) {
+        if(event.getPacket().getClass() == C0BPacketEntityAction.class) {
+            this.isC0BPacketEntityActionBeingSent = true;
+        }
+    }
+
+    @EventHandler
+    public void onTick(final TickEvent event) {
+        this.isC0BPacketEntityActionBeingSent = false;
+    }
+
+
 }

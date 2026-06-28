@@ -24,7 +24,6 @@ import bypass.Alya;
 import bypass.event.IEvent;
 import bypass.event.IEventListener;
 import bypass.event.events.*;
-import bypass.event.events.*;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
@@ -391,9 +390,9 @@ public final class LuaEventApi extends LuaTable {
                     new ZeroArgFunction() {
                         @Override
                         public LuaValue call() {
-                            if(packetSendEvent.getPacket() instanceof C0BPacketEntityAction) {
+                            if(packetSendEvent.getPacket() instanceof final C0BPacketEntityAction c0BPacketEntityAction) {
                                 return LuaValue.valueOf(
-                                        ((C0BPacketEntityAction) packetSendEvent.getPacket()).getAction().name());
+                                        c0BPacketEntityAction.getAction().name());
                             }
                             return LuaValue.NIL;
                         }
@@ -421,7 +420,8 @@ public final class LuaEventApi extends LuaTable {
                             new Thread(() -> {
                                 try {
                                     Thread.sleep(delay);
-                                } catch(InterruptedException ignored) {}
+                                } catch(InterruptedException ignored) {
+                                }
                                 mc.addScheduledTask(() -> {
                                     if(mc.getNetHandler() != null && mc.getNetHandler().getNetworkManager() != null) {
                                         mc.getNetHandler().getNetworkManager().sendPacketNoEvent(packet);
@@ -575,7 +575,8 @@ public final class LuaEventApi extends LuaTable {
                             new Thread(() -> {
                                 try {
                                     Thread.sleep(delay);
-                                } catch(InterruptedException ignored) {}
+                                } catch(InterruptedException ignored) {
+                                }
                                 mc.addScheduledTask(() -> {
                                     if(mc.getNetHandler() != null) {
                                         ((Packet<INetHandlerPlayClient>) packet).processPacket(mc.getNetHandler());
