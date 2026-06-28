@@ -53,8 +53,7 @@ jobs:
 
       - name: Update latest tag (force update)
         run: |
-          git fetch --tags origin
-          git tag -f latest
+          git tag -f latest "$GITHUB_SHA"
           git push origin +refs/tags/latest:refs/tags/latest
 
       - name: Create GitHub Release
