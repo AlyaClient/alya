@@ -49,10 +49,9 @@ public final class LuaEngine {
 
     public LuaEngine() {
         globals = JsePlatform.standardGlobals();
-        bindApi();
     }
 
-    private void bindApi() {
+    public void bindApi() {
         eventApi = new LuaEventApi();
 
         final LuaTable alyaTable = new LuaTable();
@@ -108,29 +107,22 @@ public final class LuaEngine {
                     @Override
                     public LuaValue call(LuaValue resourcePathValue) {
                         final String resourcePath = resourcePathValue.tojstring();
-                        try {
-                            final String devDir = System.getProperty("client.dev.resources");
-                            InputStream inputStream = null;
-                            if(devDir != null) {
-                                final File devFile = new File(devDir + resourcePath);
-                                if(devFile.exists()) {
-                                    inputStream = new FileInputStream(devFile);
-                                }
-                            }
-                            if(inputStream == null) {
-                                inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
-                            }
+                        try(InputStream inputStream = openScriptStream(resourcePath)) {
                             if(inputStream == null) {
                                 Alya.getInstance().getLogger().error("Lua script not found: {}", resourcePath);
                                 return LuaValue.NIL;
                             }
                             final LuaValue chunk = globals.load(new InputStreamReader(inputStream), resourcePath);
                             return chunk.call();
-                        } catch(final LuaError |
-                                      FileNotFoundException luaError) {
+                        } catch(final FileNotFoundException luaError) {
                             Alya.getInstance()
                                     .getLogger()
                                     .error("Lua error loading {}: {}", resourcePath, luaError.getMessage());
+                            return LuaValue.NIL;
+                        } catch(final IOException ioException) {
+                            Alya.getInstance()
+                                    .getLogger()
+                                    .error("Error loading {}: {}", resourcePath, ioException.getMessage());
                             return LuaValue.NIL;
                         }
                     }
@@ -173,18 +165,7 @@ public final class LuaEngine {
     }
 
     public void loadScript(final String resourcePath) {
-        try {
-            final String devDir = System.getProperty("alya.dev.resources");
-            InputStream inputStream = null;
-            if(devDir != null) {
-                final File devFile = new File(devDir + resourcePath);
-                if(devFile.exists()) {
-                    inputStream = new FileInputStream(devFile);
-                }
-            }
-            if(inputStream == null) {
-                inputStream = LuaEngine.class.getResourceAsStream(resourcePath);
-            }
+        try(InputStream inputStream = openScriptStream(resourcePath)) {
             if(inputStream == null) {
                 Alya.getInstance().getLogger().error("Lua script not found: {}", resourcePath);
                 return;
@@ -202,6 +183,19 @@ public final class LuaEngine {
                     .getLogger()
                     .error("Error loading {}: {}", resourcePath, exception.getMessage());
         }
+    }
+
+    private InputStream openScriptStream(final String resourcePath) throws FileNotFoundException {
+        final String devDir = Optional
+                .ofNullable(System.getProperty("alya.dev.resources"))
+                .orElse(System.getProperty("client.dev.resources"));
+        if(devDir != null) {
+            final File devFile = new File(devDir + resourcePath);
+            if(devFile.exists()) {
+                return new FileInputStream(devFile);
+            }
+        }
+        return LuaEngine.class.getResourceAsStream(resourcePath);
     }
 
     private String[] getAlyaScriptCore() {
@@ -299,7 +293,7 @@ public final class LuaEngine {
                 .getCommandManager()
                 .getCommands()
                 .removeIf(
-                        command -> !(command.getClass().getName().startsWith("dev.thoq.command.commands")));
+                        command -> command.getClass().getName().startsWith("bypass.lua."));
         loadedScripts.clear();
         loadAll();
         new ArrayList<>(Alya.getInstance().getModuleManager().getModules())

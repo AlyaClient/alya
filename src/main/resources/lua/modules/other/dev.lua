@@ -20,5 +20,12 @@
 
 local moduleTable = alya.modules.register("dev", "module for testing things", "OTHER")
 
-alya.events.on("motion", function(event)
+alya.events.on("packetsend", function(event)
+    if not moduleTable.isEnabled() then return end
+    alya.chat.info("PACKET:SEND::" .. event.getPacketClass())
+end)
+
+alya.events.on("packetreceive", function(event)
+    if not moduleTable.isEnabled() then return end
+    alya.chat.info("PACKET:RECIEVE::" .. event.getPacketClass())
 end)

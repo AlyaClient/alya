@@ -45,7 +45,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings("SpellCheckingInspection")
 public final class Alya {
 
     private static final Alya INSTANCE = new Alya();
@@ -70,6 +69,7 @@ public final class Alya {
     }
 
     public void initialize() {
+        this.luaEngine.bindApi();
         LuaMinecraftApi.registerEvents(eventBus);
         moduleManager.putAll(new ClickGUI(), new HUDModule(), new KeystrokesModule());
         initCommands();
