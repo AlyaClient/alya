@@ -55,7 +55,7 @@ alya.events.on("render3d", function(event)
             if hitboxesModule and hitboxesModule.isEnabled() then
                 local expansion = hitboxesModule.getSetting("Expansion")
                 if expansion then
-                    espWidth = espWidth + (expansion.getValue() * 2.0)
+                    espWidth = espWidth + 0.2 + (expansion.getValue() * 2.0)
                 end
             end
         end

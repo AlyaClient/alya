@@ -19,7 +19,7 @@
 --]]
 
 local moduleTable = alya.modules.register("Hitboxes", "Expands entity hitboxes", "COMBAT")
-local expansion = moduleTable.addNumberSetting("Expansion", "", 0.1, 0.1, 1, 0.01)
+local expansion = moduleTable.addNumberSetting("Expansion", "", 0.2, 0.05, 1, 0.01)
 
 alya.events.on("motion", function(event)
     if not moduleTable.isEnabled() then return end

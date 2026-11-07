@@ -68,7 +68,7 @@ public final class LuaMinecraftApi extends LuaTable {
                     HitboxEvent.class,
                     event -> {
                         if(hitboxExpansion >= 0) {
-                            event.setExpansion(hitboxExpansion);
+                            event.setExpansion(event.getExpansion() + hitboxExpansion);
                         }
                     });
             eventBus.subscribe(
@@ -231,6 +231,35 @@ public final class LuaMinecraftApi extends LuaTable {
                                 minecraft.thePlayer.posX,
                                 v.todouble(),
                                 minecraft.thePlayer.posZ);
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "teleport",
+                new ThreeArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue xValue, LuaValue yValue, LuaValue zValue) {
+                        if(minecraft.thePlayer == null || minecraft.getNetHandler() == null) {
+                            return LuaValue.NIL;
+                        }
+                        final double targetX = xValue.todouble();
+                        final double targetY = yValue.todouble();
+                        final double targetZ = zValue.todouble();
+                        final double deltaX = targetX - minecraft.thePlayer.posX;
+                        final double deltaY = targetY - minecraft.thePlayer.posY;
+                        final double deltaZ = targetZ - minecraft.thePlayer.posZ;
+                        final double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                        final int steps = Math.max(1, (int) Math.ceil(distance / 8.0));
+                        for(int step = 1; step <= steps; step++) {
+                            final double progress = (double) step / steps;
+                            minecraft.getNetHandler().addToSendQueue(
+                                    new net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition(
+                                            minecraft.thePlayer.posX + deltaX * progress,
+                                            minecraft.thePlayer.posY + deltaY * progress,
+                                            minecraft.thePlayer.posZ + deltaZ * progress,
+                                            false));
+                        }
+                        minecraft.thePlayer.setPosition(targetX, targetY, targetZ);
                         return LuaValue.NIL;
                     }
                 });
@@ -819,6 +848,16 @@ public final class LuaMinecraftApi extends LuaTable {
                     public LuaValue call() {
                         hitboxExpansion = -1.0f;
                         return LuaValue.NIL;
+                    }
+                });
+        set(
+                "isCollidedHorizontally",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        return minecraft.thePlayer != null
+                                ? LuaValue.valueOf(minecraft.thePlayer.isCollidedHorizontally)
+                                : LuaValue.FALSE;
                     }
                 });
         set(

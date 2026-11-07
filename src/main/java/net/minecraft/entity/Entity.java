@@ -1,5 +1,7 @@
 package net.minecraft.entity;
 
+import bypass.Alya;
+import bypass.event.events.HitboxEvent;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -958,7 +960,11 @@ public abstract class Entity implements ICommandSender
     {
         if (this.isSprinting() && !this.isInWater())
         {
-            this.createRunningParticles();
+            double d0 = this.motionX * this.motionX + this.motionZ * this.motionZ;
+            if (d0 > 0.0001D)
+            {
+                this.createRunningParticles();
+            }
         }
     }
 
@@ -1704,7 +1710,9 @@ public abstract class Entity implements ICommandSender
 
     public float getCollisionBorderSize()
     {
-        return 0.1F;
+        HitboxEvent hitboxEvent = new HitboxEvent(0.1F);
+        Alya.getInstance().getEventBus().dispatch(hitboxEvent);
+        return hitboxEvent.getExpansion();
     }
 
     public Vec3 getLookVec()

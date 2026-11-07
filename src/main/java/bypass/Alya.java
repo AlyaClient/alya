@@ -133,6 +133,7 @@ public final class Alya {
                 new Script(Category.EXPLOIT, "pingspoofer"),
                 new Script(Category.OTHER, "hackerdetector"),
                 new Script(Category.OTHER, "worldtime"),
+                new Script(Category.OTHER, "clip"),
                 new Script(Category.OTHER, "dev")
         );
     }
