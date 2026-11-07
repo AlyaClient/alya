@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.util.*;
 import org.jspecify.annotations.NonNull;
 import org.luaj.vm2.LuaTable;
@@ -68,7 +69,7 @@ public final class LuaMinecraftApi extends LuaTable {
                     HitboxEvent.class,
                     event -> {
                         if(hitboxExpansion >= 0) {
-                            event.setExpansion(hitboxExpansion);
+                            event.setExpansion(event.getExpansion() + hitboxExpansion);
                         }
                     });
             eventBus.subscribe(
@@ -231,6 +232,35 @@ public final class LuaMinecraftApi extends LuaTable {
                                 minecraft.thePlayer.posX,
                                 v.todouble(),
                                 minecraft.thePlayer.posZ);
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "teleport",
+                new ThreeArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue xValue, LuaValue yValue, LuaValue zValue) {
+                        if(minecraft.thePlayer == null || minecraft.getNetHandler() == null) {
+                            return LuaValue.NIL;
+                        }
+                        final double targetX = xValue.todouble();
+                        final double targetY = yValue.todouble();
+                        final double targetZ = zValue.todouble();
+                        final double deltaX = targetX - minecraft.thePlayer.posX;
+                        final double deltaY = targetY - minecraft.thePlayer.posY;
+                        final double deltaZ = targetZ - minecraft.thePlayer.posZ;
+                        final double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                        final int steps = Math.max(1, (int) Math.ceil(distance / 8.0));
+                        for(int step = 1; step <= steps; step++) {
+                            final double progress = (double) step / steps;
+                            minecraft.getNetHandler().addToSendQueue(
+                                    new net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition(
+                                            minecraft.thePlayer.posX + deltaX * progress,
+                                            minecraft.thePlayer.posY + deltaY * progress,
+                                            minecraft.thePlayer.posZ + deltaZ * progress,
+                                            false));
+                        }
+                        minecraft.thePlayer.setPosition(targetX, targetY, targetZ);
                         return LuaValue.NIL;
                     }
                 });
@@ -822,6 +852,16 @@ public final class LuaMinecraftApi extends LuaTable {
                     }
                 });
         set(
+                "isCollidedHorizontally",
+                new ZeroArgFunction() {
+                    @Override
+                    public LuaValue call() {
+                        return minecraft.thePlayer != null
+                                ? LuaValue.valueOf(minecraft.thePlayer.isCollidedHorizontally)
+                                : LuaValue.FALSE;
+                    }
+                });
+        set(
                 "isOnEdge",
                 new ZeroArgFunction() {
                     @Override
@@ -1141,6 +1181,23 @@ public final class LuaMinecraftApi extends LuaTable {
                             boolean state = stateValue.toboolean();
                             C0BPacketEntityAction.Action action = state ? C0BPacketEntityAction.Action.START_SPRINTING : C0BPacketEntityAction.Action.STOP_SPRINTING;
                             minecraft.getNetHandler().addToSendQueue(new C0BPacketEntityAction(minecraft.thePlayer, action));
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "sendClientStatus",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue statusValue) {
+                        if(minecraft.thePlayer != null && minecraft.getNetHandler() != null) {
+                            String statusName = statusValue.isnil() ? "PERFORM_RESPAWN" : statusValue.tojstring();
+                            C16PacketClientStatus.EnumState state = switch(statusName) {
+                                case "REQUEST_STATS" -> C16PacketClientStatus.EnumState.REQUEST_STATS;
+                                case "OPEN_INVENTORY_ACHIEVEMENT" -> C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT;
+                                default -> C16PacketClientStatus.EnumState.PERFORM_RESPAWN;
+                            };
+                            minecraft.getNetHandler().addToSendQueue(new C16PacketClientStatus(state));
                         }
                         return LuaValue.NIL;
                     }

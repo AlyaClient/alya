@@ -21,8 +21,9 @@
 local function createVanillaNoFallMode(moduleTable, modeSettings)
     alya.events.on("motion", function(event)
         if not moduleTable.isEnabled() then return end
+        if not event.isPre() then return end
         if not modeSettings.is("Vanilla") then return end
-        if alya.mc.getFallDistance() < 3.01 then
+        if alya.mc.getFallDistance() > 2.5 then
             event.setOnGround(true)
             alya.mc.setFallDistance(0)
         end

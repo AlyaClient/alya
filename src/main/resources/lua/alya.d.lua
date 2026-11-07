@@ -355,6 +355,11 @@ function AlyaMC.getPlayerX() end
 function AlyaMC.getPlayerY() end
 ---@return number
 function AlyaMC.getPlayerZ() end
+---teleports the player to the given position (sends position packets in steps of 8 blocks)
+---@param x number
+---@param y number
+---@param z number
+function AlyaMC.teleport(x, y, z) end
 ---@return number
 function AlyaMC.getMotionX() end
 ---@return number
@@ -471,6 +476,10 @@ function AlyaMC.setHitboxExpansion(expansion) end
 ---resets entity hitbox expansion to default
 function AlyaMC.resetHitboxExpansion() end
 
+---returns true if the player is collided horizontally against a block
+---@return boolean
+function AlyaMC.isCollidedHorizontally() end
+
 ---sends a chat message to the server
 ---@param message string
 function AlyaMC.sendChatMessage(message) end
@@ -478,6 +487,10 @@ function AlyaMC.sendChatMessage(message) end
 ---sends a C0BPacketEntityAction to update the server sprint state manually
 ---@param state boolean true for START_SPRINTING, false for STOP_SPRINTING
 function AlyaMC.sendSprintPacket(state) end
+
+---sends a C16PacketClientStatus packet to the server
+---@param status? "PERFORM_RESPAWN"|"REQUEST_STATS"|"OPEN_INVENTORY_ACHIEVEMENT" defaults to "PERFORM_RESPAWN"
+function AlyaMC.sendClientStatus(status) end
 
 ---breaks a block using the specified action and position
 ---@param action integer 0 = START_DESTROY_BLOCK, 1 = STOP_DESTROY_BLOCK, 2 = ABORT_DESTROY_BLOCK

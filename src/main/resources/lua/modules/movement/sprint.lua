@@ -23,7 +23,7 @@ local omniSprint = moduleTable.addBooleanSetting("OmniSprint", "Sprint in all di
 
 alya.events.on("playerinput", function(event)
     if not moduleTable.isEnabled() then return end
-    if not alya.movement.isMoving() then 
+    if not alya.movement.isMoving() or alya.mc.isCollidedHorizontally() then 
         alya.mc.setSprinting(false)
         return 
     end

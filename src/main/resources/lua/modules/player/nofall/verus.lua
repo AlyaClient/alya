@@ -21,6 +21,7 @@
 local function createVerusNoFallMode(moduleTable, modeSettings)
     alya.events.on("motion", function(event)
         if not moduleTable.isEnabled() then return end
+        if not event.isPre() then return end
         if not modeSettings.is("Verus") then return end
         if alya.mc.getFallDistance() > 3.5 then
             alya.mc.setMotionY(0.0)

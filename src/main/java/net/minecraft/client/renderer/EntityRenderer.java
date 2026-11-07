@@ -358,43 +358,42 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         if(entity != null && this.mc.theWorld != null) {
             this.mc.mcProfiler.startSection("pick");
             this.mc.pointedEntity = null;
-            double d0 = (double) this.mc.playerController.getBlockReachDistance();
+            double blockReach = (double) this.mc.playerController.getBlockReachDistance();
+            this.mc.objectMouseOver = entity.rayTrace(blockReach, partialTicks);
+            double blockDistance = blockReach;
             Vec3 vec3 = entity.getPositionEyes(partialTicks);
             boolean flag = false;
-            int i = 3;
 
             if(this.mc.playerController.extendedReach()) {
-                d0 = 6.0D;
-            }
-
-            this.mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
-            double d1 = d0;
-
-            final ReachEvent reachEvent = new ReachEvent(d0);
-            Alya.getInstance().getEventBus().dispatch(reachEvent);
-            double reachDistance = reachEvent.getReachDistance();
-            boolean reachModified = reachDistance != d0;
-            d0 = reachDistance;
-
-            if(!this.mc.playerController.extendedReach() && d0 > 3.0D) {
+                blockReach = 6.0D;
+                blockDistance = 6.0D;
+            } else if(blockReach > 3.0D) {
                 flag = true;
             }
 
             if(this.mc.objectMouseOver != null) {
-                d1 = this.mc.objectMouseOver.hitVec.distanceTo(vec3);
+                blockDistance = this.mc.objectMouseOver.hitVec.distanceTo(vec3);
             }
 
+            final ReachEvent reachEvent = new ReachEvent(3.0D);
+            Alya.getInstance().getEventBus().dispatch(reachEvent);
+            double entityReach = reachEvent.getReachDistance();
+            if(this.mc.playerController.extendedReach()) {
+                entityReach = Math.max(entityReach, 6.0D);
+            }
+
+            double searchDistance = Math.max(blockReach, entityReach);
             Vec3 vec31 = entity.getLook(partialTicks);
-            Vec3 vec32 = vec3.addVector(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0);
+            Vec3 vec32 = vec3.addVector(vec31.xCoord * searchDistance, vec31.yCoord * searchDistance, vec31.zCoord * searchDistance);
             this.pointedEntity = null;
             Vec3 vec33 = null;
-            float f = 1.0F;
-            List<Entity> list = this.mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
+            float f = Math.max(1.0F, 1.0F + (float) (entityReach - 3.0D));
+            List<Entity> list = this.mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * searchDistance, vec31.yCoord * searchDistance, vec31.zCoord * searchDistance).expand((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
                 public boolean apply(Entity p_apply_1_) {
                     return p_apply_1_.canBeCollidedWith();
                 }
             }));
-            double d2 = d1;
+            double bestEntityDistance = this.mc.objectMouseOver != null ? blockDistance : searchDistance;
 
             for(Entity value : list) {
                 float f1 = ((Entity) value).getCollisionBorderSize();
@@ -402,15 +401,15 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
 
                 if(axisalignedbb.isVecInside(vec3)) {
-                    if(d2 >= 0.0D) {
+                    if(bestEntityDistance >= 0.0D) {
                         this.pointedEntity = (Entity) value;
                         vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
-                        d2 = 0.0D;
+                        bestEntityDistance = 0.0D;
                     }
                 } else if(movingobjectposition != null) {
                     double d3 = vec3.distanceTo(movingobjectposition.hitVec);
 
-                    if(d3 < d2 || d2 == 0.0D) {
+                    if(d3 < bestEntityDistance || bestEntityDistance == 0.0D) {
                         boolean flag1 = false;
 
                         if(Reflector.ForgeEntity_canRiderInteract.exists()) {
@@ -418,25 +417,25 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                         }
 
                         if(!flag1 && (Entity) value == entity.ridingEntity) {
-                            if(d2 == 0.0D) {
+                            if(bestEntityDistance == 0.0D) {
                                 this.pointedEntity = (Entity) value;
                                 vec33 = movingobjectposition.hitVec;
                             }
                         } else {
                             this.pointedEntity = (Entity) value;
                             vec33 = movingobjectposition.hitVec;
-                            d2 = d3;
+                            bestEntityDistance = d3;
                         }
                     }
                 }
             }
 
-            if(this.pointedEntity != null && flag && vec3.distanceTo(vec33) > (reachModified ? d0 : 3.0D)) {
+            if(this.pointedEntity != null && flag && vec3.distanceTo(vec33) > entityReach) {
                 this.pointedEntity = null;
                 this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, vec33, (EnumFacing) null, new BlockPos(vec33));
             }
 
-            if(this.pointedEntity != null && (d2 < d1 || this.mc.objectMouseOver == null)) {
+            if(this.pointedEntity != null && (bestEntityDistance < blockDistance || this.mc.objectMouseOver == null)) {
                 this.mc.objectMouseOver = new MovingObjectPosition(this.pointedEntity, vec33);
 
                 if(this.pointedEntity instanceof EntityLivingBase || this.pointedEntity instanceof EntityItemFrame) {
