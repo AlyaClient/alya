@@ -75,6 +75,7 @@ public abstract class Entity implements ICommandSender
     public float prevRotationPitch;
     private AxisAlignedBB boundingBox;
     public boolean onGround;
+    public boolean safeWalk = false;
     public boolean isCollidedHorizontally;
     public boolean isCollidedVertically;
     public boolean isCollided;
@@ -453,7 +454,7 @@ public abstract class Entity implements ICommandSender
             double d3 = x;
             double d4 = y;
             double d5 = z;
-            boolean flag = this.onGround && this.isSneaking() && this instanceof EntityPlayer;
+            boolean flag = this.onGround && (this.isSneaking() || this.safeWalk) && this instanceof EntityPlayer;
 
             if (flag)
             {

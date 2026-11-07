@@ -319,6 +319,92 @@ public final class LuaEventApi extends LuaTable {
                             return LuaValue.valueOf(playerMoveEvent.isCanceled());
                         }
                     });
+        } else if(event instanceof final MoveEntityEvent moveEntityEvent) {
+            eventTable.set(
+                    "getX",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(moveEntityEvent.getX());
+                        }
+                    });
+            eventTable.set(
+                    "getY",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(moveEntityEvent.getY());
+                        }
+                    });
+            eventTable.set(
+                    "getZ",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(moveEntityEvent.getZ());
+                        }
+                    });
+            eventTable.set(
+                    "setX",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(LuaValue xValue) {
+                            moveEntityEvent.setX(xValue.todouble());
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "setY",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(LuaValue yValue) {
+                            moveEntityEvent.setY(yValue.todouble());
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "setZ",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(LuaValue zValue) {
+                            moveEntityEvent.setZ(zValue.todouble());
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "isSafeWalk",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(moveEntityEvent.isSafeWalk());
+                        }
+                    });
+            eventTable.set(
+                    "setSafeWalk",
+                    new OneArgFunction() {
+                        @Override
+                        public LuaValue call(LuaValue safeWalkValue) {
+                            moveEntityEvent.setSafeWalk(safeWalkValue.toboolean());
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "cancel",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            moveEntityEvent.cancel();
+                            return LuaValue.NIL;
+                        }
+                    });
+            eventTable.set(
+                    "isCanceled",
+                    new ZeroArgFunction() {
+                        @Override
+                        public LuaValue call() {
+                            return LuaValue.valueOf(moveEntityEvent.isCanceled());
+                        }
+                    });
         } else if(event instanceof final PlayerInputEvent playerInputEvent) {
             eventTable.set(
                     "cancel",

@@ -104,6 +104,16 @@
 ---@field getMessage fun(): string
 ---@field setMessage fun(message: string)
 
+---@class AlyaMoveEntityEvent : AlyaCancelableEvent
+---@field getX fun(): number
+---@field getY fun(): number
+---@field getZ fun(): number
+---@field setX fun(x: number)
+---@field setY fun(y: number)
+---@field setZ fun(z: number)
+---@field isSafeWalk fun(): boolean
+---@field setSafeWalk fun(safeWalk: boolean)
+
 ---@class AlyaSlowDownEvent : AlyaCancelableEvent
 ---@field getReason fun(): "eat"|"drink"|"block"|"bow"|"unknown"
 

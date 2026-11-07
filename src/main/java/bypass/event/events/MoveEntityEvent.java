@@ -25,9 +25,10 @@ import bypass.event.IEvent;
 
 @SuppressWarnings("unused")
 public final class MoveEntityEvent implements IEvent, ICancelable {
-    private final double x;
-    private final double y;
-    private final double z;
+    private double x;
+    private double y;
+    private double z;
+    private boolean safeWalk = false;
     private boolean canceled = false;
 
     public MoveEntityEvent(final double x, final double y, final double z) {
@@ -40,12 +41,32 @@ public final class MoveEntityEvent implements IEvent, ICancelable {
         return x;
     }
 
+    public void setX(final double x) {
+        this.x = x;
+    }
+
     public double getY() {
         return y;
     }
 
+    public void setY(final double y) {
+        this.y = y;
+    }
+
     public double getZ() {
         return z;
+    }
+
+    public void setZ(final double z) {
+        this.z = z;
+    }
+
+    public boolean isSafeWalk() {
+        return safeWalk;
+    }
+
+    public void setSafeWalk(final boolean safeWalk) {
+        this.safeWalk = safeWalk;
     }
 
     public boolean isCanceled() {

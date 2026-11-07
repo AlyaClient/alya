@@ -492,7 +492,9 @@ public class EntityPlayerSP extends AbstractClientPlayer {
             x = event.getX();
             y = event.getY();
             z = event.getZ();
+            this.safeWalk = event.isSafeWalk();
             super.moveEntity(x, y, z);
+            this.safeWalk = false;
         }
     }
 

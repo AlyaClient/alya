@@ -759,7 +759,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        return LuaValue.valueOf(minecraft.thePlayer != null && minecraft.thePlayer.isInWater());
+                        return LuaValue.valueOf(isInLiquid());
                     }
                 });
         set(
@@ -767,16 +767,7 @@ public final class LuaMinecraftApi extends LuaTable {
                 new ZeroArgFunction() {
                     @Override
                     public LuaValue call() {
-                        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
-                            return LuaValue.FALSE;
-                        }
-                        BlockPos pos =
-                                new BlockPos(
-                                        minecraft.thePlayer.posX,
-                                        minecraft.thePlayer.getEntityBoundingBox().minY - 0.1,
-                                        minecraft.thePlayer.posZ);
-                        return LuaValue.valueOf(
-                                minecraft.theWorld.getBlockState(pos).getBlock() instanceof BlockLiquid);
+                        return LuaValue.valueOf(isOnLiquid());
                     }
                 });
         set(
@@ -1216,5 +1207,24 @@ public final class LuaMinecraftApi extends LuaTable {
                     }
                 }
         );
+    }
+
+    public static boolean isInLiquid() {
+        return isLiquidAtOffset(0.0D);
+    }
+
+    public static boolean isOnLiquid() {
+        return isLiquidAtOffset(-0.01D);
+    }
+
+    private static boolean isLiquidAtOffset(final double yOffset) {
+        if(minecraft.thePlayer == null || minecraft.theWorld == null) {
+            return false;
+        }
+        return minecraft.theWorld.isAnyLiquid(
+                minecraft.thePlayer
+                        .getEntityBoundingBox()
+                        .contract(0.001D, 0.001D, 0.001D)
+                        .offset(0.0D, yOffset, 0.0D));
     }
 }
