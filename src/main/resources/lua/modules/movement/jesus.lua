@@ -27,8 +27,22 @@ end)
 alya.events.on("motion", function(event)
     if not moduleTable.isEnabled() then return end
     if not event.isPre() then return end
-    if not alya.mc.isInWater() and not alya.mc.isOnLiquid() then return end
-    event.setOnGround(true)
+    if alya.mc.isSneakPressed() then return end
+
+    if alya.mc.isInWater() then
+        if alya.mc.getFallDistance() <= 3.0 then
+            alya.mc.setMotionY(0.11)
+        end
+        return
+    end
+
+    if alya.mc.isOnLiquid() then
+        event.setOnGround(true)
+    end
+end)
+
+moduleTable.onEnable(function()
+    alya.mc.setJesusActive(true)
 end)
 
 moduleTable.onDisable(function()
