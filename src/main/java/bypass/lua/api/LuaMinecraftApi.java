@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.util.*;
 import org.jspecify.annotations.NonNull;
 import org.luaj.vm2.LuaTable;
@@ -1180,6 +1181,23 @@ public final class LuaMinecraftApi extends LuaTable {
                             boolean state = stateValue.toboolean();
                             C0BPacketEntityAction.Action action = state ? C0BPacketEntityAction.Action.START_SPRINTING : C0BPacketEntityAction.Action.STOP_SPRINTING;
                             minecraft.getNetHandler().addToSendQueue(new C0BPacketEntityAction(minecraft.thePlayer, action));
+                        }
+                        return LuaValue.NIL;
+                    }
+                });
+        set(
+                "sendClientStatus",
+                new OneArgFunction() {
+                    @Override
+                    public LuaValue call(LuaValue statusValue) {
+                        if(minecraft.thePlayer != null && minecraft.getNetHandler() != null) {
+                            String statusName = statusValue.isnil() ? "PERFORM_RESPAWN" : statusValue.tojstring();
+                            C16PacketClientStatus.EnumState state = switch(statusName) {
+                                case "REQUEST_STATS" -> C16PacketClientStatus.EnumState.REQUEST_STATS;
+                                case "OPEN_INVENTORY_ACHIEVEMENT" -> C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT;
+                                default -> C16PacketClientStatus.EnumState.PERFORM_RESPAWN;
+                            };
+                            minecraft.getNetHandler().addToSendQueue(new C16PacketClientStatus(state));
                         }
                         return LuaValue.NIL;
                     }

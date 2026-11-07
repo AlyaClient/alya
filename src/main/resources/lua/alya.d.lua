@@ -488,6 +488,10 @@ function AlyaMC.sendChatMessage(message) end
 ---@param state boolean true for START_SPRINTING, false for STOP_SPRINTING
 function AlyaMC.sendSprintPacket(state) end
 
+---sends a C16PacketClientStatus packet to the server
+---@param status? "PERFORM_RESPAWN"|"REQUEST_STATS"|"OPEN_INVENTORY_ACHIEVEMENT" defaults to "PERFORM_RESPAWN"
+function AlyaMC.sendClientStatus(status) end
+
 ---breaks a block using the specified action and position
 ---@param action integer 0 = START_DESTROY_BLOCK, 1 = STOP_DESTROY_BLOCK, 2 = ABORT_DESTROY_BLOCK
 ---@param x integer block x
