@@ -437,11 +437,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     }
 
     public void drawWorldBackground(int tint) {
-        if(this.mc.theWorld != null) {
-            this.drawGradientRect(0, 0, this.width, this.height, -1072689136, -804253680);
-        } else {
-            this.drawBackground(tint);
-        }
+        this.drawBackground(tint);
     }
 
     public void drawBackground(int tint) {
@@ -471,7 +467,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
             Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object) null, new Object[0]);
             oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, new Object[]{url});
         } catch(Throwable throwable) {
-            LOGGER.error("Couldn\'t open link", throwable);
+            LOGGER.error("Couldn't open link", throwable);
         }
     }
 

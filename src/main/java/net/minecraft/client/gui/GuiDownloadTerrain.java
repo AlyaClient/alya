@@ -69,11 +69,7 @@ public class GuiDownloadTerrain extends GuiScreen {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        if(this.customLoadingScreen != null) {
-            this.customLoadingScreen.drawBackground(this.width, this.height);
-        } else {
-            this.drawBackground(0);
-        }
+        this.drawDefaultBackground();
 
         this.drawCenteredString(
                 I18n.format("multiplayer.downloadingTerrain", new Object[0]),

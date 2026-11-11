@@ -20,11 +20,11 @@ public class GuiIngameMenu extends GuiScreen {
             1,
             this.width / 2 - 100,
             this.height / 4 + 120 + i,
-            I18n.format("menu.returnToMenu", new Object[0])));
+            I18n.format("menu.returnToMenu")));
 
     if (!this.mc.isIntegratedServerRunning()) {
-      ((GuiButton) this.buttonList.getFirst()).displayString =
-          I18n.format("menu.disconnect", new Object[0]);
+      this.buttonList.getFirst().displayString =
+          I18n.format("menu.disconnect");
     }
 
     this.buttonList.add(
@@ -32,7 +32,7 @@ public class GuiIngameMenu extends GuiScreen {
             4,
             this.width / 2 - 100,
             this.height / 4 + 24 + i,
-            I18n.format("menu.returnToGame", new Object[0])));
+            I18n.format("menu.returnToGame")));
     this.buttonList.add(
         new GuiButton(
             0,
@@ -40,7 +40,7 @@ public class GuiIngameMenu extends GuiScreen {
             this.height / 4 + 96 + i,
             98,
             20,
-            I18n.format("menu.options", new Object[0])));
+            I18n.format("menu.options")));
     GuiButton guibutton;
     this.buttonList.add(
         guibutton =
@@ -50,7 +50,7 @@ public class GuiIngameMenu extends GuiScreen {
                 this.height / 4 + 96 + i,
                 98,
                 20,
-                I18n.format("menu.shareToLan", new Object[0])));
+                I18n.format("menu.shareToLan")));
     this.buttonList.add(
         new GuiButton(
             5,
@@ -58,7 +58,7 @@ public class GuiIngameMenu extends GuiScreen {
             this.height / 4 + 48 + i,
             98,
             20,
-            I18n.format("gui.achievements", new Object[0])));
+            I18n.format("gui.achievements")));
     this.buttonList.add(
         new GuiButton(
             6,
@@ -66,7 +66,7 @@ public class GuiIngameMenu extends GuiScreen {
             this.height / 4 + 48 + i,
             98,
             20,
-            I18n.format("gui.stats", new Object[0])));
+            I18n.format("gui.stats")));
     guibutton.enabled = this.mc.isSingleplayer() && !this.mc.getIntegratedServer().getPublic();
   }
 
@@ -81,7 +81,7 @@ public class GuiIngameMenu extends GuiScreen {
         boolean flag = this.mc.isIntegratedServerRunning();
         button.enabled = false;
         this.mc.theWorld.sendQuittingDisconnectingPacket();
-        this.mc.loadWorld((WorldClient) null);
+        this.mc.loadWorld(null);
 
         if (flag) {
           this.mc.displayGuiScreen(new GuiMainMenu());
@@ -95,7 +95,7 @@ public class GuiIngameMenu extends GuiScreen {
         break;
 
       case 4:
-        this.mc.displayGuiScreen((GuiScreen) null);
+        this.mc.displayGuiScreen(null);
         this.mc.setIngameFocus();
         break;
 
@@ -119,8 +119,9 @@ public class GuiIngameMenu extends GuiScreen {
 
   /** Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks */
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-    this.drawDefaultBackground();
-    this.drawCenteredString(I18n.format("menu.game", new Object[0]), this.width / 2, 40, 16777215);
+    final int color = 0x99000000;
+    this.drawGradientRect(0, 0, this.width, this.height, color, color);
+    this.drawCenteredString(I18n.format("menu.game"), this.width / 2, 40, 16777215);
     super.drawScreen(mouseX, mouseY, partialTicks);
   }
 
